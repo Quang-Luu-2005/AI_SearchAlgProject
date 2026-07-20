@@ -1,0 +1,9 @@
+Lab 1: Vấn đáp
+- Không quan tâm chia việc -> hỏi bất kỳ
+- Bao quát toàn bộ công việc
+- Đặt mục tiêu cụ thể: Xử lý về thời gian/đường đi, ...
+- Tùy chọn hàm tối ưu, lộ trình (sẽ hỏi)
+- Điểm cao: 
+-- Phải chia sẻ việc cho nhau 
+-- Giải pháp đưa ra có hợp lí (Chứng minh nó hợp lí, case hợp lí, case không hợp lí)
+-- Giao diện phải tốt, đẹp
