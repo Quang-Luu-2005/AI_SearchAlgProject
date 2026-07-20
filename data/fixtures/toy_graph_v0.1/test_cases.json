@@ -1,0 +1,47 @@
+{
+  "fixture_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "cases": [
+    {
+      "case_id": "TC01_BASELINE_SHORTEST",
+      "mode": "two-point",
+      "scenario_id": "OFFPEAK_BALANCED",
+      "start": "N01",
+      "goal": "N06",
+      "oracle_algorithm": "UCS",
+      "expected_path": ["N01", "N02", "N06"],
+      "purpose": "Đường ngắn nhất hợp lý khi cạnh trũng chưa bị đóng."
+    },
+    {
+      "case_id": "TC02_RAIN_REROUTE",
+      "mode": "two-point",
+      "scenario_id": "HEAVY_RAIN_SAFE",
+      "start": "N01",
+      "goal": "N06",
+      "oracle_algorithm": "UCS",
+      "expected_path": ["N01", "N02", "N04", "N06"],
+      "purpose": "Tuyến đổi khi cạnh ngập bị đóng; dùng để giải thích alternative."
+    },
+    {
+      "case_id": "TC03_ASTAR_ORACLE",
+      "mode": "two-point",
+      "scenario_id": "OFFPEAK_BALANCED",
+      "start": "N03",
+      "goal": "N06",
+      "oracle_algorithm": "UCS",
+      "expected_path": ["N03", "N04", "N06"],
+      "purpose": "A* phải có cùng optimal cost với UCS khi heuristic admissible."
+    },
+    {
+      "case_id": "TC04_MULTI_STOP",
+      "mode": "multi-stop",
+      "scenario_id": "OFFPEAK_BALANCED",
+      "start": "N01",
+      "goal": "N01",
+      "visit": ["N03", "N05", "N06"],
+      "oracle_algorithm": "HELD_KARP",
+      "purpose": "So sánh optimum Held-Karp với Nearest Neighbor."
+    }
+  ]
+}
+

@@ -1,0 +1,8 @@
+node_id,osm_node_id,name,node_type,latitude,longitude,legacy_ward,source_id,extraction_date,validation_status,data_status
+N01,SIM-N01,Kho Linh Trung,depot,10.8678,106.7789,Linh Trung,S15,2026-07-20,Fixture,SIMULATED
+N02,SIM-N02,Nút Võ Văn Ngân,intersection,10.8506,106.7719,Linh Chiểu,S15,2026-07-20,Fixture,SIMULATED
+N03,SIM-N03,Chợ Thủ Đức,delivery,10.8498,106.7535,Trường Thọ,S15,2026-07-20,Fixture,SIMULATED
+N04,SIM-N04,Nút Kha Vạn Cân,intersection,10.8500,106.7470,Linh Đông,S15,2026-07-20,Fixture,SIMULATED
+N05,SIM-N05,Nút Phạm Văn Đồng,delivery,10.8310,106.7345,Hiệp Bình Chánh,S15,2026-07-20,Fixture,SIMULATED
+N06,SIM-N06,Điểm giao Linh Đông,delivery,10.8420,106.7410,Linh Đông,S15,2026-07-20,Fixture,SIMULATED
+

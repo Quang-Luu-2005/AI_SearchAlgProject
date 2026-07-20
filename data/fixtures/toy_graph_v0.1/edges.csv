@@ -1,0 +1,16 @@
+edge_id,from_node_id,to_node_id,osm_way_id,road_name,road_type,direction,distance_m,free_flow_speed_kmh,free_flow_time_min,flood_hotspot_id,source_id,snapshot_date,map_matching_status,is_restricted,notes,data_status
+E01,N01,N02,SIM-W01,Đường trục A,primary,one-way,1100,30,2.20,,S15,2026-07-20,Fixture,false,Short baseline leg,SIMULATED
+E02,N02,N01,SIM-W01,Đường trục A,primary,one-way,1100,30,2.20,,S15,2026-07-20,Fixture,false,Reverse baseline leg,SIMULATED
+E03,N02,N06,SIM-W02,Đường trũng,secondary,one-way,1400,25,3.36,FIXTURE_FLOOD_01,S15,2026-07-20,Fixture,false,Closed in heavy rain fixture,SIMULATED
+E04,N06,N02,SIM-W02,Đường trũng,secondary,one-way,1400,25,3.36,FIXTURE_FLOOD_01,S15,2026-07-20,Fixture,false,Closed in heavy rain fixture,SIMULATED
+E05,N01,N03,SIM-W03,Đường vòng B,primary,one-way,1600,32,3.00,,S15,2026-07-20,Fixture,false,Rain-safe alternative,SIMULATED
+E06,N03,N01,SIM-W03,Đường vòng B,primary,one-way,1600,32,3.00,,S15,2026-07-20,Fixture,false,Reverse rain-safe alternative,SIMULATED
+E07,N03,N04,SIM-W04,Đường nối C,secondary,one-way,900,27,2.00,,S15,2026-07-20,Fixture,false,Rain-safe alternative,SIMULATED
+E08,N04,N03,SIM-W04,Đường nối C,secondary,one-way,900,27,2.00,,S15,2026-07-20,Fixture,false,Reverse rain-safe alternative,SIMULATED
+E09,N04,N06,SIM-W05,Đường đích D,residential,one-way,1100,22,3.00,,S15,2026-07-20,Fixture,false,Rain-safe alternative,SIMULATED
+E10,N06,N04,SIM-W05,Đường đích D,residential,one-way,1100,22,3.00,,S15,2026-07-20,Fixture,false,Reverse rain-safe alternative,SIMULATED
+E11,N02,N04,SIM-W06,Đường tắt E,alley,one-way,800,18,2.67,,S15,2026-07-20,Fixture,false,Alternative when flood edge closes,SIMULATED
+E12,N04,N02,SIM-W06,Đường tắt E,alley,one-way,800,18,2.67,,S15,2026-07-20,Fixture,false,Reverse alternative,SIMULATED
+E13,N03,N05,SIM-W07,Đường giao F,secondary,one-way,1500,25,3.60,,S15,2026-07-20,Fixture,false,Multi-stop branch,SIMULATED
+E14,N05,N06,SIM-W08,Đường giao G,residential,one-way,1300,22,3.55,,S15,2026-07-20,Fixture,false,Multi-stop branch,SIMULATED
+

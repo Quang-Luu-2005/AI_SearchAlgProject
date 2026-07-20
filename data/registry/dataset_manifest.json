@@ -1,0 +1,29 @@
+{
+  "project": "FloodRoute HCMC",
+  "manifest_version": "0.1.0",
+  "updated_at": "2026-07-20",
+  "routing_dataset_status": "NOT_READY",
+  "raw_sources": [
+    {
+      "dataset_id": "floodroute-workbook-v0.1",
+      "path": "data/raw/FloodRoute_HCMC_Dataset_v0.1.xlsx",
+      "sha256": "CA5351EFB43ACD5D1A699F23F7DF0FF9B3A5CD8D7A65E8AB1D0AE3E174F7AC12",
+      "data_status": "MIXED_SOURCE_DERIVED_SIMULATED",
+      "immutable": true
+    }
+  ],
+  "fixtures": [
+    {
+      "dataset_id": "toy-graph-v0.1",
+      "path": "data/fixtures/toy_graph_v0.1",
+      "data_status": "SIMULATED",
+      "purpose": "unit, golden and regression tests"
+    }
+  ],
+  "limitations": [
+    "Workbook v0.1 is not a routable graph.",
+    "OSM extraction and two-person flood hotspot map-matching are pending.",
+    "Traffic multipliers and toy graph values are simulated assumptions."
+  ]
+}
+
