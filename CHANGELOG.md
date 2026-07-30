@@ -5,6 +5,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+### Added
+
+- Tài liệu tóm tắt đồ án, trạng thái repository và kế hoạch Trello 7 ngày
+  backend-first cho nhóm bốn người.
+
 ### Planned
 
 - Trích xuất và kiểm định OSM road graph v1.0.
@@ -24,4 +29,3 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 ### Changed
 
 - Chuyển tài liệu nguồn vào `docs/references/` và workbook vào `data/raw/`.
-
