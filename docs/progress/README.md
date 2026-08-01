@@ -2,6 +2,7 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-01 | [Tạo DOCX tổng quan ý tưởng và kiến trúc](2026-08-01-project-overview-docx.md) | Hoàn tất |
 | 2026-07-31 | [Project brief và kế hoạch sprint 7 ngày](2026-07-31-project-brief-sprint-plan.md) | Hoàn tất |
 | 2026-07-20 | [Bootstrap repository](2026-07-20-bootstrap.md) | Hoàn tất |
 

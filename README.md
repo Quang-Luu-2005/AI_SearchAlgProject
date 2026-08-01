@@ -42,6 +42,9 @@ scripts/data/            Công cụ kiểm tra/chuyển đổi dataset
 Chi tiết xem [kiến trúc](docs/architecture.md), [quản lý dữ liệu](docs/data-management.md)
 và [quy trình cập nhật tài liệu](docs/documentation-workflow.md).
 
+Để chia sẻ nhanh với thành viên mới hoặc người review, xem bản Word
+[Tổng quan ý tưởng và kiến trúc hệ thống](docs/FloodRoute_HCMC_Tong_quan_y_tuong_va_kien_truc.docx).
+
 ## Chạy lần đầu
 
 Yêu cầu: Node.js 22.12+ và Python 3.11+.
@@ -91,4 +94,3 @@ npm test
 
 Ưu tiên tiếp theo là chốt vùng nghiên cứu và đóng băng OSM snapshot v1.0; không
 tuyên bố kết quả định tuyến thực tế khi `routing_dataset_status` vẫn là `NOT_READY`.
-

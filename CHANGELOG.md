@@ -7,6 +7,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Bản DOCX tổng quan FloodRoute HCMC dành cho onboarding/review, tập trung vào ý
+  tưởng sản phẩm, trải nghiệm mục tiêu, cost model ở mức khái niệm, kiến trúc hệ
+  thống, data governance, vai trò thuật toán và trạng thái MVP.
 - Tài liệu tóm tắt đồ án, trạng thái repository và kế hoạch Trello 7 ngày
   backend-first cho nhóm bốn người.
 
