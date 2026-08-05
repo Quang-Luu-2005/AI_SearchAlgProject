@@ -1,0 +1,7 @@
+{
+  "dataset_id": "graph-example-cycle-with-closure-v0.1",
+  "dataset_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "purpose": "Directed-cycle and scenario edge-closure example",
+  "graph_properties": {"node_count": 3, "edge_count": 3, "directed": true}
+}

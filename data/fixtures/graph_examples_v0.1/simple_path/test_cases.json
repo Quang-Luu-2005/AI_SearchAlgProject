@@ -1,0 +1,14 @@
+{
+  "fixture_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "cases": [
+    {
+      "case_id": "SP_TC01_DIRECTED_PATH",
+      "scenario_id": "DEFAULT",
+      "start": "SP_A",
+      "goal": "SP_C",
+      "expected_path": ["SP_A", "SP_B", "SP_C"],
+      "purpose": "Đường duy nhất đi từ A đến C."
+    }
+  ]
+}

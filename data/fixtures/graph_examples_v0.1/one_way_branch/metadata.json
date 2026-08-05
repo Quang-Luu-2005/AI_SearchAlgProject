@@ -1,0 +1,7 @@
+{
+  "dataset_id": "graph-example-one-way-branch-v0.1",
+  "dataset_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "purpose": "One-way branch and deterministic-neighbor example",
+  "graph_properties": {"node_count": 4, "edge_count": 4, "directed": true}
+}

@@ -1,0 +1,4 @@
+node_id,name,node_type,latitude,longitude,source_id,validation_status,data_status
+SP_A,Điểm A,start,10.8000,106.7000,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+SP_B,Điểm B,intersection,10.8010,106.7010,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+SP_C,Điểm C,goal,10.8020,106.7020,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED

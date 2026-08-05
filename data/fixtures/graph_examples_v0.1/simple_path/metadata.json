@@ -1,0 +1,7 @@
+{
+  "dataset_id": "graph-example-simple-path-v0.1",
+  "dataset_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "purpose": "Minimal directed path example for GraphLoader and search tests",
+  "graph_properties": {"node_count": 3, "edge_count": 2, "directed": true}
+}

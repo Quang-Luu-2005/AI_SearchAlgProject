@@ -1,7 +1,7 @@
 {
   "project": "FloodRoute HCMC",
-  "manifest_version": "0.1.0",
-  "updated_at": "2026-07-20",
+  "manifest_version": "0.2.0",
+  "updated_at": "2026-08-05",
   "routing_dataset_status": "NOT_READY",
   "raw_sources": [
     {
@@ -18,6 +18,13 @@
       "path": "data/fixtures/toy_graph_v0.1",
       "data_status": "SIMULATED",
       "purpose": "unit, golden and regression tests"
+    },
+    {
+      "dataset_id": "graph-examples-v0.1",
+      "path": "data/fixtures/graph_examples_v0.1",
+      "data_status": "SIMULATED",
+      "purpose": "learning, GraphLoader examples and focused graph-structure tests",
+      "graphs": ["simple_path", "one_way_branch", "cycle_with_closure"]
     }
   ],
   "limitations": [
@@ -26,4 +33,3 @@
     "Traffic multipliers and toy graph values are simulated assumptions."
   ]
 }
-

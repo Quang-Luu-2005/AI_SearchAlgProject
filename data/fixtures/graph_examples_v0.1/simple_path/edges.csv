@@ -1,0 +1,3 @@
+edge_id,from_node_id,to_node_id,road_name,direction,distance_m,free_flow_time_min,source_id,is_restricted,data_status
+SP_E01,SP_A,SP_B,Đoạn A-B,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
+SP_E02,SP_B,SP_C,Đoạn B-C,one-way,120,1.2,SIM-GRAPH-EXAMPLES,false,SIMULATED

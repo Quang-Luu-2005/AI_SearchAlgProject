@@ -1,0 +1,14 @@
+{
+  "fixture_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "cases": [
+    {
+      "case_id": "OW_TC01_ONE_WAY",
+      "scenario_id": "DEFAULT",
+      "start": "OW_A",
+      "goal": "OW_D",
+      "expected_path": ["OW_A", "OW_B", "OW_D"],
+      "purpose": "Minh họa cạnh một chiều và nhánh ngắn hơn qua B."
+    }
+  ]
+}

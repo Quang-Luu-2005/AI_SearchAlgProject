@@ -1,0 +1,12 @@
+{
+  "fixture_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "scenarios": [
+    {
+      "scenario_id": "DEFAULT",
+      "weights": {"distance": 0.5, "freeflow_time": 0.5},
+      "closed_edge_ids": [],
+      "edge_overrides": {}
+    }
+  ]
+}

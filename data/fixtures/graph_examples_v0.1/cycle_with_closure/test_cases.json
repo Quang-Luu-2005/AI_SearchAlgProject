@@ -1,0 +1,22 @@
+{
+  "fixture_version": "0.1.0",
+  "data_status": "SIMULATED",
+  "cases": [
+    {
+      "case_id": "CY_TC01_OPEN_CYCLE",
+      "scenario_id": "OPEN_CYCLE",
+      "start": "CY_A",
+      "goal": "CY_C",
+      "expected_path": ["CY_A", "CY_B", "CY_C"],
+      "purpose": "Graph ban đầu có directed cycle."
+    },
+    {
+      "case_id": "CY_TC02_BREAK_CYCLE",
+      "scenario_id": "BREAK_CYCLE",
+      "start": "CY_A",
+      "goal": "CY_C",
+      "expected_path": ["CY_A", "CY_B", "CY_C"],
+      "purpose": "Đóng C-A để phá cycle mà không ảnh hưởng đường A-B-C."
+    }
+  ]
+}

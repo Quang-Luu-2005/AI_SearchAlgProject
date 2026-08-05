@@ -7,8 +7,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Package `graph_examples_v0.1` gồm directed path, one-way branch và cycle có
+  scenario đóng cạnh; kèm metadata, golden case, validation và unit test loader.
 - Graph Loader bất biến cho graph có hướng, hỗ trợ fixture CSV/JSON, scenario
-  đóng cạnh, neighbor deterministic và cycle detection; thêm unit test BE-01.
+  đóng cạnh, neighbor deterministic và cycle detection; thêm unit test BE-01 và
+  quy ước CSV làm nguồn chuẩn cho Node/Edge, JSON cho dữ liệu lồng nhau.
 - Bản DOCX tổng quan FloodRoute HCMC dành cho onboarding/review, tập trung vào ý
   tưởng sản phẩm, trải nghiệm mục tiêu, cost model ở mức khái niệm, kiến trúc hệ
   thống, data governance, vai trò thuật toán và trạng thái MVP.

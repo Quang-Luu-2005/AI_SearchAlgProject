@@ -15,6 +15,9 @@ from backend.app.core.graph import GraphLoader
 
 
 FIXTURE_DIR = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "toy_graph_v0.1"
+EXAMPLE_FIXTURE_DIR = (
+    Path(__file__).resolve().parents[2] / "data" / "fixtures" / "graph_examples_v0.1"
+)
 
 
 def test_loader_reads_six_node_directed_fixture_and_sorts_neighbors() -> None:
@@ -156,3 +159,30 @@ def test_invalid_scenario_edge_reference_is_rejected(tmp_path: Path) -> None:
 
     with pytest.raises(GraphFormatError, match="MISSING"):
         GraphLoader.from_json(graph_path)
+
+
+@pytest.mark.parametrize(
+    ("folder_name", "node_count", "edge_count", "has_cycle"),
+    [
+        ("simple_path", 3, 2, False),
+        ("one_way_branch", 4, 4, False),
+        ("cycle_with_closure", 3, 3, True),
+    ],
+)
+def test_example_graph_datasets_are_loadable(
+    folder_name: str,
+    node_count: int,
+    edge_count: int,
+    has_cycle: bool,
+) -> None:
+    graph = GraphLoader.from_directory(EXAMPLE_FIXTURE_DIR / folder_name)
+
+    assert len(graph.nodes) == node_count
+    assert len(graph.edges) == edge_count
+    assert graph.has_cycle() is has_cycle
+
+    if folder_name == "one_way_branch":
+        assert graph.neighbor_ids("OW_A") == ("OW_B", "OW_C")
+        assert not graph.edge_exists("OW_B", "OW_A")
+    if folder_name == "cycle_with_closure":
+        assert not graph.for_scenario("BREAK_CYCLE").has_cycle()

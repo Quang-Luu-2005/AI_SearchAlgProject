@@ -1,0 +1,4 @@
+edge_id,from_node_id,to_node_id,road_name,direction,distance_m,free_flow_time_min,source_id,is_restricted,data_status
+CY_E01,CY_A,CY_B,Cạnh A-B,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
+CY_E02,CY_B,CY_C,Cạnh B-C,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
+CY_E03,CY_C,CY_A,Cạnh C-A,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED

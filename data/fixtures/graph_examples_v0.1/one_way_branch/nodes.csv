@@ -1,0 +1,5 @@
+node_id,name,node_type,latitude,longitude,source_id,validation_status,data_status
+OW_A,Điểm xuất phát,start,10.8100,106.7100,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+OW_B,Nhánh B,intersection,10.8110,106.7110,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+OW_C,Nhánh C,intersection,10.8090,106.7110,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+OW_D,Điểm đích,goal,10.8100,106.7120,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED

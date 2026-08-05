@@ -1,0 +1,4 @@
+node_id,name,node_type,latitude,longitude,source_id,validation_status,data_status
+CY_A,Đỉnh A,intersection,10.8200,106.7200,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+CY_B,Đỉnh B,intersection,10.8210,106.7210,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED
+CY_C,Đỉnh C,intersection,10.8190,106.7210,SIM-GRAPH-EXAMPLES,Fixture,SIMULATED

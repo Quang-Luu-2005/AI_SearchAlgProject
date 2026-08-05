@@ -26,6 +26,8 @@ giữ graph gốc bất biến và hỗ trợ truy vấn nền cho các thuật 
   caller chỉ cần node đích.
 - Scenario không mutate edge hoặc adjacency index; `GraphView` lọc bằng
   `closed_edge_ids`.
+- CSV là nguồn chuẩn cho Node/Edge; JSON dùng cho Scenario, metadata, golden case
+  và full-graph import/export nhỏ, không duy trì hai bản graph chỉnh sửa độc lập.
 - Fixture vẫn là `SIMULATED`; không sửa `data/raw/` và không tạo processed release
   mới. Quyết định graph core và immutability được ghi trong
   [ADR-0003](../decisions/0003-immutable-directed-graph-loader.md).

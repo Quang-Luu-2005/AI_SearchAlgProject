@@ -51,6 +51,10 @@ hotspot mapping, source và snapshot date. Một đường hai chiều phải th
 - TC03: A* phải khớp optimal cost của UCS.
 - TC04: Held-Karp làm oracle cho Nearest Neighbor.
 
+`graph_examples_v0.1` bổ sung ba fixture tập trung để học/demo và unit test:
+directed path, one-way branch và directed cycle có scenario đóng cạnh. Mỗi graph
+có metadata và golden case riêng, luôn gắn `SIMULATED`.
+
 Khi triển khai thuật toán, bổ sung thêm case unreachable, start=goal, one-way,
 tie-break, invalid/negative weight, heuristic consistency và counterexample cho
 DFS/Greedy/Nearest Neighbor.

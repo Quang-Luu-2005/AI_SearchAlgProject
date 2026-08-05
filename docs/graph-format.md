@@ -8,6 +8,38 @@
 - JSON: một object có `nodes`, `edges`, và tùy chọn `scenarios`, theo
   `data/schemas/graph.schema.json`.
 
+## Quy ước lưu trữ khuyến nghị
+
+Định dạng chuẩn trong repository là **CSV cho Node/Edge** và **JSON cho dữ liệu
+có cấu trúc lồng nhau**:
+
+| Nội dung | Định dạng chính | Lý do |
+|---|---|---|
+| Node | `nodes.csv` | Dễ nhập, lọc và kiểm tra bằng Excel hoặc công cụ dạng bảng |
+| Edge | `edges.csv` | Gọn khi graph lớn, dễ review từng dòng và kiểm tra khóa ngoại |
+| Scenario | `scenarios.json` | Phù hợp với weights, edge overrides và danh sách edge đóng |
+| Metadata | `metadata.json` | Phù hợp với provenance, version và limitations |
+| Golden test case | `test_cases.json` | Phù hợp với path, visit list và expected result lồng nhau |
+
+Một graph release/fixture nên có cấu trúc:
+
+```text
+graph_vX.Y.Z/
+  nodes.csv
+  edges.csv
+  scenarios.json
+  metadata.json          # bắt buộc với processed release
+  test_cases.json        # dùng cho fixture/golden test
+  checksums.sha256       # bắt buộc với processed release
+  validation_report.json # bắt buộc với processed release
+```
+
+Không dùng một file full-graph JSON làm nguồn dữ liệu chính khi graph lớn vì khó
+chỉnh sửa bằng công cụ dạng bảng, Git diff dễ nhiễu và thường phải parse toàn bộ
+file. Full-graph JSON vẫn được loader hỗ trợ cho fixture nhỏ, import/export hoặc
+trao đổi qua API. Khi có cả CSV và JSON, CSV là nguồn chuẩn; bản JSON phải được
+tạo lại từ cùng version thay vì chỉnh sửa độc lập để tránh dữ liệu lệch nhau.
+
 Fixture hiện tại có thể load trực tiếp:
 
 ```python
@@ -15,6 +47,29 @@ from backend.app.core.graph import GraphLoader
 
 graph = GraphLoader.from_directory("data/fixtures/toy_graph_v0.1")
 ```
+
+## Dataset ví dụ có sẵn
+
+Folder `data/fixtures/graph_examples_v0.1/` có ba graph `SIMULATED` hoàn chỉnh:
+
+| Ví dụ | Node/Edge | Minh họa |
+|---|---:|---|
+| `simple_path` | 3/2 | Đường có hướng `SP_A → SP_B → SP_C` |
+| `one_way_branch` | 4/4 | Hai nhánh một chiều và neighbor deterministic |
+| `cycle_with_closure` | 3/3 | Directed cycle và scenario `BREAK_CYCLE` |
+
+Ví dụ load graph cycle:
+
+```python
+graph = GraphLoader.from_directory(
+    "data/fixtures/graph_examples_v0.1/cycle_with_closure"
+)
+open_cycle = graph.has_cycle()  # True
+closed_cycle = graph.for_scenario("BREAK_CYCLE").has_cycle()  # False
+```
+
+Mỗi ví dụ có `nodes.csv`, `edges.csv`, `scenarios.json`, `metadata.json` và
+`test_cases.json`. Xem README của package để chọn graph phù hợp với test cần viết.
 
 Mọi fixture phải ghi rõ `SIMULATED` hoặc `ASSUMPTION`. Loader không sửa file
 nguồn và không tự tạo cạnh ngược.

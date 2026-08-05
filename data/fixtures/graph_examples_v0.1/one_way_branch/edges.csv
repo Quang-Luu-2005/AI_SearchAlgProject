@@ -1,0 +1,5 @@
+edge_id,from_node_id,to_node_id,road_name,direction,distance_m,free_flow_time_min,source_id,is_restricted,data_status
+OW_E01,OW_A,OW_C,Nhánh A-C,one-way,150,1.5,SIM-GRAPH-EXAMPLES,false,SIMULATED
+OW_E02,OW_A,OW_B,Nhánh A-B,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
+OW_E03,OW_B,OW_D,Nhánh B-D,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
+OW_E04,OW_C,OW_D,Nhánh C-D,one-way,100,1.0,SIM-GRAPH-EXAMPLES,false,SIMULATED
