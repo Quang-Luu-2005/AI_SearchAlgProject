@@ -22,6 +22,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Tài liệu tóm tắt đồ án, trạng thái repository và kế hoạch Trello 7 ngày
   backend-first cho nhóm bốn người.
 
+### Changed
+
+- Chuẩn hóa dev startup bằng `npm run dev`: dùng Python từ `.venv`, chạy Vite
+  đúng frontend root, khởi động/dừng đồng thời backend và frontend; vẫn hỗ trợ
+  hai lệnh chạy riêng.
+
 ### Planned
 
 - Trích xuất và kiểm định OSM road graph v1.0.

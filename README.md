@@ -52,20 +52,28 @@ cài đặt đến nạp graph và chạy toàn bộ kiểm tra nằm trong
 Yêu cầu: Node.js 22.12+ và Python 3.11+.
 
 ```powershell
-# Frontend
-npm --prefix frontend install
-npm run dev:frontend
-
-# Backend (terminal khác)
+# Cài backend
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e ".\backend[dev]"
-npm run dev:backend
+.\.venv\Scripts\python.exe -m pip install -e ".\backend[dev]"
+
+# Cài frontend
+npm --prefix frontend install
+
+# Chạy đồng thời backend và frontend
+npm run dev
 ```
 
 - Frontend: `http://localhost:5173`
 - API: `http://localhost:8000`
 - Swagger: `http://localhost:8000/docs`
+
+`npm run dev` luôn dùng Python trong `.venv`, chạy Vite từ đúng folder
+`frontend/` và dừng cả hai service khi nhấn `Ctrl+C`. Nếu cần chạy riêng:
+
+```powershell
+npm run dev:backend
+npm run dev:frontend
+```
 
 ## Kiểm tra
 

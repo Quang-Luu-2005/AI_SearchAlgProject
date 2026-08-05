@@ -74,33 +74,39 @@ ngoại Node/Edge, trọng số dương, scenario closure, metadata count và go
 
 ## 4. Chạy ứng dụng
 
-Ứng dụng cần hai terminal chạy song song.
-
-### Terminal 1 — Backend
+Cách khuyến nghị là chạy cả backend và frontend trong một terminal:
 
 ```powershell
 cd D:\AI\Lab\Lab_1
-.\.venv\Scripts\Activate.ps1
-npm run dev:backend
+npm run dev
 ```
 
-Backend chạy tại:
+Script kiểm tra `.venv` và frontend dependencies trước khi chạy, dùng đúng Python
+trong `.venv`, khởi động Vite từ folder `frontend/` và dừng cả hai service khi
+nhấn `Ctrl+C`.
 
+Các địa chỉ:
+
+- Frontend: `http://localhost:5173`
 - API root: `http://localhost:8000`
 - Swagger: `http://localhost:8000/docs`
 - Health: `http://localhost:8000/api/v1/health`
 
-Giữ terminal này mở.
-
-### Terminal 2 — Frontend
+Nếu muốn xem log ở hai terminal riêng:
 
 ```powershell
+# Terminal backend
+cd D:\AI\Lab\Lab_1
+npm run dev:backend
+
+# Terminal frontend khác
 cd D:\AI\Lab\Lab_1
 npm run dev:frontend
 ```
 
-Mở `http://localhost:5173` trong trình duyệt. Vite tự proxy request `/api` sang
-backend ở port 8000.
+Các script riêng vẫn tự dùng đúng working directory; không cần activate `.venv`
+để chạy server. Mở `http://localhost:5173` trong trình duyệt. Vite tự proxy
+request `/api` sang backend ở port 8000.
 
 ## 5. Nạp và hiển thị graph trên giao diện
 
@@ -263,6 +269,17 @@ python -m pytest backend\tests
 - Mở `http://localhost:8000/api/v1/health`.
 - Kiểm tra terminal backend có validation hoặc parsing error.
 - Đảm bảo frontend được mở từ `http://localhost:5173`, không mở trực tiếp file HTML.
+
+### Frontend mở nhưng trả 404
+
+Dùng script ở repository root thay vì gọi trực tiếp file Vite:
+
+```powershell
+npm run dev
+```
+
+Script này đặt working directory của Vite về đúng `frontend/`. Nếu dependency
+chưa có, chạy `npm --prefix frontend install` rồi thử lại.
 
 ### Folder không xuất hiện trong dropdown
 
