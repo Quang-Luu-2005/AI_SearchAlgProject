@@ -1,6 +1,501 @@
+from collections import deque
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any
+from types import MappingProxyType
+from typing import Any, Iterable, Mapping, TypeVar
+
+
+_T = TypeVar("_T")
+
+
+def _freeze_value(value: Any) -> Any:
+    """Return a recursively immutable representation of a model attribute."""
+    if isinstance(value, Mapping):
+        return MappingProxyType({key: _freeze_value(item) for key, item in value.items()})
+    if isinstance(value, list):
+        return tuple(_freeze_value(item) for item in value)
+    if isinstance(value, tuple):
+        return tuple(_freeze_value(item) for item in value)
+    if isinstance(value, set):
+        return frozenset(_freeze_value(item) for item in value)
+    return value
+
+
+class _ReadOnlyTuple(tuple[_T, ...]):
+    """Tuple that supports both ``graph.nodes`` and ``graph.nodes()`` access."""
+
+    def __call__(self) -> tuple[_T, ...]:
+        return tuple(self)
+
+
+class NodeNotFoundError(KeyError):
+    """Raised when a graph query references a node that is not in the graph."""
+
+
+class EdgeNotFoundError(KeyError):
+    """Raised when a graph query references an edge that is not in the graph."""
+
+
+class ScenarioNotFoundError(KeyError):
+    """Raised when a graph query references an unknown scenario."""
+
+
+class GraphFormatError(ValueError):
+    """Raised when graph input violates the graph data contract."""
+
+
+@dataclass(frozen=True, slots=True)
+class Node:
+    """Immutable graph node with standard coordinates and extensible metadata."""
+
+    node_id: str
+    latitude: float | None = None
+    longitude: float | None = None
+    attributes: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.node_id, str) or not self.node_id.strip():
+            raise GraphFormatError("Node node_id must be a non-empty string")
+        object.__setattr__(self, "node_id", self.node_id.strip())
+        if self.latitude is not None and not -90 <= self.latitude <= 90:
+            raise GraphFormatError(f"Node {self.node_id} latitude is outside [-90, 90]")
+        if self.longitude is not None and not -180 <= self.longitude <= 180:
+            raise GraphFormatError(f"Node {self.node_id} longitude is outside [-180, 180]")
+        object.__setattr__(self, "attributes", _freeze_value(dict(self.attributes)))
+
+    @property
+    def data(self) -> Mapping[str, Any]:
+        """Alias for metadata consumers that use the conventional ``data`` name."""
+        return self.attributes
+
+    def __getattr__(self, name: str) -> Any:
+        attributes = object.__getattribute__(self, "attributes")
+        try:
+            return attributes[name]
+        except KeyError as error:
+            raise AttributeError(name) from error
+
+
+@dataclass(frozen=True, slots=True)
+class Edge:
+    """Immutable directed edge and its routing attributes."""
+
+    edge_id: str
+    from_node_id: str
+    to_node_id: str
+    distance_m: float
+    free_flow_time_min: float
+    attributes: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        for field_name in ("edge_id", "from_node_id", "to_node_id"):
+            value = getattr(self, field_name)
+            if not isinstance(value, str) or not value.strip():
+                raise GraphFormatError(f"Edge {field_name} must be a non-empty string")
+            object.__setattr__(self, field_name, value.strip())
+        if self.distance_m <= 0:
+            raise GraphFormatError(f"Edge {self.edge_id} distance_m must be positive")
+        if self.free_flow_time_min <= 0:
+            raise GraphFormatError(
+                f"Edge {self.edge_id} free_flow_time_min must be positive"
+            )
+        object.__setattr__(self, "attributes", _freeze_value(dict(self.attributes)))
+
+    @property
+    def node_id(self) -> str:
+        """Target node alias useful when iterating over outgoing neighbors."""
+        return self.to_node_id
+
+    @property
+    def data(self) -> Mapping[str, Any]:
+        return self.attributes
+
+    def __getattr__(self, name: str) -> Any:
+        attributes = object.__getattribute__(self, "attributes")
+        try:
+            return attributes[name]
+        except KeyError as error:
+            raise AttributeError(name) from error
+
+
+@dataclass(frozen=True, slots=True)
+class Scenario:
+    """Immutable scenario metadata, including the directed edges it closes."""
+
+    scenario_id: str
+    closed_edge_ids: tuple[str, ...] = ()
+    attributes: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.scenario_id, str) or not self.scenario_id.strip():
+            raise GraphFormatError("Scenario scenario_id must be a non-empty string")
+        object.__setattr__(self, "scenario_id", self.scenario_id.strip())
+        closed_edges = tuple(sorted({str(edge_id).strip() for edge_id in self.closed_edge_ids}))
+        if any(not edge_id for edge_id in closed_edges):
+            raise GraphFormatError(
+                f"Scenario {self.scenario_id} contains an empty closed edge id"
+            )
+        object.__setattr__(self, "closed_edge_ids", closed_edges)
+        object.__setattr__(self, "attributes", _freeze_value(dict(self.attributes)))
+
+    @property
+    def data(self) -> Mapping[str, Any]:
+        return self.attributes
+
+
+class Graph:
+    """Immutable directed graph contract shared by loaders and algorithms.
+
+    ``nodes`` and ``edges`` are read-only tuple views. ``neighbors`` returns
+    outgoing directed edges, while ``neighbor_nodes`` returns the corresponding
+    node models. A scenario is applied as a view, so the base graph is unchanged.
+    """
+
+    __slots__ = (
+        "_nodes",
+        "_edges",
+        "_node_by_id",
+        "_edge_by_id",
+        "_outgoing",
+        "_scenarios",
+        "_scenario_by_id",
+        "_metadata",
+        "_directed",
+        "_locked",
+    )
+
+    def __init__(
+        self,
+        nodes: Iterable[Node],
+        edges: Iterable[Edge],
+        scenarios: Iterable[Scenario] = (),
+        *,
+        metadata: Mapping[str, Any] | None = None,
+        directed: bool = True,
+    ) -> None:
+        if not directed:
+            raise GraphFormatError("Graph loader supports directed graphs only")
+
+        node_values = tuple(nodes)
+        edge_values = tuple(edges)
+        scenario_values = tuple(scenarios)
+        node_by_id: dict[str, Node] = {}
+        for node in node_values:
+            if not isinstance(node, Node):
+                raise TypeError("Graph nodes must be Node instances")
+            if node.node_id in node_by_id:
+                raise GraphFormatError(f"Duplicate node_id: {node.node_id}")
+            node_by_id[node.node_id] = node
+
+        edge_by_id: dict[str, Edge] = {}
+        outgoing: dict[str, list[Edge]] = {node_id: [] for node_id in node_by_id}
+        for edge in edge_values:
+            if not isinstance(edge, Edge):
+                raise TypeError("Graph edges must be Edge instances")
+            if edge.edge_id in edge_by_id:
+                raise GraphFormatError(f"Duplicate edge_id: {edge.edge_id}")
+            if edge.from_node_id not in node_by_id or edge.to_node_id not in node_by_id:
+                raise GraphFormatError(
+                    f"Edge {edge.edge_id} references a missing node: "
+                    f"{edge.from_node_id}->{edge.to_node_id}"
+                )
+            edge_by_id[edge.edge_id] = edge
+            outgoing[edge.from_node_id].append(edge)
+
+        scenario_by_id: dict[str, Scenario] = {}
+        for scenario in scenario_values:
+            if not isinstance(scenario, Scenario):
+                raise TypeError("Graph scenarios must be Scenario instances")
+            if scenario.scenario_id in scenario_by_id:
+                raise GraphFormatError(f"Duplicate scenario_id: {scenario.scenario_id}")
+            unknown_edges = set(scenario.closed_edge_ids) - edge_by_id.keys()
+            if unknown_edges:
+                raise GraphFormatError(
+                    f"Scenario {scenario.scenario_id} closes missing edges: "
+                    f"{sorted(unknown_edges)}"
+                )
+            scenario_by_id[scenario.scenario_id] = scenario
+
+        sorted_nodes = tuple(sorted(node_values, key=lambda node: node.node_id))
+        sorted_edges = tuple(
+            sorted(edge_values, key=lambda edge: (edge.from_node_id, edge.to_node_id, edge.edge_id))
+        )
+        sorted_outgoing = {
+            node_id: tuple(sorted(edges_for_node, key=lambda edge: (edge.to_node_id, edge.edge_id)))
+            for node_id, edges_for_node in outgoing.items()
+        }
+
+        object.__setattr__(self, "_nodes", _ReadOnlyTuple(sorted_nodes))
+        object.__setattr__(self, "_edges", _ReadOnlyTuple(sorted_edges))
+        object.__setattr__(self, "_node_by_id", MappingProxyType(dict(node_by_id)))
+        object.__setattr__(self, "_edge_by_id", MappingProxyType(dict(edge_by_id)))
+        object.__setattr__(self, "_outgoing", MappingProxyType(sorted_outgoing))
+        sorted_scenarios = tuple(sorted(scenario_values, key=lambda scenario: scenario.scenario_id))
+        object.__setattr__(self, "_scenarios", _ReadOnlyTuple(sorted_scenarios))
+        object.__setattr__(self, "_scenario_by_id", MappingProxyType(dict(scenario_by_id)))
+        object.__setattr__(self, "_metadata", _freeze_value(dict(metadata or {})))
+        object.__setattr__(self, "_directed", True)
+        object.__setattr__(self, "_locked", True)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if getattr(self, "_locked", False):
+            raise AttributeError("Graph is immutable")
+        object.__setattr__(self, name, value)
+
+    @property
+    def directed(self) -> bool:
+        return self._directed
+
+    @property
+    def is_directed(self) -> bool:
+        return self._directed
+
+    @property
+    def nodes(self) -> tuple[Node, ...]:
+        return self._nodes
+
+    @property
+    def edges(self) -> tuple[Edge, ...]:
+        return self._edges
+
+    @property
+    def scenarios(self) -> tuple[Scenario, ...]:
+        return self._scenarios
+
+    @property
+    def metadata(self) -> Mapping[str, Any]:
+        return self._metadata
+
+    def list_nodes(self) -> tuple[Node, ...]:
+        return tuple(self._nodes)
+
+    def list_edges(self, scenario_id: str | None = None) -> tuple[Edge, ...]:
+        closed_edge_ids = self._closed_edge_ids(scenario_id)
+        return tuple(edge for edge in self._edges if edge.edge_id not in closed_edge_ids)
+
+    def has_node(self, node_id: str) -> bool:
+        return node_id in self._node_by_id
+
+    def get_node(self, node_id: str) -> Node:
+        try:
+            return self._node_by_id[node_id]
+        except KeyError as error:
+            raise NodeNotFoundError(f"Unknown node: {node_id}") from error
+
+    def node(self, node_id: str) -> Node:
+        return self.get_node(node_id)
+
+    def node_exists(self, node_id: str) -> bool:
+        return self.has_node(node_id)
+
+    def neighbors(self, node_id: str, scenario_id: str | None = None) -> tuple[Edge, ...]:
+        self.get_node(node_id)
+        closed_edge_ids = self._closed_edge_ids(scenario_id)
+        return tuple(
+            edge for edge in self._outgoing[node_id] if edge.edge_id not in closed_edge_ids
+        )
+
+    def outgoing_edges(self, node_id: str, scenario_id: str | None = None) -> tuple[Edge, ...]:
+        return self.neighbors(node_id, scenario_id)
+
+    def get_neighbors(self, node_id: str, scenario_id: str | None = None) -> tuple[Edge, ...]:
+        return self.neighbors(node_id, scenario_id)
+
+    def neighbor_nodes(self, node_id: str, scenario_id: str | None = None) -> tuple[Node, ...]:
+        return tuple(
+            self.get_node(edge.to_node_id)
+            for edge in self.neighbors(node_id, scenario_id)
+        )
+
+    def neighbor_ids(self, node_id: str, scenario_id: str | None = None) -> tuple[str, ...]:
+        return tuple(edge.to_node_id for edge in self.neighbors(node_id, scenario_id))
+
+    def has_edge(self, edge_id: str, scenario_id: str | None = None) -> bool:
+        return edge_id in self._edge_by_id and edge_id not in self._closed_edge_ids(scenario_id)
+
+    def edge_exists(
+        self,
+        from_node_id: str,
+        to_node_id: str,
+        scenario_id: str | None = None,
+    ) -> bool:
+        return any(
+            edge.to_node_id == to_node_id
+            for edge in self.neighbors(from_node_id, scenario_id)
+        )
+
+    def get_edge(self, edge_id: str, scenario_id: str | None = None) -> Edge:
+        try:
+            edge = self._edge_by_id[edge_id]
+        except KeyError as error:
+            raise EdgeNotFoundError(f"Unknown edge: {edge_id}") from error
+        if edge.edge_id in self._closed_edge_ids(scenario_id):
+            raise EdgeNotFoundError(f"Edge {edge_id} is closed in scenario {scenario_id}")
+        return edge
+
+    def is_edge_closed(self, edge_id: str, scenario_id: str) -> bool:
+        if edge_id not in self._edge_by_id:
+            raise EdgeNotFoundError(f"Unknown edge: {edge_id}")
+        return edge_id in self._closed_edge_ids(scenario_id)
+
+    def is_edge_open(self, edge_id: str, scenario_id: str) -> bool:
+        return not self.is_edge_closed(edge_id, scenario_id)
+
+    def scenario(self, scenario_id: str) -> Scenario:
+        try:
+            return self._scenario_by_id[scenario_id]
+        except KeyError as error:
+            raise ScenarioNotFoundError(f"Unknown scenario: {scenario_id}") from error
+
+    def for_scenario(self, scenario_id: str) -> "GraphView":
+        self.scenario(scenario_id)
+        return GraphView(self, scenario_id)
+
+    def has_cycle(self, scenario_id: str | None = None) -> bool:
+        """Return whether the active directed graph contains a cycle."""
+        indegree = {node.node_id: 0 for node in self._nodes}
+        for edge in self.list_edges(scenario_id):
+            indegree[edge.to_node_id] += 1
+
+        ready = deque(sorted(node_id for node_id, degree in indegree.items() if degree == 0))
+        visited = 0
+        while ready:
+            node_id = ready.popleft()
+            visited += 1
+            for edge in self.neighbors(node_id, scenario_id):
+                indegree[edge.to_node_id] -= 1
+                if indegree[edge.to_node_id] == 0:
+                    ready.append(edge.to_node_id)
+        return visited != len(self._nodes)
+
+    def is_cyclic(self, scenario_id: str | None = None) -> bool:
+        return self.has_cycle(scenario_id)
+
+    def contains_cycle(self, scenario_id: str | None = None) -> bool:
+        return self.has_cycle(scenario_id)
+
+    def _closed_edge_ids(self, scenario_id: str | None) -> frozenset[str]:
+        if scenario_id is None:
+            return frozenset()
+        return frozenset(self.scenario(scenario_id).closed_edge_ids)
+
+    @classmethod
+    def from_csv(cls, nodes_path: str, edges_path: str, scenarios_path: str | None = None) -> "Graph":
+        from .graph import GraphLoader
+
+        return GraphLoader.from_csv(nodes_path, edges_path, scenarios_path)
+
+    @classmethod
+    def from_json(cls, graph_path: str, scenarios_path: str | None = None) -> "Graph":
+        from .graph import GraphLoader
+
+        return GraphLoader.from_json(graph_path, scenarios_path)
+
+    @classmethod
+    def from_directory(cls, directory: str) -> "Graph":
+        from .graph import GraphLoader
+
+        return GraphLoader.from_directory(directory)
+
+    from_fixture = from_directory
+
+
+class GraphView:
+    """Read-only scenario view over a :class:`Graph`."""
+
+    __slots__ = ("_graph", "_scenario_id", "_locked")
+
+    def __init__(self, graph: Graph, scenario_id: str) -> None:
+        object.__setattr__(self, "_graph", graph)
+        object.__setattr__(self, "_scenario_id", scenario_id)
+        object.__setattr__(self, "_locked", True)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if getattr(self, "_locked", False):
+            raise AttributeError("GraphView is immutable")
+        object.__setattr__(self, name, value)
+
+    @property
+    def graph(self) -> Graph:
+        return self._graph
+
+    @property
+    def base_graph(self) -> Graph:
+        return self._graph
+
+    @property
+    def scenario_id(self) -> str:
+        return self._scenario_id
+
+    @property
+    def nodes(self) -> tuple[Node, ...]:
+        return self._graph.nodes
+
+    @property
+    def edges(self) -> tuple[Edge, ...]:
+        return _ReadOnlyTuple(self._graph.list_edges(self._scenario_id))
+
+    @property
+    def directed(self) -> bool:
+        return self._graph.directed
+
+    @property
+    def is_directed(self) -> bool:
+        return self._graph.is_directed
+
+    def list_nodes(self) -> tuple[Node, ...]:
+        return self._graph.list_nodes()
+
+    def list_edges(self) -> tuple[Edge, ...]:
+        return self._graph.list_edges(self._scenario_id)
+
+    def has_node(self, node_id: str) -> bool:
+        return self._graph.has_node(node_id)
+
+    def get_node(self, node_id: str) -> Node:
+        return self._graph.get_node(node_id)
+
+    def node(self, node_id: str) -> Node:
+        return self.get_node(node_id)
+
+    def node_exists(self, node_id: str) -> bool:
+        return self.has_node(node_id)
+
+    def neighbors(self, node_id: str) -> tuple[Edge, ...]:
+        return self._graph.neighbors(node_id, self._scenario_id)
+
+    def outgoing_edges(self, node_id: str) -> tuple[Edge, ...]:
+        return self.neighbors(node_id)
+
+    def get_neighbors(self, node_id: str) -> tuple[Edge, ...]:
+        return self.neighbors(node_id)
+
+    def neighbor_nodes(self, node_id: str) -> tuple[Node, ...]:
+        return self._graph.neighbor_nodes(node_id, self._scenario_id)
+
+    def neighbor_ids(self, node_id: str) -> tuple[str, ...]:
+        return self._graph.neighbor_ids(node_id, self._scenario_id)
+
+    def has_edge(self, edge_id: str) -> bool:
+        return self._graph.has_edge(edge_id, self._scenario_id)
+
+    def edge_exists(self, from_node_id: str, to_node_id: str) -> bool:
+        return self._graph.edge_exists(from_node_id, to_node_id, self._scenario_id)
+
+    def get_edge(self, edge_id: str) -> Edge:
+        return self._graph.get_edge(edge_id, self._scenario_id)
+
+    def is_edge_closed(self, edge_id: str) -> bool:
+        return self._graph.is_edge_closed(edge_id, self._scenario_id)
+
+    def is_edge_open(self, edge_id: str) -> bool:
+        return self._graph.is_edge_open(edge_id, self._scenario_id)
+
+    def has_cycle(self) -> bool:
+        return self._graph.has_cycle(self._scenario_id)
+
+    def contains_cycle(self) -> bool:
+        return self.has_cycle()
 
 
 class TraceEventKind(StrEnum):
@@ -39,4 +534,3 @@ class SearchResult:
     trace: tuple[TraceEvent, ...]
     guarantee: str
     explanation: str
-

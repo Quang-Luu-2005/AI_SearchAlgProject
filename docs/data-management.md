@@ -74,3 +74,12 @@ python scripts/data/validate_dataset.py
 Validator hiện kiểm tra checksum raw workbook, unique ID, foreign key, distance/time
 dương, nhãn fixture, tổng trọng số, edge closure và tính hợp lệ của golden path.
 
+## Graph loader và format
+
+Graph fixture/processed được đọc bằng `GraphLoader` từ `nodes.csv` + `edges.csv`
+và tùy chọn `scenarios.json`, hoặc từ JSON theo
+[`data/schemas/graph.schema.json`](../data/schemas/graph.schema.json). Loader
+giữ provenance và các cột mở rộng trong metadata của Node/Edge, kiểm tra ID/FK,
+trọng số dương, duplicate ID và scenario không đóng edge không tồn tại. Graph
+được xây dựng bất biến; scenario chỉ tạo view đóng cạnh. Chi tiết API và quy tắc
+cạnh một chiều xem [graph-format.md](graph-format.md).

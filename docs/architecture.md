@@ -30,7 +30,7 @@ flowchart LR
 | Module | Trách nhiệm | Không được làm |
 |---|---|---|
 | `backend/app/api` | Validate request, gọi use case, serialize response | Chứa logic search |
-| `backend/app/core` | Graph/cost/scenario/result contracts | Import FastAPI |
+| `backend/app/core` | Graph Loader, immutable Graph/Node/Edge/Scenario contracts và result contracts | Import FastAPI hoặc mutate graph |
 | `backend/app/algorithms` | BFS, DFS, UCS, A*, Greedy, Bidirectional | Mutate graph, render UI |
 | `backend/app/optimization` | Pairwise matrix, Held-Karp, Nearest Neighbor | Tự định nghĩa cost khác search |
 | `backend/app/explanation` | Breakdown, alternative, guarantee, limitations | Tạo số liệu không có trong result |
@@ -55,10 +55,18 @@ explanation)`. Trace dùng các event `OPEN`, `EXPAND`, `RELAX`, `CLOSE`, `GOAL`
 | `POST /api/v1/optimize-tour` | Sau search | Visiting order + subpaths |
 | `POST /api/v1/compare` | Sau search | Cùng input, nhiều thuật toán |
 
+## Graph Loader contract
+
+`backend/app/core/graph.py` cung cấp `GraphLoader.from_directory`, `from_csv`,
+`from_json` và `load_graph`. Loader tạo các model bất biến trong
+`backend/app/core/contracts.py`. Graph là directed-only; neighbor được sort
+deterministic theo `(to_node_id, edge_id)` và mỗi scenario được biểu diễn bằng
+`GraphView` lọc `closed_edge_ids`, không thay đổi graph gốc. Chi tiết field và
+ví dụ input nằm trong [graph-format.md](graph-format.md).
+
 ## Vì sao không dùng Next.js
 
 Ứng dụng này là một client-side visualization gọi API Python, không cần SSR, SEO
 hay server actions. Vite giảm lớp framework không phục vụ rubric và phù hợp với
 giới hạn React Leaflet hoạt động phía client. Nếu sau này cần auth, persistence
 hoặc public portal có SSR, quyết định này phải được xem lại bằng ADR mới.
-

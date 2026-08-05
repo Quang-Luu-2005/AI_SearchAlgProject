@@ -7,6 +7,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Graph Loader bất biến cho graph có hướng, hỗ trợ fixture CSV/JSON, scenario
+  đóng cạnh, neighbor deterministic và cycle detection; thêm unit test BE-01.
 - Bản DOCX tổng quan FloodRoute HCMC dành cho onboarding/review, tập trung vào ý
   tưởng sản phẩm, trải nghiệm mục tiêu, cost model ở mức khái niệm, kiến trúc hệ
   thống, data governance, vai trò thuật toán và trạng thái MVP.
