@@ -40,7 +40,9 @@ scripts/data/            Công cụ kiểm tra/chuyển đổi dataset
 ```
 
 Chi tiết xem [kiến trúc](docs/architecture.md), [quản lý dữ liệu](docs/data-management.md)
-và [quy trình cập nhật tài liệu](docs/documentation-workflow.md).
+và [quy trình cập nhật tài liệu](docs/documentation-workflow.md). Hướng dẫn từ
+cài đặt đến nạp graph và chạy toàn bộ kiểm tra nằm trong
+[runbook dự án](docs/runbook.md).
 
 Để chia sẻ nhanh với thành viên mới hoặc người review, xem bản Word
 [Tổng quan ý tưởng và kiến trúc hệ thống](docs/FloodRoute_HCMC_Tong_quan_y_tuong_va_kien_truc.docx).

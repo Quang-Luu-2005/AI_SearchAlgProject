@@ -71,6 +71,31 @@ closed_cycle = graph.for_scenario("BREAK_CYCLE").has_cycle()  # False
 Mỗi ví dụ có `nodes.csv`, `edges.csv`, `scenarios.json`, `metadata.json` và
 `test_cases.json`. Xem README của package để chọn graph phù hợp với test cần viết.
 
+## Nạp tự động trên giao diện
+
+`GET /api/v1/graphs` tự khám phá đệ quy các folder bên dưới `data/fixtures`.
+Folder tối thiểu phải có:
+
+```text
+nodes.csv
+edges.csv
+```
+
+Các file `scenarios.json`, `metadata.json` và `test_cases.json` là phần mở rộng;
+fixture dùng để nộp/review nên có đủ cả năm file theo quy ước ở trên. Folder có
+file bắt buộc nhưng dữ liệu sai contract được trả trong `invalid_graphs` và không
+xuất hiện trong dropdown chọn graph.
+
+Sau khi chọn folder, frontend gọi:
+
+```text
+GET /api/v1/graphs/{graph_id}?scenario_id={scenario_id}
+```
+
+`graph_id` là đường dẫn tương đối bên trong `data/fixtures`; API không chấp nhận
+đường dẫn thoát ra ngoài root này. Payload trả Node, Edge, Scenario, metadata và
+`is_closed` cho từng edge để giao diện hiển thị trạng thái scenario.
+
 Mọi fixture phải ghi rõ `SIMULATED` hoặc `ASSUMPTION`. Loader không sửa file
 nguồn và không tự tạo cạnh ngược.
 

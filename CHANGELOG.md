@@ -7,6 +7,10 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Runbook chạy toàn bộ dự án từ cài môi trường, validate dataset, khởi động
+  backend/frontend, nạp graph folder đến test và troubleshooting.
+- Graph dataset explorer: tự khám phá folder fixture hợp lệ, API list/load graph
+  an toàn theo scenario và giao diện chọn dataset để vẽ Node/Edge động.
 - Package `graph_examples_v0.1` gồm directed path, one-way branch và cycle có
   scenario đóng cạnh; kèm metadata, golden case, validation và unit test loader.
 - Graph Loader bất biến cho graph có hướng, hỗ trợ fixture CSV/JSON, scenario

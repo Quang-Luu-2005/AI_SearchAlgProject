@@ -49,6 +49,8 @@ explanation)`. Trace dùng các event `OPEN`, `EXPAND`, `RELAX`, `CLOSE`, `GOAL`
 |---|---|---|
 | `GET /api/v1/health` | Có | Readiness cơ bản |
 | `GET /api/v1/dataset/meta` | Có | Version, provenance, limitations |
+| `GET /api/v1/graphs` | Có | Liệt kê graph folder hợp lệ trong fixture root |
+| `GET /api/v1/graphs/{graph_id}` | Có | Node/Edge/Scenario cho graph explorer |
 | `GET /api/v1/locations` | Kế tiếp | Node/POI có thể chọn |
 | `GET /api/v1/scenarios` | Kế tiếp | Scenario và cost preset |
 | `POST /api/v1/search` | Kế tiếp | Two-point result + trace |
@@ -63,6 +65,12 @@ explanation)`. Trace dùng các event `OPEN`, `EXPAND`, `RELAX`, `CLOSE`, `GOAL`
 deterministic theo `(to_node_id, edge_id)` và mỗi scenario được biểu diễn bằng
 `GraphView` lọc `closed_edge_ids`, không thay đổi graph gốc. Chi tiết field và
 ví dụ input nằm trong [graph-format.md](graph-format.md).
+
+Graph explorer không nhận filesystem path tùy ý từ frontend. Backend chỉ khám
+phá folder dưới `data/fixtures`, tạo `graph_id` tương đối, kiểm tra đường dẫn sau
+khi resolve vẫn nằm trong fixture root rồi mới load. Frontend gọi catalog, cho
+chọn dataset/scenario và vẽ Node/Edge; edge đóng vẫn có trong payload với
+`is_closed=true` để bản đồ hiển thị khác màu.
 
 ## Vì sao không dùng Next.js
 

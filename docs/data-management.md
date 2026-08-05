@@ -55,6 +55,11 @@ hotspot mapping, source và snapshot date. Một đường hai chiều phải th
 directed path, one-way branch và directed cycle có scenario đóng cạnh. Mỗi graph
 có metadata và golden case riêng, luôn gắn `SIMULATED`.
 
+Graph explorer chỉ tự khám phá folder dưới `data/fixtures`. Một folder cần tối
+thiểu `nodes.csv` và `edges.csv` để được xem là candidate; chỉ graph load/validate
+thành công mới xuất hiện trong dropdown. Fixture dùng để bàn giao nên bổ sung
+`scenarios.json`, `metadata.json`, `test_cases.json` và giữ nhãn `SIMULATED`.
+
 Khi triển khai thuật toán, bổ sung thêm case unreachable, start=goal, one-way,
 tie-break, invalid/negative weight, heuristic consistency và counterexample cho
 DFS/Greedy/Nearest Neighbor.

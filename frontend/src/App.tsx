@@ -1,35 +1,84 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MetricCard } from './features/dashboard/MetricCard'
 import { RouteMap } from './features/map/RouteMap'
+import {
+  fetchGraph,
+  fetchGraphCatalog,
+  type GraphPayload,
+  type GraphSummary,
+  type InvalidGraphSummary,
+} from './lib/graph'
 import { PROJECT_NAME } from './lib/project'
 
-type Scenario = 'OFFPEAK_BALANCED' | 'HEAVY_RAIN_SAFE'
-
-const scenarioView = {
-  OFFPEAK_BALANCED: {
-    label: 'Ngoài giờ · Cân bằng',
-    path: 'N01 → N02 → N06',
-    distance: '2,50 km',
-    eta: '5,6 phút',
-    explored: '4 nút',
-    explanation:
-      'Tuyến ngắn qua N02 được chọn vì cạnh trũng chưa bị đóng và có tổng chi phí thấp nhất.',
-  },
-  HEAVY_RAIN_SAFE: {
-    label: 'Mưa lớn · An toàn',
-    path: 'N01 → N02 → N04 → N06',
-    distance: '3,00 km',
-    eta: '7,9 phút',
-    explored: '5 nút',
-    explanation:
-      'Cạnh N02 → N06 bị đóng trong fixture mưa lớn. Tuyến chuyển qua N04 dù dài hơn để tránh rủi ro ngập.',
-  },
-} as const
-
 export function App() {
-  const [scenario, setScenario] = useState<Scenario>('OFFPEAK_BALANCED')
-  const [hasRun, setHasRun] = useState(false)
-  const view = scenarioView[scenario]
+  const [catalog, setCatalog] = useState<GraphSummary[]>([])
+  const [invalidGraphs, setInvalidGraphs] = useState<InvalidGraphSummary[]>([])
+  const [graphId, setGraphId] = useState('')
+  const [scenarioId, setScenarioId] = useState('')
+  const [graph, setGraph] = useState<GraphPayload | null>(null)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [reloadVersion, setReloadVersion] = useState(0)
+  const [catalogVersion, setCatalogVersion] = useState(0)
+
+  const selectedSummary = useMemo(
+    () => catalog.find((item) => item.graph_id === graphId),
+    [catalog, graphId],
+  )
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchGraphCatalog(controller.signal)
+      .then(({ graphs, invalid_graphs }) => {
+        setCatalog(graphs)
+        setInvalidGraphs(invalid_graphs)
+        const initial = (
+          graphs.find((item) => item.graph_id === graphId)
+          ?? graphs.find((item) => item.graph_id === 'toy_graph_v0.1')
+          ?? graphs[0]
+        )
+        if (initial) {
+          setGraphId(initial.graph_id)
+          if (!initial.scenario_ids.includes(scenarioId)) {
+            setScenarioId(initial.scenario_ids[0] ?? '')
+          }
+        } else {
+          setLoading(false)
+          setError('Không tìm thấy folder graph hợp lệ trong data/fixtures.')
+        }
+      })
+      .catch((reason: Error) => {
+        if (reason.name !== 'AbortError') {
+          setLoading(false)
+          setError(reason.message)
+        }
+      })
+    return () => controller.abort()
+  }, [catalogVersion])
+
+  useEffect(() => {
+    if (!graphId) return
+    const controller = new AbortController()
+    setLoading(true)
+    setError('')
+    fetchGraph(graphId, scenarioId, controller.signal)
+      .then(setGraph)
+      .catch((reason: Error) => {
+        if (reason.name !== 'AbortError') setError(reason.message)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [graphId, scenarioId, reloadVersion])
+
+  function selectGraph(nextGraphId: string) {
+    const summary = catalog.find((item) => item.graph_id === nextGraphId)
+    setGraphId(nextGraphId)
+    setScenarioId(summary?.scenario_ids[0] ?? '')
+  }
+
+  const closedEdgeCount = graph?.edges.filter((edge) => edge.is_closed).length ?? 0
 
   return (
     <div className="app-shell">
@@ -38,106 +87,113 @@ export function App() {
           <span className="brand-mark">FR</span>
           <span>
             <strong>{PROJECT_NAME}</strong>
-            <small>Explainable urban routing</small>
+            <small>Graph dataset explorer</small>
           </span>
         </a>
         <div className="status-cluster">
           <span className="status-dot" />
-          Khung dự án v0.1
+          Graph Loader API
           <span className="badge badge-warning">SIMULATED</span>
         </div>
       </header>
 
       <main id="top" className="workspace">
         <aside className="control-panel">
-          <div className="eyebrow">Thiết lập hành trình</div>
-          <h1>Tìm tuyến giao hàng</h1>
-          <p className="intro">Chọn điều kiện để xem route fixture thay đổi trước khi graph OSM v1.0 hoàn tất.</p>
+          <div className="eyebrow">Nạp dữ liệu thông minh</div>
+          <h1>Chọn graph folder</h1>
+          <p className="intro">
+            Backend tự tìm các folder hợp lệ trong <code>data/fixtures</code> và nạp CSV/JSON theo contract.
+          </p>
 
           <label>
-            Điểm xuất phát
-            <select defaultValue="N01">
-              <option value="N01">Kho Linh Trung</option>
+            Dataset folder
+            <select
+              value={graphId}
+              onChange={(event) => selectGraph(event.target.value)}
+              disabled={!catalog.length}
+            >
+              {catalog.map((item) => (
+                <option key={item.graph_id} value={item.graph_id}>
+                  {item.graph_id} ({item.node_count}N/{item.edge_count}E)
+                </option>
+              ))}
             </select>
           </label>
 
           <label>
-            Điểm đến
-            <select defaultValue="N06">
-              <option value="N06">Điểm giao Linh Đông</option>
+            Scenario
+            <select
+              value={scenarioId}
+              onChange={(event) => setScenarioId(event.target.value)}
+              disabled={!selectedSummary?.scenario_ids.length}
+            >
+              {!selectedSummary?.scenario_ids.length && <option value="">Không có scenario</option>}
+              {selectedSummary?.scenario_ids.map((id) => (
+                <option key={id} value={id}>{id}</option>
+              ))}
             </select>
           </label>
 
-          <label>
-            Thuật toán
-            <select defaultValue="A_STAR">
-              <option value="A_STAR">A* Search</option>
-              <option value="UCS">Uniform Cost Search</option>
-              <option value="BFS">Breadth-First Search</option>
-              <option value="DFS">Depth-First Search</option>
-            </select>
-          </label>
-
-          <fieldset>
-            <legend>Kịch bản</legend>
-            {(Object.keys(scenarioView) as Scenario[]).map((scenarioId) => (
-              <label className="scenario-option" key={scenarioId}>
-                <input
-                  type="radio"
-                  name="scenario"
-                  value={scenarioId}
-                  checked={scenario === scenarioId}
-                  onChange={() => {
-                    setScenario(scenarioId)
-                    setHasRun(false)
-                  }}
-                />
-                <span>
-                  <strong>{scenarioView[scenarioId].label}</strong>
-                  <small>{scenarioId}</small>
-                </span>
-              </label>
-            ))}
-          </fieldset>
-
-          <button className="run-button" type="button" onClick={() => setHasRun(true)}>
-            Chạy mô phỏng fixture
+          <button
+            className="run-button"
+            type="button"
+            onClick={() => {
+              setCatalogVersion((version) => version + 1)
+              setReloadVersion((version) => version + 1)
+            }}
+            disabled={!graphId || loading}
+          >
+            {loading ? 'Đang nạp…' : 'Quét và nạp lại'}
           </button>
-          <p className="control-note">Backend search API là bước kế tiếp; màn hình này xác nhận layout và data contract.</p>
+          <p className="control-note">
+            Folder tối thiểu cần <code>nodes.csv</code> và <code>edges.csv</code>;
+            <code> scenarios.json</code> được tự động dùng nếu có.
+          </p>
+          {error && <p className="load-error" role="alert">{error}</p>}
+          {invalidGraphs.length > 0 && (
+            <div className="load-warning" role="status">
+              <strong>{invalidGraphs.length} folder không hợp lệ</strong>
+              {invalidGraphs.map((item) => (
+                <small key={item.graph_id}>{item.graph_id}: {item.error}</small>
+              ))}
+            </div>
+          )}
         </aside>
 
         <section className="results-panel" aria-live="polite">
           <div className="results-heading">
             <div>
-              <div className="eyebrow">Kết quả xem trước</div>
-              <h2>{view.path}</h2>
+              <div className="eyebrow">Graph đang hiển thị</div>
+              <h2>{graph?.graph_id ?? 'Đang chờ dữ liệu'}</h2>
             </div>
-            <span className={hasRun ? 'run-state active' : 'run-state'}>
-              {hasRun ? 'Đã phát trace mẫu' : 'Sẵn sàng'}
+            <span className={graph && !loading ? 'run-state active' : 'run-state'}>
+              {loading ? 'Đang nạp' : graph ? 'Đã nạp' : 'Chưa có graph'}
             </span>
           </div>
 
           <div className="map-frame">
-            <RouteMap scenario={scenario} />
+            {graph ? <RouteMap graph={graph} /> : <div className="map-placeholder">Chưa có dữ liệu bản đồ</div>}
             <div className="legend">
-              <span><i className="line final" />Tuyến chọn</span>
-              <span><i className="line graph" />Cạnh graph</span>
+              <span><i className="line active-edge" />Cạnh đang mở</span>
+              <span><i className="line closed-edge" />Cạnh bị đóng</span>
               <span><i className="node" />Node</span>
             </div>
           </div>
 
           <div className="metrics-grid">
-            <MetricCard label="Khoảng cách" value={view.distance} detail="fixture" />
-            <MetricCard label="ETA" value={view.eta} detail="free-flow" />
-            <MetricCard label="Đã mở rộng" value={view.explored} detail="trace mẫu" />
-            <MetricCard label="Bảo đảm" value="Optimal*" detail="khi heuristic hợp lệ" />
+            <MetricCard label="Node" value={String(graph?.nodes.length ?? 0)} detail="CSV" />
+            <MetricCard label="Tổng edge" value={String(graph?.edges.length ?? 0)} detail="directed" />
+            <MetricCard label="Edge đang mở" value={String(graph?.active_edge_count ?? 0)} detail={scenarioId || 'base'} />
+            <MetricCard label="Edge bị đóng" value={String(closedEdgeCount)} detail={scenarioId || 'base'} />
           </div>
 
           <article className="explanation-card">
             <span className="explanation-icon">i</span>
             <div>
-              <strong>Vì sao chọn tuyến này?</strong>
-              <p>{view.explanation}</p>
+              <strong>Luồng dữ liệu</strong>
+              <p>
+                Folder → GraphLoader bất biến → FastAPI → React map. Cạnh đóng theo scenario vẫn được hiển thị bằng nét đứt màu đỏ.
+              </p>
             </div>
           </article>
         </section>
@@ -145,4 +201,3 @@ export function App() {
     </div>
   )
 }
-

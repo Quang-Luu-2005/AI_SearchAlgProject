@@ -253,6 +253,11 @@ legend {
   background: var(--teal-dark);
 }
 
+.run-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .control-note {
   margin-top: 12px;
   font-size: 0.72rem;
@@ -304,6 +309,15 @@ legend {
     #dbe6e3;
 }
 
+.map-placeholder {
+  display: grid;
+  width: 100%;
+  height: clamp(310px, 48vh, 520px);
+  place-items: center;
+  color: var(--muted);
+  font-weight: 700;
+}
+
 .leaflet-tooltip {
   border: 0;
   border-radius: 8px;
@@ -353,13 +367,40 @@ legend {
   border-top: 3px solid;
 }
 
-.line.final {
-  border-color: var(--orange);
+.line.active-edge {
+  border-color: var(--teal);
 }
 
-.line.graph {
-  border-color: #9fb5b0;
+.line.closed-edge {
+  border-color: #c75b4d;
   border-top-style: dashed;
+}
+
+.load-error {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #e2b5ae;
+  border-radius: 10px;
+  color: #8f3429;
+  background: #fff0ed;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.load-warning {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ead39b;
+  border-radius: 10px;
+  color: #76531a;
+  background: #fff8e7;
+  font-size: 0.75rem;
+}
+
+.load-warning small {
+  overflow-wrap: anywhere;
 }
 
 .node {
@@ -484,4 +525,3 @@ legend {
     bottom: auto;
   }
 }
-

@@ -2,6 +2,8 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-05 | [Viết runbook chạy toàn bộ dự án](2026-08-05-project-runbook.md) | Hoàn tất |
+| 2026-08-05 | [Graph explorer nạp folder thông minh](2026-08-05-smart-graph-explorer.md) | Hoàn tất |
 | 2026-08-05 | [Tạo package dataset graph ví dụ](2026-08-05-graph-example-datasets.md) | Hoàn tất |
 | 2026-08-05 | [BE-01 — Graph Loader bất biến](2026-08-05-be-01-immutable-graph-loader.md) | Hoàn tất |
 | 2026-08-01 | [Tạo DOCX tổng quan ý tưởng và kiến trúc](2026-08-01-project-overview-docx.md) | Hoàn tất |

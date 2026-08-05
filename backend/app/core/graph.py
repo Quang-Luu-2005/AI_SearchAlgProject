@@ -180,6 +180,8 @@ def _build_graph(
 class GraphLoader:
     """Factory for immutable graphs from fixture or processed graph files."""
 
+    REQUIRED_DIRECTORY_FILES = frozenset({"nodes.csv", "edges.csv"})
+
     @classmethod
     def load(
         cls,
@@ -209,10 +211,45 @@ class GraphLoader:
     ) -> Graph:
         directory_path = Path(directory)
         scenarios_path = directory_path / scenarios_filename
-        return cls.from_csv(
+        graph = cls.from_csv(
             directory_path / nodes_filename,
             directory_path / edges_filename,
             scenarios_path if scenarios_path.is_file() else None,
+        )
+        metadata_path = directory_path / "metadata.json"
+        if not metadata_path.is_file():
+            return graph
+        metadata_payload = _read_json(metadata_path)
+        if not isinstance(metadata_payload, Mapping):
+            raise GraphFormatError(f"Graph metadata must be an object: {metadata_path}")
+        return Graph(
+            graph.nodes,
+            graph.edges,
+            graph.scenarios,
+            metadata={**graph.metadata, **metadata_payload},
+        )
+
+    @classmethod
+    def discover_directories(cls, root: PathLike) -> tuple[Path, ...]:
+        """Find loadable graph folders below ``root`` in deterministic order."""
+        root_path = Path(root).resolve()
+        if not root_path.is_dir():
+            raise GraphFormatError(f"Graph discovery root is not a directory: {root_path}")
+
+        candidates = {root_path}
+        candidates.update(path.parent.resolve() for path in root_path.rglob("nodes.csv"))
+        graph_directories = []
+        for candidate in candidates:
+            if not candidate.is_relative_to(root_path):
+                continue
+            filenames = {path.name for path in candidate.iterdir() if path.is_file()}
+            if cls.REQUIRED_DIRECTORY_FILES <= filenames:
+                graph_directories.append(candidate)
+        return tuple(
+            sorted(
+                graph_directories,
+                key=lambda path: path.relative_to(root_path).as_posix(),
+            )
         )
 
     from_fixture = from_directory
