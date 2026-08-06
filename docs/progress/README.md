@@ -1,9 +1,9 @@
 # Progress log
 
-| 2026-08-07 | [Hot reload cho dev server](2026-08-07-hot-reload.md) | Hoàn tất |
-
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-07 | [Thay UI Stitch và tích hợp Backend API](2026-08-07-stitch-ui-integration.md) | Hoàn tất |
+| 2026-08-07 | [Hot reload cho dev server](2026-08-07-hot-reload.md) | Hoàn tất |
 | 2026-08-07 | [BE-03 — Xây dựng API Backend](2026-08-07-be-03-backend-api.md) | Hoàn tất |
 | 2026-08-07 | [BE-02 — Scenario và Cost Engine](2026-08-07-be-02-scenario-cost-engine.md) | Hoàn tất |
 | 2026-08-07 | [Dọn cây thư mục local](2026-08-07-repository-cleanup.md) | Hoàn tất |

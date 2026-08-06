@@ -67,6 +67,10 @@ npm run dev
 - API: `http://localhost:8000`
 - Swagger: `http://localhost:8000/docs`
 
+Giao diện Pathfinder AI cho phép chọn dataset, scenario, điểm đầu/đích và chạy
+UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và metrics đều lấy
+trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
+
 `npm run dev` luôn dùng Python trong `.venv`, chạy Vite từ đúng folder
 `frontend/` và dừng cả hai service khi nhấn `Ctrl+C`. Nếu cần chạy riêng:
 

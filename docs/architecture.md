@@ -36,6 +36,11 @@ flowchart LR
 | `backend/app/explanation` | Breakdown, alternative, guarantee, limitations | Tạo số liệu không có trong result |
 | `frontend/src/features` | Controls, map, trace player, metrics | Cài lại thuật toán search |
 
+Frontend Pathfinder AI nạp catalog graph, locations và scenarios từ API. Mỗi lần
+chạy, UI gửi lựa chọn start/goal/algorithm/scenario tới `POST /search` hoặc
+`POST /compare`, sau đó chỉ trực quan hóa `path`, `trace`, `metrics`, `guarantee`
+và `explanation` trả về; không duy trì cost/search logic phía trình duyệt.
+
 ## Hợp đồng kết quả
 
 Mọi thuật toán trả về cùng mô hình `SearchResult(path, metrics, trace, guarantee,

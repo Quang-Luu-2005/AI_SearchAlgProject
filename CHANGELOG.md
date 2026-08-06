@@ -7,6 +7,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Giao diện Pathfinder AI responsive theo thiết kế Stitch, tích hợp trực tiếp
+  locations, scenarios, graph, search và compare API; hiển thị đường tối ưu,
+  node đã duyệt, metrics, guarantee và explanation từ backend.
 - BE-03 Backend API: locations, scenarios, search và compare với Pydantic/OpenAPI
   schema, validation/error mapping, metrics, trace, guarantee và explanation.
 - Registry/search service deterministic cho `UCS` và `A_STAR`; A* dùng heuristic
@@ -30,6 +33,10 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Changed
 
+- Thay dashboard graph explorer cũ bằng control panel/canvas mới; loại bỏ dữ liệu
+  path hardcode từ bản HTML thiết kế và dùng hoàn toàn response `SIMULATED` của backend.
+- Các script test data/backend ở repository root dùng Python trong `.venv`, đồng
+  nhất với `npm run dev` và không phụ thuộc Python hệ thống.
 - Dev server: backend now watches the `backend/` tree with Uvicorn reload and
   Vite uses polling-based HMR for reliable updates on Windows.
 

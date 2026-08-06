@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
-import { MetricCard } from './features/dashboard/MetricCard'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap } from './features/map/RouteMap'
 import {
   fetchGraph,
@@ -8,59 +7,120 @@ import {
   type GraphSummary,
   type InvalidGraphSummary,
 } from './lib/graph'
-import { PROJECT_NAME } from './lib/project'
+import {
+  fetchLocations,
+  fetchScenarios,
+  runComparison,
+  runSearch,
+  type AlgorithmSelection,
+  type LocationItem,
+  type ScenarioItem,
+  type SearchResult,
+} from './lib/search'
+
+function metric(value: number | undefined, digits = 1): string {
+  return value === undefined ? '—' : value.toFixed(digits)
+}
 
 export function App() {
   const [catalog, setCatalog] = useState<GraphSummary[]>([])
   const [invalidGraphs, setInvalidGraphs] = useState<InvalidGraphSummary[]>([])
   const [graphId, setGraphId] = useState('')
-  const [scenarioId, setScenarioId] = useState('')
   const [graph, setGraph] = useState<GraphPayload | null>(null)
-  const [error, setError] = useState('')
+  const [locations, setLocations] = useState<LocationItem[]>([])
+  const [scenarios, setScenarios] = useState<ScenarioItem[]>([])
+  const [scenarioId, setScenarioId] = useState('')
+  const [startId, setStartId] = useState('')
+  const [goalId, setGoalId] = useState('')
+  const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
+  const [result, setResult] = useState<SearchResult | null>(null)
+  const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(true)
+  const [running, setRunning] = useState(false)
+  const [error, setError] = useState('')
   const [reloadVersion, setReloadVersion] = useState(0)
-  const [catalogVersion, setCatalogVersion] = useState(0)
 
-  const selectedSummary = useMemo(
+  const selectedGraph = useMemo(
     () => catalog.find((item) => item.graph_id === graphId),
     [catalog, graphId],
   )
+  const selectedScenario = useMemo(
+    () => scenarios.find((item) => item.scenario_id === scenarioId),
+    [scenarios, scenarioId],
+  )
+  const exploredNodeIds = useMemo(
+    () => result?.trace.map((event) => event.node_id) ?? [],
+    [result],
+  )
+  const canRun = Boolean(graphId && scenarioId && startId && goalId && !running)
 
   useEffect(() => {
     const controller = new AbortController()
+    setLoading(true)
     fetchGraphCatalog(controller.signal)
       .then(({ graphs, invalid_graphs }) => {
         setCatalog(graphs)
         setInvalidGraphs(invalid_graphs)
-        const initial = (
-          graphs.find((item) => item.graph_id === graphId)
+        const initial = graphs.find((item) => item.graph_id === graphId)
           ?? graphs.find((item) => item.graph_id === 'toy_graph_v0.1')
           ?? graphs[0]
-        )
-        if (initial) {
-          setGraphId(initial.graph_id)
-          if (!initial.scenario_ids.includes(scenarioId)) {
-            setScenarioId(initial.scenario_ids[0] ?? '')
-          }
-        } else {
-          setLoading(false)
-          setError('Không tìm thấy folder graph hợp lệ trong data/fixtures.')
-        }
+        if (initial) setGraphId(initial.graph_id)
+        else setError('Không tìm thấy graph hợp lệ trong data/fixtures.')
       })
       .catch((reason: Error) => {
-        if (reason.name !== 'AbortError') {
-          setLoading(false)
-          setError(reason.message)
-        }
+        if (reason.name !== 'AbortError') setError(reason.message)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [catalogVersion])
+  }, [reloadVersion])
+
+  useEffect(() => {
+    if (!graphId) return
+    const controller = new AbortController()
+    setError('')
+    setResult(null)
+    setComparisonResults([])
+
+    Promise.all([
+      fetchLocations(graphId, controller.signal),
+      fetchScenarios(graphId, controller.signal),
+    ])
+      .then(([locationPayload, scenarioPayload]) => {
+        const nextLocations = locationPayload.locations
+        const nextScenarios = scenarioPayload.scenarios
+        setLocations(nextLocations)
+        setScenarios(nextScenarios)
+        setStartId((current) => (
+          nextLocations.some((item) => item.node_id === current)
+            ? current
+            : nextLocations[0]?.node_id ?? ''
+        ))
+        setGoalId((current) => (
+          nextLocations.some((item) => item.node_id === current)
+            ? current
+            : nextLocations.at(-1)?.node_id ?? ''
+        ))
+        setScenarioId((current) => (
+          nextScenarios.some((item) => item.scenario_id === current)
+            ? current
+            : nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
+              ?? nextScenarios[0]?.scenario_id
+              ?? ''
+        ))
+      })
+      .catch((reason: Error) => {
+        if (reason.name !== 'AbortError') setError(reason.message)
+      })
+
+    return () => controller.abort()
+  }, [graphId, reloadVersion])
 
   useEffect(() => {
     if (!graphId) return
     const controller = new AbortController()
     setLoading(true)
-    setError('')
     fetchGraph(graphId, scenarioId, controller.signal)
       .then(setGraph)
       .catch((reason: Error) => {
@@ -73,131 +133,231 @@ export function App() {
   }, [graphId, scenarioId, reloadVersion])
 
   function selectGraph(nextGraphId: string) {
-    const summary = catalog.find((item) => item.graph_id === nextGraphId)
     setGraphId(nextGraphId)
-    setScenarioId(summary?.scenario_ids[0] ?? '')
+    setScenarioId('')
+    setStartId('')
+    setGoalId('')
   }
 
-  const closedEdgeCount = graph?.edges.filter((edge) => edge.is_closed).length ?? 0
+  async function executeSearch(event?: FormEvent) {
+    event?.preventDefault()
+    if (!canRun) return
+    setRunning(true)
+    setError('')
+    setResult(null)
+    setComparisonResults([])
+    const input = {
+      graph_id: graphId,
+      start: startId,
+      goal: goalId,
+      scenario: scenarioId,
+    }
+    try {
+      if (algorithm === 'COMPARE') {
+        const payload = await runComparison(input)
+        setComparisonResults(payload.results)
+        setResult(payload.results[0] ?? null)
+      } else {
+        setResult(await runSearch({ ...input, algorithm }))
+      }
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'Không thể chạy thuật toán.')
+    } finally {
+      setRunning(false)
+    }
+  }
+
+  function clearBoard() {
+    setResult(null)
+    setComparisonResults([])
+    setError('')
+  }
 
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="#top" aria-label={PROJECT_NAME}>
-          <span className="brand-mark">FR</span>
-          <span>
-            <strong>{PROJECT_NAME}</strong>
-            <small>Graph dataset explorer</small>
-          </span>
-        </a>
-        <div className="status-cluster">
-          <span className="status-dot" />
-          Graph Loader API
-          <span className="badge badge-warning">SIMULATED</span>
+        <div className="brand-block">
+          <strong>Pathfinder AI</strong>
+          <span>FloodRoute HCMC</span>
         </div>
+        <button className="clear-button" type="button" onClick={clearBoard}>
+          Xóa kết quả
+        </button>
+        <button className="top-run-button" type="button" onClick={() => executeSearch()} disabled={!canRun}>
+          <span aria-hidden="true">▷</span>
+          {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
+        </button>
       </header>
 
-      <main id="top" className="workspace">
+      <div className="workspace">
         <aside className="control-panel">
-          <div className="eyebrow">Nạp dữ liệu thông minh</div>
-          <h1>Chọn graph folder</h1>
-          <p className="intro">
-            Backend tự tìm các folder hợp lệ trong <code>data/fixtures</code> và nạp CSV/JSON theo contract.
-          </p>
+          <div className="panel-heading">
+            <h1>Bảng điều khiển</h1>
+            <p>Cấu hình tìm đường trên graph</p>
+          </div>
 
-          <label>
-            Dataset folder
-            <select
-              value={graphId}
-              onChange={(event) => selectGraph(event.target.value)}
-              disabled={!catalog.length}
-            >
-              {catalog.map((item) => (
-                <option key={item.graph_id} value={item.graph_id}>
-                  {item.graph_id} ({item.node_count}N/{item.edge_count}E)
-                </option>
-              ))}
-            </select>
-          </label>
+          <form onSubmit={executeSearch}>
+            <label>
+              Dataset
+              <select value={graphId} onChange={(event) => selectGraph(event.target.value)}>
+                {catalog.map((item) => (
+                  <option key={item.graph_id} value={item.graph_id}>
+                    {item.label} · {item.node_count} nút
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label>
-            Scenario
-            <select
-              value={scenarioId}
-              onChange={(event) => setScenarioId(event.target.value)}
-              disabled={!selectedSummary?.scenario_ids.length}
-            >
-              {!selectedSummary?.scenario_ids.length && <option value="">Không có scenario</option>}
-              {selectedSummary?.scenario_ids.map((id) => (
-                <option key={id} value={id}>{id}</option>
-              ))}
-            </select>
-          </label>
+            <label>
+              Chọn thuật toán
+              <select
+                value={algorithm}
+                onChange={(event) => setAlgorithm(event.target.value as AlgorithmSelection)}
+              >
+                <option value="A_STAR">A* Search</option>
+                <option value="UCS">Uniform Cost Search</option>
+                <option value="COMPARE">So sánh UCS và A*</option>
+              </select>
+            </label>
 
-          <button
-            className="run-button"
-            type="button"
-            onClick={() => {
-              setCatalogVersion((version) => version + 1)
-              setReloadVersion((version) => version + 1)
-            }}
-            disabled={!graphId || loading}
-          >
-            {loading ? 'Đang nạp…' : 'Quét và nạp lại'}
-          </button>
-          <p className="control-note">
-            Folder tối thiểu cần <code>nodes.csv</code> và <code>edges.csv</code>;
-            <code> scenarios.json</code> được tự động dùng nếu có.
-          </p>
-          {error && <p className="load-error" role="alert">{error}</p>}
-          {invalidGraphs.length > 0 && (
-            <div className="load-warning" role="status">
-              <strong>{invalidGraphs.length} folder không hợp lệ</strong>
-              {invalidGraphs.map((item) => (
-                <small key={item.graph_id}>{item.graph_id}: {item.error}</small>
-              ))}
+            <label>
+              Kịch bản chi phí
+              <select value={scenarioId} onChange={(event) => setScenarioId(event.target.value)}>
+                {scenarios.map((item) => (
+                  <option key={item.scenario_id} value={item.scenario_id}>
+                    {item.scenario_id}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="route-fields">
+              <label>
+                Điểm bắt đầu
+                <select value={startId} onChange={(event) => setStartId(event.target.value)}>
+                  {locations.map((item) => (
+                    <option key={item.node_id} value={item.node_id}>
+                      {item.node_id} · {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="swap-button"
+                type="button"
+                aria-label="Đổi điểm bắt đầu và đích"
+                onClick={() => {
+                  setStartId(goalId)
+                  setGoalId(startId)
+                }}
+              >
+                ⇅
+              </button>
+              <label>
+                Điểm đích
+                <select value={goalId} onChange={(event) => setGoalId(event.target.value)}>
+                  {locations.map((item) => (
+                    <option key={item.node_id} value={item.node_id}>
+                      {item.node_id} · {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <button className="generate-button" type="button" onClick={() => setReloadVersion((value) => value + 1)}>
+              <span aria-hidden="true">⌘</span>
+              Nạp lại graph
+            </button>
+            <button className="mobile-run-button" type="submit" disabled={!canRun}>
+              {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
+            </button>
+          </form>
+
+          {selectedScenario && (
+            <div className="scenario-summary">
+              <span>{selectedScenario.cost_preset ?? 'CUSTOM'} preset</span>
+              <strong>{selectedScenario.closed_edge_ids.length} cạnh đóng</strong>
             </div>
           )}
+          {invalidGraphs.length > 0 && (
+            <p className="warning-note">{invalidGraphs.length} graph không hợp lệ đã bị bỏ qua.</p>
+          )}
+          <div className="connection-state">
+            <span className="status-dot" />
+            Backend API đã kết nối
+          </div>
         </aside>
 
-        <section className="results-panel" aria-live="polite">
-          <div className="results-heading">
+        <main className="canvas-area" aria-live="polite">
+          <div className="canvas-heading">
             <div>
-              <div className="eyebrow">Graph đang hiển thị</div>
-              <h2>{graph?.graph_id ?? 'Đang chờ dữ liệu'}</h2>
+              <span className="eyebrow">Optimal path visualizer</span>
+              <h2>{selectedGraph?.label ?? 'Đang tải graph'}</h2>
             </div>
-            <span className={graph && !loading ? 'run-state active' : 'run-state'}>
-              {loading ? 'Đang nạp' : graph ? 'Đã nạp' : 'Chưa có graph'}
-            </span>
+            <span className="simulated-badge">SIMULATED</span>
           </div>
 
-          <div className="map-frame">
-            {graph ? <RouteMap graph={graph} /> : <div className="map-placeholder">Chưa có dữ liệu bản đồ</div>}
+          <section className="map-card">
+            {graph ? (
+              <RouteMap
+                graph={graph}
+                pathEdgeIds={result?.edge_ids}
+                pathNodeIds={result?.path}
+                exploredNodeIds={exploredNodeIds}
+                startId={startId}
+                goalId={goalId}
+              />
+            ) : (
+              <div className="map-placeholder">Chưa có dữ liệu graph</div>
+            )}
+            {loading && <div className="loading-overlay">Đang nạp dữ liệu…</div>}
+          </section>
+
+          <section className="status-bar">
             <div className="legend">
-              <span><i className="line active-edge" />Cạnh đang mở</span>
-              <span><i className="line closed-edge" />Cạnh bị đóng</span>
-              <span><i className="node" />Node</span>
+              <span><i className="legend-line open" />Đường thoáng</span>
+              <span><i className="legend-line blocked" />Đường bị chặn</span>
+              <span><i className="legend-node" />Nút giao</span>
+              <span><i className="legend-line path" />Đường tối ưu</span>
             </div>
-          </div>
-
-          <div className="metrics-grid">
-            <MetricCard label="Node" value={String(graph?.nodes.length ?? 0)} detail="CSV" />
-            <MetricCard label="Tổng edge" value={String(graph?.edges.length ?? 0)} detail="directed" />
-            <MetricCard label="Edge đang mở" value={String(graph?.active_edge_count ?? 0)} detail={scenarioId || 'base'} />
-            <MetricCard label="Edge bị đóng" value={String(closedEdgeCount)} detail={scenarioId || 'base'} />
-          </div>
-
-          <article className="explanation-card">
-            <span className="explanation-icon">i</span>
-            <div>
-              <strong>Luồng dữ liệu</strong>
-              <p>
-                Folder → GraphLoader bất biến → FastAPI → React map. Cạnh đóng theo scenario vẫn được hiển thị bằng nét đứt màu đỏ.
-              </p>
+            <div className="metric-pair">
+              <div><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
+              <div><span>Path Length (km)</span><strong>{metric(result?.metrics.distance_km, 2)}</strong></div>
+              <div><span>ETA (min)</span><strong>{metric(result?.metrics.estimated_time_min, 2)}</strong></div>
+              <div><span>Total Cost</span><strong>{metric(result?.metrics.total_cost, 2)}</strong></div>
             </div>
-          </article>
-        </section>
-      </main>
+          </section>
+
+          {error && <div className="error-banner" role="alert">{error}</div>}
+
+          {comparisonResults.length > 0 && (
+            <section className="comparison-grid" aria-label="Kết quả so sánh">
+              {comparisonResults.map((item) => (
+                <button key={item.algorithm} type="button" onClick={() => setResult(item)}>
+                  <span>{item.algorithm}</span>
+                  <strong>{item.metrics.total_cost.toFixed(3)} cost</strong>
+                  <small>{item.metrics.explored_nodes} nodes · {item.metrics.processing_time_ms.toFixed(3)} ms</small>
+                </button>
+              ))}
+            </section>
+          )}
+
+          {result && (
+            <section className="result-details">
+              <div>
+                <span className="result-kicker">{result.algorithm} · {result.scenario}</span>
+                <h3>{result.path.join(' → ')}</h3>
+                <p>{result.explanation}</p>
+              </div>
+              <div className="guarantee-card">
+                <span>Guarantee</span>
+                <strong>{result.guarantee}</strong>
+              </div>
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   )
 }
