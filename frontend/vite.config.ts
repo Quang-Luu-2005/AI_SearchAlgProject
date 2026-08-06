@@ -7,10 +7,15 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:8000',
     },
+    // Polling is more reliable for HMR on Windows/OneDrive/network-mounted folders.
+    // It only affects the development server; production builds are unchanged.
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
   },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
   },
 })
-

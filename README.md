@@ -70,6 +70,10 @@ npm run dev
 `npm run dev` luôn dùng Python trong `.venv`, chạy Vite từ đúng folder
 `frontend/` và dừng cả hai service khi nhấn `Ctrl+C`. Nếu cần chạy riêng:
 
+Trong chế độ này, backend tự reload khi lưu file Python và frontend tự cập nhật
+qua Vite HMR. Không dùng `build` hoặc `preview` khi đang phát triển vì đó là các
+chế độ không có hot reload.
+
 ```powershell
 npm run dev:backend
 npm run dev:frontend

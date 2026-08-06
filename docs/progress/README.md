@@ -1,5 +1,7 @@
 # Progress log
 
+| 2026-08-07 | [Hot reload cho dev server](2026-08-07-hot-reload.md) | Hoàn tất |
+
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
 | 2026-08-07 | [BE-03 — Xây dựng API Backend](2026-08-07-be-03-backend-api.md) | Hoàn tất |

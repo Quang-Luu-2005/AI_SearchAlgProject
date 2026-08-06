@@ -85,6 +85,11 @@ Script kiểm tra `.venv` và frontend dependencies trước khi chạy, dùng �
 trong `.venv`, khởi động Vite từ folder `frontend/` và dừng cả hai service khi
 nhấn `Ctrl+C`.
 
+Khi lưu file, Uvicorn tự reload backend và Vite tự cập nhật frontend qua HMR.
+Vite dùng polling để watcher ổn định trên Windows, OneDrive hoặc thư mục mount
+mạng. Dùng `npm run dev` trong lúc phát triển; `build`/`preview` không có hot
+reload.
+
 Các địa chỉ:
 
 - Frontend: `http://localhost:5173`
