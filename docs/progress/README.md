@@ -2,6 +2,7 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-07 | [BE-02 — Scenario và Cost Engine](2026-08-07-be-02-scenario-cost-engine.md) | Hoàn tất |
 | 2026-08-07 | [Dọn cây thư mục local](2026-08-07-repository-cleanup.md) | Hoàn tất |
 | 2026-08-05 | [Sửa cách chạy backend/frontend](2026-08-05-fix-dev-startup.md) | Hoàn tất |
 | 2026-08-05 | [Viết runbook chạy toàn bộ dự án](2026-08-05-project-runbook.md) | Hoàn tất |

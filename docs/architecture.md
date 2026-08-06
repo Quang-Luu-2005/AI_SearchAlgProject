@@ -30,7 +30,7 @@ flowchart LR
 | Module | Trách nhiệm | Không được làm |
 |---|---|---|
 | `backend/app/api` | Validate request, gọi use case, serialize response | Chứa logic search |
-| `backend/app/core` | Graph Loader, immutable Graph/Node/Edge/Scenario contracts và result contracts | Import FastAPI hoặc mutate graph |
+| `backend/app/core` | Graph Loader, immutable Graph/Node/Edge/Scenario/Cost contracts, ScenarioCostEngine và result contracts | Import FastAPI hoặc mutate graph |
 | `backend/app/algorithms` | BFS, DFS, UCS, A*, Greedy, Bidirectional | Mutate graph, render UI |
 | `backend/app/optimization` | Pairwise matrix, Held-Karp, Nearest Neighbor | Tự định nghĩa cost khác search |
 | `backend/app/explanation` | Breakdown, alternative, guarantee, limitations | Tạo số liệu không có trong result |
@@ -42,6 +42,10 @@ Mọi thuật toán trả về cùng mô hình `SearchResult(path, metrics, trac
 explanation)`. Trace dùng các event `OPEN`, `EXPAND`, `RELAX`, `CLOSE`, `GOAL`,
 `FAIL`; UI chỉ phát lại danh sách này. Tie-break mặc định: `g` thấp hơn, sau đó
 `node_id` tăng dần.
+
+`backend/app/core/cost.py` cung cấp `ScenarioCostEngine`, các preset
+`BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE` và breakdown bất biến cho edge/route.
+Engine nhận graph contract, không import FastAPI và không mutate graph.
 
 ## API dự kiến
 

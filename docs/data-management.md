@@ -55,6 +55,14 @@ hotspot mapping, source và snapshot date. Một đường hai chiều phải th
 directed path, one-way branch và directed cycle có scenario đóng cạnh. Mỗi graph
 có metadata và golden case riêng, luôn gắn `SIMULATED`.
 
+Toy graph v0.1 có ba scenario cost `OFFPEAK_BALANCED`, `PEAK_TRAFFIC` và
+`HEAVY_RAIN_SAFE`. Preset bốn thành phần (`distance`, `freeflow_time`,
+`congestion`, `flood_risk`) phải không âm và tổng bằng 1. Cost engine dùng
+free-flow time làm component nền, sau đó cộng riêng traffic penalty là thời gian
+trễ để không tính congestion hai lần. Edge override có thể thay congestion,
+traffic multiplier, flood risk hoặc cost metric; closed edge không có total cost
+khả dụng và không được dùng trong route.
+
 Graph explorer chỉ tự khám phá folder dưới `data/fixtures`. Một folder cần tối
 thiểu `nodes.csv` và `edges.csv` để được xem là candidate; chỉ graph load/validate
 thành công mới xuất hiện trong dropdown. Fixture dùng để bàn giao nên bổ sung

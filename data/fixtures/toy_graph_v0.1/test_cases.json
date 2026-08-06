@@ -33,6 +33,16 @@
       "purpose": "A* phải có cùng optimal cost với UCS khi heuristic admissible."
     },
     {
+      "case_id": "TC05_PEAK_COST",
+      "mode": "two-point",
+      "scenario_id": "PEAK_TRAFFIC",
+      "start": "N01",
+      "goal": "N06",
+      "oracle_algorithm": "UCS",
+      "expected_path": ["N01", "N02", "N06"],
+      "purpose": "Đường vẫn khả dụng nhưng cost phải phản ánh traffic peak."
+    },
+    {
       "case_id": "TC04_MULTI_STOP",
       "mode": "multi-stop",
       "scenario_id": "OFFPEAK_BALANCED",
@@ -44,4 +54,3 @@
     }
   ]
 }
-

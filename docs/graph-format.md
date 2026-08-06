@@ -58,6 +58,29 @@ Folder `data/fixtures/graph_examples_v0.1/` có ba graph `SIMULATED` hoàn chỉ
 | `one_way_branch` | 4/4 | Hai nhánh một chiều và neighbor deterministic |
 | `cycle_with_closure` | 3/3 | Directed cycle và scenario `BREAK_CYCLE` |
 
+Toy graph `toy_graph_v0.1` có ba scenario cost `OFFPEAK_BALANCED`, `PEAK_TRAFFIC`
+và `HEAVY_RAIN_SAFE`. Mỗi scenario khai báo `cost_preset`, `weights`,
+`traffic_multiplier`, `data_status`, `edge_overrides` và `closed_edge_ids`.
+`ScenarioCostEngine` trả breakdown edge gồm:
+
+```json
+{
+  "distance_km": 1.2,
+  "free_flow_time_min": 3.6,
+  "travel_time_min": 4.5,
+  "congestion_level_1_5": 4,
+  "traffic_penalty": 0.9,
+  "flood_risk": 0.0,
+  "total_cost": 1.8,
+  "is_closed": false,
+  "data_status": "SIMULATED"
+}
+```
+
+`total_cost` là tổng các component đã nhân weight; `free_flow_time_min` và
+`traffic_penalty` được tách riêng để tránh cộng congestion hai lần. Edge bị đóng
+vẫn có metric/breakdown nhưng `total_cost` là `null` và `is_closed` là `true`.
+
 Ví dụ load graph cycle:
 
 ```python

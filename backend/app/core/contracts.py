@@ -44,6 +44,10 @@ class GraphFormatError(ValueError):
     """Raised when graph input violates the graph data contract."""
 
 
+class CostModelError(ValueError):
+    """Raised when a scenario or cost input violates the cost contract."""
+
+
 @dataclass(frozen=True, slots=True)
 class Node:
     """Immutable graph node with standard coordinates and extensible metadata."""
@@ -141,6 +145,131 @@ class Scenario:
     @property
     def data(self) -> Mapping[str, Any]:
         return self.attributes
+
+
+_COST_COMPONENTS = ("distance", "freeflow_time", "congestion", "flood_risk")
+
+
+@dataclass(frozen=True, slots=True)
+class CostPreset:
+    """Immutable non-negative weights used to score one edge."""
+
+    preset_id: str
+    weights: Mapping[str, float]
+    description: str = ""
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.preset_id, str) or not self.preset_id.strip():
+            raise CostModelError("Cost preset preset_id must be a non-empty string")
+        object.__setattr__(self, "preset_id", self.preset_id.strip())
+        weights = {str(key): float(value) for key, value in dict(self.weights).items()}
+        missing = set(_COST_COMPONENTS) - weights.keys()
+        unknown = weights.keys() - set(_COST_COMPONENTS)
+        if missing:
+            raise CostModelError(
+                f"Cost preset {self.preset_id} is missing weights: {sorted(missing)}"
+            )
+        if unknown:
+            raise CostModelError(
+                f"Cost preset {self.preset_id} has unknown weights: {sorted(unknown)}"
+            )
+        if any(value < 0 for value in weights.values()):
+            raise CostModelError(f"Cost preset {self.preset_id} cannot contain negative weights")
+        if abs(sum(weights.values()) - 1.0) > 1e-9:
+            raise CostModelError(f"Cost preset {self.preset_id} weights must sum to 1")
+        object.__setattr__(self, "weights", _freeze_value(weights))
+
+
+@dataclass(frozen=True, slots=True)
+class EdgeCostBreakdown:
+    """Reproducible metric and weighted component breakdown for one edge."""
+
+    edge_id: str
+    scenario_id: str
+    cost_preset: str
+    distance_km: float
+    free_flow_time_min: float
+    travel_time_min: float
+    congestion_level_1_5: float
+    traffic_penalty: float
+    flood_risk: float
+    weighted_components: Mapping[str, float]
+    total_cost: float | None
+    is_closed: bool
+    data_status: str
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "distance_km",
+            "free_flow_time_min",
+            "travel_time_min",
+            "congestion_level_1_5",
+            "traffic_penalty",
+            "flood_risk",
+        ):
+            value = float(getattr(self, field_name))
+            if value < 0:
+                raise CostModelError(f"Edge cost {field_name} cannot be negative")
+            object.__setattr__(self, field_name, value)
+        if self.distance_km <= 0 or self.free_flow_time_min <= 0 or self.travel_time_min <= 0:
+            raise CostModelError("Edge cost distance and time must be positive")
+        if self.congestion_level_1_5 > 5:
+            raise CostModelError("Edge cost congestion level must be between 0 and 5")
+        if self.flood_risk > 1:
+            raise CostModelError("Edge cost flood risk must be between 0 and 1")
+        if self.total_cost is not None:
+            total_cost = float(self.total_cost)
+            if total_cost < 0:
+                raise CostModelError("Edge total cost cannot be negative")
+            object.__setattr__(self, "total_cost", total_cost)
+        components = {str(key): float(value) for key, value in dict(self.weighted_components).items()}
+        if any(value < 0 for value in components.values()):
+            raise CostModelError("Weighted cost components cannot be negative")
+        object.__setattr__(self, "weighted_components", _freeze_value(components))
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return a JSON-friendly representation without exposing mutable state."""
+        return {
+            "edge_id": self.edge_id,
+            "scenario_id": self.scenario_id,
+            "cost_preset": self.cost_preset,
+            "distance_km": self.distance_km,
+            "free_flow_time_min": self.free_flow_time_min,
+            "travel_time_min": self.travel_time_min,
+            "congestion_level_1_5": self.congestion_level_1_5,
+            "traffic_penalty": self.traffic_penalty,
+            "flood_risk": self.flood_risk,
+            "weighted_components": dict(self.weighted_components),
+            "total_cost": self.total_cost,
+            "is_closed": self.is_closed,
+            "data_status": self.data_status,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class RouteCostBreakdown:
+    """Aggregate cost breakdown whose total is the sum of open edge costs."""
+
+    scenario_id: str
+    edge_costs: tuple[EdgeCostBreakdown, ...]
+    total_cost: float | None
+    is_available: bool
+    data_status: str
+
+    def __post_init__(self) -> None:
+        if any(not isinstance(edge_cost, EdgeCostBreakdown) for edge_cost in self.edge_costs):
+            raise TypeError("Route edge_costs must contain EdgeCostBreakdown values")
+        if self.total_cost is not None and self.total_cost < 0:
+            raise CostModelError("Route total cost cannot be negative")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "scenario_id": self.scenario_id,
+            "edges": [edge_cost.to_dict() for edge_cost in self.edge_costs],
+            "total_cost": self.total_cost,
+            "is_available": self.is_available,
+            "data_status": self.data_status,
+        }
 
 
 class Graph:

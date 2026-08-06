@@ -7,6 +7,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- BE-02 ScenarioCostEngine với các preset `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE`,
+  breakdown edge/route, edge override, flood risk, congestion penalty và closed edge.
 - Runbook chạy toàn bộ dự án từ cài môi trường, validate dataset, khởi động
   backend/frontend, nạp graph folder đến test và troubleshooting.
 - Graph dataset explorer: tự khám phá folder fixture hợp lệ, API list/load graph

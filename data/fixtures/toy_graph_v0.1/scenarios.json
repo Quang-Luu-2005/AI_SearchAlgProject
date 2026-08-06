@@ -4,8 +4,11 @@
   "scenarios": [
     {
       "scenario_id": "OFFPEAK_BALANCED",
+      "data_status": "SIMULATED",
       "traffic_scenario": "OFFPEAK",
       "cost_preset": "BALANCED",
+      "traffic_multiplier": 1.0,
+      "default_congestion_level_1_5": 1,
       "weights": {
         "distance": 0.25,
         "freeflow_time": 0.30,
@@ -19,9 +22,31 @@
       }
     },
     {
+      "scenario_id": "PEAK_TRAFFIC",
+      "data_status": "SIMULATED",
+      "traffic_scenario": "PEAK",
+      "cost_preset": "PEAK_TRAFFIC",
+      "traffic_multiplier": 1.45,
+      "default_congestion_level_1_5": 4,
+      "weights": {
+        "distance": 0.15,
+        "freeflow_time": 0.25,
+        "congestion": 0.45,
+        "flood_risk": 0.15
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {
+        "E03": {"congestion_level_1_5": 4, "flood_risk_0_1": 0.20},
+        "E04": {"congestion_level_1_5": 4, "flood_risk_0_1": 0.20}
+      }
+    },
+    {
       "scenario_id": "HEAVY_RAIN_SAFE",
+      "data_status": "SIMULATED",
       "traffic_scenario": "HEAVY_RAIN_PEAK",
       "cost_preset": "RAIN_SAFE",
+      "traffic_multiplier": 1.25,
+      "default_congestion_level_1_5": 3,
       "weights": {
         "distance": 0.10,
         "freeflow_time": 0.25,
@@ -36,4 +61,3 @@
     }
   ]
 }
-
