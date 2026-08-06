@@ -12,6 +12,8 @@ React/TypeScript responsive và nối toàn bộ dữ liệu hiển thị với 
 - Nạp graph catalog, locations và scenarios từ `/api/v1`.
 - Gọi `/search` cho UCS/A* và `/compare` cho chế độ so sánh.
 - Tô đường tối ưu, node start/goal, node đã duyệt và cạnh bị đóng trên React Leaflet.
+- Bổ sung nút reset viewport, marker start/goal cam-hồng có label cố định và
+  animation vẽ lần lượt từng cạnh của đường tối ưu màu tím có viền sáng.
 - Hiển thị metrics, path, guarantee, explanation, lỗi backend và nhãn `SIMULATED`.
 - Bổ sung test client cho locations, search và compare.
 - Chuẩn hóa `npm test` để test data/backend dùng Python từ `.venv`.

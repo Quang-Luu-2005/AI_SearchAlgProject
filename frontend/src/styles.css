@@ -418,6 +418,119 @@ select:focus {
   font-weight: 750;
 }
 
+.map-reset-button {
+  position: absolute;
+  z-index: 600;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--outline);
+  border-radius: 11px;
+  color: var(--primary);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 5px 16px rgba(25, 28, 29, 0.12);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.map-reset-button:hover {
+  color: white;
+  background: var(--primary);
+}
+
+.map-reset-button span {
+  font-size: 1.1rem;
+}
+
+.route-path-segment {
+  filter: drop-shadow(0 0 5px rgba(109, 40, 217, 0.75));
+  stroke-dasharray: 18 10;
+  animation: draw-route-segment 0.58s ease-out both;
+}
+
+@keyframes draw-route-segment {
+  from {
+    stroke-dashoffset: 130;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.endpoint-marker {
+  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 1)) drop-shadow(0 4px 7px rgba(25, 28, 29, 0.28));
+}
+
+.leaflet-tooltip.endpoint-label {
+  padding: 5px 8px;
+  border: 0;
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.leaflet-tooltip.start-label {
+  background: #d97706;
+}
+
+.leaflet-tooltip.goal-label {
+  background: #db2777;
+}
+
+.leaflet-tooltip-top.start-label::before {
+  border-top-color: #d97706;
+}
+
+.leaflet-tooltip-top.goal-label::before {
+  border-top-color: #db2777;
+}
+
+.route-animation-status {
+  position: absolute;
+  z-index: 600;
+  bottom: 20px;
+  left: 50%;
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  color: #4c1d95;
+  background: rgba(245, 243, 255, 0.95);
+  box-shadow: 0 6px 18px rgba(76, 29, 149, 0.18);
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.animation-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #7c3aed;
+  box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.5);
+  animation: route-pulse 1s infinite;
+}
+
+@keyframes route-pulse {
+  70% {
+    box-shadow: 0 0 0 7px rgba(124, 58, 237, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 58, 237, 0);
+  }
+}
+
 .status-bar {
   display: flex;
   width: min(1180px, 100%);
@@ -465,8 +578,9 @@ select:focus {
 }
 
 .legend-line.path {
-  border-color: var(--primary-hover);
+  border-color: #6d28d9;
   border-top-width: 6px;
+  box-shadow: 0 0 5px rgba(109, 40, 217, 0.45);
 }
 
 .legend-node {

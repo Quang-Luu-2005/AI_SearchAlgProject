@@ -35,6 +35,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 - Thay dashboard graph explorer cũ bằng control panel/canvas mới; loại bỏ dữ liệu
   path hardcode từ bản HTML thiết kế và dùng hoàn toàn response `SIMULATED` của backend.
+- Map có nút đưa viewport về graph, marker start/goal màu riêng và animation vẽ
+  từng đoạn của tuyến tối ưu với màu tím/viền sáng nổi bật.
 - Các script test data/backend ở repository root dùng Python trong `.venv`, đồng
   nhất với `npm run dev` và không phụ thuộc Python hệ thống.
 - Dev server: backend now watches the `backend/` tree with Uvicorn reload and

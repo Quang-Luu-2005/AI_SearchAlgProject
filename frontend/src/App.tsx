@@ -35,6 +35,8 @@ export function App() {
   const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
+  const [visiblePathEdgeCount, setVisiblePathEdgeCount] = useState(0)
+  const [animatingPath, setAnimatingPath] = useState(false)
   const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
   const [error, setError] = useState('')
@@ -53,6 +55,28 @@ export function App() {
     [result],
   )
   const canRun = Boolean(graphId && scenarioId && startId && goalId && !running)
+
+  useEffect(() => {
+    const edgeCount = result?.edge_ids.length ?? 0
+    setVisiblePathEdgeCount(0)
+    if (!edgeCount) {
+      setAnimatingPath(false)
+      return
+    }
+
+    setAnimatingPath(true)
+    let nextEdgeCount = 0
+    const timer = window.setInterval(() => {
+      nextEdgeCount += 1
+      setVisiblePathEdgeCount(nextEdgeCount)
+      if (nextEdgeCount >= edgeCount) {
+        window.clearInterval(timer)
+        setAnimatingPath(false)
+      }
+    }, 480)
+
+    return () => window.clearInterval(timer)
+  }, [result])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -303,7 +327,8 @@ export function App() {
               <RouteMap
                 graph={graph}
                 pathEdgeIds={result?.edge_ids}
-                pathNodeIds={result?.path}
+                visiblePathEdgeCount={visiblePathEdgeCount}
+                pathNodeIds={result?.path.slice(0, visiblePathEdgeCount + 1)}
                 exploredNodeIds={exploredNodeIds}
                 startId={startId}
                 goalId={goalId}
@@ -312,6 +337,12 @@ export function App() {
               <div className="map-placeholder">Chưa có dữ liệu graph</div>
             )}
             {loading && <div className="loading-overlay">Đang nạp dữ liệu…</div>}
+            {animatingPath && result && (
+              <div className="route-animation-status">
+                <span className="animation-pulse" />
+                Đang mô phỏng tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}
+              </div>
+            )}
           </section>
 
           <section className="status-bar">
