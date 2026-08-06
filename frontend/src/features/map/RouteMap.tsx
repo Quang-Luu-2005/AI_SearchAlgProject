@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { CircleMarker, MapContainer, Polyline, Tooltip, useMap } from 'react-leaflet'
 import { latLngBounds, type LatLngExpression } from 'leaflet'
+import recenterGraphIcon from '../../assets/recenter-graph.png'
 import type { GraphPayload } from '../../lib/graph'
 
 type RouteMapProps = {
@@ -50,8 +51,7 @@ function ResetGraphView({ positions }: { positions: LatLngExpression[] }) {
         resetView()
       }}
     >
-      <span aria-hidden="true">⌖</span>
-      Về graph
+      <img src={recenterGraphIcon} alt="" aria-hidden="true" />
     </button>
   )
 }

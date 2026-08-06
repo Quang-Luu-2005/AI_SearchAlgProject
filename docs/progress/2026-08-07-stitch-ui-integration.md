@@ -14,6 +14,10 @@ React/TypeScript responsive và nối toàn bộ dữ liệu hiển thị với 
 - Tô đường tối ưu, node start/goal, node đã duyệt và cạnh bị đóng trên React Leaflet.
 - Bổ sung nút reset viewport, marker start/goal cam-hồng có label cố định và
   animation vẽ lần lượt từng cạnh của đường tối ưu màu tím có viền sáng.
+- Tạo icon reset graph bằng image model, loại chroma-key thành PNG alpha 256×256
+  và dùng cho map control không có chữ.
+- Sửa z-index/stacking context để cụm zoom Leaflet không nổi ra ngoài map và đè
+  lên topbar khi người dùng cuộn trang.
 - Hiển thị metrics, path, guarantee, explanation, lỗi backend và nhãn `SIMULATED`.
 - Bổ sung test client cho locations, search và compare.
 - Chuẩn hóa `npm test` để test data/backend dùng Python từ `.venv`.
