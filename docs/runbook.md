@@ -196,6 +196,37 @@ Invoke-RestMethod `
 API chỉ cho phép `graph_id` nằm dưới `data/fixtures`; không nhận filesystem path
 tùy ý từ frontend.
 
+### Kiểm tra API search BE-03
+
+Liệt kê location và scenario:
+
+```powershell
+Invoke-RestMethod http://localhost:8000/api/v1/locations
+Invoke-RestMethod http://localhost:8000/api/v1/scenarios
+```
+
+Chạy request bàn giao:
+
+```powershell
+$body = @{
+  start = "N01"
+  goal = "N06"
+  algorithm = "A_STAR"
+  scenario = "HEAVY_RAIN_SAFE"
+} | ConvertTo-Json
+
+Invoke-RestMethod `
+  -Method Post `
+  -Uri http://localhost:8000/api/v1/search `
+  -ContentType "application/json" `
+  -Body $body
+```
+
+Mở `http://localhost:8000/docs`, chọn `POST /api/v1/search`, bấm **Try it out**
+và **Execute** để kiểm tra cùng example trong Swagger. Registry hiện hỗ trợ
+`UCS` và `A_STAR`; A* dùng `h=0` nên có cùng optimality guarantee với UCS nhưng
+chưa có lợi thế heuristic.
+
 ## 8. Nạp graph trực tiếp bằng Python
 
 ```powershell

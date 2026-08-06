@@ -7,6 +7,10 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- BE-03 Backend API: locations, scenarios, search và compare với Pydantic/OpenAPI
+  schema, validation/error mapping, metrics, trace, guarantee và explanation.
+- Registry/search service deterministic cho `UCS` và `A_STAR`; A* dùng heuristic
+  `h=0` có bảo đảm tối ưu với cost không âm.
 - BE-02 ScenarioCostEngine với các preset `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE`,
   breakdown edge/route, edge override, flood risk, congestion penalty và closed edge.
 - Runbook chạy toàn bộ dự án từ cài môi trường, validate dataset, khởi động
@@ -35,7 +39,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 ### Planned
 
 - Trích xuất và kiểm định OSM road graph v1.0.
-- Triển khai search engine và API `/search`.
+- Triển khai BFS/DFS/Greedy/Bidirectional và heuristic địa lý đã kiểm chứng cho A*.
 
 ## [0.1.0] - 2026-07-20
 

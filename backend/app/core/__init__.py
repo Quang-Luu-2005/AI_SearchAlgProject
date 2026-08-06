@@ -1,6 +1,8 @@
 """Graph, scenario, cost and result contracts shared by all algorithms."""
 from .cost import CostEngine, DEFAULT_COST_PRESETS, ScenarioCostEngine
 from .contracts import (
+    AlgorithmName,
+    AlgorithmNotFoundError,
     CostModelError,
     CostPreset,
     Edge,
@@ -12,12 +14,17 @@ from .contracts import (
     Node,
     NodeNotFoundError,
     RouteCostBreakdown,
+    RouteNotFoundError,
+    SearchPath,
+    SearchExecution,
     Scenario,
     ScenarioNotFoundError,
 )
 from .graph import GraphLoader, load_graph
 
 __all__ = [
+    "AlgorithmName",
+    "AlgorithmNotFoundError",
     "Edge",
     "EdgeCostBreakdown",
     "EdgeNotFoundError",
@@ -32,6 +39,9 @@ __all__ = [
     "Node",
     "NodeNotFoundError",
     "RouteCostBreakdown",
+    "RouteNotFoundError",
+    "SearchPath",
+    "SearchExecution",
     "Scenario",
     "ScenarioNotFoundError",
     "load_graph",

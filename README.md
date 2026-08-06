@@ -99,7 +99,8 @@ npm test
 | Fixture/golden cases | Hoàn tất |
 | OSM graph 80–150 nút | Chưa thực hiện |
 | Map-match 24 flood hotspots | Chưa thực hiện |
-| BFS/DFS/UCS/A*/Greedy/Bidirectional | Chưa thực hiện |
+| UCS và A* (`h=0`) | Hoàn tất |
+| BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
 | Held-Karp/Nearest Neighbor | Chưa thực hiện |
 
 Ưu tiên tiếp theo là chốt vùng nghiên cứu và đóng băng OSM snapshot v1.0; không

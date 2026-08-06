@@ -4,6 +4,7 @@
 |---|---|---|
 | `FloodRoute_HCMC_Tong_quan_y_tuong_va_kien_truc.docx` | Bản Word bao quát idea, trải nghiệm mục tiêu, kiến trúc, dữ liệu, thuật toán và trạng thái MVP | Khi thay đổi project scope, kiến trúc cấp cao hoặc thông điệp chung của nhóm |
 | `architecture.md` | Module, luồng dữ liệu, API contract | Khi đổi boundary hoặc interface |
+| `api.md` | Request/response, endpoint search/compare và error status | Khi đổi API contract |
 | `data-management.md` | Vòng đời, schema, provenance, QC | Mỗi thay đổi dataset/pipeline |
 | `graph-format.md` | Format Node/Edge/Scenario và API Graph Loader bất biến | Khi đổi graph contract hoặc loader |
 | `runbook.md` | Cài đặt, chạy API/UI, nạp graph folder, test và troubleshooting | Khi đổi setup, command hoặc runtime flow |

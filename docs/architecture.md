@@ -55,11 +55,16 @@ Engine nhận graph contract, không import FastAPI và không mutate graph.
 | `GET /api/v1/dataset/meta` | Có | Version, provenance, limitations |
 | `GET /api/v1/graphs` | Có | Liệt kê graph folder hợp lệ trong fixture root |
 | `GET /api/v1/graphs/{graph_id}` | Có | Node/Edge/Scenario cho graph explorer |
-| `GET /api/v1/locations` | Kế tiếp | Node/POI có thể chọn |
-| `GET /api/v1/scenarios` | Kế tiếp | Scenario và cost preset |
-| `POST /api/v1/search` | Kế tiếp | Two-point result + trace |
+| `GET /api/v1/locations` | Có | Node/POI có thể chọn |
+| `GET /api/v1/scenarios` | Có | Scenario và cost preset |
+| `POST /api/v1/search` | Có | Two-point result + trace |
 | `POST /api/v1/optimize-tour` | Sau search | Visiting order + subpaths |
-| `POST /api/v1/compare` | Sau search | Cùng input, nhiều thuật toán |
+| `POST /api/v1/compare` | Có | Cùng input, nhiều thuật toán |
+
+API search dùng Pydantic schema trong `backend/app/api/models.py`, gọi
+`SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS` và
+`A_STAR`; A* dùng `h=0` để giữ admissible/consistent cho cost đa thành phần. Chi
+tiết request, response và error status xem [api.md](api.md).
 
 ## Graph Loader contract
 

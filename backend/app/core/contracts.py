@@ -48,6 +48,14 @@ class CostModelError(ValueError):
     """Raised when a scenario or cost input violates the cost contract."""
 
 
+class AlgorithmNotFoundError(ValueError):
+    """Raised when a search request names an unsupported algorithm."""
+
+
+class RouteNotFoundError(LookupError):
+    """Raised when no directed path exists for the active scenario."""
+
+
 @dataclass(frozen=True, slots=True)
 class Node:
     """Immutable graph node with standard coordinates and extensible metadata."""
@@ -636,6 +644,11 @@ class TraceEventKind(StrEnum):
     FAIL = "FAIL"
 
 
+class AlgorithmName(StrEnum):
+    UCS = "UCS"
+    A_STAR = "A_STAR"
+
+
 @dataclass(frozen=True, slots=True)
 class TraceEvent:
     step: int
@@ -645,6 +658,25 @@ class TraceEvent:
     g_cost: float | None = None
     h_cost: float | None = None
     details: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
+class SearchPath:
+    """Framework-independent path/trace output produced by a search algorithm."""
+
+    path: tuple[str, ...]
+    edge_ids: tuple[str, ...]
+    trace: tuple[TraceEvent, ...]
+    explored_nodes: int
+    guarantee: str
+
+    def __post_init__(self) -> None:
+        if not self.path:
+            raise ValueError("SearchPath path cannot be empty")
+        if len(self.edge_ids) != len(self.path) - 1:
+            raise ValueError("SearchPath edge_ids must connect every consecutive node")
+        if self.explored_nodes < 0:
+            raise ValueError("SearchPath explored_nodes cannot be negative")
 
 
 @dataclass(frozen=True, slots=True)
@@ -663,3 +695,15 @@ class SearchResult:
     trace: tuple[TraceEvent, ...]
     guarantee: str
     explanation: str
+
+
+@dataclass(frozen=True, slots=True)
+class SearchExecution:
+    """SearchResult plus request identity and edge-level provenance."""
+
+    algorithm: AlgorithmName
+    scenario_id: str
+    edge_ids: tuple[str, ...]
+    edge_costs: tuple[EdgeCostBreakdown, ...]
+    result: SearchResult
+    data_status: str

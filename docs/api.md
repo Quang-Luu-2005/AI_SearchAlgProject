@@ -1,0 +1,47 @@
+# Backend API
+
+All endpoints use prefix `/api/v1`. Swagger UI is available at `/docs`, and the
+OpenAPI document is available at `/openapi.json`.
+
+## Search catalog
+
+- `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists selectable nodes.
+- `GET /api/v1/scenarios?graph_id=toy_graph_v0.1` lists scenario, preset, weights
+  and closed edges.
+
+## Search
+
+`POST /api/v1/search` accepts:
+
+```json
+{
+  "start": "N01",
+  "goal": "N06",
+  "algorithm": "A_STAR",
+  "scenario": "HEAVY_RAIN_SAFE"
+}
+```
+
+`graph_id` is optional and defaults to `toy_graph_v0.1`. Initial algorithm names
+are `UCS` and `A_STAR`; A* currently uses admissible `h=0`.
+
+The response includes `path`, `edge_ids`, `metrics`, `trace`, `guarantee`,
+`explanation`, `edge_breakdown`, `data_status` and `limitations`. Fixture results
+are always marked `SIMULATED`.
+
+## Compare
+
+`POST /api/v1/compare` accepts the same start, goal and scenario with an
+`algorithms` array. When omitted, it compares `UCS` and `A_STAR` using exactly the
+same graph and cost engine.
+
+## Errors
+
+| Condition | Status |
+|---|---:|
+| Unknown node or scenario | 404 |
+| No directed route in the active scenario | 404 |
+| Invalid algorithm or cost configuration | 422 |
+| Missing/invalid request field | 422 |
+
+Error responses use `{ "detail": "actionable message" }`.
