@@ -2,6 +2,7 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-07 | [Dọn cây thư mục local](2026-08-07-repository-cleanup.md) | Hoàn tất |
 | 2026-08-05 | [Sửa cách chạy backend/frontend](2026-08-05-fix-dev-startup.md) | Hoàn tất |
 | 2026-08-05 | [Viết runbook chạy toàn bộ dự án](2026-08-05-project-runbook.md) | Hoàn tất |
 | 2026-08-05 | [Graph explorer nạp folder thông minh](2026-08-05-smart-graph-explorer.md) | Hoàn tất |

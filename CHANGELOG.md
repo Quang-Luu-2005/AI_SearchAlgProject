@@ -24,6 +24,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Changed
 
+- Dọn cây thư mục local: loại bỏ lockfile rỗng nằm sai cấp và chuẩn hóa ignore cho
+  các dependency/cache sinh tự động (`node_modules/`).
 - Chuẩn hóa dev startup bằng `npm run dev`: dùng Python từ `.venv`, chạy Vite
   đúng frontend root, khởi động/dừng đồng thời backend và frontend; vẫn hỗ trợ
   hai lệnh chạy riêng.

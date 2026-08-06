@@ -12,7 +12,7 @@ __pycache__/
 *.egg-info/
 
 # Node / Vite
-frontend/node_modules/
+node_modules/
 frontend/dist/
 frontend/coverage/
 
@@ -32,4 +32,3 @@ experiments/results/*
 .vscode/
 .DS_Store
 Thumbs.db
-
