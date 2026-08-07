@@ -1,5 +1,18 @@
 # FloodRoute HCMC
 
+## Dataset pilot đang dùng
+
+Ứng dụng mặc định dùng `processed/thu_duc_market_v1.0.0`: bài toán giao hàng xe máy
+quanh chợ Thủ Đức khi có ùn tắc lịch sử và các tuyến có ghi nhận dễ ngập. Snapshot có
+90 node, 155 directed edge, liên thông mạnh trong bbox `10.845–10.853,
+106.751–106.759`. Traffic là dữ liệu lịch sử 2020–2021, **không phải real-time**;
+flood risk là penalty theo ghi nhận nguồn, không phải dự báo hay chỉ dẫn an toàn.
+
+Release hiện là `REVIEW_REQUIRED` vì flood map-match còn thiếu hai reviewer thật.
+Chi tiết nguồn, công thức và giới hạn nằm trong
+[`metadata.json`](data/processed/thu_duc_market_v1.0.0/metadata.json) và
+[ADR 0007](docs/decisions/0007-thu-duc-market-real-dataset.md).
+
 Website mô phỏng tìm đường giao hàng đa điểm cho shipper xe máy tại TP.HCM trong
 điều kiện kẹt xe và ngập nước. Repository hiện ở giai đoạn **bootstrap v0.1**:
 khung frontend/backend chạy được, dataset có provenance, và fixture deterministic
@@ -105,11 +118,11 @@ npm test
 | Khung React/FastAPI | Hoàn tất |
 | Phân lớp dataset + checksum | Hoàn tất |
 | Fixture/golden cases | Hoàn tất |
-| OSM graph 80–150 nút | Chưa thực hiện |
-| Map-match 24 flood hotspots | Chưa thực hiện |
+| Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
+| Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
 | UCS và A* (`h=0`) | Hoàn tất |
 | BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
 | Held-Karp/Nearest Neighbor | Chưa thực hiện |
 
-Ưu tiên tiếp theo là chốt vùng nghiên cứu và đóng băng OSM snapshot v1.0; không
-tuyên bố kết quả định tuyến thực tế khi `routing_dataset_status` vẫn là `NOT_READY`.
+Ưu tiên tiếp theo là hai reviewer xác nhận flood map-match; không tuyên bố kết quả
+định tuyến thực tế khi `routing_dataset_status` vẫn là `REVIEW_REQUIRED`.

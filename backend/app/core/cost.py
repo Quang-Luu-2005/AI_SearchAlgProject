@@ -240,9 +240,19 @@ class ScenarioCostEngine:
         edge_costs = tuple(self.cost_for_edge(edge_id, scenario_id) for edge_id in edge_ids)
         is_available = all(not edge_cost.is_closed for edge_cost in edge_costs)
         total_cost = sum(edge_cost.total_cost or 0.0 for edge_cost in edge_costs) if is_available else None
-        data_status = "SIMULATED" if all(
-            edge_cost.data_status == "SIMULATED" for edge_cost in edge_costs
-        ) else "ASSUMPTION"
+        statuses = {edge_cost.data_status for edge_cost in edge_costs}
+        if not statuses:
+            scenario = self._graph.scenario(scenario_id)
+            data_status = str(
+                scenario.data.get(
+                    "data_status",
+                    self._graph.metadata.get("data_status", "SIMULATED"),
+                )
+            )
+        elif len(statuses) == 1:
+            data_status = next(iter(statuses))
+        else:
+            data_status = "MIXED"
         return RouteCostBreakdown(
             scenario_id=scenario_id,
             edge_costs=edge_costs,

@@ -1,5 +1,17 @@
 # Backend API
 
+## Processed dataset catalog
+
+`GET /api/v1/graphs` chỉ khám phá hai root cấu hình (`data/fixtures` và
+`data/processed`). Processed graph ID có prefix `processed/`, ví dụ
+`processed/thu_duc_market_v1.0.0`. Mỗi catalog row bổ sung `dataset_kind`,
+`snapshot_date`, `real_time`, `source_ids`, `limitations` và
+`routing_dataset_status`.
+
+Fixture result vẫn là `SIMULATED`. Processed result propagate `SOURCE_BACKED`,
+`DERIVED`, `ASSUMPTION` hoặc `MIXED`; limitation của pilot nói rõ traffic là lịch sử,
+không real-time.
+
 All endpoints use prefix `/api/v1`. Swagger UI is available at `/docs`, and the
 OpenAPI document is available at `/openapi.json`.
 

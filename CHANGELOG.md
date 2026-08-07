@@ -7,6 +7,14 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Dataset thực tế `thu_duc_market_v1.0.0` cho pilot giao hàng quanh chợ Thủ Đức: 90
+  node, 155 directed edge, traffic lịch sử UTraffic, POI OSM, flood hotspot 2025–2026,
+  ba scenario và golden case đổi tuyến.
+- Pipeline tái lập, raw/processed checksum, provenance registry và QC cho bbox,
+  connectivity, snapping, traffic/flood mapping cùng review state.
+- ADR 0007 cho nguồn dữ liệu, quy tắc P85/LOS/flood penalty, processed catalog và
+  điều kiện nâng `ACADEMIC_DEMO_READY`.
+
 - Giao diện Pathfinder AI responsive theo thiết kế Stitch, tích hợp trực tiếp
   locations, scenarios, graph, search và compare API; hiển thị đường tối ưu,
   node đã duyệt, metrics, guarantee và explanation từ backend.
@@ -32,6 +40,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
   backend-first cho nhóm bốn người.
 
 ### Changed
+
+- Graph catalog/API/UI hỗ trợ cả `data/fixtures` và `data/processed`; UI chọn pilot
+  Thủ Đức mặc định, truyền trạng thái `MIXED` và hiển thị historical/not real-time,
+  limitations cùng attribution OSM.
+- Cost/search loại bỏ giả định hard-code mọi traffic/flood là `SIMULATED` và propagate
+  đúng `SOURCE_BACKED`, `DERIVED`, `ASSUMPTION`, `MIXED`.
 
 - Thay dashboard graph explorer cũ bằng control panel/canvas mới; loại bỏ dữ liệu
   path hardcode từ bản HTML thiết kế và dùng hoàn toàn response `SIMULATED` của backend.

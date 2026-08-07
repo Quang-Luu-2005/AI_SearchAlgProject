@@ -1,0 +1,9 @@
+point_id,name,point_type,osm_type,osm_id,latitude,longitude,selected_for_demo,snap_node_id,snap_distance_m,location_data_status,order_data_status,source_id,source_url
+DP00,Chợ Thủ Đức,DEPOT,way,499426667,10.8502385,106.7541974,True,UTR_NODE_2984717728,13.716,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/way/499426667
+DP01,Long Châu,DELIVERY,node,10215649401,10.8529541,106.75229,True,UTR_NODE_366383242,36.802,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/node/10215649401
+DP02,Pharmacity,DELIVERY,node,4965375504,10.8525413,106.7528014,True,UTR_NODE_5763193249,8.869,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/node/4965375504
+DP03,WinMart+,DELIVERY,node,5609998736,10.8517865,106.753265,True,UTR_NODE_366444178,17.972,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/node/5609998736
+DP04,Tạp Hóa Ngọc Hân,DELIVERY,node,4684698690,10.8502187,106.754861,True,UTR_NODE_366463208,45.635,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/node/4684698690
+DP05,CH Sỉ Số 1 Kha Vạn Cân,DELIVERY,node,10976631705,10.8502615,106.7543745,True,UTR_NODE_2984717728,8.446,SOURCE_BACKED,ASSUMPTION,OSM-POI-2026-08-07,https://www.openstreetmap.org/node/10976631705
+DP07,Điểm giao Cầu Ngang – Kha Vạn Cân,DELIVERY_TEST_ANCHOR,,,10.8485905,106.7529815,False,UTR_NODE_2947068442,0.000,SOURCE_BACKED,ASSUMPTION,UTRAFFIC-HCM-V6,https://www.kaggle.com/datasets/thanhnguyen2612/traffic-flow-data-in-ho-chi-minh-city-viet-nam
+DP08,Điểm giao Dương Văn Cam – Kha Vạn Cân,DELIVERY_TEST_ANCHOR,,,10.8495638,106.7534794,False,UTR_NODE_366385739,0.000,SOURCE_BACKED,ASSUMPTION,UTRAFFIC-HCM-V6,https://www.kaggle.com/datasets/thanhnguyen2612/traffic-flow-data-in-ho-chi-minh-city-viet-nam

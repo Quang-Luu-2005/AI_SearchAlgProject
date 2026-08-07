@@ -1,4 +1,5 @@
 import json
+import csv
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -15,7 +16,7 @@ from ..core.contracts import (
     SearchExecution,
 )
 from ..core.graph import GraphLoader
-from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT
+from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT
 from ..services import SearchService
 from .models import (
     CompareRequest,
@@ -51,45 +52,62 @@ def _json_value(value: Any) -> Any:
     return value
 
 
-def _graph_id(path: Path) -> str:
-    return path.relative_to(FIXTURES_ROOT.resolve()).as_posix()
+def _graph_id(path: Path, dataset_kind: str) -> str:
+    root = FIXTURES_ROOT if dataset_kind == "fixture" else PROCESSED_ROOT
+    relative_id = path.relative_to(root.resolve()).as_posix()
+    return relative_id if dataset_kind == "fixture" else f"processed/{relative_id}"
 
 
-def _load_fixture_graph(graph_id: str) -> tuple[Path, Graph]:
-    fixtures_root = FIXTURES_ROOT.resolve()
-    graph_path = (fixtures_root / graph_id).resolve()
-    if not graph_path.is_relative_to(fixtures_root):
+def _load_graph(graph_id: str) -> tuple[Path, Graph, str]:
+    if graph_id.startswith("processed/"):
+        dataset_kind = "processed"
+        root = PROCESSED_ROOT.resolve()
+        relative_id = graph_id.removeprefix("processed/")
+    else:
+        dataset_kind = "fixture"
+        root = FIXTURES_ROOT.resolve()
+        relative_id = graph_id
+    graph_path = (root / relative_id).resolve()
+    if not graph_path.is_relative_to(root):
         raise HTTPException(status_code=404, detail="Graph folder not found")
-    discovered = set(GraphLoader.discover_directories(fixtures_root))
+    discovered = set(GraphLoader.discover_directories(root))
     if graph_path not in discovered:
         raise HTTPException(status_code=404, detail="Graph folder not found or incomplete")
     try:
-        return graph_path, GraphLoader.from_directory(graph_path)
+        return graph_path, GraphLoader.from_directory(graph_path), dataset_kind
     except GraphFormatError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
 
 @router.get("/graphs", tags=["graph"])
 def graph_catalog() -> dict[str, object]:
-    """List valid graph folders below data/fixtures for the local explorer."""
+    """List valid fixture and processed graph folders for the local explorer."""
     graphs = []
     invalid_graphs = []
-    for path in GraphLoader.discover_directories(FIXTURES_ROOT):
-        try:
-            graph = GraphLoader.from_directory(path)
-        except GraphFormatError as error:
-            invalid_graphs.append({"graph_id": _graph_id(path), "error": str(error)})
-            continue
-        graphs.append(
-            {
-                "graph_id": _graph_id(path),
-                "label": graph.metadata.get("dataset_id", _graph_id(path)),
-                "data_status": graph.metadata.get("data_status", "SIMULATED"),
-                "node_count": len(graph.nodes),
-                "edge_count": len(graph.edges),
-                "scenario_ids": [scenario.scenario_id for scenario in graph.scenarios],
-            }
-        )
+    for root, dataset_kind in ((FIXTURES_ROOT, "fixture"), (PROCESSED_ROOT, "processed")):
+        for path in GraphLoader.discover_directories(root):
+            graph_id = _graph_id(path, dataset_kind)
+            try:
+                graph = GraphLoader.from_directory(path)
+            except GraphFormatError as error:
+                invalid_graphs.append({"graph_id": graph_id, "error": str(error)})
+                continue
+            graphs.append(
+                {
+                    "graph_id": graph_id,
+                    "label": graph.metadata.get("label", graph.metadata.get("dataset_id", graph_id)),
+                    "data_status": graph.metadata.get("data_status", "SIMULATED"),
+                    "dataset_kind": dataset_kind,
+                    "snapshot_date": graph.metadata.get("snapshot_date"),
+                    "real_time": graph.metadata.get("real_time", False),
+                    "source_ids": list(graph.metadata.get("source_ids", [])),
+                    "limitations": list(graph.metadata.get("limitations", [])),
+                    "routing_dataset_status": graph.metadata.get("routing_dataset_status"),
+                    "node_count": len(graph.nodes),
+                    "edge_count": len(graph.edges),
+                    "scenario_ids": [scenario.scenario_id for scenario in graph.scenarios],
+                }
+            )
     return {"graphs": graphs, "invalid_graphs": invalid_graphs}
 
 
@@ -101,12 +119,29 @@ def graph_catalog() -> dict[str, object]:
 )
 def locations(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, object]:
     """List selectable graph nodes for search inputs."""
-    _, graph = _load_fixture_graph(graph_id)
-    return {
-        "graph_id": graph_id,
-        "data_status": graph.metadata.get("data_status", "SIMULATED"),
-        "locations": [
+    graph_path, graph, dataset_kind = _load_graph(graph_id)
+    if dataset_kind == "processed" and (graph_path / "delivery_points.csv").is_file():
+        with (graph_path / "delivery_points.csv").open(encoding="utf-8", newline="") as file:
+            point_rows = [
+                row for row in csv.DictReader(file)
+                if row.get("selected_for_demo", "").casefold() == "true"
+            ]
+        location_rows = [
             {
+                "point_id": row["point_id"],
+                "node_id": row["snap_node_id"],
+                "name": row["name"],
+                "node_type": row["point_type"],
+                "latitude": float(row["latitude"]),
+                "longitude": float(row["longitude"]),
+                "data_status": row["location_data_status"],
+            }
+            for row in point_rows
+        ]
+    else:
+        location_rows = [
+            {
+                "point_id": None,
                 "node_id": node.node_id,
                 "name": node.attributes.get("name", node.node_id),
                 "node_type": node.attributes.get("node_type"),
@@ -115,7 +150,11 @@ def locations(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, obje
                 "data_status": node.attributes.get("data_status", "SIMULATED"),
             }
             for node in graph.nodes
-        ],
+        ]
+    return {
+        "graph_id": graph_id,
+        "data_status": graph.metadata.get("data_status", "SIMULATED"),
+        "locations": location_rows,
     }
 
 
@@ -127,7 +166,7 @@ def locations(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, obje
 )
 def scenarios(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, object]:
     """List scenario and cost-preset metadata for one graph."""
-    _, graph = _load_fixture_graph(graph_id)
+    _, graph, _ = _load_graph(graph_id)
     return {
         "graph_id": graph_id,
         "data_status": graph.metadata.get("data_status", "SIMULATED"),
@@ -145,7 +184,7 @@ def scenarios(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, obje
     }
 
 
-def _search_response(execution: SearchExecution) -> dict[str, object]:
+def _search_response(execution: SearchExecution, graph: Graph) -> dict[str, object]:
     result = execution.result
     return {
         "algorithm": execution.algorithm.value,
@@ -187,10 +226,8 @@ def _search_response(execution: SearchExecution) -> dict[str, object]:
             }
             for edge_cost in execution.edge_costs
         ],
-        "limitations": [
-            "SIMULATED fixture; not real-world routing guidance.",
-            "A_STAR currently uses h=0 and therefore behaves like UCS.",
-        ],
+        "limitations": list(graph.metadata.get("limitations", []))
+        + ["A_STAR currently uses h=0 and therefore behaves like UCS."],
     }
 
 
@@ -211,7 +248,7 @@ def _raise_search_http_error(error: Exception) -> None:
 )
 def search(payload: SearchRequest) -> dict[str, object]:
     """Run one validated two-point search on an immutable scenario graph."""
-    _, graph = _load_fixture_graph(payload.graph_id)
+    _, graph, _ = _load_graph(payload.graph_id)
     try:
         execution = SearchService(graph).search(
             start=payload.start,
@@ -228,7 +265,7 @@ def search(payload: SearchRequest) -> dict[str, object]:
         ValueError,
     ) as error:
         _raise_search_http_error(error)
-    return _search_response(execution)
+    return _search_response(execution, graph)
 
 
 @router.post(
@@ -239,7 +276,7 @@ def search(payload: SearchRequest) -> dict[str, object]:
 )
 def compare(payload: CompareRequest) -> dict[str, object]:
     """Run multiple registered algorithms against the exact same graph/cost input."""
-    _, graph = _load_fixture_graph(payload.graph_id)
+    _, graph, _ = _load_graph(payload.graph_id)
     try:
         executions = SearchService(graph).compare(
             start=payload.start,
@@ -260,7 +297,7 @@ def compare(payload: CompareRequest) -> dict[str, object]:
         "start": payload.start,
         "goal": payload.goal,
         "scenario": payload.scenario,
-        "results": [_search_response(execution) for execution in executions],
+        "results": [_search_response(execution, graph) for execution in executions],
     }
 
 
@@ -270,7 +307,7 @@ def graph_detail(
     scenario_id: str | None = Query(default=None),
 ) -> dict[str, object]:
     """Load one discovered graph folder and serialize it for visualization."""
-    _, graph = _load_fixture_graph(graph_id)
+    _, graph, _ = _load_graph(graph_id)
     if scenario_id is not None:
         try:
             graph.scenario(scenario_id)

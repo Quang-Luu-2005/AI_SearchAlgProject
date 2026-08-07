@@ -1,11 +1,29 @@
 # Quản lý dataset và cơ sở kiểm thử
 
+## Release chợ Thủ Đức v1.0.0
+
+Processed release đã được đóng băng với 90 node, 155 directed edge và ba scenario.
+Dataset có trạng thái `MIXED`, `real_time=false`; manifest giữ `REVIEW_REQUIRED` do
+mapping flood chưa có hai chữ ký reviewer. Không được hiểu
+`NO_RECORD_IN_SELECTED_SOURCES` là an toàn và không được nâng
+`ACADEMIC_DEMO_READY` trước khi toàn bộ review đạt.
+
+Pipeline tái lập:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/data/build_thu_duc_market.py `
+  --utraffic-zip <path-to-immutable-kaggle-zip>
+npm run test:data
+```
+
+Ngoài các file processed tối thiểu, release này có `flood_hotspots.csv`,
+`traffic_profiles.csv`, `mapping_review.csv` và `test_cases.json`.
+
 ## Trạng thái hiện tại
 
-Workbook v0.1 có 24 flood hotspot cùng nguồn, assumptions, scenario và schema
-template, nhưng **chưa phải graph định tuyến**. Vì vậy manifest giữ
-`routing_dataset_status = NOT_READY`; giao diện hiện dùng toy fixture có badge
-`SIMULATED`.
+Workbook v0.1 vẫn là nguồn nghiên cứu không routable. Ứng dụng hiện dùng processed
+pilot chợ Thủ Đức, còn fixture phục vụ regression. Manifest giữ
+`routing_dataset_status = REVIEW_REQUIRED` cho đến khi có hai reviewer.
 
 ## Vòng đời dữ liệu
 
@@ -63,10 +81,10 @@ trễ để không tính congestion hai lần. Edge override có thể thay cong
 traffic multiplier, flood risk hoặc cost metric; closed edge không có total cost
 khả dụng và không được dùng trong route.
 
-Graph explorer chỉ tự khám phá folder dưới `data/fixtures`. Một folder cần tối
-thiểu `nodes.csv` và `edges.csv` để được xem là candidate; chỉ graph load/validate
-thành công mới xuất hiện trong dropdown. Fixture dùng để bàn giao nên bổ sung
-`scenarios.json`, `metadata.json`, `test_cases.json` và giữ nhãn `SIMULATED`.
+Graph explorer chỉ tự khám phá folder dưới hai root cấu hình `data/fixtures` và
+`data/processed`. Một folder cần tối thiểu `nodes.csv` và `edges.csv` để được xem là
+candidate; chỉ graph load/validate thành công mới xuất hiện trong dropdown. Fixture
+giữ nhãn `SIMULATED`; processed release phải có metadata, checksum và validation.
 
 Khi triển khai thuật toán, bổ sung thêm case unreachable, start=goal, one-way,
 tie-break, invalid/negative weight, heuristic consistency và counterexample cho

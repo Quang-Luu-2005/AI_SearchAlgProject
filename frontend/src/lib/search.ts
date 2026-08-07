@@ -2,6 +2,7 @@ export type Algorithm = 'UCS' | 'A_STAR'
 export type AlgorithmSelection = Algorithm | 'COMPARE'
 
 export type LocationItem = {
+  point_id: string | null
   node_id: string
   name: string
   node_type: string | null

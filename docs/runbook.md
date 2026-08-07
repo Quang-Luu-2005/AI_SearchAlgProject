@@ -1,5 +1,9 @@
 # Hướng dẫn chạy FloodRoute HCMC
 
+Validator kiểm tra cả fixture và processed pilot chợ Thủ Đức. Dòng
+`release status: REVIEW_REQUIRED` là trạng thái dự kiến cho đến khi hai reviewer
+xác nhận mapping; đây không phải validation failure.
+
 Tài liệu này mô tả toàn bộ luồng chạy repository ở trạng thái hiện tại: cài môi
 trường, kiểm tra dataset, khởi động API và giao diện, nạp graph folder, xem
 scenario trên bản đồ, gọi API và chạy test.
@@ -115,8 +119,9 @@ request `/api` sang backend ở port 8000.
 
 ## 5. Nạp và hiển thị graph trên giao diện
 
-Giao diện không còn hard-code Node/Edge. Khi mở trang, backend tự khám phá các
-graph folder hợp lệ bên dưới `data/fixtures`.
+Giao diện không còn hard-code Node/Edge. Khi mở trang, backend tự khám phá các graph
+folder hợp lệ bên dưới `data/fixtures` và `data/processed`; pilot chợ Thủ Đức được
+chọn mặc định.
 
 1. Chọn graph trong ô **Dataset folder**.
 2. Chọn **Scenario** nếu graph có `scenarios.json`.
@@ -132,6 +137,7 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/simple_path` | Đường thẳng có hướng |
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
+| `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
 
 ## 6. Thêm dataset folder mới
 
@@ -198,8 +204,8 @@ Invoke-RestMethod `
   "http://localhost:8000/api/v1/graphs/graph_examples_v0.1/cycle_with_closure?scenario_id=BREAK_CYCLE"
 ```
 
-API chỉ cho phép `graph_id` nằm dưới `data/fixtures`; không nhận filesystem path
-tùy ý từ frontend.
+API chỉ cho phép `graph_id` nằm dưới `data/fixtures` hoặc `data/processed`; không nhận
+filesystem path tùy ý từ frontend.
 
 ### Kiểm tra API search BE-03
 

@@ -1,0 +1,85 @@
+{
+  "snapshot_date": "2026-08-07",
+  "bbox": {
+    "south": 10.845,
+    "west": 106.751,
+    "north": 10.853,
+    "east": 106.759
+  },
+  "source": "OpenStreetMap Nominatim and Overpass read-only queries",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "query_note": "Named market/retail/pharmacy POIs inside the fixed pilot bbox.",
+  "elements": [
+    {
+      "point_id": "DP00",
+      "name": "Chợ Thủ Đức",
+      "point_type": "DEPOT",
+      "osm_type": "way",
+      "osm_id": 499426667,
+      "latitude": 10.8502385,
+      "longitude": 106.7541974,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP01",
+      "name": "Long Châu",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 10215649401,
+      "latitude": 10.8529541,
+      "longitude": 106.75229,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP02",
+      "name": "Pharmacity",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 4965375504,
+      "latitude": 10.8525413,
+      "longitude": 106.7528014,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP03",
+      "name": "WinMart+",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 5609998736,
+      "latitude": 10.8517865,
+      "longitude": 106.753265,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP04",
+      "name": "Tạp Hóa Ngọc Hân",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 4684698690,
+      "latitude": 10.8502187,
+      "longitude": 106.754861,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP05",
+      "name": "CH Sỉ Số 1 Kha Vạn Cân",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 10976631705,
+      "latitude": 10.8502615,
+      "longitude": 106.7543745,
+      "selected_for_demo": true
+    },
+    {
+      "point_id": "DP06",
+      "name": "Pizza Hut Võ Văn Ngân",
+      "point_type": "DELIVERY",
+      "osm_type": "node",
+      "osm_id": 4089412564,
+      "latitude": 10.8511325,
+      "longitude": 106.7565904,
+      "selected_for_demo": true
+    }
+  ]
+}

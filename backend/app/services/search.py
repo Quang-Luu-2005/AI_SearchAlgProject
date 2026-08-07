@@ -67,13 +67,16 @@ class SearchService:
             component_totals,
             key=lambda component: (component_totals[component], component),
         )
+        data_note = f"Data status is {route_cost.data_status}."
+        if self._graph.metadata.get("real_time") is False:
+            data_note += " Traffic profiles are historical, not real-time."
         explanation = (
             f"{algorithm_name.value} selected {' -> '.join(search_path.path)} under "
             f"{scenario_id}. Total weighted cost is {route_cost.total_cost:.6f}; "
             f"distance is {distance_m / 1000:.3f} km and ETA is "
             f"{estimated_time_min:.3f} min. The largest weighted component is "
             f"{dominant_component} ({component_totals[dominant_component]:.6f}). "
-            "All fixture traffic and flood values are SIMULATED."
+            f"{data_note}"
         )
         result = SearchResult(
             path=search_path.path,

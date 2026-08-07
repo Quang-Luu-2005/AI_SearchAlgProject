@@ -98,6 +98,52 @@ def test_route_total_is_sum_of_edge_costs(engine: ScenarioCostEngine) -> None:
     assert route.data_status == "SIMULATED"
 
 
+@pytest.mark.parametrize("status", ["SOURCE_BACKED", "DERIVED", "ASSUMPTION", "MIXED"])
+def test_route_preserves_a_single_provenance_status(
+    engine: ScenarioCostEngine,
+    status: str,
+) -> None:
+    graph = Graph(
+        nodes=engine.graph.nodes,
+        edges=engine.graph.edges,
+        scenarios=(
+            Scenario(
+                scenario_id="STATUS_TEST",
+                attributes={
+                    "cost_preset": "BALANCED",
+                    "weights": dict(DEFAULT_COST_PRESETS["BALANCED"].weights),
+                    "edge_overrides": {"E01": {"data_status": status}},
+                },
+            ),
+        ),
+    )
+
+    assert ScenarioCostEngine(graph).route_cost(["E01"], "STATUS_TEST").data_status == status
+
+
+def test_route_with_multiple_provenance_statuses_is_mixed(engine: ScenarioCostEngine) -> None:
+    graph = Graph(
+        nodes=engine.graph.nodes,
+        edges=engine.graph.edges,
+        scenarios=(
+            Scenario(
+                scenario_id="MIXED_STATUS_TEST",
+                attributes={
+                    "cost_preset": "BALANCED",
+                    "weights": dict(DEFAULT_COST_PRESETS["BALANCED"].weights),
+                    "edge_overrides": {
+                        "E01": {"data_status": "DERIVED"},
+                        "E05": {"data_status": "ASSUMPTION"},
+                    },
+                },
+            ),
+        ),
+    )
+
+    route = ScenarioCostEngine(graph).route_cost(["E01", "E05"], "MIXED_STATUS_TEST")
+    assert route.data_status == "MIXED"
+
+
 def test_closed_edge_makes_route_unavailable(engine: ScenarioCostEngine) -> None:
     route = engine.route_cost(["E03", "E05"], "HEAVY_RAIN_SAFE")
 

@@ -35,6 +35,7 @@ class CompareRequest(BaseModel):
 
 
 class LocationItem(BaseModel):
+    point_id: str | None = None
     node_id: str
     name: str
     node_type: str | None

@@ -1,5 +1,10 @@
 # Graph format và Graph Loader
 
+Catalog khám phá cả `data/fixtures` và `data/processed`. ID fixture giữ dạng cũ; ID
+processed có prefix `processed/`. Cả hai loại đều bị giới hạn trong root đã cấu hình
+sau khi resolve path. Processed release phải có metadata/checksum/validation/provenance;
+fixture phải giữ nhãn simulation.
+
 ## Phạm vi
 
 `backend.app.core.graph.GraphLoader` đọc graph có hướng từ hai dạng input:
@@ -96,7 +101,8 @@ Mỗi ví dụ có `nodes.csv`, `edges.csv`, `scenarios.json`, `metadata.json` v
 
 ## Nạp tự động trên giao diện
 
-`GET /api/v1/graphs` tự khám phá đệ quy các folder bên dưới `data/fixtures`.
+`GET /api/v1/graphs` tự khám phá đệ quy các folder bên dưới `data/fixtures` và
+`data/processed`.
 Folder tối thiểu phải có:
 
 ```text
@@ -115,8 +121,9 @@ Sau khi chọn folder, frontend gọi:
 GET /api/v1/graphs/{graph_id}?scenario_id={scenario_id}
 ```
 
-`graph_id` là đường dẫn tương đối bên trong `data/fixtures`; API không chấp nhận
-đường dẫn thoát ra ngoài root này. Payload trả Node, Edge, Scenario, metadata và
+`graph_id` là đường dẫn tương đối bên trong root cho phép; processed ID có prefix
+`processed/`. API không chấp nhận đường dẫn thoát ra ngoài root tương ứng. Payload trả
+Node, Edge, Scenario, metadata và
 `is_closed` cho từng edge để giao diện hiển thị trạng thái scenario.
 
 Mọi fixture phải ghi rõ `SIMULATED` hoặc `ASSUMPTION`. Loader không sửa file

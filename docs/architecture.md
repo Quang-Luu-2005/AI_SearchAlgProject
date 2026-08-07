@@ -1,5 +1,14 @@
 # Kiến trúc hệ thống
 
+## Processed graph catalog
+
+Catalog graph đọc hai root cố định: `data/fixtures` và `data/processed`. Fixture giữ
+graph ID tương đối cũ; processed graph có prefix `processed/`. API resolve path và xác
+nhận candidate qua `GraphLoader.discover_directories` trong đúng root, vì vậy client
+không thể yêu cầu path filesystem tùy ý. UI ưu tiên
+`processed/thu_duc_market_v1.0.0` nhưng thuật toán vẫn chỉ phụ thuộc immutable graph
+contract, không phụ thuộc FastAPI hay loại dataset.
+
 ## Mục tiêu thiết kế
 
 - Search engine kiểm thử được mà không cần HTTP hoặc trình duyệt.
@@ -81,8 +90,9 @@ deterministic theo `(to_node_id, edge_id)` và mỗi scenario được biểu di
 ví dụ input nằm trong [graph-format.md](graph-format.md).
 
 Graph explorer không nhận filesystem path tùy ý từ frontend. Backend chỉ khám
-phá folder dưới `data/fixtures`, tạo `graph_id` tương đối, kiểm tra đường dẫn sau
-khi resolve vẫn nằm trong fixture root rồi mới load. Frontend gọi catalog, cho
+phá folder dưới `data/fixtures` và `data/processed`, tạo `graph_id` tương đối có prefix
+cho processed, kiểm tra đường dẫn sau khi resolve vẫn nằm trong root tương ứng rồi mới
+load. Frontend gọi catalog, cho
 chọn dataset/scenario và vẽ Node/Edge; edge đóng vẫn có trong payload với
 `is_closed=true` để bản đồ hiển thị khác màu.
 

@@ -3,6 +3,7 @@ import { RouteMap } from './features/map/RouteMap'
 import {
   fetchGraph,
   fetchGraphCatalog,
+  preferredGraphId,
   type GraphPayload,
   type GraphSummary,
   type InvalidGraphSummary,
@@ -85,11 +86,9 @@ export function App() {
       .then(({ graphs, invalid_graphs }) => {
         setCatalog(graphs)
         setInvalidGraphs(invalid_graphs)
-        const initial = graphs.find((item) => item.graph_id === graphId)
-          ?? graphs.find((item) => item.graph_id === 'toy_graph_v0.1')
-          ?? graphs[0]
-        if (initial) setGraphId(initial.graph_id)
-        else setError('Không tìm thấy graph hợp lệ trong data/fixtures.')
+        const initialGraphId = preferredGraphId(graphs, graphId)
+        if (initialGraphId) setGraphId(initialGraphId)
+        else setError('Không tìm thấy graph hợp lệ trong data/fixtures hoặc data/processed.')
       })
       .catch((reason: Error) => {
         if (reason.name !== 'AbortError') setError(reason.message)
@@ -129,7 +128,8 @@ export function App() {
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
-            : nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
+            : nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
+              ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
               ?? nextScenarios[0]?.scenario_id
               ?? ''
         ))
@@ -260,7 +260,7 @@ export function App() {
                 Điểm bắt đầu
                 <select value={startId} onChange={(event) => setStartId(event.target.value)}>
                   {locations.map((item) => (
-                    <option key={item.node_id} value={item.node_id}>
+                    <option key={item.point_id ?? item.node_id} value={item.node_id}>
                       {item.node_id} · {item.name}
                     </option>
                   ))}
@@ -281,7 +281,7 @@ export function App() {
                 Điểm đích
                 <select value={goalId} onChange={(event) => setGoalId(event.target.value)}>
                   {locations.map((item) => (
-                    <option key={item.node_id} value={item.node_id}>
+                    <option key={item.point_id ?? item.node_id} value={item.node_id}>
                       {item.node_id} · {item.name}
                     </option>
                   ))}
@@ -304,6 +304,32 @@ export function App() {
               <strong>{selectedScenario.closed_edge_ids.length} cạnh đóng</strong>
             </div>
           )}
+          {selectedGraph?.dataset_kind === 'processed' && (
+            <div className="dataset-notice">
+              <strong>{selectedGraph.real_time ? 'Real-time dataset' : 'Historical traffic · not real-time'}</strong>
+              <span>Snapshot {selectedGraph.snapshot_date ?? 'unknown'} · {selectedGraph.routing_dataset_status}</span>
+              {selectedGraph.graph_id === 'processed/thu_duc_market_v1.0.0' && (
+                <small>No flood record does not mean a road is safe.</small>
+              )}
+              <details>
+                <summary>Nguồn và giới hạn dataset</summary>
+                <ul>
+                  {selectedGraph.limitations.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+                {selectedGraph.graph_id === 'processed/thu_duc_market_v1.0.0' && (
+                  <div>
+                    <a href="https://ttbc-hcm.gov.vn/24-diem-mua-la-ngap-o-tp-thu-duc-nguoi-dan-can-chu-y-1018710.html" target="_blank" rel="noreferrer">
+                      Flood hotspots 2025
+                    </a>
+                    {' · '}
+                    <a href="https://tuoitre.vn/nld/so-xay-dung-tphcm-neu-nguyen-nhan-cho-thu-duc-ngap-nang-sau-mua-dau-mua-196260507181450735.htm" target="_blank" rel="noreferrer">
+                      Thu Duc Market update 2026
+                    </a>
+                  </div>
+                )}
+              </details>
+            </div>
+          )}
           {invalidGraphs.length > 0 && (
             <p className="warning-note">{invalidGraphs.length} graph không hợp lệ đã bị bỏ qua.</p>
           )}
@@ -319,7 +345,9 @@ export function App() {
               <span className="eyebrow">Optimal path visualizer</span>
               <h2>{selectedGraph?.label ?? 'Đang tải graph'}</h2>
             </div>
-            <span className="simulated-badge">SIMULATED</span>
+            <span className={`data-badge data-badge--${(selectedGraph?.data_status ?? 'unknown').toLowerCase()}`}>
+              {selectedGraph?.data_status ?? 'UNKNOWN'}
+            </span>
           </div>
 
           <section className="map-card">
@@ -344,6 +372,15 @@ export function App() {
               </div>
             )}
           </section>
+
+          {selectedGraph?.graph_id === 'processed/thu_duc_market_v1.0.0' && (
+            <p className="dataset-attribution">
+              Traffic: UTraffic/HCMUT · Flood records: TP.HCM public reporting · POI{' '}
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
+                © OpenStreetMap contributors, ODbL 1.0
+              </a>
+            </p>
+          )}
 
           <section className="status-bar">
             <div className="legend">

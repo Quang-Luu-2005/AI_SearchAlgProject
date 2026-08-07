@@ -1,0 +1,18 @@
+{
+  "dataset_id": "thu_duc_market_v1.0.0",
+  "generated_at": "2026-08-07T00:00:00+00:00",
+  "status": "PASS_WITH_PENDING_HUMAN_REVIEW",
+  "checks": {
+    "node_count": 90,
+    "edge_count": 155,
+    "strongly_connected": true,
+    "positive_distance_and_time": true,
+    "poi_snap_max_m": 45.635,
+    "poi_snap_within_100m": true,
+    "source_provenance_present": true,
+    "human_mapping_review_count": 0
+  },
+  "warnings": [
+    "Dataset must remain REVIEW_REQUIRED until reviewer_1 and reviewer_2 are completed by human team members."
+  ]
+}

@@ -336,7 +336,7 @@ select:focus {
   letter-spacing: -0.03em;
 }
 
-.simulated-badge {
+.data-badge {
   padding: 6px 10px;
   border-radius: 999px;
   color: #754b00;
@@ -344,6 +344,51 @@ select:focus {
   font-size: 0.67rem;
   font-weight: 800;
   letter-spacing: 0.08em;
+}
+
+.data-badge--mixed {
+  color: #174a3d;
+  background: #c9f0e4;
+}
+
+.dataset-notice {
+  display: grid;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #d8c48b;
+  border-radius: 12px;
+  color: #54451d;
+  background: #fff9e8;
+  font-size: 0.76rem;
+}
+
+.dataset-notice span,
+.dataset-notice small {
+  color: var(--muted);
+}
+
+.dataset-notice summary {
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.dataset-notice ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+.dataset-notice a,
+.dataset-attribution a {
+  color: var(--primary);
+}
+
+.dataset-attribution {
+  width: min(1180px, 100%);
+  margin: 7px auto 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-align: right;
 }
 
 .map-card {

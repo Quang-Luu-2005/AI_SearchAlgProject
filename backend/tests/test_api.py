@@ -23,7 +23,7 @@ def test_dataset_metadata_exposes_provenance() -> None:
     assert payload["fixtures"][0]["data_status"] == "SIMULATED"
 
 
-def test_graph_catalog_discovers_loadable_fixture_folders() -> None:
+def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
     response = client.get("/api/v1/graphs")
 
     assert response.status_code == 200
@@ -36,6 +36,12 @@ def test_graph_catalog_discovers_loadable_fixture_folders() -> None:
         "BREAK_CYCLE",
         "OPEN_CYCLE",
     ]
+    real_graph = graph_by_id["processed/thu_duc_market_v1.0.0"]
+    assert (real_graph["node_count"], real_graph["edge_count"]) == (90, 155)
+    assert real_graph["dataset_kind"] == "processed"
+    assert real_graph["data_status"] == "MIXED"
+    assert real_graph["real_time"] is False
+    assert real_graph["routing_dataset_status"] == "REVIEW_REQUIRED"
 
 
 def test_graph_detail_applies_scenario_without_hiding_closed_edge() -> None:
@@ -73,6 +79,21 @@ def test_locations_returns_selectable_simulated_nodes() -> None:
         "N06",
     ]
     assert all(item["data_status"] == "SIMULATED" for item in payload["locations"])
+
+
+def test_processed_locations_only_return_source_backed_pois() -> None:
+    response = client.get(
+        "/api/v1/locations",
+        params={"graph_id": "processed/thu_duc_market_v1.0.0"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["locations"]) == 6
+    assert [item["point_id"] for item in payload["locations"]] == [
+        "DP00", "DP01", "DP02", "DP03", "DP04", "DP05"
+    ]
+    assert all(item["data_status"] == "SOURCE_BACKED" for item in payload["locations"])
 
 
 def test_scenarios_returns_three_cost_presets() -> None:
@@ -190,6 +211,27 @@ def test_compare_runs_ucs_and_a_star_on_same_input() -> None:
     assert [result["algorithm"] for result in results] == ["UCS", "A_STAR"]
     assert results[0]["path"] == results[1]["path"]
     assert results[0]["metrics"]["total_cost"] == results[1]["metrics"]["total_cost"]
+
+
+def test_processed_search_discloses_historical_limitations() -> None:
+    response = client.post(
+        "/api/v1/search",
+        json={
+            "graph_id": "processed/thu_duc_market_v1.0.0",
+            "start": "UTR_NODE_2947068442",
+            "goal": "UTR_NODE_366385739",
+            "algorithm": "UCS",
+            "scenario": "RAIN_FLOOD_AWARE_2025_2026",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    # The selected detour contains only derived traffic edges; the dataset/scenario
+    # remains MIXED, while route status is intentionally edge-granular.
+    assert payload["data_status"] == "DERIVED"
+    assert "historical, not real-time" in payload["explanation"]
+    assert any("not real-time" in item for item in payload["limitations"])
 
 
 def test_openapi_documents_be03_endpoints_and_handoff_example() -> None:

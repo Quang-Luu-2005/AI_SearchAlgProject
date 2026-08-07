@@ -1,8 +1,8 @@
 {
   "project": "FloodRoute HCMC",
-  "manifest_version": "0.2.0",
-  "updated_at": "2026-08-05",
-  "routing_dataset_status": "NOT_READY",
+  "manifest_version": "1.0.0",
+  "updated_at": "2026-08-07",
+  "routing_dataset_status": "REVIEW_REQUIRED",
   "raw_sources": [
     {
       "dataset_id": "floodroute-workbook-v0.1",
@@ -10,6 +10,45 @@
       "sha256": "CA5351EFB43ACD5D1A699F23F7DF0FF9B3A5CD8D7A65E8AB1D0AE3E174F7AC12",
       "data_status": "MIXED_SOURCE_DERIVED_SIMULATED",
       "immutable": true
+    },
+    {
+      "dataset_id": "UTRAFFIC-HCM-V6",
+      "path": "data/raw/thu_duc_market_v1.0.0/utraffic_hcm_v6.zip",
+      "sha256": "E0EAF59BBCA805A3B0175521DCF0518140AB01A44059D315ED3979414B56761E",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true
+    },
+    {
+      "dataset_id": "OSM-POI-2026-08-07",
+      "path": "data/raw/thu_duc_market_v1.0.0/osm_poi_snapshot.json",
+      "sha256": "4681D12A7A45560678099EE806DDA5EFDB845A77D61F4F178C4347FE7144ED45",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true
+    },
+    {
+      "dataset_id": "THU-DUC-SOURCE-REGISTRY-1.0.0",
+      "path": "data/raw/thu_duc_market_v1.0.0/source_registry.json",
+      "sha256": "DFD321A6CB67BAE49178D0907002D261042B5A84FC6CACD929D812AE846E5318",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true
+    }
+  ],
+  "processed_datasets": [
+    {
+      "dataset_id": "thu_duc_market_v1.0.0",
+      "path": "data/processed/thu_duc_market_v1.0.0",
+      "data_status": "MIXED",
+      "routing_dataset_status": "REVIEW_REQUIRED",
+      "snapshot_date": "2026-08-07",
+      "real_time": false,
+      "node_count": 90,
+      "edge_count": 155,
+      "source_ids": [
+        "UTRAFFIC-HCM-V6",
+        "OSM-POI-2026-08-07",
+        "HMC-FLOOD-2025-24",
+        "HMC-FLOOD-2026-MARKET"
+      ]
     }
   ],
   "fixtures": [
@@ -28,8 +67,10 @@
     }
   ],
   "limitations": [
-    "Workbook v0.1 is not a routable graph.",
-    "OSM extraction and two-person flood hotspot map-matching are pending.",
-    "Traffic multipliers and toy graph values are simulated assumptions."
+    "Traffic profiles are historical observations from 2020-2021, not real-time.",
+    "Flood absence means NO_RECORD in selected sources, not flood-safe.",
+    "Two human team-member reviews are still required for flood candidate map matches.",
+    "Delivery orders, cost weights and rain closures are academic ASSUMPTION values.",
+    "The processed dataset is for academic demonstration, not safety guidance."
   ]
 }
