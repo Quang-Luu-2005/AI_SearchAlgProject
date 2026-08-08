@@ -27,6 +27,20 @@ function FitGraphBounds({ positions }: { positions: LatLngExpression[] }) {
   return null
 }
 
+function FocusEndpoints({ positions }: { positions: LatLngExpression[] }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (positions.length === 2) {
+      map.fitBounds(latLngBounds(positions), { padding: [84, 84], maxZoom: 17 })
+    } else if (positions.length === 1) {
+      map.setView(positions[0], 16)
+    }
+  }, [map, positions])
+
+  return null
+}
+
 function ResetGraphView({ positions }: { positions: LatLngExpression[] }) {
   const map = useMap()
 
@@ -71,13 +85,24 @@ export function RouteMap({
     ),
     [graph.nodes],
   )
-  const nodeById = new Map(drawableNodes.map((node) => [node.node_id, node]))
+  const nodeById = useMemo(
+    () => new Map(drawableNodes.map((node) => [node.node_id, node])),
+    [drawableNodes],
+  )
   const visiblePathEdgeIds = pathEdgeIds.slice(0, visiblePathEdgeCount)
   const pathNodes = new Set(pathNodeIds)
   const exploredNodes = new Set(exploredNodeIds)
   const positions = useMemo<LatLngExpression[]>(
     () => drawableNodes.map((node) => [node.latitude!, node.longitude!]),
     [drawableNodes],
+  )
+  const endpointPositions = useMemo<LatLngExpression[]>(
+    () => [startId, goalId]
+      .filter((nodeId): nodeId is string => Boolean(nodeId))
+      .map((nodeId) => nodeById.get(nodeId))
+      .filter((node): node is NonNullable<typeof node> => Boolean(node))
+      .map((node) => [node.latitude!, node.longitude!]),
+    [goalId, nodeById, startId],
   )
   const center = positions[0] ?? ([10.849, 106.756] as LatLngExpression)
 
@@ -91,6 +116,7 @@ export function RouteMap({
       attributionControl={false}
     >
       <FitGraphBounds positions={positions} />
+      <FocusEndpoints positions={endpointPositions} />
       <ResetGraphView positions={positions} />
 
       {graph.edges.map((edge) => {

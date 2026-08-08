@@ -84,6 +84,10 @@ Giao diện Pathfinder AI cho phép chọn dataset, scenario, điểm đầu/đ�
 UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và metrics đều lấy
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
+Với graph lớn, điểm đầu/đích được chọn bằng ô tìm kiếm theo tên hoặc `node_id`; bản đồ
+chỉ dùng để xem topology và tự zoom vào hai endpoint đã chọn, không cần hiển thị toàn
+bộ node để thao tác.
+
 `npm run dev` luôn dùng Python trong `.venv`, chạy Vite từ đúng folder
 `frontend/` và dừng cả hai service khi nhấn `Ctrl+C`. Nếu cần chạy riêng:
 

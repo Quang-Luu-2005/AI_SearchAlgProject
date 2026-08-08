@@ -11,6 +11,9 @@
   chung contract và được kiểm tra deterministic.
 - Mở catalog API cho fixture + processed, truyền provenance/status/limitations; UI
   chọn pilot mặc định và công bố historical/not real-time cùng attribution OSM.
+- Với graph lớn, UI không yêu cầu người dùng nhìn/chọn toàn bộ node trên bản đồ: ô
+  start/goal tìm theo tên hoặc `node_id`, hiển thị tối đa 40 kết quả và focus endpoint
+  sau khi chọn.
 - Mở rộng validator cho checksum, bbox, ID/FK, connectivity, weight, snapping,
   provenance, mapping review và golden case.
 

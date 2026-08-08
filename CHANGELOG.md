@@ -41,6 +41,10 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Changed
 
+- Route picker trên UI chuyển từ danh sách select dài sang tìm kiếm theo tên hoặc
+  `node_id`, giới hạn 40 kết quả hiển thị; endpoint được highlight và bản đồ tự zoom
+  vào start/goal khi chọn.
+
 - Graph catalog/API/UI hỗ trợ cả `data/fixtures` và `data/processed`; UI chọn pilot
   Thủ Đức mặc định, truyền trạng thái `MIXED` và hiển thị historical/not real-time,
   limitations cùng attribution OSM.

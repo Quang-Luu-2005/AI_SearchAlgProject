@@ -23,6 +23,74 @@ function metric(value: number | undefined, digits = 1): string {
   return value === undefined ? '—' : value.toFixed(digits)
 }
 
+type LocationPickerProps = {
+  label: string
+  value: string
+  locations: LocationItem[]
+  onChange: (nodeId: string) => void
+}
+
+function LocationPicker({ label, value, locations, onChange }: LocationPickerProps) {
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const selected = locations.find((item) => item.node_id === value)
+  const normalizedQuery = query.trim().toLocaleLowerCase()
+  const matches = locations
+    .filter((item) => {
+      if (!normalizedQuery) return true
+      return `${item.name} ${item.node_id}`.toLocaleLowerCase().includes(normalizedQuery)
+    })
+    .slice(0, 40)
+
+  function choose(nodeId: string) {
+    onChange(nodeId)
+    setQuery('')
+    setOpen(false)
+  }
+
+  return (
+    <div className="location-picker">
+      <label>
+        {label}
+        <input
+          type="search"
+          value={open ? query : (selected ? `${selected.name} · ${selected.node_id}` : '')}
+          placeholder="Tìm theo tên hoặc node_id…"
+          aria-label={label}
+          aria-expanded={open}
+          onFocus={() => {
+            setQuery('')
+            setOpen(true)
+          }}
+          onChange={(event) => {
+            setQuery(event.target.value)
+            setOpen(true)
+          }}
+          onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+        />
+      </label>
+      {open && (
+        <div className="location-results" role="listbox" aria-label={`${label} results`}>
+          {matches.length > 0 ? matches.map((item) => (
+            <button
+              key={item.point_id ?? item.node_id}
+              type="button"
+              role="option"
+              aria-selected={item.node_id === value}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => choose(item.node_id)}
+            >
+              <span>{item.name}</span>
+              <small>{item.node_id}</small>
+            </button>
+          )) : <span className="location-empty">Không tìm thấy điểm phù hợp</span>}
+          {matches.length === 40 && <small className="location-result-limit">Đang hiển thị 40 kết quả đầu tiên</small>}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function App() {
   const [catalog, setCatalog] = useState<GraphSummary[]>([])
   const [invalidGraphs, setInvalidGraphs] = useState<InvalidGraphSummary[]>([])
@@ -256,16 +324,12 @@ export function App() {
             </label>
 
             <div className="route-fields">
-              <label>
-                Điểm bắt đầu
-                <select value={startId} onChange={(event) => setStartId(event.target.value)}>
-                  {locations.map((item) => (
-                    <option key={item.point_id ?? item.node_id} value={item.node_id}>
-                      {item.node_id} · {item.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <LocationPicker
+                label="Điểm bắt đầu"
+                value={startId}
+                locations={locations}
+                onChange={setStartId}
+              />
               <button
                 className="swap-button"
                 type="button"
@@ -277,16 +341,12 @@ export function App() {
               >
                 ⇅
               </button>
-              <label>
-                Điểm đích
-                <select value={goalId} onChange={(event) => setGoalId(event.target.value)}>
-                  {locations.map((item) => (
-                    <option key={item.point_id ?? item.node_id} value={item.node_id}>
-                      {item.node_id} · {item.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <LocationPicker
+                label="Điểm đích"
+                value={goalId}
+                locations={locations}
+                onChange={setGoalId}
+              />
             </div>
 
             <button className="generate-button" type="button" onClick={() => setReloadVersion((value) => value + 1)}>
