@@ -33,10 +33,11 @@ nhất trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ; khô
 làm edge/node runtime. API locations trả một row cho mọi topology node. Graph capacity
 3.229/5.057 dùng cùng contract/layer pipeline nhưng mang trạng thái benchmark-only.
 
-Camera không dùng hard `maxBounds`: `renderWorldCopies=false` và min zoom 10.5 tránh
-rơi về toàn thế giới. Initial/reset lấy bounding rectangle B của polygon ranh A rồi cộng
-3% padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có một vành ngữ cảnh bên ngoài.
-Nếu boundary API lỗi, renderer mới fallback về context ring động của graph.
+Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
+trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%
+padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có một vành ngữ cảnh nhỏ bên
+ngoài đường đỏ. Nếu boundary API lỗi, renderer fallback về context ring động của graph
+và cũng giới hạn camera trong rectangle fallback đó.
 
 ## Luồng chính
 

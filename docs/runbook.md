@@ -154,11 +154,11 @@ Trong chế độ START/GOAL có thể click trực tiếp circle node hoặc cl
 basemap. Trường hợp thứ hai snap tới topology node gần nhất trong 200 m; popup hiện khoảng
 cách `SNAP`. Nếu không có node trong bán kính này, chế độ chọn được giữ nguyên và UI báo lỗi.
 
-Map vẽ đường đỏ “Ranh TP Thủ Đức cũ” từ frozen OSM boundary snapshot. Có thể pan ra vùng
-lân cận để xem context; min zoom 10.5 và `renderWorldCopies=false` ngăn viewport rơi về
-bản đồ toàn thế giới. Nút reset fit rectangle B có lề bao trọn polygon ranh A, nhờ vậy
-các cạnh sát biên và một phần khu vực bên ngoài vẫn nhìn thấy. Nếu boundary API lỗi,
-camera fallback về graph context bounds.
+Map vẽ đường đỏ “Ranh TP Thủ Đức cũ” từ frozen OSM boundary snapshot. Camera chỉ pan
+trong rectangle B có lề bao trọn polygon ranh A; min zoom 10.5 và
+`renderWorldCopies=false` ngăn viewport đi ra toàn TP.HCM hoặc bản đồ thế giới. Nút reset
+fit lại B, nhờ vậy các cạnh sát biên và một vành nhỏ bên ngoài đường đỏ vẫn nhìn thấy.
+Nếu boundary API lỗi, camera fallback và giới hạn theo graph context bounds.
 
 ## 6. Thêm dataset folder mới
 

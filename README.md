@@ -91,7 +91,8 @@ topology. Nếu mất mạng, nền trung tính vẫn cho phép chạy thuật t
 
 Bản đồ vẽ đường đỏ theo snapshot ranh TP Thủ Đức cũ. View tổng quan là một hình chữ
 nhật có lề bao trọn polygon ranh thật, nên vẫn thấy được khu vực ngoài biên và các cạnh
-sát ranh. Nút reset đưa camera về rectangle này; bản đồ không khóa pan theo hình chữ nhật.
+sát ranh. Nút reset đưa camera về rectangle này và camera bị giới hạn trong B, nên không
+thể kéo bản đồ ra toàn TP.HCM hoặc world view.
 
 Catalog có thêm `processed/thu_duc_core_capacity_v0.1.0` gồm 3.229 node/5.057 directed
 edge để stress-test. Pilot 90/155 vẫn là mặc định. Chạy benchmark bằng:

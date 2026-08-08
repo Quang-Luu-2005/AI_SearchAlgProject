@@ -10,8 +10,8 @@ Kế hoạch triển khai đầy đủ được lưu tại
   `optimizeDeps` để tránh lỗi `maplibre-gl-worker.mjs` trong `.vite/deps`.
 - Điều chỉnh vị trí nút reset viewport xuống dưới NavigationControl, tránh chồng với
   zoom/compass trên desktop và mobile.
-- Giữ viewport ở min zoom 10.5, tắt world-copy và bỏ hard `maxBounds`. Initial/reset
-  ưu tiên rectangle B bao polygon ranh A; graph context là fallback; endpoint đơn dùng
+- Giữ viewport ở min zoom 10.5, tắt world-copy và hard-clamp theo rectangle B. Initial/reset
+  ưu tiên B bao polygon ranh A; graph context là fallback; endpoint đơn dùng
   zoom 16.5.
 - Chuyển Node/Edge/route thành GeoJSON layers; giữ closed edge, explored node, endpoint
   và route animation theo response backend.

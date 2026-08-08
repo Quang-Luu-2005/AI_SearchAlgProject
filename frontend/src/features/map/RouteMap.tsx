@@ -486,8 +486,9 @@ export function RouteMap({
     }
 
     // Rectangle B contains the irregular boundary A plus a small outside context ring.
-    // It controls overview/reset only; panning is deliberately not hard-clamped.
+    // Clamp navigation to B so the map remains a Thu Duc study-area crop.
     map.setMinZoom(MIN_CITY_ZOOM)
+    map.setMaxBounds(bounds)
     const cameraKey = `${graph.graph_id}:${styleRevision}:${boundary?.source_id ?? 'graph-fallback'}`
     if (cameraGraphKeyRef.current === cameraKey) return
     cameraGraphKeyRef.current = cameraKey
@@ -531,7 +532,10 @@ export function RouteMap({
   function resetView() {
     const map = mapRef.current
     const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
-    if (map && bounds) map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
+    if (map && bounds) {
+      map.setMaxBounds(bounds)
+      map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
+    }
   }
 
   return (

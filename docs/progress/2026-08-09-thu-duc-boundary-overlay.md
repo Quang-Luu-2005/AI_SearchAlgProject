@@ -6,8 +6,8 @@
   công bố trạng thái `HISTORIC_OSM_RELATION`.
 - Thêm `GET /api/v1/boundaries/thu-duc` và frontend loader độc lập với graph API.
 - Thêm GeoJSON fill/line layer đỏ “Ranh TP Thủ Đức cũ”.
-- Tính rectangle B có padding bao trọn polygon A cho initial/reset camera; giữ pan ngoài
-  boundary, tắt world copies và dùng graph bounds làm fallback.
+- Tính rectangle B có padding bao trọn polygon A cho initial/reset camera; giới hạn pan
+  trong B, tắt world copies và dùng graph bounds làm fallback.
 - Thêm validator geometry/disclosure, backend API test và MapLibre source/layer test.
 
 ## Xác minh

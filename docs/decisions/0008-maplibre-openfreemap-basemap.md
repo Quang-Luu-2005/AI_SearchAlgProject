@@ -27,9 +27,9 @@ có một hitbox layer trong suốt để click; START và GOAL được đặt 
 Nếu remote style không tải được, renderer chuyển sang style nền trung tính cục bộ và
 vẫn cài graph sources/layers. Không dùng geocoder, satellite hoặc provider routing.
 
-Camera dùng `minZoom=10.5` và `renderWorldCopies=false`, nhưng không dùng hard `maxBounds`.
-Theo ADR 0010, initial/reset ưu tiên rectangle có padding bao trọn polygon ranh TP Thủ
-Đức cũ; context ring động của graph chỉ là fallback khi boundary chưa sẵn sàng.
+Camera dùng `minZoom=10.5`, `renderWorldCopies=false` và `maxBounds` theo ADR 0010.
+Initial/reset ưu tiên rectangle có padding bao trọn polygon ranh TP Thủ Đức cũ; context
+ring động của graph chỉ là fallback khi boundary chưa sẵn sàng.
 
 ## Hệ quả
 

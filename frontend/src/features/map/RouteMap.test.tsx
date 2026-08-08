@@ -217,7 +217,7 @@ describe('MapLibre RouteMap', () => {
     expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
   })
 
-  it('keeps city-scale zoom without hard bounds and focuses a single endpoint', async () => {
+  it('clamps navigation to the city crop and focuses a single endpoint', async () => {
     render(
       <RouteMap
         graph={graph}
@@ -232,7 +232,7 @@ describe('MapLibre RouteMap', () => {
 
     await waitFor(() => {
       expect(map.setMinZoom).toHaveBeenCalledWith(10.5)
-      expect(map.setMaxBounds).not.toHaveBeenCalled()
+      expect(map.setMaxBounds).toHaveBeenCalled()
       expect(map.options).toMatchObject({ minZoom: 10.5, renderWorldCopies: false })
       expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
         center: [106.75, 10.85],
