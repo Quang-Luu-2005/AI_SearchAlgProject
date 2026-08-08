@@ -19,7 +19,8 @@ contract, không phụ thuộc FastAPI hay loại dataset.
 ## Map renderer
 
 Frontend dùng MapLibre GL JS. OpenFreeMap là basemap best-effort; Node, Edge và route
-được chuyển từ API payload sang ba GeoJSON source và render bằng GPU layers. Basemap
+được chuyển từ API payload sang ba GeoJSON source và render bằng GPU layers. Snapshot
+ranh TP Thủ Đức cũ là GeoJSON source thứ tư, chỉ dùng làm lớp ngữ cảnh. Basemap
 không tham gia snapping, topology, scenario hoặc cost. Khi remote style lỗi, renderer
 dùng style nền trung tính cục bộ và vẫn hiển thị graph.
 
@@ -32,9 +33,10 @@ nhất trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ; khô
 làm edge/node runtime. API locations trả một row cho mọi topology node. Graph capacity
 3.229/5.057 dùng cùng contract/layer pipeline nhưng mang trạng thái benchmark-only.
 
-Camera không dùng hard `maxBounds`: min zoom 12 và `renderWorldCopies=false` giữ city-scale,
-còn initial/reset fit một context ring động lớn hơn graph để vùng ngoài và cạnh biên không
-bị cắt khỏi thao tác pan.
+Camera không dùng hard `maxBounds`: `renderWorldCopies=false` và min zoom 10.5 tránh
+rơi về toàn thế giới. Initial/reset lấy bounding rectangle B của polygon ranh A rồi cộng
+3% padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có một vành ngữ cảnh bên ngoài.
+Nếu boundary API lỗi, renderer mới fallback về context ring động của graph.
 
 ## Luồng chính
 

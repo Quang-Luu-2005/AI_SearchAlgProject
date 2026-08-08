@@ -8,7 +8,7 @@ import {
   type StyleSpecification,
 } from 'maplibre-gl'
 import recenterGraphIcon from '../../assets/recenter-graph.png'
-import type { GraphPayload } from '../../lib/graph'
+import type { GraphPayload, ThuDucBoundary } from '../../lib/graph'
 import {
   buildEdgeFeatureCollection,
   buildNodeFeatureCollection,
@@ -21,6 +21,8 @@ export type EndpointPickTarget = 'START' | 'GOAL'
 
 type RouteMapProps = {
   graph: GraphPayload
+  boundary?: ThuDucBoundary | null
+  boundaryWarning?: string
   pathEdgeIds?: string[]
   visiblePathEdgeCount?: number
   pathNodeIds?: string[]
@@ -48,12 +50,16 @@ const FALLBACK_STYLE: StyleSpecification = {
 const SOURCE_EDGES = 'floodroute-edges'
 const SOURCE_ROUTE = 'floodroute-route'
 const SOURCE_NODES = 'floodroute-nodes'
+const SOURCE_BOUNDARY = 'floodroute-thu-duc-boundary'
 const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
 const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
-const MIN_PILOT_ZOOM = 12
+const MIN_CITY_ZOOM = 10.5
 const MAX_BASEMAP_SNAP_DISTANCE_M = 200
 
 function addGraphLayers(map: maplibregl.Map) {
+  if (!map.getSource(SOURCE_BOUNDARY)) {
+    map.addSource(SOURCE_BOUNDARY, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
+  }
   if (!map.getSource(SOURCE_EDGES)) {
     map.addSource(SOURCE_EDGES, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
   }
@@ -62,6 +68,31 @@ function addGraphLayers(map: maplibregl.Map) {
   }
   if (!map.getSource(SOURCE_NODES)) {
     map.addSource(SOURCE_NODES, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
+  }
+
+  if (!map.getLayer('floodroute-thu-duc-boundary-fill')) {
+    map.addLayer({
+      id: 'floodroute-thu-duc-boundary-fill',
+      type: 'fill',
+      source: SOURCE_BOUNDARY,
+      paint: {
+        'fill-color': '#d52b1e',
+        'fill-opacity': 0.035,
+      },
+    })
+  }
+  if (!map.getLayer('floodroute-thu-duc-boundary-line')) {
+    map.addLayer({
+      id: 'floodroute-thu-duc-boundary-line',
+      type: 'line',
+      source: SOURCE_BOUNDARY,
+      paint: {
+        'line-color': '#d52b1e',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 15, 4],
+        'line-opacity': 0.95,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
   }
 
   if (!map.getLayer('floodroute-edge-open')) {
@@ -234,8 +265,46 @@ function graphContextBounds(graph: GraphPayload): maplibregl.LngLatBounds | null
   )
 }
 
+function boundaryContextBounds(boundary: ThuDucBoundary | null | undefined): maplibregl.LngLatBounds | null {
+  if (!boundary?.features.length) return null
+  const extent: CoordinateExtent = {
+    west: Number.POSITIVE_INFINITY,
+    south: Number.POSITIVE_INFINITY,
+    east: Number.NEGATIVE_INFINITY,
+    north: Number.NEGATIVE_INFINITY,
+  }
+
+  function visitCoordinates(value: unknown): void {
+    if (!Array.isArray(value)) return
+    if (value.length >= 2 && typeof value[0] === 'number' && typeof value[1] === 'number') {
+      const [longitude, latitude] = value
+      if (Number.isFinite(longitude) && Number.isFinite(latitude)) {
+        extent.west = Math.min(extent.west, longitude)
+        extent.south = Math.min(extent.south, latitude)
+        extent.east = Math.max(extent.east, longitude)
+        extent.north = Math.max(extent.north, latitude)
+      }
+      return
+    }
+    value.forEach(visitCoordinates)
+  }
+
+  boundary.features.forEach((feature) => visitCoordinates(feature.geometry.coordinates))
+  if (![extent.west, extent.south, extent.east, extent.north].every(Number.isFinite)) return null
+
+  // B is a padded rectangle that fully contains the irregular Thu Duc polygon A.
+  const longitudePadding = Math.max((extent.east - extent.west) * 0.03, 0.004)
+  const latitudePadding = Math.max((extent.north - extent.south) * 0.03, 0.004)
+  return new maplibregl.LngLatBounds(
+    [extent.west - longitudePadding, extent.south - latitudePadding],
+    [extent.east + longitudePadding, extent.north + latitudePadding],
+  )
+}
+
 export function RouteMap({
   graph,
+  boundary,
+  boundaryWarning = '',
   pathEdgeIds = [],
   visiblePathEdgeCount = pathEdgeIds.length,
   pathNodeIds = [],
@@ -286,7 +355,7 @@ export function RouteMap({
       style: BASEMAP_STYLE_URL,
       center: DEFAULT_CENTER,
       zoom: 14,
-      minZoom: MIN_PILOT_ZOOM,
+      minZoom: MIN_CITY_ZOOM,
       renderWorldCopies: false,
       attributionControl: false,
     })
@@ -399,28 +468,31 @@ export function RouteMap({
     ;(map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
     ;(map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
     ;(map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
-  }, [edgeData, nodeData, routeData, styleRevision])
+    ;(map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
+      boundary ?? EMPTY_FEATURE_COLLECTION,
+    )
+  }, [boundary, edgeData, nodeData, routeData, styleRevision])
 
   const cameraGraphKeyRef = useRef('')
 
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
-    const bounds = graphContextBounds(graph)
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
     if (!bounds) {
       map.setCenter(DEFAULT_CENTER)
       map.setZoom(14)
       return
     }
 
-    // Keep city-scale zoom, but do not hard-clamp panning to a rectangular bbox.
-    // The context bounds include an outer geographic ring so border edges stay visible.
-    map.setMinZoom(MIN_PILOT_ZOOM)
-    const cameraKey = `${graph.graph_id}:${styleRevision}`
+    // Rectangle B contains the irregular boundary A plus a small outside context ring.
+    // It controls overview/reset only; panning is deliberately not hard-clamped.
+    map.setMinZoom(MIN_CITY_ZOOM)
+    const cameraKey = `${graph.graph_id}:${styleRevision}:${boundary?.source_id ?? 'graph-fallback'}`
     if (cameraGraphKeyRef.current === cameraKey) return
     cameraGraphKeyRef.current = cameraKey
     map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
-  }, [graph, styleRevision])
+  }, [boundary, graph, styleRevision])
 
   useEffect(() => {
     const map = mapRef.current
@@ -458,7 +530,7 @@ export function RouteMap({
 
   function resetView() {
     const map = mapRef.current
-    const bounds = graphContextBounds(graph)
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
     if (map && bounds) map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
   }
 
@@ -496,13 +568,15 @@ export function RouteMap({
       <button
         type="button"
         className="map-reset-button"
-        title="Đưa bản đồ về toàn bộ graph"
-        aria-label="Đưa bản đồ về toàn bộ graph"
+        title="Đưa bản đồ về toàn vùng Thủ Đức"
+        aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
         onClick={resetView}
       >
         <img src={recenterGraphIcon} alt="" aria-hidden="true" />
       </button>
-      {basemapWarning && <div className="basemap-warning" role="status">{basemapWarning}</div>}
+      {(basemapWarning || boundaryWarning) && (
+        <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
+      )}
       <div className="map-note">
         {graph.data_status} · {graph.nodes.length.toLocaleString('vi-VN')} node ·{' '}
         {graph.edges.length.toLocaleString('vi-VN')} edge

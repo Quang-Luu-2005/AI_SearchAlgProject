@@ -761,6 +761,11 @@ select:focus {
   box-shadow: 0 0 5px rgba(109, 40, 217, 0.45);
 }
 
+.legend-line.boundary {
+  border-color: #d52b1e;
+  border-top-width: 3px;
+}
+
 .legend-node {
   width: 13px;
   height: 13px;

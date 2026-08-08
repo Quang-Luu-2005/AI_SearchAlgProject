@@ -35,6 +35,14 @@ Node/tọa độ là `SOURCE_BACKED`; free-flow time là `DERIVED`; baseline sce
 `ASSUMPTION`. Validator kiểm tra checksum, bbox, ID/FK, weight dương, count và strong
 connectivity cho graph này.
 
+## Snapshot ranh vùng nghiên cứu
+
+`data/raw/thu_duc_boundary_v1.0.0/osm_relation_19407794.geojson` là snapshot bất biến
+của OSM relation `19407794`, tải ngày 2026-08-09 và kiểm tra bằng SHA-256 trong manifest.
+OSM hiện gắn relation này là `historic`, nên UI bắt buộc ghi “Ranh TP Thủ Đức cũ”. Polygon
+chỉ cung cấp ngữ cảnh và rectangle camera; không sửa graph, edge cost hay tuyên bố địa giới
+hành chính hiện hành.
+
 ## Trạng thái hiện tại
 
 Workbook v0.1 vẫn là nguồn nghiên cứu không routable. Ứng dụng hiện dùng processed

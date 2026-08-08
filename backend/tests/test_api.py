@@ -23,6 +23,17 @@ def test_dataset_metadata_exposes_provenance() -> None:
     assert payload["fixtures"][0]["data_status"] == "SIMULATED"
 
 
+def test_thu_duc_boundary_returns_frozen_historic_osm_polygon() -> None:
+    response = client.get("/api/v1/boundaries/thu-duc")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["source_id"] == "OSM-THU-DUC-BOUNDARY-2026-08-09"
+    assert payload["features"][0]["geometry"]["type"] == "Polygon"
+    assert payload["features"][0]["properties"]["osm_id"] == 19407794
+    assert payload["features"][0]["properties"]["boundary_status"] == "HISTORIC_OSM_RELATION"
+
+
 def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
     response = client.get("/api/v1/graphs")
 
@@ -260,6 +271,7 @@ def test_openapi_documents_be03_endpoints_and_handoff_example() -> None:
     assert response.status_code == 200
     schema = response.json()
     for path in (
+        "/api/v1/boundaries/thu-duc",
         "/api/v1/locations",
         "/api/v1/scenarios",
         "/api/v1/search",

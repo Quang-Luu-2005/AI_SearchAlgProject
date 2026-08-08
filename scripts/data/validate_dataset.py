@@ -18,6 +18,9 @@ FIXTURE_ROOT = DATA_ROOT / "fixtures" / "toy_graph_v0.1"
 EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
 PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_market_v1.0.0"
 CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
+THU_DUC_BOUNDARY_PATH = (
+    DATA_ROOT / "raw" / "thu_duc_boundary_v1.0.0" / "osm_relation_19407794.geojson"
+)
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -59,6 +62,51 @@ def _is_strongly_connected(node_ids: set[str], edges: list[dict[str, str]]) -> b
         return seen
 
     return reachable(forward) == node_ids and reachable(reverse) == node_ids
+
+
+def validate_thu_duc_boundary(path: Path) -> list[str]:
+    errors: list[str] = []
+    payload = read_json(path)
+    if payload.get("source_id") != "OSM-THU-DUC-BOUNDARY-2026-08-09":
+        errors.append("Thu Duc boundary source_id is missing or unexpected")
+    features = payload.get("features", [])
+    if len(features) != 1:
+        return errors + ["Thu Duc boundary must contain exactly one frozen feature"]
+    feature = features[0]
+    properties = feature.get("properties", {})
+    geometry = feature.get("geometry", {})
+    if properties.get("osm_id") != 19407794:
+        errors.append("Thu Duc boundary must identify OSM relation 19407794")
+    if properties.get("boundary_status") != "HISTORIC_OSM_RELATION":
+        errors.append("Thu Duc boundary must disclose its historic OSM status")
+    if geometry.get("type") not in {"Polygon", "MultiPolygon"}:
+        errors.append("Thu Duc boundary geometry must be Polygon or MultiPolygon")
+
+    coordinates: list[tuple[float, float]] = []
+
+    def collect(value: Any) -> None:
+        if (
+            isinstance(value, list)
+            and len(value) >= 2
+            and all(isinstance(item, (int, float)) for item in value[:2])
+        ):
+            coordinates.append((float(value[0]), float(value[1])))
+            return
+        if isinstance(value, list):
+            for child in value:
+                collect(child)
+
+    collect(geometry.get("coordinates", []))
+    if len(coordinates) < 4:
+        errors.append("Thu Duc boundary polygon has too few coordinates")
+    else:
+        west = min(item[0] for item in coordinates)
+        east = max(item[0] for item in coordinates)
+        south = min(item[1] for item in coordinates)
+        north = max(item[1] for item in coordinates)
+        if not (west < 106.70 and east > 106.88 and south < 10.75 and north > 10.89):
+            errors.append("Thu Duc boundary extent does not cover the frozen study area")
+    return errors
 
 
 def validate_processed_dataset(dataset_root: Path) -> list[str]:
@@ -370,6 +418,9 @@ def validate() -> list[str]:
         elif sha256(source_path) != source["sha256"]:
             errors.append(f"Checksum mismatch: {source_path}")
 
+    if THU_DUC_BOUNDARY_PATH.is_file():
+        errors.extend(validate_thu_duc_boundary(THU_DUC_BOUNDARY_PATH))
+
     fixture_roots = [FIXTURE_ROOT]
     if EXAMPLE_FIXTURE_ROOT.is_dir():
         fixture_roots.extend(
@@ -404,6 +455,7 @@ if __name__ == "__main__":
 
     print("Dataset validation: PASS")
     print("- raw source checksum verified")
+    print("- historic Thu Duc boundary geometry and disclosure verified")
     print("- toy graph: 6 nodes, 14 directed edges")
     print("- graph examples: simple path, one-way branch, cycle with closure")
     print("- scenario weights, labels and golden paths verified")

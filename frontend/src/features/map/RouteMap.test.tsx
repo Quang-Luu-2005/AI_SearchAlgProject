@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import type { GraphPayload } from '../../lib/graph'
+import type { GraphPayload, ThuDucBoundary } from '../../lib/graph'
 import { RouteMap } from './RouteMap'
 
 const maplibreMock = vi.hoisted(() => {
@@ -125,6 +125,30 @@ const graph: GraphPayload = {
   active_edge_count: 1,
 }
 
+const boundary: ThuDucBoundary = {
+  type: 'FeatureCollection',
+  snapshot_date: '2026-08-09',
+  source_url: 'https://www.openstreetmap.org/relation/19407794',
+  source_id: 'OSM-THU-DUC-BOUNDARY-2026-08-09',
+  license: 'ODbL-1.0',
+  attribution: '© OpenStreetMap contributors',
+  scope_note: 'Historic former Thu Duc City boundary.',
+  features: [{
+    type: 'Feature',
+    properties: { osm_id: 19407794, boundary_status: 'HISTORIC_OSM_RELATION' },
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [106.69, 10.74],
+        [106.89, 10.74],
+        [106.89, 10.90],
+        [106.69, 10.90],
+        [106.69, 10.74],
+      ]],
+    },
+  }],
+}
+
 describe('MapLibre RouteMap', () => {
   afterEach(() => {
     maplibreMock.FakeMap.instances.length = 0
@@ -136,6 +160,7 @@ describe('MapLibre RouteMap', () => {
     const view = render(
       <RouteMap
         graph={graph}
+        boundary={boundary}
         startId="N1"
         goalId="N2"
         pickTarget="START"
@@ -148,7 +173,9 @@ describe('MapLibre RouteMap', () => {
 
     await waitFor(() => {
       expect(map.layers).toContain('floodroute-node-hitbox')
+      expect(map.layers).toContain('floodroute-thu-duc-boundary-line')
       expect(map.sources.get('floodroute-nodes')?.setData).toHaveBeenCalled()
+      expect(map.sources.get('floodroute-thu-duc-boundary')?.setData).toHaveBeenCalledWith(boundary)
     })
 
     map.emit('click', 'floodroute-node-hitbox', {
@@ -204,9 +231,9 @@ describe('MapLibre RouteMap', () => {
     map.emit('style.load')
 
     await waitFor(() => {
-      expect(map.setMinZoom).toHaveBeenCalledWith(12)
+      expect(map.setMinZoom).toHaveBeenCalledWith(10.5)
       expect(map.setMaxBounds).not.toHaveBeenCalled()
-      expect(map.options).toMatchObject({ minZoom: 12, renderWorldCopies: false })
+      expect(map.options).toMatchObject({ minZoom: 10.5, renderWorldCopies: false })
       expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
         center: [106.75, 10.85],
         zoom: 16.5,

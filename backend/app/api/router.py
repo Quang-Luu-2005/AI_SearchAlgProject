@@ -17,7 +17,7 @@ from ..core.contracts import (
     SearchExecution,
 )
 from ..core.graph import GraphLoader
-from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT
+from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT, THU_DUC_BOUNDARY
 from ..services import SearchService
 from .models import (
     CompareRequest,
@@ -43,6 +43,13 @@ def dataset_meta() -> dict[str, object]:
     """Expose dataset provenance without loading the routing graph."""
     with DATASET_MANIFEST.open(encoding="utf-8") as manifest_file:
         return json.load(manifest_file)
+
+
+@router.get("/boundaries/thu-duc", tags=["dataset"])
+def thu_duc_boundary() -> dict[str, object]:
+    """Return the frozen historic OSM boundary used as Thu Duc study context."""
+    with THU_DUC_BOUNDARY.open(encoding="utf-8") as boundary_file:
+        return json.load(boundary_file)
 
 
 def _json_value(value: Any) -> Any:

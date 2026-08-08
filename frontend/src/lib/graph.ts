@@ -1,3 +1,5 @@
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson'
+
 export type GraphSummary = {
   graph_id: string
   label: string
@@ -11,6 +13,15 @@ export type GraphSummary = {
   node_count: number
   edge_count: number
   scenario_ids: string[]
+}
+
+export type ThuDucBoundary = FeatureCollection<Polygon | MultiPolygon> & {
+  snapshot_date: string
+  source_url: string
+  source_id: string
+  license: string
+  attribution: string
+  scope_note: string
 }
 
 export function preferredGraphId(graphs: GraphSummary[], currentId = ''): string {
@@ -86,4 +97,8 @@ export function fetchGraph(
   signal?: AbortSignal,
 ): Promise<GraphPayload> {
   return getJson(buildGraphUrl(graphId, scenarioId), signal)
+}
+
+export function fetchThuDucBoundary(signal?: AbortSignal): Promise<ThuDucBoundary> {
+  return getJson('/api/v1/boundaries/thu-duc', signal)
 }

@@ -15,8 +15,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
   dependency optimizer để sửa lỗi thiếu `maplibre-gl-worker.mjs` trong `.vite/deps`.
 - Script dev root chuyển tiếp tham số Vite như `--force` để làm mới dependency cache.
 - Tách nút reset viewport khỏi nhóm zoom/compass MapLibre để không chồng nút ở góc phải.
-- Giữ camera ở min zoom 12, focus endpoint ở zoom 16.5 và dùng context ring thay cho
-  hard `maxBounds`; có thể quét vùng ngoài Thủ Đức mà không rơi về toàn thế giới.
+- Thêm frozen GeoJSON OSM relation 19407794, API boundary và lớp đỏ “Ranh TP Thủ Đức
+  cũ”; rectangle camera B có lề bao trọn polygon A nhưng không hard-clamp thao tác pan.
+- Giữ camera ở min zoom 10.5, focus endpoint ở zoom 16.5 và fallback graph context khi
+  boundary chưa tải; có thể quét vùng ngoài Thủ Đức mà không rơi về toàn thế giới.
+- ADR 0010 ghi quyết định boundary historic, provenance và quy tắc camera A/B.
 - Mở picker processed pilot ra đủ 90 topology node và hỗ trợ click basemap snap tới node
   gần nhất trong 200 m khi chọn START/GOAL.
 - Graph benchmark UTraffic lõi Thủ Đức 3.229 node/5.057 cạnh, builder/validator, ADR 0009

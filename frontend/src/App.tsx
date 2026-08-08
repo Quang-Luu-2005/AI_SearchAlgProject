@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget } from './features/map/RouteMap'
 import {
+  fetchThuDucBoundary,
   fetchGraph,
   fetchGraphCatalog,
   preferredGraphId,
   type GraphPayload,
   type GraphSummary,
   type InvalidGraphSummary,
+  type ThuDucBoundary,
 } from './lib/graph'
 import {
   fetchLocations,
@@ -96,6 +98,8 @@ export function App() {
   const [invalidGraphs, setInvalidGraphs] = useState<InvalidGraphSummary[]>([])
   const [graphId, setGraphId] = useState('')
   const [graph, setGraph] = useState<GraphPayload | null>(null)
+  const [thuDucBoundary, setThuDucBoundary] = useState<ThuDucBoundary | null>(null)
+  const [boundaryError, setBoundaryError] = useState('')
   const [locations, setLocations] = useState<LocationItem[]>([])
   const [scenarios, setScenarios] = useState<ScenarioItem[]>([])
   const [scenarioId, setScenarioId] = useState('')
@@ -125,6 +129,19 @@ export function App() {
     [result],
   )
   const canRun = Boolean(graphId && scenarioId && startId && goalId && !running)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchThuDucBoundary(controller.signal)
+      .then((payload) => {
+        setThuDucBoundary(payload)
+        setBoundaryError('')
+      })
+      .catch((reason: Error) => {
+        if (reason.name !== 'AbortError') setBoundaryError('Không tải được ranh Thủ Đức.')
+      })
+    return () => controller.abort()
+  }, [])
 
   useEffect(() => {
     const edgeCount = result?.edge_ids.length ?? 0
@@ -448,6 +465,8 @@ export function App() {
             {graph ? (
               <RouteMap
                 graph={graph}
+                boundary={thuDucBoundary}
+                boundaryWarning={boundaryError}
                 pathEdgeIds={result?.edge_ids}
                 visiblePathEdgeCount={visiblePathEdgeCount}
                 pathNodeIds={result?.path.slice(0, visiblePathEdgeCount + 1)}
@@ -485,6 +504,7 @@ export function App() {
               <span><i className="legend-line blocked" />Đường bị chặn</span>
               <span><i className="legend-node" />Nút giao</span>
               <span><i className="legend-line path" />Đường tối ưu</span>
+              <span><i className="legend-line boundary" />Ranh TP Thủ Đức cũ</span>
             </div>
             <div className="metric-pair">
               <div><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
