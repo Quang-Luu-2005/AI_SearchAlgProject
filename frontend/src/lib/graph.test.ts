@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildGraphUrl, preferredGraphId, type GraphSummary } from './graph'
+import { buildGraphUrl, interactiveGraphs, preferredGraphId, type GraphSummary } from './graph'
 
 describe('graph API paths', () => {
   it('keeps graph folders as safe path segments', () => {
@@ -36,5 +36,16 @@ describe('default dataset selection', () => {
       summary('processed/thu_duc_market_v1.0.0', 'processed'),
       summary('processed/thu_duc_landmarks_v1.0.0', 'processed'),
     ])).toBe('processed/thu_duc_landmarks_v1.0.0')
+  })
+
+  it('keeps capacity-only graphs out of the interactive routing dropdown', () => {
+    const graphs = [
+      { graph_id: 'processed/thu_duc_landmarks_v1.0.0', routing_dataset_status: 'ACADEMIC_LANDMARK_DEMO' },
+      { graph_id: 'processed/thu_duc_core_capacity_v0.1.0', routing_dataset_status: 'CAPACITY_BENCHMARK_ONLY' },
+    ] as GraphSummary[]
+
+    expect(interactiveGraphs(graphs).map((item) => item.graph_id)).toEqual([
+      'processed/thu_duc_landmarks_v1.0.0',
+    ])
   })
 })

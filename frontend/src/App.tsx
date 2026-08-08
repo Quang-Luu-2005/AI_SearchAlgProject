@@ -4,6 +4,7 @@ import {
   fetchThuDucBoundary,
   fetchGraph,
   fetchGraphCatalog,
+  interactiveGraphs,
   preferredGraphId,
   type GraphPayload,
   type GraphSummary,
@@ -170,9 +171,10 @@ export function App() {
     setLoading(true)
     fetchGraphCatalog(controller.signal)
       .then(({ graphs, invalid_graphs }) => {
-        setCatalog(graphs)
+        const nextCatalog = interactiveGraphs(graphs)
+        setCatalog(nextCatalog)
         setInvalidGraphs(invalid_graphs)
-        const initialGraphId = preferredGraphId(graphs, graphId)
+        const initialGraphId = preferredGraphId(nextCatalog, graphId)
         if (initialGraphId) setGraphId(initialGraphId)
         else setError('Không tìm thấy graph hợp lệ trong data/fixtures hoặc data/processed.')
       })

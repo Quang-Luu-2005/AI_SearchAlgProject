@@ -35,6 +35,11 @@ trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark ed
 8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
 benchmark riêng.
 
+Frontend loại catalog row có `routing_dataset_status=CAPACITY_BENCHMARK_ONLY` khỏi
+dropdown định tuyến. Graph này vẫn tồn tại qua API/script benchmark, nhưng không được
+trình bày như một bộ endpoint người dùng vì node của nó là giao lộ kỹ thuật và bbox chỉ
+phủ lõi Thủ Đức.
+
 Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
 trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%
 padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có một vành ngữ cảnh nhỏ bên

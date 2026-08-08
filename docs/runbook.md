@@ -149,7 +149,7 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
 | `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
 | `processed/thu_duc_landmarks_v1.0.0` | Mặc định: 65 landmark chọn được/178 road-path edge |
-| `processed/thu_duc_core_capacity_v0.1.0` | Benchmark UTraffic 3.229 node/5.057 edge; không flood-aware |
+| `processed/thu_duc_core_capacity_v0.1.0` | Chỉ dùng benchmark 3.229/5.057; ẩn khỏi dropdown UI |
 
 Trong landmark dataset, circle trắng viền xanh là nút có thể chọn. Trong chế độ START/GOAL
 có thể click trực tiếp marker hoặc vị trí gần marker trên basemap; trường hợp thứ hai snap

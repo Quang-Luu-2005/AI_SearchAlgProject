@@ -24,6 +24,10 @@ export type ThuDucBoundary = FeatureCollection<Polygon | MultiPolygon> & {
   scope_note: string
 }
 
+export function interactiveGraphs(graphs: GraphSummary[]): GraphSummary[] {
+  return graphs.filter((item) => item.routing_dataset_status !== 'CAPACITY_BENCHMARK_ONLY')
+}
+
 export function preferredGraphId(graphs: GraphSummary[], currentId = ''): string {
   return graphs.find((item) => item.graph_id === currentId)?.graph_id
     ?? graphs.find((item) => item.graph_id === 'processed/thu_duc_landmarks_v1.0.0')?.graph_id

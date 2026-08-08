@@ -12,6 +12,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Marker dạng nút nhỏ trắng viền xanh cho node `selectable`, polyline geometry cho cạnh
   aggregate, raw Overpass snapshot, builder, validator, API/frontend regression tests.
 - ADR 0011 cho định nghĩa địa điểm lớn, graph compression, snapping và connector rule.
+- Ẩn `CAPACITY_BENCHMARK_ONLY` 3.229 node khỏi dropdown định tuyến để không nhầm node
+  kỹ thuật với landmark chọn được; API và benchmark script vẫn giữ nguyên.
 
 - OpenFreeMap `Liberty` vector basemap, GeoJSON graph layers, popup tên node derived,
   toolbar click-node chọn START/GOAL và fallback nền trung tính khi basemap lỗi.
