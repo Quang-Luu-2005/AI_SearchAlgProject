@@ -474,6 +474,11 @@ export function RouteMap({
   }, [boundary, edgeData, nodeData, routeData, styleRevision])
 
   const cameraGraphKeyRef = useRef('')
+  const previousEndpointRef = useRef({
+    graphId: graph.graph_id,
+    startId,
+    goalId,
+  })
 
   useEffect(() => {
     const map = mapRef.current
@@ -499,6 +504,32 @@ export function RouteMap({
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
     const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
+    const previous = previousEndpointRef.current
+    const graphChanged = previous.graphId !== graph.graph_id
+    const startChanged = !graphChanged && previous.startId !== startId
+    const goalChanged = !graphChanged && previous.goalId !== goalId
+    previousEndpointRef.current = { graphId: graph.graph_id, startId, goalId }
+
+    const changedEndpointId = startChanged && !goalChanged
+      ? startId
+      : goalChanged && !startChanged
+        ? goalId
+        : ''
+    const changedEndpoint = changedEndpointId ? nodeById.get(changedEndpointId) : undefined
+
+    map.stop()
+    if (changedEndpoint && changedEndpoint.latitude !== null && changedEndpoint.longitude !== null
+      && Number.isFinite(changedEndpoint.latitude)
+      && Number.isFinite(changedEndpoint.longitude)) {
+      map.flyTo({
+        center: [changedEndpoint.longitude, changedEndpoint.latitude],
+        zoom: 16.5,
+        essential: true,
+        duration: 500,
+      })
+      return
+    }
+
     const endpoints = [startId, goalId].flatMap<[number, number]>((nodeId) => {
       if (!nodeId) return []
       const node = nodeById.get(nodeId)
@@ -507,7 +538,6 @@ export function RouteMap({
         ? []
         : [[node.longitude, node.latitude]]
     })
-    map.stop()
     if (endpoints.length === 1) {
       map.flyTo({ center: endpoints[0], zoom: 16.5, essential: true, duration: 500 })
     } else if (endpoints.length === 2) {

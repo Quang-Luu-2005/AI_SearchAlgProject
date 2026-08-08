@@ -20,6 +20,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Giữ camera ở min zoom 10.5, focus endpoint ở zoom 16.5 và fallback graph context khi
   boundary chưa tải; không thể kéo viewport ra toàn TP.HCM hoặc bản đồ thế giới.
 - ADR 0010 ghi quyết định boundary historic, provenance và quy tắc camera A/B.
+- Camera `flyTo` endpoint vừa thay đổi khi chọn START/GOAL; không còn tự fit về trung
+  điểm của hai endpoint sau mỗi lần chọn.
 - Mở picker processed pilot ra đủ 90 topology node và hỗ trợ click basemap snap tới node
   gần nhất trong 200 m khi chọn START/GOAL.
 - Graph benchmark UTraffic lõi Thủ Đức 3.229 node/5.057 cạnh, builder/validator, ADR 0009

@@ -9,10 +9,12 @@
 - Tính rectangle B có padding bao trọn polygon A cho initial/reset camera; giới hạn pan
   trong B, tắt world copies và dùng graph bounds làm fallback.
 - Thêm validator geometry/disclosure, backend API test và MapLibre source/layer test.
+- Sửa camera endpoint: chọn START hoặc GOAL sẽ focus endpoint vừa đổi thay vì fit cả cặp
+  và đưa camera về trung điểm.
 
 ## Xác minh
 
 - `npm run test:data`: PASS; gồm checksum và geometry/disclosure của boundary.
 - `npm run test:backend`: PASS, 47 tests.
-- `npm run test:frontend`: PASS, 20 tests.
+- `npm run test:frontend`: PASS, 21 tests.
 - `npm run build:frontend`: PASS; còn warning chunk MapLibre lớn hơn 500 kB.

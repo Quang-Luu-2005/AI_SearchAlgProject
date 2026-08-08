@@ -241,6 +241,40 @@ describe('MapLibre RouteMap', () => {
     })
   })
 
+  it('flies to the endpoint that was just changed instead of centering both endpoints', async () => {
+    const view = render(
+      <RouteMap
+        graph={graph}
+        startId="N1"
+        pickTarget={null}
+        onNodePick={vi.fn()}
+        onPickTargetChange={vi.fn()}
+      />,
+    )
+    const map = maplibreMock.FakeMap.instances[0]
+    map.emit('style.load')
+    await waitFor(() => expect(map.flyTo).toHaveBeenCalled())
+    map.flyTo.mockClear()
+
+    view.rerender(
+      <RouteMap
+        graph={graph}
+        startId="N1"
+        goalId="N2"
+        pickTarget={null}
+        onNodePick={vi.fn()}
+        onPickTargetChange={vi.fn()}
+      />,
+    )
+
+    await waitFor(() => {
+      expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
+        center: [106.751, 10.851],
+        zoom: 16.5,
+      }))
+    })
+  })
+
   it('snaps a basemap click to the nearest graph node while picking', async () => {
     const onNodePick = vi.fn()
     const onPickTargetChange = vi.fn()
