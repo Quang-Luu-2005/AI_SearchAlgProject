@@ -94,8 +94,8 @@ sát ranh. Nút reset đưa camera về rectangle này và camera bị giới h�
 thể kéo bản đồ ra toàn TP.HCM hoặc world view.
 
 Catalog có thêm `processed/thu_duc_core_capacity_v0.1.0` gồm 3.229 node/5.057 directed
-edge để stress-test. Dataset `CAPACITY_BENCHMARK_ONLY` không xuất hiện trong dropdown
-định tuyến chính; chạy benchmark riêng bằng:
+edge để stress-test. Dataset 90 node và `CAPACITY_BENCHMARK_ONLY` không xuất hiện trong
+dropdown map; giao diện chỉ giữ 65 landmark. Chạy benchmark riêng bằng:
 
 ```powershell
 npm run benchmark:capacity

@@ -35,10 +35,9 @@ trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark ed
 8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
 benchmark riêng.
 
-Frontend loại catalog row có `routing_dataset_status=CAPACITY_BENCHMARK_ONLY` khỏi
-dropdown định tuyến. Graph này vẫn tồn tại qua API/script benchmark, nhưng không được
-trình bày như một bộ endpoint người dùng vì node của nó là giao lộ kỹ thuật và bbox chỉ
-phủ lõi Thủ Đức.
+Frontend map scope chỉ giữ catalog row `processed/thu_duc_landmarks_v1.0.0`. Pilot 90 node
+và capacity graph vẫn tồn tại qua API/script benchmark, nhưng không được trình bày trong
+dropdown map vì không đúng mục tiêu 65 landmark hiện tại.
 
 Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
 trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%

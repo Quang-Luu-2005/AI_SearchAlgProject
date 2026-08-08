@@ -7,6 +7,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- UI map scope cố định về `thu_duc_landmarks_v1.0.0` với đúng 65 selectable landmark;
+  processed pilot 90 node và capacity graph không còn xuất hiện trong dropdown map.
+
 - Dataset mặc định `thu_duc_landmarks_v1.0.0`: 65 landmark OSM chọn được, 178 cạnh
   shortest-road-path tổng hợp từ mạng UTraffic nguồn 8.952 node/14.043 cạnh.
 - Marker dạng nút nhỏ trắng viền xanh cho node `selectable`, polyline geometry cho cạnh
