@@ -173,6 +173,7 @@ describe('MapLibre RouteMap', () => {
 
     await waitFor(() => {
       expect(map.layers).toContain('floodroute-node-hitbox')
+      expect(map.layers).toContain('floodroute-selectable-node')
       expect(map.layers).toContain('floodroute-thu-duc-boundary-line')
       expect(map.sources.get('floodroute-nodes')?.setData).toHaveBeenCalled()
       expect(map.sources.get('floodroute-thu-duc-boundary')?.setData).toHaveBeenCalledWith(boundary)

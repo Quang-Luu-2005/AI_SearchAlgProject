@@ -148,11 +148,13 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
 | `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
+| `processed/thu_duc_landmarks_v1.0.0` | Mặc định: 65 landmark chọn được/178 road-path edge |
 | `processed/thu_duc_core_capacity_v0.1.0` | Benchmark UTraffic 3.229 node/5.057 edge; không flood-aware |
 
-Trong chế độ START/GOAL có thể click trực tiếp circle node hoặc click một vị trí/POI trên
-basemap. Trường hợp thứ hai snap tới topology node gần nhất trong 200 m; popup hiện khoảng
-cách `SNAP`. Nếu không có node trong bán kính này, chế độ chọn được giữ nguyên và UI báo lỗi.
+Trong landmark dataset, circle trắng viền xanh là nút có thể chọn. Trong chế độ START/GOAL
+có thể click trực tiếp marker hoặc vị trí gần marker trên basemap; trường hợp thứ hai snap
+tới landmark gần nhất trong 200 m. Nếu không có landmark trong bán kính này, chế độ chọn
+được giữ nguyên và UI báo lỗi.
 
 Map vẽ đường đỏ “Ranh TP Thủ Đức cũ” từ frozen OSM boundary snapshot. Camera chỉ pan
 trong rectangle B có lề bao trọn polygon ranh A; min zoom 10.5 và

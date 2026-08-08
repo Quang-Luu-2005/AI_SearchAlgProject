@@ -7,6 +7,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Dataset mặc định `thu_duc_landmarks_v1.0.0`: 65 landmark OSM chọn được, 178 cạnh
+  shortest-road-path tổng hợp từ mạng UTraffic nguồn 8.952 node/14.043 cạnh.
+- Marker dạng nút nhỏ trắng viền xanh cho node `selectable`, polyline geometry cho cạnh
+  aggregate, raw Overpass snapshot, builder, validator, API/frontend regression tests.
+- ADR 0011 cho định nghĩa địa điểm lớn, graph compression, snapping và connector rule.
+
 - OpenFreeMap `Liberty` vector basemap, GeoJSON graph layers, popup tên node derived,
   toolbar click-node chọn START/GOAL và fallback nền trung tính khi basemap lỗi.
 - ADR 0008 cho quyết định chuyển React Leaflet sang MapLibre GL JS/OpenFreeMap.

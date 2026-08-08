@@ -18,6 +18,7 @@ FIXTURE_ROOT = DATA_ROOT / "fixtures" / "toy_graph_v0.1"
 EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
 PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_market_v1.0.0"
 CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
+LANDMARK_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.0"
 THU_DUC_BOUNDARY_PATH = (
     DATA_ROOT / "raw" / "thu_duc_boundary_v1.0.0" / "osm_relation_19407794.geojson"
 )
@@ -319,6 +320,92 @@ def validate_capacity_dataset(dataset_root: Path) -> list[str]:
     return errors
 
 
+def validate_landmark_dataset(dataset_root: Path) -> list[str]:
+    errors: list[str] = []
+    dataset_name = dataset_root.relative_to(DATA_ROOT).as_posix()
+    required_files = {
+        "nodes.csv", "edges.csv", "landmarks.csv", "scenarios.json", "metadata.json",
+        "validation_report.json", "README.md", "checksums.sha256",
+    }
+    missing = sorted(name for name in required_files if not (dataset_root / name).is_file())
+    if missing:
+        return [f"{dataset_name} is missing files: {missing}"]
+
+    declared: dict[str, str] = {}
+    for line in (dataset_root / "checksums.sha256").read_text(encoding="utf-8").splitlines():
+        checksum, filename = line.split(maxsplit=1)
+        declared[filename.strip()] = checksum.upper()
+    for filename in required_files - {"checksums.sha256"}:
+        if declared.get(filename) != sha256(dataset_root / filename):
+            errors.append(f"{dataset_name}: checksum mismatch for {filename}")
+
+    nodes = read_csv(dataset_root / "nodes.csv")
+    edges = read_csv(dataset_root / "edges.csv")
+    landmarks = read_csv(dataset_root / "landmarks.csv")
+    scenarios = read_json(dataset_root / "scenarios.json")
+    metadata = read_json(dataset_root / "metadata.json")
+    if len(nodes) != 65 or len(edges) != 178 or len(landmarks) != 65:
+        errors.append(f"{dataset_name}: expected 65 landmarks and 178 directed edges")
+    node_ids = {row["node_id"] for row in nodes}
+    if len(node_ids) != len(nodes) or len({row["edge_id"] for row in edges}) != len(edges):
+        errors.append(f"{dataset_name}: node and edge IDs must be unique")
+    allowed_categories = {
+        "EDUCATION", "HOSPITAL", "MARKET", "CIVIC_TRANSPORT", "MALL",
+        "RAIL_STATION", "STADIUM", "CULTURE_THEME",
+    }
+    node_coordinates: dict[str, tuple[float, float]] = {}
+    for node in nodes:
+        longitude, latitude = float(node["longitude"]), float(node["latitude"])
+        node_coordinates[node["node_id"]] = (longitude, latitude)
+        if node.get("selectable", "").casefold() != "true":
+            errors.append(f"{dataset_name}: {node['node_id']} must be selectable")
+        if node.get("node_type") != "SELECTABLE_LANDMARK":
+            errors.append(f"{dataset_name}: {node['node_id']} must be a landmark node")
+        if node.get("place_category") not in allowed_categories:
+            errors.append(f"{dataset_name}: {node['node_id']} has invalid category")
+        if not node.get("name") or node.get("data_status") != "SOURCE_BACKED":
+            errors.append(f"{dataset_name}: {node['node_id']} needs a source-backed name")
+        if float(node["snap_distance_m"]) > 1_500:
+            errors.append(f"{dataset_name}: {node['node_id']} exceeds snap threshold")
+
+    for edge in edges:
+        origin, destination = edge["from_node_id"], edge["to_node_id"]
+        if origin not in node_ids or destination not in node_ids:
+            errors.append(f"{dataset_name}: {edge['edge_id']} has invalid FK")
+            continue
+        if float(edge["distance_m"]) <= 0 or float(edge["free_flow_time_min"]) <= 0:
+            errors.append(f"{dataset_name}: {edge['edge_id']} has invalid cost")
+        if edge.get("data_status") != "DERIVED":
+            errors.append(f"{dataset_name}: {edge['edge_id']} must be DERIVED")
+        try:
+            coordinates = json.loads(edge["path_coordinates_json"])
+        except json.JSONDecodeError:
+            errors.append(f"{dataset_name}: {edge['edge_id']} has invalid path geometry")
+            continue
+        if len(coordinates) < 2:
+            errors.append(f"{dataset_name}: {edge['edge_id']} path is too short")
+            continue
+        for actual, expected in (
+            (coordinates[0], node_coordinates[origin]),
+            (coordinates[-1], node_coordinates[destination]),
+        ):
+            if abs(float(actual[0]) - expected[0]) > 1e-7 or abs(float(actual[1]) - expected[1]) > 1e-7:
+                errors.append(f"{dataset_name}: {edge['edge_id']} geometry misses endpoint")
+                break
+    if not _is_strongly_connected(node_ids, edges):
+        errors.append(f"{dataset_name}: landmark graph must be strongly connected")
+
+    scenario_rows = scenarios.get("scenarios", [])
+    if [row.get("scenario_id") for row in scenario_rows] != ["LANDMARK_HISTORICAL_BASELINE"]:
+        errors.append(f"{dataset_name}: landmark baseline scenario is required")
+    properties = metadata.get("graph_properties", {})
+    if properties.get("selectable_node_count") != len(nodes):
+        errors.append(f"{dataset_name}: selectable count does not match nodes")
+    if properties.get("hidden_source_road_node_count", 0) <= len(nodes):
+        errors.append(f"{dataset_name}: hidden source road graph disclosure is invalid")
+    return errors
+
+
 def validate_graph_fixture(fixture_root: Path) -> list[str]:
     errors: list[str] = []
     fixture_name = fixture_root.relative_to(DATA_ROOT).as_posix()
@@ -439,6 +526,8 @@ def validate() -> list[str]:
             errors.extend(validate_processed_dataset(processed_root))
         elif processed_root == CAPACITY_PROCESSED_ROOT:
             errors.extend(validate_capacity_dataset(processed_root))
+        elif processed_root == LANDMARK_PROCESSED_ROOT:
+            errors.extend(validate_landmark_dataset(processed_root))
         else:
             errors.append(f"Unexpected processed dataset path: {processed_root}")
 
@@ -461,5 +550,6 @@ if __name__ == "__main__":
     print("- scenario weights, labels and golden paths verified")
     print("- Thu Duc Market: 90 nodes, 155 directed edges, strongly connected")
     print("- Thu Duc capacity graph: 3229 nodes, 5057 directed edges, strongly connected")
+    print("- Thu Duc landmarks: 65 selectable POIs, 178 derived road-path edges")
     print("- traffic/flood provenance and route-change golden case verified")
     print("- release status: REVIEW_REQUIRED (two human map-match reviews pending)")

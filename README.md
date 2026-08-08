@@ -1,17 +1,16 @@
 # FloodRoute HCMC
 
-## Dataset pilot đang dùng
+## Dataset mặc định đang dùng
 
-Ứng dụng mặc định dùng `processed/thu_duc_market_v1.0.0`: bài toán giao hàng xe máy
-quanh chợ Thủ Đức khi có ùn tắc lịch sử và các tuyến có ghi nhận dễ ngập. Snapshot có
-90 node, 155 directed edge, liên thông mạnh trong bbox `10.845–10.853,
-106.751–106.759`. Traffic là dữ liệu lịch sử 2020–2021, **không phải real-time**;
-flood risk là penalty theo ghi nhận nguồn, không phải dự báo hay chỉ dẫn an toàn.
+Ứng dụng mặc định dùng `processed/thu_duc_landmarks_v1.0.0`: 65 địa điểm lớn có tên thật
+từ OSM và 178 cạnh có hướng được tổng hợp theo đường đi ngắn nhất trên snapshot UTraffic.
+Mạng nguồn 8.952 node/14.043 cạnh chỉ dùng lúc build; UI chỉ nhận landmark nên bản đồ
+không bị phủ bởi node kỹ thuật. Traffic là dữ liệu lịch sử, **không phải real-time**.
 
-Release hiện là `REVIEW_REQUIRED` vì flood map-match còn thiếu hai reviewer thật.
-Chi tiết nguồn, công thức và giới hạn nằm trong
-[`metadata.json`](data/processed/thu_duc_market_v1.0.0/metadata.json) và
-[ADR 0007](docs/decisions/0007-thu-duc-market-real-dataset.md).
+Pilot flood-aware quanh chợ Thủ Đức 90/155 vẫn được giữ riêng và còn trạng thái
+`REVIEW_REQUIRED`. Chi tiết landmark release nằm trong
+[`metadata.json`](data/processed/thu_duc_landmarks_v1.0.0/metadata.json) và
+[ADR 0011](docs/decisions/0011-thu-duc-selectable-landmark-graph.md).
 
 Website mô phỏng tìm đường giao hàng đa điểm cho shipper xe máy tại TP.HCM trong
 điều kiện kẹt xe và ngập nước. Repository hiện ở giai đoạn **bootstrap v0.1**:
@@ -84,10 +83,10 @@ Giao diện Pathfinder AI cho phép chọn dataset, scenario, điểm đầu/đ�
 UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và metrics đều lấy
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
-Với graph lớn, điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn trực tiếp trên mọi
-node bằng toolbar START/GOAL. Khi click một POI/đường trên basemap, UI snap tới node
-UTraffic gần nhất trong 200 m và công bố khoảng cách snap; basemap không tự trở thành
-topology. Nếu mất mạng, nền trung tính vẫn cho phép chạy thuật toán.
+Điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn marker tròn trắng viền xanh bằng
+toolbar START/GOAL. Marker này biểu thị rõ địa điểm có thể chọn. Edge hiển thị polyline
+đường UTraffic đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính
+vẫn cho phép chạy thuật toán.
 
 Bản đồ vẽ đường đỏ theo snapshot ranh TP Thủ Đức cũ. View tổng quan là một hình chữ
 nhật có lề bao trọn polygon ranh thật, nên vẫn thấy được khu vực ngoài biên và các cạnh

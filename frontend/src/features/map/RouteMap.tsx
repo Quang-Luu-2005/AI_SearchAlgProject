@@ -52,6 +52,7 @@ const SOURCE_ROUTE = 'floodroute-route'
 const SOURCE_NODES = 'floodroute-nodes'
 const SOURCE_BOUNDARY = 'floodroute-thu-duc-boundary'
 const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
+const LAYER_SELECTABLE_NODE = 'floodroute-selectable-node'
 const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
 const MIN_CITY_ZOOM = 10.5
 const MAX_BASEMAP_SNAP_DISTANCE_M = 200
@@ -191,11 +192,32 @@ function addGraphLayers(map: maplibregl.Map) {
       },
     })
   }
+  if (!map.getLayer(LAYER_SELECTABLE_NODE)) {
+    map.addLayer({
+      id: LAYER_SELECTABLE_NODE,
+      type: 'circle',
+      source: SOURCE_NODES,
+      filter: [
+        'all',
+        ['==', ['get', 'selectable'], true],
+        ['==', ['get', 'visual_state'], 'default'],
+      ],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10.5, 4.5, 15, 7],
+        'circle-color': '#ffffff',
+        'circle-stroke-color': '#0057b8',
+        'circle-stroke-width': 2.4,
+        'circle-opacity': 0.98,
+        'circle-stroke-opacity': 1,
+      },
+    })
+  }
   if (!map.getLayer(LAYER_NODE_HITBOX)) {
     map.addLayer({
       id: LAYER_NODE_HITBOX,
       type: 'circle',
       source: SOURCE_NODES,
+      filter: ['==', ['get', 'selectable'], true],
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 7, 17, 12],
         'circle-opacity': 0,
@@ -219,7 +241,8 @@ function popupContent(properties: NodeFeatureProperties, snapDistanceM?: number)
   id.textContent = properties.node_id
   const meta = document.createElement('small')
   const snapText = snapDistanceM === undefined ? '' : ` · SNAP ${snapDistanceM.toFixed(0)} m`
-  meta.textContent = `${properties.node_type} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}${snapText}`
+  const category = properties.place_category ? ` · ${properties.place_category}` : ''
+  meta.textContent = `${properties.node_type}${category} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}${snapText}`
   root.append(title, id, meta)
   return root
 }

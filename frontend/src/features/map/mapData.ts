@@ -10,6 +10,9 @@ export type NodeFeatureProperties = {
   data_status: string
   label_status: 'SOURCE_BACKED' | 'DERIVED'
   visual_state: NodeVisualState
+  selectable: boolean
+  place_category: string
+  snap_distance_m: number
 }
 
 export type EdgeFeatureProperties = {
@@ -61,6 +64,7 @@ export function findNearestGraphNode(
   if (!Number.isFinite(longitude) || !Number.isFinite(latitude) || maxDistanceM < 0) return null
   let nearest: NodeSnapResult | null = null
   for (const node of graph.nodes) {
+    if (node.attributes.selectable === false || node.attributes.selectable === 'false') continue
     if (node.longitude === null || node.latitude === null) continue
     const distanceM = haversineM(longitude, latitude, node.longitude, node.latitude)
     if (
@@ -166,6 +170,9 @@ export function buildNodeFeatureCollection(
         data_status: String(node.attributes.data_status ?? graph.data_status),
         label_status: labelStatus,
         visual_state: visualState,
+        selectable: node.attributes.selectable !== false && node.attributes.selectable !== 'false',
+        place_category: String(node.attributes.place_category ?? ''),
+        snap_distance_m: Number(node.attributes.snap_distance_m ?? 0),
       },
     }]
   })
@@ -184,15 +191,34 @@ function edgeFeature(
     || from.latitude === null || from.longitude === null
     || to.latitude === null || to.longitude === null
   ) return null
+  let coordinates: [number, number][] = [
+    [from.longitude, from.latitude],
+    [to.longitude, to.latitude],
+  ]
+  const encodedPath = edge.attributes.path_coordinates_json
+  if (typeof encodedPath === 'string' && encodedPath) {
+    try {
+      const parsed: unknown = JSON.parse(encodedPath)
+      if (Array.isArray(parsed)) {
+        const validCoordinates = parsed.flatMap<[number, number]>((item) => (
+          Array.isArray(item) && item.length >= 2
+          && typeof item[0] === 'number' && Number.isFinite(item[0])
+          && typeof item[1] === 'number' && Number.isFinite(item[1])
+            ? [[item[0], item[1]]]
+            : []
+        ))
+        if (validCoordinates.length >= 2) coordinates = validCoordinates
+      }
+    } catch {
+      // Invalid optional display geometry falls back to the contract endpoints.
+    }
+  }
   return {
     type: 'Feature',
     id: edge.edge_id,
     geometry: {
       type: 'LineString',
-      coordinates: [
-        [from.longitude, from.latitude],
-        [to.longitude, to.latitude],
-      ],
+      coordinates,
     },
     properties: {
       edge_id: edge.edge_id,

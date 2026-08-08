@@ -40,9 +40,32 @@
       "immutable": true,
       "osm_relation_id": 19407794,
       "license": "ODbL-1.0"
+    },
+    {
+      "dataset_id": "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+      "path": "data/raw/thu_duc_landmarks_v1.0.0/osm_major_places_snapshot.json",
+      "sha256": "7816744328679D857C6898D14DF1B612550B4F3D22BB8D2FE2B50CB8E84EB594",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true,
+      "license": "ODbL-1.0"
     }
   ],
   "processed_datasets": [
+    {
+      "dataset_id": "thu_duc_landmarks_v1.0.0",
+      "path": "data/processed/thu_duc_landmarks_v1.0.0",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 178,
+      "source_ids": [
+        "UTRAFFIC-HCM-V6",
+        "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+        "OSM-THU-DUC-BOUNDARY-2026-08-09"
+      ]
+    },
     {
       "dataset_id": "thu_duc_market_v1.0.0",
       "path": "data/processed/thu_duc_market_v1.0.0",
@@ -89,6 +112,7 @@
     }
   ],
   "limitations": [
+    "The landmark demo exposes 65 named major places; its 178 edges are derived aggregate UTraffic road paths.",
     "Traffic profiles are historical observations from 2020-2021, not real-time.",
     "Flood absence means NO_RECORD in selected sources, not flood-safe.",
     "Two human team-member reviews are still required for flood candidate map matches.",

@@ -121,6 +121,22 @@ describe('graph GeoJSON', () => {
       feature.properties.route_index,
     ])).toEqual([['E2', 0], ['E1', 1]])
   })
+
+  it('uses frozen road-path geometry when an aggregate landmark edge provides it', () => {
+    const aggregate = edge('AGG', '1', '2', 'Road path')
+    aggregate.attributes.path_coordinates_json = JSON.stringify([
+      [106.75, 10.85],
+      [106.7505, 10.8507],
+      [106.751, 10.851],
+    ])
+    const payload = { ...graph, edges: [aggregate] }
+
+    expect(buildEdgeFeatureCollection(payload).features[0].geometry.coordinates).toEqual([
+      [106.75, 10.85],
+      [106.7505, 10.8507],
+      [106.751, 10.851],
+    ])
+  })
 })
 
 describe('basemap click snapping', () => {
@@ -130,6 +146,14 @@ describe('basemap click snapping', () => {
     expect(snap?.nodeId).toBe('2')
     expect(snap?.distanceM).toBeLessThan(5)
     expect(findNearestGraphNode(graph, 106.8, 10.9, 20)).toBeNull()
+  })
+
+  it('ignores nodes explicitly marked as not selectable', () => {
+    const hidden = node('hidden', 'Hidden', 10.851, 106.751)
+    hidden.attributes.selectable = false
+    const payload = { ...graph, nodes: [hidden, graph.nodes[0]] }
+
+    expect(findNearestGraphNode(payload, 106.751, 10.851, 200)?.nodeId).toBe('1')
   })
 })
 

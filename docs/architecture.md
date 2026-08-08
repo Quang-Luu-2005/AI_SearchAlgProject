@@ -24,14 +24,16 @@ ranh TP Thủ Đức cũ là GeoJSON source thứ tư, chỉ dùng làm lớp ng
 không tham gia snapping, topology, scenario hoặc cost. Khi remote style lỗi, renderer
 dùng style nền trung tính cục bộ và vẫn hiển thị graph.
 
-Mọi node có circle layer nhỏ và hitbox trong suốt. Display label ưu tiên POI name, sau
-đó suy ra deterministic từ các `road_name` kề; fallback cuối là tọa độ. Đây chỉ là
-presentation metadata, không mutate graph contract hay processed dataset.
+Landmark graph chỉ gửi node `selectable=true` lên UI. Mỗi node có marker dạng nút nhỏ
+tròn trắng viền xanh và hitbox trong suốt; START/GOAL vẫn dùng style endpoint riêng.
+Dataset cũ vẫn có display label deterministic từ `road_name`, nhưng release mặc định chỉ
+dùng tên POI OSM source-backed.
 
-Khi chọn endpoint, click ngoài node layer được snap phía client tới topology node gần
-nhất trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ; không dùng basemap feature
-làm edge/node runtime. API locations trả một row cho mọi topology node. Graph capacity
-3.229/5.057 dùng cùng contract/layer pipeline nhưng mang trạng thái benchmark-only.
+Khi chọn endpoint, click ngoài marker được snap phía client tới node có thể chọn gần nhất
+trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark edge giữ
+`path_coordinates_json`, là polyline shortest path đã tổng hợp từ mạng nguồn UTraffic
+8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
+benchmark riêng.
 
 Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
 trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%

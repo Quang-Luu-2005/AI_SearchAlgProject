@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "landmark_count": 65,
+  "derived_edge_count": 178,
+  "max_snap_distance_m": 1007.352,
+  "source_road_graph": {
+    "node_count": 8952,
+    "edge_count": 14043,
+    "strongly_connected": true
+  }
+}

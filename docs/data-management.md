@@ -43,6 +43,23 @@ OSM hiện gắn relation này là `historic`, nên UI bắt buộc ghi “Ranh 
 chỉ cung cấp ngữ cảnh và rectangle camera; không sửa graph, edge cost hay tuyên bố địa giới
 hành chính hiện hành.
 
+## Landmark graph Thủ Đức v1.0.0
+
+`thu_duc_landmarks_v1.0.0` là release mặc định: 65 named major places và 178 directed
+aggregate road-path edge. “Địa điểm lớn” được định nghĩa bằng nhóm tag OSM có tên:
+university/college, hospital, marketplace, bus station/townhall, mall, railway station,
+stadium, museum hoặc theme park. Snapshot candidate được lưu bất biến tại
+`data/raw/thu_duc_landmarks_v1.0.0/`.
+
+Builder lọc POI trong polygon ranh, snap vào thành phần liên thông mạnh UTraffic
+8.952 node/14.043 cạnh, rồi tạo một bidirectional road-distance MST và hai cạnh gần nhất
+cho mỗi landmark. Edge giữ polyline UTraffic đầy đủ. Marker ở tọa độ OSM thật; connector
+từ POI đến node đường dùng giả định 20 km/h và được công bố trong edge/metadata.
+
+```powershell
+node scripts/python.mjs scripts/data/build_thu_duc_landmarks.py
+```
+
 ## Trạng thái hiện tại
 
 Workbook v0.1 vẫn là nguồn nghiên cứu không routable. Ứng dụng hiện dùng processed

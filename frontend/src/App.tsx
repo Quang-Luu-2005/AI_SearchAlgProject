@@ -489,9 +489,9 @@ export function App() {
             )}
           </section>
 
-          {selectedGraph?.graph_id === 'processed/thu_duc_market_v1.0.0' && (
+          {selectedGraph?.graph_id?.startsWith('processed/thu_duc_') && (
             <p className="dataset-attribution">
-              Traffic: UTraffic/HCMUT · Flood records: TP.HCM public reporting · POI{' '}
+              Traffic/road paths: UTraffic/HCMUT · POI/boundary{' '}
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
                 © OpenStreetMap contributors, ODbL 1.0
               </a>
@@ -502,7 +502,7 @@ export function App() {
             <div className="legend">
               <span><i className="legend-line open" />Đường thoáng</span>
               <span><i className="legend-line blocked" />Đường bị chặn</span>
-              <span><i className="legend-node" />Nút giao</span>
+              <span><i className="legend-selectable-node" />Điểm có thể chọn</span>
               <span><i className="legend-line path" />Đường tối ưu</span>
               <span><i className="legend-line boundary" />Ranh TP Thủ Đức cũ</span>
             </div>

@@ -27,6 +27,8 @@ không tham gia topology hoặc cost.
 - `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists every selectable topology node.
   Với processed pilot, POI thật đứng trước và node còn lại có tên giao lộ deterministic;
   response có đúng một row cho mỗi `node_id`.
+- Với `processed/thu_duc_landmarks_v1.0.0`, response chỉ có 65 named landmark; không trả
+  8.952 node đường nguồn dùng trong bước build.
 - `GET /api/v1/scenarios?graph_id=toy_graph_v0.1` lists scenario, preset, weights
   and closed edges.
 

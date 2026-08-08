@@ -34,6 +34,7 @@ describe('default dataset selection', () => {
     expect(preferredGraphId([
       summary('toy_graph_v0.1', 'fixture'),
       summary('processed/thu_duc_market_v1.0.0', 'processed'),
-    ])).toBe('processed/thu_duc_market_v1.0.0')
+      summary('processed/thu_duc_landmarks_v1.0.0', 'processed'),
+    ])).toBe('processed/thu_duc_landmarks_v1.0.0')
   })
 })
