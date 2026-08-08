@@ -4,6 +4,7 @@ import {
   type GeoJSONSource,
   type MapGeoJSONFeature,
   type MapLayerMouseEvent,
+  type MapMouseEvent,
   type StyleSpecification,
 } from 'maplibre-gl'
 import recenterGraphIcon from '../../assets/recenter-graph.png'
@@ -12,6 +13,7 @@ import {
   buildEdgeFeatureCollection,
   buildNodeFeatureCollection,
   buildRouteFeatureCollection,
+  findNearestGraphNode,
   type NodeFeatureProperties,
 } from './mapData'
 
@@ -49,6 +51,7 @@ const SOURCE_NODES = 'floodroute-nodes'
 const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
 const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
 const MIN_PILOT_ZOOM = 12
+const MAX_BASEMAP_SNAP_DISTANCE_M = 200
 
 function addGraphLayers(map: maplibregl.Map) {
   if (!map.getSource(SOURCE_EDGES)) {
@@ -176,7 +179,7 @@ function featureProperties(feature: MapGeoJSONFeature | undefined): NodeFeatureP
   return properties as NodeFeatureProperties
 }
 
-function popupContent(properties: NodeFeatureProperties): HTMLElement {
+function popupContent(properties: NodeFeatureProperties, snapDistanceM?: number): HTMLElement {
   const root = document.createElement('div')
   root.className = 'map-node-popup'
   const title = document.createElement('strong')
@@ -184,7 +187,8 @@ function popupContent(properties: NodeFeatureProperties): HTMLElement {
   const id = document.createElement('span')
   id.textContent = properties.node_id
   const meta = document.createElement('small')
-  meta.textContent = `${properties.node_type} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}`
+  const snapText = snapDistanceM === undefined ? '' : ` · SNAP ${snapDistanceM.toFixed(0)} m`
+  meta.textContent = `${properties.node_type} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}${snapText}`
   root.append(title, id, meta)
   return root
 }
@@ -219,12 +223,14 @@ function graphExtent(graph: GraphPayload): CoordinateExtent | null {
   })
 }
 
-function graphBounds(graph: GraphPayload, padding = 0): maplibregl.LngLatBounds | null {
+function graphContextBounds(graph: GraphPayload): maplibregl.LngLatBounds | null {
   const extent = graphExtent(graph)
   if (!extent) return null
+  const longitudePadding = Math.max((extent.east - extent.west) * 0.25, 0.006)
+  const latitudePadding = Math.max((extent.north - extent.south) * 0.25, 0.006)
   return new maplibregl.LngLatBounds(
-    [extent.west - padding, extent.south - padding],
-    [extent.east + padding, extent.north + padding],
+    [extent.west - longitudePadding, extent.south - latitudePadding],
+    [extent.east + longitudePadding, extent.north + latitudePadding],
   )
 }
 
@@ -247,14 +253,17 @@ export function RouteMap({
   const pickTargetRef = useRef(pickTarget)
   const onNodePickRef = useRef(onNodePick)
   const onPickTargetChangeRef = useRef(onPickTargetChange)
+  const graphRef = useRef(graph)
   const fallbackAppliedRef = useRef(false)
   const styleReadyRef = useRef(false)
   const [styleRevision, setStyleRevision] = useState(0)
   const [basemapWarning, setBasemapWarning] = useState('')
+  const [pickFeedback, setPickFeedback] = useState('')
 
   pickTargetRef.current = pickTarget
   onNodePickRef.current = onNodePick
   onPickTargetChangeRef.current = onPickTargetChange
+  graphRef.current = graph
 
   const edgeData = useMemo(() => buildEdgeFeatureCollection(graph), [graph])
   const nodeData = useMemo(() => buildNodeFeatureCollection(graph, {
@@ -267,6 +276,8 @@ export function RouteMap({
     () => buildRouteFeatureCollection(graph, pathEdgeIds.slice(0, visiblePathEdgeCount)),
     [graph, pathEdgeIds, visiblePathEdgeCount],
   )
+  const nodeDataRef = useRef(nodeData)
+  nodeDataRef.current = nodeData
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
@@ -276,6 +287,7 @@ export function RouteMap({
       center: DEFAULT_CENTER,
       zoom: 14,
       minZoom: MIN_PILOT_ZOOM,
+      renderWorldCopies: false,
       attributionControl: false,
     })
     mapRef.current = map
@@ -334,12 +346,44 @@ export function RouteMap({
         .setDOMContent(popupContent(properties))
         .addTo(map)
     }
+    const onMapClick = (event: MapMouseEvent) => {
+      const target = pickTargetRef.current
+      if (!target) return
+      const directNodeHit = map.getLayer(LAYER_NODE_HITBOX)
+        ? map.queryRenderedFeatures(event.point, { layers: [LAYER_NODE_HITBOX] }).length > 0
+        : false
+      if (directNodeHit) return
+
+      const snap = findNearestGraphNode(
+        graphRef.current,
+        event.lngLat.lng,
+        event.lngLat.lat,
+        MAX_BASEMAP_SNAP_DISTANCE_M,
+      )
+      if (!snap) {
+        setPickFeedback(`Không có node định tuyến trong ${MAX_BASEMAP_SNAP_DISTANCE_M} m.`)
+        return
+      }
+      const feature = nodeDataRef.current.features.find(
+        (item) => item.properties.node_id === snap.nodeId,
+      )
+      if (!feature) return
+
+      onNodePickRef.current(target, snap.nodeId)
+      onPickTargetChangeRef.current(null)
+      clickPopupRef.current?.remove()
+      clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
+        .setLngLat([snap.longitude, snap.latitude])
+        .setDOMContent(popupContent(feature.properties, snap.distanceM))
+        .addTo(map)
+    }
 
     map.on('style.load', onStyleLoad)
     map.on('error', onError)
     map.on('mouseenter', LAYER_NODE_HITBOX, onMouseEnter)
     map.on('mouseleave', LAYER_NODE_HITBOX, onMouseLeave)
     map.on('click', LAYER_NODE_HITBOX, onNodeClick)
+    map.on('click', onMapClick)
 
     return () => {
       hoverPopupRef.current?.remove()
@@ -362,17 +406,16 @@ export function RouteMap({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
-    const bounds = graphBounds(graph)
+    const bounds = graphContextBounds(graph)
     if (!bounds) {
       map.setCenter(DEFAULT_CENTER)
       map.setZoom(14)
       return
     }
 
-    // Keep accidental camera resets inside the pilot graph instead of allowing
-    // a style update or invalid fit to reveal the whole world.
+    // Keep city-scale zoom, but do not hard-clamp panning to a rectangular bbox.
+    // The context bounds include an outer geographic ring so border edges stay visible.
     map.setMinZoom(MIN_PILOT_ZOOM)
-    map.setMaxBounds(graphBounds(graph, 0.002) ?? bounds)
     const cameraKey = `${graph.graph_id}:${styleRevision}`
     if (cameraGraphKeyRef.current === cameraKey) return
     cameraGraphKeyRef.current = cameraKey
@@ -404,6 +447,7 @@ export function RouteMap({
   }, [goalId, graph, startId, styleRevision])
 
   useEffect(() => {
+    setPickFeedback('')
     if (!pickTarget) return
     const cancel = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onPickTargetChange(null)
@@ -414,7 +458,7 @@ export function RouteMap({
 
   function resetView() {
     const map = mapRef.current
-    const bounds = graphBounds(graph)
+    const bounds = graphContextBounds(graph)
     if (map && bounds) map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
   }
 
@@ -444,7 +488,11 @@ export function RouteMap({
           </button>
         )}
       </div>
-      {pickTarget && <div className="map-pick-hint">Click một node để đặt {pickTarget} · Esc để hủy</div>}
+      {pickTarget && (
+        <div className="map-pick-hint">
+          {pickFeedback || `Click node hoặc vị trí trên bản đồ để đặt ${pickTarget} · Esc để hủy`}
+        </div>
+      )}
       <button
         type="button"
         className="map-reset-button"
@@ -455,7 +503,10 @@ export function RouteMap({
         <img src={recenterGraphIcon} alt="" aria-hidden="true" />
       </button>
       {basemapWarning && <div className="basemap-warning" role="status">{basemapWarning}</div>}
-      <div className="map-note">{graph.data_status} · {graph.graph_id}</div>
+      <div className="map-note">
+        {graph.data_status} · {graph.nodes.length.toLocaleString('vi-VN')} node ·{' '}
+        {graph.edges.length.toLocaleString('vi-VN')} edge
+      </div>
     </div>
   )
 }

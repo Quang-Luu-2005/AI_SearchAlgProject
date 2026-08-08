@@ -1,7 +1,7 @@
 {
   "project": "FloodRoute HCMC",
   "manifest_version": "1.0.0",
-  "updated_at": "2026-08-07",
+  "updated_at": "2026-08-09",
   "routing_dataset_status": "REVIEW_REQUIRED",
   "raw_sources": [
     {
@@ -48,6 +48,19 @@
         "OSM-POI-2026-08-07",
         "HMC-FLOOD-2025-24",
         "HMC-FLOOD-2026-MARKET"
+      ]
+    },
+    {
+      "dataset_id": "thu_duc_core_capacity_v0.1.0",
+      "path": "data/processed/thu_duc_core_capacity_v0.1.0",
+      "data_status": "MIXED",
+      "routing_dataset_status": "CAPACITY_BENCHMARK_ONLY",
+      "snapshot_date": "2021-04-22",
+      "real_time": false,
+      "node_count": 3229,
+      "edge_count": 5057,
+      "source_ids": [
+        "UTRAFFIC-HCM-V6"
       ]
     }
   ],

@@ -17,9 +17,14 @@ OpenAPI document is available at `/openapi.json`.
 
 ## Search catalog
 
-- `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists selectable nodes.
+- `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists every selectable topology node.
+  Với processed pilot, POI thật đứng trước và node còn lại có tên giao lộ deterministic;
+  response có đúng một row cho mỗi `node_id`.
 - `GET /api/v1/scenarios?graph_id=toy_graph_v0.1` lists scenario, preset, weights
   and closed edges.
+
+Basemap feature không được gửi thẳng vào search. Frontend snap click basemap tới node gần
+nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 
 ## Search
 

@@ -148,6 +148,15 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
 | `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
+| `processed/thu_duc_core_capacity_v0.1.0` | Benchmark UTraffic 3.229 node/5.057 edge; không flood-aware |
+
+Trong chế độ START/GOAL có thể click trực tiếp circle node hoặc click một vị trí/POI trên
+basemap. Trường hợp thứ hai snap tới topology node gần nhất trong 200 m; popup hiện khoảng
+cách `SNAP`. Nếu không có node trong bán kính này, chế độ chọn được giữ nguyên và UI báo lỗi.
+
+Map không hard-clamp vào bbox graph. Có thể pan ra vùng lân cận Thủ Đức để xem context;
+min zoom 12 và `renderWorldCopies=false` ngăn viewport rơi về bản đồ toàn thế giới. Nút
+reset fit lại graph cùng một vành đệm địa lý bên ngoài để các cạnh sát biên vẫn nhìn thấy.
 
 ## 6. Thêm dataset folder mới
 

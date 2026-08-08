@@ -27,6 +27,10 @@ có một hitbox layer trong suốt để click; START và GOAL được đặt 
 Nếu remote style không tải được, renderer chuyển sang style nền trung tính cục bộ và
 vẫn cài graph sources/layers. Không dùng geocoder, satellite hoặc provider routing.
 
+Camera dùng `minZoom=12` và `renderWorldCopies=false`, nhưng không dùng hard `maxBounds`.
+Initial/reset viewport fit một context ring động rộng hơn graph để vẫn quét được vùng
+ngoài Thủ Đức và không cắt các cạnh sát biên.
+
 ## Hệ quả
 
 - Bản đồ có tên đường/POI thật và layer graph hiệu năng tốt hơn khi số node tăng.

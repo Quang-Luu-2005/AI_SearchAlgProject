@@ -37,9 +37,12 @@ const maplibreMock = vi.hoisted(() => {
     setMinZoom = vi.fn()
     setMaxBounds = vi.fn()
     stop = vi.fn()
+    queryRenderedFeatures = vi.fn(() => [])
     canvas = document.createElement('canvas')
+    options: Record<string, unknown>
 
-    constructor() {
+    constructor(options: Record<string, unknown>) {
+      this.options = options
       FakeMap.instances.push(this)
     }
 
@@ -187,7 +190,7 @@ describe('MapLibre RouteMap', () => {
     expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
   })
 
-  it('keeps the camera bounded to the graph and focuses a single endpoint', async () => {
+  it('keeps city-scale zoom without hard bounds and focuses a single endpoint', async () => {
     render(
       <RouteMap
         graph={graph}
@@ -202,11 +205,36 @@ describe('MapLibre RouteMap', () => {
 
     await waitFor(() => {
       expect(map.setMinZoom).toHaveBeenCalledWith(12)
-      expect(map.setMaxBounds).toHaveBeenCalled()
+      expect(map.setMaxBounds).not.toHaveBeenCalled()
+      expect(map.options).toMatchObject({ minZoom: 12, renderWorldCopies: false })
       expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
         center: [106.75, 10.85],
         zoom: 16.5,
       }))
     })
+  })
+
+  it('snaps a basemap click to the nearest graph node while picking', async () => {
+    const onNodePick = vi.fn()
+    const onPickTargetChange = vi.fn()
+    render(
+      <RouteMap
+        graph={graph}
+        pickTarget="GOAL"
+        onNodePick={onNodePick}
+        onPickTargetChange={onPickTargetChange}
+      />,
+    )
+    const map = maplibreMock.FakeMap.instances[0]
+    map.emit('style.load')
+
+    await waitFor(() => expect(map.layers).toContain('floodroute-node-hitbox'))
+    map.emit('click', '', {
+      point: { x: 100, y: 100 },
+      lngLat: { lng: 106.75002, lat: 10.85002 },
+    })
+
+    expect(onNodePick).toHaveBeenCalledWith('GOAL', 'N1')
+    expect(onPickTargetChange).toHaveBeenCalledWith(null)
   })
 })

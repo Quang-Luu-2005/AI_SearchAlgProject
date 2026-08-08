@@ -85,8 +85,16 @@ UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và 
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
 Với graph lớn, điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn trực tiếp trên mọi
-node bằng toolbar START/GOAL. OpenFreeMap cung cấp nền đường phố và POI; graph UTraffic
-vẫn quyết định topology/cost. Nếu mất mạng, nền trung tính vẫn cho phép chạy thuật toán.
+node bằng toolbar START/GOAL. Khi click một POI/đường trên basemap, UI snap tới node
+UTraffic gần nhất trong 200 m và công bố khoảng cách snap; basemap không tự trở thành
+topology. Nếu mất mạng, nền trung tính vẫn cho phép chạy thuật toán.
+
+Catalog có thêm `processed/thu_duc_core_capacity_v0.1.0` gồm 3.229 node/5.057 directed
+edge để stress-test. Pilot 90/155 vẫn là mặc định. Chạy benchmark bằng:
+
+```powershell
+npm run benchmark:capacity
+```
 
 Basemap mặc định có thể đổi trong `frontend/.env`:
 

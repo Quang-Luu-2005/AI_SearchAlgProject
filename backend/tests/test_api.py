@@ -42,6 +42,9 @@ def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
     assert real_graph["data_status"] == "MIXED"
     assert real_graph["real_time"] is False
     assert real_graph["routing_dataset_status"] == "REVIEW_REQUIRED"
+    capacity_graph = graph_by_id["processed/thu_duc_core_capacity_v0.1.0"]
+    assert (capacity_graph["node_count"], capacity_graph["edge_count"]) == (3229, 5057)
+    assert capacity_graph["routing_dataset_status"] == "CAPACITY_BENCHMARK_ONLY"
 
 
 def test_graph_detail_applies_scenario_without_hiding_closed_edge() -> None:
@@ -81,7 +84,7 @@ def test_locations_returns_selectable_simulated_nodes() -> None:
     assert all(item["data_status"] == "SIMULATED" for item in payload["locations"])
 
 
-def test_processed_locations_only_return_source_backed_pois() -> None:
+def test_processed_locations_return_every_topology_node_with_pois_first() -> None:
     response = client.get(
         "/api/v1/locations",
         params={"graph_id": "processed/thu_duc_market_v1.0.0"},
@@ -89,11 +92,25 @@ def test_processed_locations_only_return_source_backed_pois() -> None:
 
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload["locations"]) == 6
-    assert [item["point_id"] for item in payload["locations"]] == [
-        "DP00", "DP01", "DP02", "DP03", "DP04", "DP05"
-    ]
+    assert len(payload["locations"]) == 90
+    assert payload["locations"][0]["point_id"] == "DP00"
+    assert "Chợ Thủ Đức" in payload["locations"][0]["name"]
+    assert len({item["node_id"] for item in payload["locations"]}) == 90
+    assert any(item["name"].startswith("Giao ") for item in payload["locations"])
     assert all(item["data_status"] == "SOURCE_BACKED" for item in payload["locations"])
+
+
+def test_capacity_graph_exposes_all_nodes_as_selectable_locations() -> None:
+    response = client.get(
+        "/api/v1/locations",
+        params={"graph_id": "processed/thu_duc_core_capacity_v0.1.0"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["locations"]) == 3229
+    assert len({item["node_id"] for item in payload["locations"]}) == 3229
+    assert all(item["name"] for item in payload["locations"])
 
 
 def test_scenarios_returns_three_cost_presets() -> None:

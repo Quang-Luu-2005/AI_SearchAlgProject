@@ -56,8 +56,9 @@ Nhãn chỉ dùng cho presentation và popup, không ghi ngược vào dataset.
 - `Escape` hủy chế độ chọn.
 - Thay đổi endpoint, scenario hoặc swap endpoint đều xóa route/compare result cũ.
 - Khi có endpoint, bản đồ tự focus; nút reset đưa viewport về toàn graph.
-- Camera được giới hạn theo bbox graph với min zoom 12; chọn một endpoint focus ở zoom
-  16.5 và không reset về toàn graph khi endpoint còn lại chưa được chọn.
+- Camera giữ min zoom 12 nhưng không hard-clamp theo bbox. Initial/reset dùng context ring
+  động bên ngoài graph; chọn một endpoint focus ở zoom 16.5 và không reset về toàn graph
+  khi endpoint còn lại chưa được chọn.
 
 ### 3.5. Khả năng lỗi
 

@@ -5,6 +5,7 @@ import {
   buildNodeFeatureCollection,
   buildRouteFeatureCollection,
   deriveNodeDisplayName,
+  findNearestGraphNode,
 } from './mapData'
 
 function node(
@@ -122,3 +123,33 @@ describe('graph GeoJSON', () => {
   })
 })
 
+describe('basemap click snapping', () => {
+  it('selects the nearest topology node only inside the threshold', () => {
+    const snap = findNearestGraphNode(graph, 106.75102, 10.85102, 100)
+
+    expect(snap?.nodeId).toBe('2')
+    expect(snap?.distanceM).toBeLessThan(5)
+    expect(findNearestGraphNode(graph, 106.8, 10.9, 20)).toBeNull()
+  })
+})
+
+describe('capacity graph conversion', () => {
+  it('materializes 3229 nodes and 5057 edges without dropping selectable topology', () => {
+    const nodes = Array.from({ length: 3229 }, (_, index) => node(
+      `C${index}`,
+      `UTraffic node ${index}`,
+      10.82 + (index % 60) * 0.0005,
+      106.72 + Math.floor(index / 60) * 0.0005,
+    ))
+    const edges = Array.from({ length: 5057 }, (_, index) => edge(
+      `CE${index}`,
+      `C${index % nodes.length}`,
+      `C${(index + 1) % nodes.length}`,
+      'Capacity Road',
+    ))
+    const payload: GraphPayload = { ...graph, nodes, edges, active_edge_count: edges.length }
+
+    expect(buildNodeFeatureCollection(payload).features).toHaveLength(3229)
+    expect(buildEdgeFeatureCollection(payload).features).toHaveLength(5057)
+  })
+})

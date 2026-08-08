@@ -1,0 +1,32 @@
+{
+  "dataset_id": "thu_duc_core_capacity_v0.1.0",
+  "dataset_kind": "capacity_benchmark",
+  "data_status": "MIXED",
+  "routing_dataset_status": "CAPACITY_BENCHMARK_ONLY",
+  "snapshot_date": "2021-04-22",
+  "real_time": false,
+  "bbox": {
+    "south": 10.82,
+    "west": 106.72,
+    "north": 10.88,
+    "east": 106.79
+  },
+  "source_ids": [
+    "UTRAFFIC-HCM-V6"
+  ],
+  "attribution": [
+    "UTraffic/HCMUT historical road network"
+  ],
+  "graph_properties": {
+    "directed": true,
+    "strongly_connected": true,
+    "node_count": 3229,
+    "edge_count": 5057
+  },
+  "limitations": [
+    "Capacity benchmark only; not the default academic pilot dataset.",
+    "Free-flow time is derived from source max_velocity with street-type fallback.",
+    "Flood risk 0 means NO_RECORD in selected sources, not flood-safe.",
+    "No real-time traffic, POI order model, or verified flood map matching."
+  ]
+}

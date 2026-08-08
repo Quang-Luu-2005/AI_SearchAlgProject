@@ -27,6 +27,15 @@ Mọi node có circle layer nhỏ và hitbox trong suốt. Display label ưu ti�
 đó suy ra deterministic từ các `road_name` kề; fallback cuối là tọa độ. Đây chỉ là
 presentation metadata, không mutate graph contract hay processed dataset.
 
+Khi chọn endpoint, click ngoài node layer được snap phía client tới topology node gần
+nhất trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ; không dùng basemap feature
+làm edge/node runtime. API locations trả một row cho mọi topology node. Graph capacity
+3.229/5.057 dùng cùng contract/layer pipeline nhưng mang trạng thái benchmark-only.
+
+Camera không dùng hard `maxBounds`: min zoom 12 và `renderWorldCopies=false` giữ city-scale,
+còn initial/reset fit một context ring động lớn hơn graph để vùng ngoài và cạnh biên không
+bị cắt khỏi thao tác pan.
+
 ## Luồng chính
 
 ```mermaid

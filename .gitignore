@@ -23,6 +23,8 @@ data/processed/*
 !data/processed/README.md
 !data/processed/thu_duc_market_v1.0.0/
 !data/processed/thu_duc_market_v1.0.0/**
+!data/processed/thu_duc_core_capacity_v0.1.0/
+!data/processed/thu_duc_core_capacity_v0.1.0/**
 experiments/results/*
 !experiments/results/README.md
 

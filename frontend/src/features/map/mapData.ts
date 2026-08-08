@@ -28,6 +28,56 @@ type GraphState = {
   exploredNodeIds?: string[]
 }
 
+export type NodeSnapResult = {
+  nodeId: string
+  longitude: number
+  latitude: number
+  distanceM: number
+}
+
+function haversineM(
+  fromLongitude: number,
+  fromLatitude: number,
+  toLongitude: number,
+  toLatitude: number,
+): number {
+  const radians = Math.PI / 180
+  const deltaLatitude = (toLatitude - fromLatitude) * radians
+  const deltaLongitude = (toLongitude - fromLongitude) * radians
+  const fromLatitudeRadians = fromLatitude * radians
+  const toLatitudeRadians = toLatitude * radians
+  const haversine = Math.sin(deltaLatitude / 2) ** 2
+    + Math.cos(fromLatitudeRadians) * Math.cos(toLatitudeRadians)
+    * Math.sin(deltaLongitude / 2) ** 2
+  return 2 * 6_371_000 * Math.asin(Math.sqrt(haversine))
+}
+
+export function findNearestGraphNode(
+  graph: GraphPayload,
+  longitude: number,
+  latitude: number,
+  maxDistanceM = 200,
+): NodeSnapResult | null {
+  if (!Number.isFinite(longitude) || !Number.isFinite(latitude) || maxDistanceM < 0) return null
+  let nearest: NodeSnapResult | null = null
+  for (const node of graph.nodes) {
+    if (node.longitude === null || node.latitude === null) continue
+    const distanceM = haversineM(longitude, latitude, node.longitude, node.latitude)
+    if (
+      distanceM > maxDistanceM
+      || (nearest && distanceM > nearest.distanceM)
+      || (nearest && distanceM === nearest.distanceM && node.node_id >= nearest.nodeId)
+    ) continue
+    nearest = {
+      nodeId: node.node_id,
+      longitude: node.longitude,
+      latitude: node.latitude,
+      distanceM,
+    }
+  }
+  return nearest
+}
+
 function sortedUnique(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))]
     .sort((left, right) => left < right ? -1 : left > right ? 1 : 0)
@@ -180,4 +230,3 @@ export function buildRouteFeatureCollection(
   })
   return { type: 'FeatureCollection', features }
 }
-

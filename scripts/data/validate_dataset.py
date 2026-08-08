@@ -17,6 +17,7 @@ MANIFEST_PATH = DATA_ROOT / "registry" / "dataset_manifest.json"
 FIXTURE_ROOT = DATA_ROOT / "fixtures" / "toy_graph_v0.1"
 EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
 PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_market_v1.0.0"
+CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -203,6 +204,73 @@ def validate_processed_dataset(dataset_root: Path) -> list[str]:
     return errors
 
 
+def validate_capacity_dataset(dataset_root: Path) -> list[str]:
+    errors: list[str] = []
+    dataset_name = dataset_root.relative_to(DATA_ROOT).as_posix()
+    required_files = {
+        "nodes.csv", "edges.csv", "scenarios.json", "metadata.json",
+        "README.md", "checksums.sha256",
+    }
+    missing = sorted(name for name in required_files if not (dataset_root / name).is_file())
+    if missing:
+        return [f"{dataset_name} is missing files: {missing}"]
+
+    declared_checksums: dict[str, str] = {}
+    for line in (dataset_root / "checksums.sha256").read_text(encoding="utf-8").splitlines():
+        checksum, filename = line.split(maxsplit=1)
+        declared_checksums[filename.strip()] = checksum.upper()
+    for filename in required_files - {"checksums.sha256"}:
+        if declared_checksums.get(filename) != sha256(dataset_root / filename):
+            errors.append(f"{dataset_name}: checksum mismatch for {filename}")
+
+    nodes = read_csv(dataset_root / "nodes.csv")
+    edges = read_csv(dataset_root / "edges.csv")
+    scenarios = read_json(dataset_root / "scenarios.json")
+    metadata = read_json(dataset_root / "metadata.json")
+    if len(nodes) != 3229 or len(edges) != 5057:
+        errors.append(f"{dataset_name}: expected 3229 nodes and 5057 directed edges")
+
+    node_ids = [row["node_id"] for row in nodes]
+    edge_ids = [row["edge_id"] for row in edges]
+    node_id_set = set(node_ids)
+    if len(node_ids) != len(node_id_set) or len(edge_ids) != len(set(edge_ids)):
+        errors.append(f"{dataset_name}: node and edge IDs must be unique")
+    for node in nodes:
+        latitude, longitude = float(node["latitude"]), float(node["longitude"])
+        if not (10.82 <= latitude <= 10.88 and 106.72 <= longitude <= 106.79):
+            errors.append(f"{dataset_name}: node {node['node_id']} falls outside capacity bbox")
+        if node.get("data_status") != "SOURCE_BACKED":
+            errors.append(f"{dataset_name}: node {node['node_id']} needs SOURCE_BACKED status")
+    for edge in edges:
+        if edge["from_node_id"] not in node_id_set or edge["to_node_id"] not in node_id_set:
+            errors.append(f"{dataset_name}: edge {edge['edge_id']} has an invalid FK")
+        values = [float(edge["distance_m"]), float(edge["free_flow_time_min"])]
+        if not all(math.isfinite(value) and value > 0 for value in values):
+            errors.append(f"{dataset_name}: edge {edge['edge_id']} distance/time must be positive")
+        if edge.get("data_status") != "DERIVED":
+            errors.append(f"{dataset_name}: edge {edge['edge_id']} must be DERIVED")
+    if not _is_strongly_connected(node_id_set, edges):
+        errors.append(f"{dataset_name}: directed capacity graph must be strongly connected")
+
+    scenario_rows = scenarios.get("scenarios", [])
+    if [row.get("scenario_id") for row in scenario_rows] != ["CAPACITY_BASELINE"]:
+        errors.append(f"{dataset_name}: CAPACITY_BASELINE scenario is required")
+    for scenario in scenario_rows:
+        if abs(sum(float(value) for value in scenario.get("weights", {}).values()) - 1.0) > 1e-9:
+            errors.append(f"{dataset_name}: scenario weights must sum to 1")
+        if scenario.get("data_status") != "ASSUMPTION":
+            errors.append(f"{dataset_name}: scenario must be labelled ASSUMPTION")
+
+    properties = metadata.get("graph_properties", {})
+    if metadata.get("routing_dataset_status") != "CAPACITY_BENCHMARK_ONLY":
+        errors.append(f"{dataset_name}: metadata status must be CAPACITY_BENCHMARK_ONLY")
+    if metadata.get("data_status") != "MIXED" or metadata.get("real_time") is not False:
+        errors.append(f"{dataset_name}: metadata must declare MIXED and real_time=false")
+    if properties.get("node_count") != len(nodes) or properties.get("edge_count") != len(edges):
+        errors.append(f"{dataset_name}: metadata graph counts do not match CSV files")
+    return errors
+
+
 def validate_graph_fixture(fixture_root: Path) -> list[str]:
     errors: list[str] = []
     fixture_name = fixture_root.relative_to(DATA_ROOT).as_posix()
@@ -318,6 +386,8 @@ def validate() -> list[str]:
         processed_root = REPOSITORY_ROOT / processed["path"]
         if processed_root == PROCESSED_ROOT:
             errors.extend(validate_processed_dataset(processed_root))
+        elif processed_root == CAPACITY_PROCESSED_ROOT:
+            errors.extend(validate_capacity_dataset(processed_root))
         else:
             errors.append(f"Unexpected processed dataset path: {processed_root}")
 
@@ -338,5 +408,6 @@ if __name__ == "__main__":
     print("- graph examples: simple path, one-way branch, cycle with closure")
     print("- scenario weights, labels and golden paths verified")
     print("- Thu Duc Market: 90 nodes, 155 directed edges, strongly connected")
+    print("- Thu Duc capacity graph: 3229 nodes, 5057 directed edges, strongly connected")
     print("- traffic/flood provenance and route-change golden case verified")
     print("- release status: REVIEW_REQUIRED (two human map-match reviews pending)")

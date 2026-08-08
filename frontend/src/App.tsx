@@ -192,7 +192,9 @@ export function App() {
         setGoalId((current) => (
           nextLocations.some((item) => item.node_id === current)
             ? current
-            : nextLocations.at(-1)?.node_id ?? ''
+            : nextLocations.filter((item) => item.point_id).at(-1)?.node_id
+              ?? nextLocations.at(-1)?.node_id
+              ?? ''
         ))
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
