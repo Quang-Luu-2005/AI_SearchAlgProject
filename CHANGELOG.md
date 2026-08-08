@@ -7,6 +7,15 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- OpenFreeMap `Liberty` vector basemap, GeoJSON graph layers, popup tên node derived,
+  toolbar click-node chọn START/GOAL và fallback nền trung tính khi basemap lỗi.
+- ADR 0008 cho quyết định chuyển React Leaflet sang MapLibre GL JS/OpenFreeMap.
+- Tài liệu hóa plan triển khai đầy đủ tại `docs/plans/2026-08-09-maplibre-openfreemap.md`.
+- Cấu hình MapLibre worker qua Vite worker pipeline và loại `maplibre-gl` khỏi
+  dependency optimizer để sửa lỗi thiếu `maplibre-gl-worker.mjs` trong `.vite/deps`.
+- Script dev root chuyển tiếp tham số Vite như `--force` để làm mới dependency cache.
+- Tách nút reset viewport khỏi nhóm zoom/compass MapLibre để không chồng nút ở góc phải.
+
 - Dataset thực tế `thu_duc_market_v1.0.0` cho pilot giao hàng quanh chợ Thủ Đức: 90
   node, 155 directed edge, traffic lịch sử UTraffic, POI OSM, flood hotspot 2025–2026,
   ba scenario và golden case đổi tuyến.
@@ -41,6 +50,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Changed
 
+- Frontend map renderer chuyển từ React Leaflet/nền CSS sang MapLibre WebGL; backend,
+  graph schema, cost model và processed dataset giữ nguyên.
+
 - Route picker trên UI chuyển từ danh sách select dài sang tìm kiếm theo tên hoặc
   `node_id`, giới hạn 40 kết quả hiển thị; endpoint được highlight và bản đồ tự zoom
   vào start/goal khi chọn.
@@ -57,7 +69,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
   từng đoạn của tuyến tối ưu với màu tím/viền sáng nổi bật.
 - Nút reset viewport dùng icon PNG trong suốt được tạo bằng image model, không
   hiển thị chữ nhưng vẫn có tooltip và nhãn accessibility.
-- Cô lập stacking context của Leaflet để zoom/reset controls không tràn lên
+- Cô lập stacking context của map renderer để zoom/reset controls không tràn lên
   sticky header khi cuộn trang.
 - Các script test data/backend ở repository root dùng Python trong `.venv`, đồng
   nhất với `npm run dev` và không phụ thuộc Python hệ thống.

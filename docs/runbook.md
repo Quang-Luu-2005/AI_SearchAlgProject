@@ -125,9 +125,19 @@ chọn mặc định.
 
 1. Chọn graph trong ô **Dataset folder**.
 2. Chọn **Scenario** nếu graph có `scenarios.json`.
-3. Bản đồ hiển thị Node và directed Edge từ CSV.
+3. OpenFreeMap hiển thị nền đường/POI; MapLibre overlay Node và directed Edge từ CSV.
 4. Edge đang mở có màu xanh; edge bị đóng có nét đứt màu đỏ.
-5. Sau khi thêm hoặc sửa folder, bấm **Quét và nạp lại**.
+5. Bấm **Chọn START** hoặc **Chọn GOAL**, sau đó click bất kỳ node; `Escape` để hủy.
+6. Sau khi thêm hoặc sửa folder, bấm **Quét và nạp lại**.
+
+Basemap cần mạng nhưng không bắt buộc cho search. Nếu không tải được, UI báo lỗi nền
+và tiếp tục vẽ graph trên background trung tính. Đổi provider/style bằng cách copy
+`frontend/.env.example` thành `frontend/.env` rồi sửa `VITE_BASEMAP_STYLE_URL`.
+
+Nếu Vite báo thiếu `frontend/node_modules/.vite/deps/maplibre-gl-worker.mjs`, dừng
+frontend rồi khởi động lại với `npm run dev:frontend -- --force`. Cấu hình Vite đã
+đóng gói worker bằng `?worker&url`/`setWorkerUrl` và loại `maplibre-gl` khỏi dependency
+optimizer; tùy chọn `--force` chỉ dùng để làm mới cache cũ của lần chạy trước.
 
 Các fixture có sẵn:
 

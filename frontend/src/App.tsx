@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { RouteMap } from './features/map/RouteMap'
+import { RouteMap, type EndpointPickTarget } from './features/map/RouteMap'
 import {
   fetchGraph,
   fetchGraphCatalog,
@@ -101,6 +101,7 @@ export function App() {
   const [scenarioId, setScenarioId] = useState('')
   const [startId, setStartId] = useState('')
   const [goalId, setGoalId] = useState('')
+  const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
   const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
@@ -229,6 +230,40 @@ export function App() {
     setScenarioId('')
     setStartId('')
     setGoalId('')
+    setPickTarget(null)
+  }
+
+  function clearRouteResult() {
+    setResult(null)
+    setComparisonResults([])
+    setVisiblePathEdgeCount(0)
+    setAnimatingPath(false)
+  }
+
+  function selectStart(nodeId: string) {
+    setStartId(nodeId)
+    clearRouteResult()
+  }
+
+  function selectGoal(nodeId: string) {
+    setGoalId(nodeId)
+    clearRouteResult()
+  }
+
+  function pickNode(target: EndpointPickTarget, nodeId: string) {
+    if (target === 'START') selectStart(nodeId)
+    else selectGoal(nodeId)
+  }
+
+  function swapEndpoints() {
+    setStartId(goalId)
+    setGoalId(startId)
+    clearRouteResult()
+  }
+
+  function selectScenario(nextScenarioId: string) {
+    setScenarioId(nextScenarioId)
+    clearRouteResult()
   }
 
   async function executeSearch(event?: FormEvent) {
@@ -260,8 +295,8 @@ export function App() {
   }
 
   function clearBoard() {
-    setResult(null)
-    setComparisonResults([])
+    clearRouteResult()
+    setPickTarget(null)
     setError('')
   }
 
@@ -314,7 +349,7 @@ export function App() {
 
             <label>
               Kịch bản chi phí
-              <select value={scenarioId} onChange={(event) => setScenarioId(event.target.value)}>
+              <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
                 {scenarios.map((item) => (
                   <option key={item.scenario_id} value={item.scenario_id}>
                     {item.scenario_id}
@@ -328,16 +363,13 @@ export function App() {
                 label="Điểm bắt đầu"
                 value={startId}
                 locations={locations}
-                onChange={setStartId}
+                onChange={selectStart}
               />
               <button
                 className="swap-button"
                 type="button"
                 aria-label="Đổi điểm bắt đầu và đích"
-                onClick={() => {
-                  setStartId(goalId)
-                  setGoalId(startId)
-                }}
+                onClick={swapEndpoints}
               >
                 ⇅
               </button>
@@ -345,7 +377,7 @@ export function App() {
                 label="Điểm đích"
                 value={goalId}
                 locations={locations}
-                onChange={setGoalId}
+                onChange={selectGoal}
               />
             </div>
 
@@ -420,6 +452,9 @@ export function App() {
                 exploredNodeIds={exploredNodeIds}
                 startId={startId}
                 goalId={goalId}
+                pickTarget={pickTarget}
+                onNodePick={pickNode}
+                onPickTargetChange={setPickTarget}
               />
             ) : (
               <div className="map-placeholder">Chưa có dữ liệu graph</div>

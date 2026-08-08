@@ -12,6 +12,9 @@ const backendPython = backendPythonCandidates.find(existsSync)
 const viteEntry = path.join(repositoryRoot, 'frontend', 'node_modules', 'vite', 'bin', 'vite.js')
 const backendOnly = process.argv.includes('--backend-only')
 const frontendOnly = process.argv.includes('--frontend-only')
+const viteExtraArgs = process.argv.slice(2).filter(
+  (argument) => argument !== '--backend-only' && argument !== '--frontend-only',
+)
 
 if (backendOnly && frontendOnly) {
   console.error('Chỉ được chọn một trong --backend-only hoặc --frontend-only.')
@@ -98,6 +101,7 @@ if (!backendOnly) {
     '--port',
     '5173',
     '--strictPort',
+    ...viteExtraArgs,
   ], path.join(repositoryRoot, 'frontend'))
 }
 

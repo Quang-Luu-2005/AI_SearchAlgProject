@@ -16,6 +16,17 @@ contract, không phụ thuộc FastAPI hay loại dataset.
 - Demo chính chạy trên dataset snapshot để tái lập và không phụ thuộc API trả phí.
 - Explanation sinh từ cost breakdown và guarantee có cấu trúc.
 
+## Map renderer
+
+Frontend dùng MapLibre GL JS. OpenFreeMap là basemap best-effort; Node, Edge và route
+được chuyển từ API payload sang ba GeoJSON source và render bằng GPU layers. Basemap
+không tham gia snapping, topology, scenario hoặc cost. Khi remote style lỗi, renderer
+dùng style nền trung tính cục bộ và vẫn hiển thị graph.
+
+Mọi node có circle layer nhỏ và hitbox trong suốt. Display label ưu tiên POI name, sau
+đó suy ra deterministic từ các `road_name` kề; fallback cuối là tọa độ. Đây chỉ là
+presentation metadata, không mutate graph contract hay processed dataset.
+
 ## Luồng chính
 
 ```mermaid
@@ -100,5 +111,5 @@ chọn dataset/scenario và vẽ Node/Edge; edge đóng vẫn có trong payload 
 
 Ứng dụng này là một client-side visualization gọi API Python, không cần SSR, SEO
 hay server actions. Vite giảm lớp framework không phục vụ rubric và phù hợp với
-giới hạn React Leaflet hoạt động phía client. Nếu sau này cần auth, persistence
+MapLibre GL JS hoạt động phía client. Nếu sau này cần auth, persistence
 hoặc public portal có SSR, quyết định này phải được xem lại bằng ADR mới.

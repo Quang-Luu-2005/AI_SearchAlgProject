@@ -23,7 +23,7 @@ khung frontend/backend chạy được, dataset có provenance, và fixture dete
 
 ## Stack đã chọn
 
-- Frontend: React + TypeScript + Vite + React Leaflet.
+- Frontend: React + TypeScript + Vite + MapLibre GL JS; OpenFreeMap vector basemap.
 - Backend: Python + FastAPI; thuật toán nằm trong module Python thuần.
 - Data: raw workbook/OSM snapshot → interim → processed CSV/JSON/GraphML.
 - Test: pytest cho backend, Vitest cho frontend, validator chuẩn thư viện Python
@@ -84,9 +84,15 @@ Giao diện Pathfinder AI cho phép chọn dataset, scenario, điểm đầu/đ�
 UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và metrics đều lấy
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
-Với graph lớn, điểm đầu/đích được chọn bằng ô tìm kiếm theo tên hoặc `node_id`; bản đồ
-chỉ dùng để xem topology và tự zoom vào hai endpoint đã chọn, không cần hiển thị toàn
-bộ node để thao tác.
+Với graph lớn, điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn trực tiếp trên mọi
+node bằng toolbar START/GOAL. OpenFreeMap cung cấp nền đường phố và POI; graph UTraffic
+vẫn quyết định topology/cost. Nếu mất mạng, nền trung tính vẫn cho phép chạy thuật toán.
+
+Basemap mặc định có thể đổi trong `frontend/.env`:
+
+```env
+VITE_BASEMAP_STYLE_URL=https://tiles.openfreemap.org/styles/liberty
+```
 
 `npm run dev` luôn dùng Python trong `.venv`, chạy Vite từ đúng folder
 `frontend/` và dừng cả hai service khi nhấn `Ctrl+C`. Nếu cần chạy riêng:
