@@ -10,6 +10,8 @@ Kế hoạch triển khai đầy đủ được lưu tại
   `optimizeDeps` để tránh lỗi `maplibre-gl-worker.mjs` trong `.vite/deps`.
 - Điều chỉnh vị trí nút reset viewport xuống dưới NavigationControl, tránh chồng với
   zoom/compass trên desktop và mobile.
+- Giới hạn viewport theo bbox graph với min zoom 12; chọn một endpoint dùng zoom 16.5
+  và không còn chạy fit toàn graph khi endpoint còn lại chưa được chọn.
 - Chuyển Node/Edge/route thành GeoJSON layers; giữ closed edge, explored node, endpoint
   và route animation theo response backend.
 - Cho phép click mọi node bằng hitbox GPU; toolbar chọn START/GOAL, Escape để hủy và

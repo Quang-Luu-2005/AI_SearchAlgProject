@@ -15,6 +15,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
   dependency optimizer để sửa lỗi thiếu `maplibre-gl-worker.mjs` trong `.vite/deps`.
 - Script dev root chuyển tiếp tham số Vite như `--force` để làm mới dependency cache.
 - Tách nút reset viewport khỏi nhóm zoom/compass MapLibre để không chồng nút ở góc phải.
+- Giới hạn camera theo bbox graph, đặt min zoom 12 và focus endpoint ở zoom 16.5 để
+  chọn node không bị zoom ra toàn thế giới.
 
 - Dataset thực tế `thu_duc_market_v1.0.0` cho pilot giao hàng quanh chợ Thủ Đức: 90
   node, 155 directed edge, traffic lịch sử UTraffic, POI OSM, flood hotspot 2025–2026,

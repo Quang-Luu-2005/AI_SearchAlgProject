@@ -32,6 +32,11 @@ const maplibreMock = vi.hoisted(() => {
     flyTo = vi.fn()
     setStyle = vi.fn()
     getZoom = vi.fn(() => 14)
+    setCenter = vi.fn()
+    setZoom = vi.fn()
+    setMinZoom = vi.fn()
+    setMaxBounds = vi.fn()
+    stop = vi.fn()
     canvas = document.createElement('canvas')
 
     constructor() {
@@ -181,5 +186,27 @@ describe('MapLibre RouteMap', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Chọn GOAL' }))
     expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
   })
-})
 
+  it('keeps the camera bounded to the graph and focuses a single endpoint', async () => {
+    render(
+      <RouteMap
+        graph={graph}
+        startId="N1"
+        pickTarget={null}
+        onNodePick={vi.fn()}
+        onPickTargetChange={vi.fn()}
+      />,
+    )
+    const map = maplibreMock.FakeMap.instances[0]
+    map.emit('style.load')
+
+    await waitFor(() => {
+      expect(map.setMinZoom).toHaveBeenCalledWith(12)
+      expect(map.setMaxBounds).toHaveBeenCalled()
+      expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
+        center: [106.75, 10.85],
+        zoom: 16.5,
+      }))
+    })
+  })
+})

@@ -47,6 +47,8 @@ const SOURCE_EDGES = 'floodroute-edges'
 const SOURCE_ROUTE = 'floodroute-route'
 const SOURCE_NODES = 'floodroute-nodes'
 const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
+const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
+const MIN_PILOT_ZOOM = 12
 
 function addGraphLayers(map: maplibregl.Map) {
   if (!map.getSource(SOURCE_EDGES)) {
@@ -187,16 +189,43 @@ function popupContent(properties: NodeFeatureProperties): HTMLElement {
   return root
 }
 
-function graphBounds(graph: GraphPayload): maplibregl.LngLatBounds | null {
+type CoordinateExtent = {
+  west: number
+  south: number
+  east: number
+  north: number
+}
+
+function graphExtent(graph: GraphPayload): CoordinateExtent | null {
   const coordinates = graph.nodes.flatMap<[number, number]>((node) => (
     node.latitude === null || node.longitude === null
+      || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)
+      || node.latitude < -90 || node.latitude > 90
+      || node.longitude < -180 || node.longitude > 180
       ? []
       : [[node.longitude, node.latitude]]
   ))
   if (!coordinates.length) return null
-  const bounds = new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
-  for (const coordinate of coordinates.slice(1)) bounds.extend(coordinate)
-  return bounds
+  return coordinates.reduce<CoordinateExtent>((extent, [longitude, latitude]) => ({
+    west: Math.min(extent.west, longitude),
+    south: Math.min(extent.south, latitude),
+    east: Math.max(extent.east, longitude),
+    north: Math.max(extent.north, latitude),
+  }), {
+    west: coordinates[0][0],
+    south: coordinates[0][1],
+    east: coordinates[0][0],
+    north: coordinates[0][1],
+  })
+}
+
+function graphBounds(graph: GraphPayload, padding = 0): maplibregl.LngLatBounds | null {
+  const extent = graphExtent(graph)
+  if (!extent) return null
+  return new maplibregl.LngLatBounds(
+    [extent.west - padding, extent.south - padding],
+    [extent.east + padding, extent.north + padding],
+  )
 }
 
 export function RouteMap({
@@ -244,8 +273,9 @@ export function RouteMap({
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: BASEMAP_STYLE_URL,
-      center: [106.756, 10.849],
+      center: DEFAULT_CENTER,
       zoom: 14,
+      minZoom: MIN_PILOT_ZOOM,
       attributionControl: false,
     })
     mapRef.current = map
@@ -327,6 +357,28 @@ export function RouteMap({
     ;(map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
   }, [edgeData, nodeData, routeData, styleRevision])
 
+  const cameraGraphKeyRef = useRef('')
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !styleReadyRef.current) return
+    const bounds = graphBounds(graph)
+    if (!bounds) {
+      map.setCenter(DEFAULT_CENTER)
+      map.setZoom(14)
+      return
+    }
+
+    // Keep accidental camera resets inside the pilot graph instead of allowing
+    // a style update or invalid fit to reveal the whole world.
+    map.setMinZoom(MIN_PILOT_ZOOM)
+    map.setMaxBounds(graphBounds(graph, 0.002) ?? bounds)
+    const cameraKey = `${graph.graph_id}:${styleRevision}`
+    if (cameraGraphKeyRef.current === cameraKey) return
+    cameraGraphKeyRef.current = cameraKey
+    map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
+  }, [graph, styleRevision])
+
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
@@ -335,20 +387,19 @@ export function RouteMap({
       if (!nodeId) return []
       const node = nodeById.get(nodeId)
       return !node || node.latitude === null || node.longitude === null
+        || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)
         ? []
         : [[node.longitude, node.latitude]]
     })
+    map.stop()
     if (endpoints.length === 1) {
-      map.flyTo({ center: endpoints[0], zoom: Math.max(map.getZoom(), 16), essential: true })
+      map.flyTo({ center: endpoints[0], zoom: 16.5, essential: true, duration: 500 })
     } else if (endpoints.length === 2) {
       map.fitBounds(new maplibregl.LngLatBounds(endpoints[0], endpoints[1]), {
         padding: 84,
         maxZoom: 17,
         duration: 650,
       })
-    } else {
-      const bounds = graphBounds(graph)
-      if (bounds) map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
     }
   }, [goalId, graph, startId, styleRevision])
 
