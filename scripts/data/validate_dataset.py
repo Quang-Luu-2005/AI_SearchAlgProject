@@ -19,6 +19,7 @@ EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
 PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_market_v1.0.0"
 CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
 LANDMARK_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.0"
+OSM_THU_DUC_PROCESSED_ROOT = DATA_ROOT / "processed" / "osm_thu_duc_v1.0.0"
 THU_DUC_BOUNDARY_PATH = (
     DATA_ROOT / "raw" / "thu_duc_boundary_v1.0.0" / "osm_relation_19407794.geojson"
 )
@@ -494,6 +495,35 @@ def validate_graph_fixture(fixture_root: Path) -> list[str]:
     return errors
 
 
+def validate_osm_thu_duc_dataset(dataset_root: Path) -> list[str]:
+    errors: list[str] = []
+    dataset_name = dataset_root.relative_to(DATA_ROOT).as_posix()
+    required_files = {
+        "nodes.csv", "edges.csv", "scenarios.json", "delivery_points.csv",
+        "metadata.json", "validation_report.json", "checksums.sha256",
+    }
+    missing = sorted(name for name in required_files if not (dataset_root / name).is_file())
+    if missing:
+        return [f"{dataset_name} is missing files: {missing}"]
+
+    declared_checksums: dict[str, str] = {}
+    for line in (dataset_root / "checksums.sha256").read_text(encoding="utf-8").splitlines():
+        checksum, filename = line.split(maxsplit=1)
+        declared_checksums[filename.strip()] = checksum.upper()
+    for filename in declared_checksums.keys():
+        if (dataset_root / filename).is_file():
+            if declared_checksums.get(filename) != sha256(dataset_root / filename):
+                errors.append(f"{dataset_name}: checksum mismatch for {filename}")
+
+    nodes = read_csv(dataset_root / "nodes.csv")
+    edges = read_csv(dataset_root / "edges.csv")
+    metadata = read_json(dataset_root / "metadata.json")
+
+    if metadata.get("node_count") != len(nodes) or metadata.get("edge_count") != len(edges):
+        errors.append(f"{dataset_name}: metadata graph counts do not match CSV files")
+    return errors
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     manifest = read_json(MANIFEST_PATH)
@@ -528,6 +558,8 @@ def validate() -> list[str]:
             errors.extend(validate_capacity_dataset(processed_root))
         elif processed_root == LANDMARK_PROCESSED_ROOT:
             errors.extend(validate_landmark_dataset(processed_root))
+        elif processed_root == OSM_THU_DUC_PROCESSED_ROOT:
+            errors.extend(validate_osm_thu_duc_dataset(processed_root))
         else:
             errors.append(f"Unexpected processed dataset path: {processed_root}")
 

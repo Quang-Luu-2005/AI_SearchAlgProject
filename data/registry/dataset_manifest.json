@@ -48,6 +48,20 @@
       "data_status": "SOURCE_BACKED",
       "immutable": true,
       "license": "ODbL-1.0"
+    },
+    {
+      "dataset_id": "OSM-OVERPASS-ROAD-2026-08-10",
+      "path": "data/raw/osm/thu_duc_osm_v1.0.0/osm_road_snapshot.json",
+      "sha256": "FA350C48528FE8BA9CB15D3263558CE323145263AD635D471FF9B51DF6F7B64F",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true
+    },
+    {
+      "dataset_id": "OSM-OVERPASS-REGISTRY-2026-08-10",
+      "path": "data/raw/osm/thu_duc_osm_v1.0.0/source_registry.json",
+      "sha256": "BA64D681927CCA3BB5FC95E343BA0B5F5378E700D7E465A8DD9D87695FAF1F3E",
+      "data_status": "SOURCE_BACKED",
+      "immutable": true
     }
   ],
   "processed_datasets": [
@@ -93,6 +107,20 @@
       "edge_count": 5057,
       "source_ids": [
         "UTRAFFIC-HCM-V6"
+      ]
+    },
+    {
+      "dataset_id": "osm_thu_duc_v1.0.0",
+      "path": "data/processed/osm_thu_duc_v1.0.0",
+      "data_status": "SOURCE_BACKED",
+      "routing_dataset_status": "ACADEMIC_DEMO_READY",
+      "snapshot_date": "2026-08-10",
+      "real_time": false,
+      "node_count": 27,
+      "edge_count": 40,
+      "source_ids": [
+        "OSM-OVERPASS-ROAD-2026-08-10",
+        "OSM-OVERPASS-REGISTRY-2026-08-10"
       ]
     }
   ],

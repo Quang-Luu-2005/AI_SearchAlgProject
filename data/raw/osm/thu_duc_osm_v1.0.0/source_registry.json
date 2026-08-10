@@ -1,0 +1,21 @@
+{
+  "dataset_id": "thu_duc_osm_v1.0.0",
+  "bounding_box": {
+    "south": 10.845,
+    "west": 106.751,
+    "north": 10.853,
+    "east": 106.759
+  },
+  "sources": [
+    {
+      "source_id": "OSM-OVERPASS-2026-08-10",
+      "title": "OpenStreetMap Highway Infrastructure Snapshot for Thu Duc Market",
+      "provider": "OpenStreetMap contributors via Overpass API",
+      "url": "https://overpass-api.de/api/interpreter",
+      "license": "ODbL-1.0 (Open Database License)",
+      "snapshot_date": "2026-08-10",
+      "query_type": "way['highway']",
+      "area": "Thu Duc Market, Ho Chi Minh City, Vietnam"
+    }
+  ]
+}

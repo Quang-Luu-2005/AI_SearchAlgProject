@@ -7,6 +7,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Triển khai quy trình dữ liệu OSM 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed) chuẩn hóa: raw snapshot `thu_duc_osm_v1.0.0`, interim topology `data/interim/osm_thu_duc_v1.0.0/` (27 nodes, 40 edges), script tái tạo [`scripts/data/build_osm_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/build_osm_dataset.py), SHA-256 checksums, metadata và cập nhật validator.
 - UI map scope cố định về `thu_duc_landmarks_v1.0.0` với đúng 65 selectable landmark;
   processed pilot 90 node và capacity graph không còn xuất hiện trong dropdown map.
 
