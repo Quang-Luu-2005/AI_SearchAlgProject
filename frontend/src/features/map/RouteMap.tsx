@@ -247,6 +247,22 @@ function popupContent(properties: NodeFeatureProperties, snapDistanceM?: number)
   return root
 }
 
+function endpointPinElement(target: EndpointPickTarget, nodeLabel: string): HTMLElement {
+  const marker = document.createElement('div')
+  marker.className = `route-endpoint-marker route-endpoint-marker--${target.toLowerCase()}`
+  marker.setAttribute('role', 'img')
+  marker.setAttribute('aria-label', `${target}: ${nodeLabel}`)
+  marker.title = `${target}: ${nodeLabel}`
+
+  const pin = document.createElement('div')
+  pin.className = 'route-endpoint-marker__pin'
+  const label = document.createElement('span')
+  label.textContent = target === 'START' ? 'S' : 'G'
+  pin.append(label)
+  marker.append(pin)
+  return marker
+}
+
 type CoordinateExtent = {
   west: number
   south: number
@@ -497,11 +513,6 @@ export function RouteMap({
   }, [boundary, edgeData, nodeData, routeData, styleRevision])
 
   const cameraGraphKeyRef = useRef('')
-  const previousEndpointRef = useRef({
-    graphId: graph.graph_id,
-    startId,
-    goalId,
-  })
 
   useEffect(() => {
     const map = mapRef.current
@@ -525,52 +536,27 @@ export function RouteMap({
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !styleReadyRef.current) return
+    if (!map) return
     const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
-    const previous = previousEndpointRef.current
-    const graphChanged = previous.graphId !== graph.graph_id
-    const startChanged = !graphChanged && previous.startId !== startId
-    const goalChanged = !graphChanged && previous.goalId !== goalId
-    previousEndpointRef.current = { graphId: graph.graph_id, startId, goalId }
-
-    const changedEndpointId = startChanged && !goalChanged
-      ? startId
-      : goalChanged && !startChanged
-        ? goalId
-        : ''
-    const changedEndpoint = changedEndpointId ? nodeById.get(changedEndpointId) : undefined
-
-    map.stop()
-    if (changedEndpoint && changedEndpoint.latitude !== null && changedEndpoint.longitude !== null
-      && Number.isFinite(changedEndpoint.latitude)
-      && Number.isFinite(changedEndpoint.longitude)) {
-      map.flyTo({
-        center: [changedEndpoint.longitude, changedEndpoint.latitude],
-        zoom: 16.5,
-        essential: true,
-        duration: 500,
-      })
-      return
-    }
-
-    const endpoints = [startId, goalId].flatMap<[number, number]>((nodeId) => {
+    const markers = ([
+      ['START', startId],
+      ['GOAL', goalId],
+    ] as const).flatMap<maplibregl.Marker>(([target, nodeId]) => {
       if (!nodeId) return []
       const node = nodeById.get(nodeId)
-      return !node || node.latitude === null || node.longitude === null
-        || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)
-        ? []
-        : [[node.longitude, node.latitude]]
-    })
-    if (endpoints.length === 1) {
-      map.flyTo({ center: endpoints[0], zoom: 16.5, essential: true, duration: 500 })
-    } else if (endpoints.length === 2) {
-      map.fitBounds(new maplibregl.LngLatBounds(endpoints[0], endpoints[1]), {
-        padding: 84,
-        maxZoom: 17,
-        duration: 650,
+      if (!node || node.latitude === null || node.longitude === null
+        || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)) return []
+      const marker = new maplibregl.Marker({
+        element: endpointPinElement(target, node.label || node.node_id),
+        anchor: 'bottom',
       })
-    }
-  }, [goalId, graph, startId, styleRevision])
+        .setLngLat([node.longitude, node.latitude])
+        .addTo(map)
+      return [marker]
+    })
+
+    return () => markers.forEach((marker) => marker.remove())
+  }, [goalId, graph, startId])
 
   useEffect(() => {
     setPickFeedback('')

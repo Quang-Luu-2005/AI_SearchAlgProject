@@ -45,9 +45,11 @@ padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có mộ
 ngoài đường đỏ. Nếu boundary API lỗi, renderer fallback về context ring động của graph
 và cũng giới hạn camera trong rectangle fallback đó.
 
-Camera endpoint theo dõi riêng thay đổi `startId`/`goalId`: nếu chỉ một endpoint vừa đổi,
-renderer `flyTo` chính node đó ở zoom 16.5. `fitBounds` hai endpoint chỉ dùng khi khởi tạo
-với cả hai điểm hoặc khi cả hai thay đổi cùng lúc, tránh nhảy về trung điểm sau khi chọn.
+Thay đổi `startId`/`goalId` chỉ cập nhật GeoJSON node state, không gọi `flyTo` hoặc
+`fitBounds`. Renderer giữ nguyên viewport người dùng đang quan sát và gắn hai HTML marker
+dạng ghim lớn vào đúng tọa độ endpoint: START màu cam, GOAL màu hồng. Các marker này chỉ
+tồn tại cho endpoint đã chọn. `fitBounds` chỉ dùng khi nạp graph, nạp boundary mới hoặc
+khi người dùng bấm nút reset viewport.
 
 ## Luồng chính
 

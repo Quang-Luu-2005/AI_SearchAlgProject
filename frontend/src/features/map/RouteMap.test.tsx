@@ -21,6 +21,21 @@ const maplibreMock = vi.hoisted(() => {
     addTo = vi.fn(() => this)
   }
 
+  class FakeMarker {
+    static instances: FakeMarker[] = []
+    element: HTMLElement
+    options: Record<string, unknown>
+    setLngLat = vi.fn(() => this)
+    addTo = vi.fn(() => this)
+    remove = vi.fn(() => this)
+
+    constructor(options: Record<string, unknown>) {
+      this.options = options
+      this.element = options.element as HTMLElement
+      FakeMarker.instances.push(this)
+    }
+  }
+
   class FakeMap {
     static instances: FakeMap[] = []
     handlers = new Map<string, Handler>()
@@ -78,11 +93,12 @@ const maplibreMock = vi.hoisted(() => {
     }
   }
 
-  return { FakeBounds, FakeMap, FakePopup }
+  return { FakeBounds, FakeMap, FakeMarker, FakePopup }
 })
 
 vi.mock('maplibre-gl', () => ({
   Map: maplibreMock.FakeMap,
+  Marker: maplibreMock.FakeMarker,
   Popup: maplibreMock.FakePopup,
   LngLatBounds: maplibreMock.FakeBounds,
   NavigationControl: class {},
@@ -152,6 +168,7 @@ const boundary: ThuDucBoundary = {
 describe('MapLibre RouteMap', () => {
   afterEach(() => {
     maplibreMock.FakeMap.instances.length = 0
+    maplibreMock.FakeMarker.instances.length = 0
   })
 
   it('installs graph layers, updates sources and dispatches an active node pick', async () => {
@@ -218,7 +235,7 @@ describe('MapLibre RouteMap', () => {
     expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
   })
 
-  it('clamps navigation to the city crop and focuses a single endpoint', async () => {
+  it('clamps navigation to the city crop without focusing a selected endpoint', async () => {
     render(
       <RouteMap
         graph={graph}
@@ -235,18 +252,20 @@ describe('MapLibre RouteMap', () => {
       expect(map.setMinZoom).toHaveBeenCalledWith(10.5)
       expect(map.setMaxBounds).toHaveBeenCalled()
       expect(map.options).toMatchObject({ minZoom: 10.5, renderWorldCopies: false })
-      expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
-        center: [106.75, 10.85],
-        zoom: 16.5,
-      }))
+      expect(map.flyTo).not.toHaveBeenCalled()
     })
+    expect(maplibreMock.FakeMarker.instances).toHaveLength(1)
+    expect(maplibreMock.FakeMarker.instances[0].options).toMatchObject({ anchor: 'bottom' })
+    expect(maplibreMock.FakeMarker.instances[0].setLngLat).toHaveBeenCalledWith([106.75, 10.85])
+    expect(maplibreMock.FakeMarker.instances[0].element).toHaveClass(
+      'route-endpoint-marker--start',
+    )
   })
 
-  it('flies to the endpoint that was just changed instead of centering both endpoints', async () => {
+  it('keeps the camera unchanged and highlights both endpoints when selection changes', async () => {
     const view = render(
       <RouteMap
         graph={graph}
-        startId="N1"
         pickTarget={null}
         onNodePick={vi.fn()}
         onPickTargetChange={vi.fn()}
@@ -254,7 +273,8 @@ describe('MapLibre RouteMap', () => {
     )
     const map = maplibreMock.FakeMap.instances[0]
     map.emit('style.load')
-    await waitFor(() => expect(map.flyTo).toHaveBeenCalled())
+    await waitFor(() => expect(map.fitBounds).toHaveBeenCalled())
+    map.fitBounds.mockClear()
     map.flyTo.mockClear()
 
     view.rerender(
@@ -269,11 +289,21 @@ describe('MapLibre RouteMap', () => {
     )
 
     await waitFor(() => {
-      expect(map.flyTo).toHaveBeenCalledWith(expect.objectContaining({
-        center: [106.751, 10.851],
-        zoom: 16.5,
-      }))
+      const latestNodeData = map.sources.get('floodroute-nodes')?.setData.mock.calls.at(-1)?.[0]
+      expect(latestNodeData.features.map((feature: { properties: { visual_state: string } }) => (
+        feature.properties.visual_state
+      ))).toEqual(['start', 'goal'])
+      expect(maplibreMock.FakeMarker.instances).toHaveLength(2)
     })
+    expect(maplibreMock.FakeMarker.instances.map((marker) => marker.element.textContent))
+      .toEqual(['S', 'G'])
+    expect(maplibreMock.FakeMarker.instances.map((marker) => marker.element.className))
+      .toEqual([
+        'route-endpoint-marker route-endpoint-marker--start',
+        'route-endpoint-marker route-endpoint-marker--goal',
+      ])
+    expect(map.flyTo).not.toHaveBeenCalled()
+    expect(map.fitBounds).not.toHaveBeenCalled()
   })
 
   it('snaps a basemap click to the nearest graph node while picking', async () => {

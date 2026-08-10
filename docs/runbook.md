@@ -154,7 +154,8 @@ Các fixture có sẵn:
 Trong landmark dataset, circle trắng viền xanh là nút có thể chọn. Trong chế độ START/GOAL
 có thể click trực tiếp marker hoặc vị trí gần marker trên basemap; trường hợp thứ hai snap
 tới landmark gần nhất trong 200 m. Nếu không có landmark trong bán kính này, chế độ chọn
-được giữ nguyên và UI báo lỗi.
+được giữ nguyên và UI báo lỗi. Sau khi chọn, START có ghim lớn màu cam và GOAL có ghim
+lớn màu hồng; viewport hiện tại được giữ nguyên, không tự zoom hoặc đổi tâm bản đồ.
 
 Map vẽ đường đỏ “Ranh TP Thủ Đức cũ” từ frozen OSM boundary snapshot. Camera chỉ pan
 trong rectangle B có lề bao trọn polygon ranh A; min zoom 10.5 và

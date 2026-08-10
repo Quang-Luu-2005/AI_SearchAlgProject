@@ -84,9 +84,10 @@ UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và 
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
 Điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn marker tròn trắng viền xanh bằng
-toolbar START/GOAL. Marker này biểu thị rõ địa điểm có thể chọn. Edge hiển thị polyline
-đường UTraffic đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính
-vẫn cho phép chạy thuật toán.
+toolbar START/GOAL. Hai điểm đã chọn dùng ghim lớn neo đúng tọa độ: START màu cam và
+GOAL màu hồng, không làm thay đổi camera hiện tại. Edge hiển thị polyline đường UTraffic
+đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính vẫn cho phép
+chạy thuật toán.
 
 Bản đồ vẽ đường đỏ theo snapshot ranh TP Thủ Đức cũ. View tổng quan là một hình chữ
 nhật có lề bao trọn polygon ranh thật, nên vẫn thấy được khu vực ngoài biên và các cạnh
