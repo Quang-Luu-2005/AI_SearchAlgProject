@@ -41,6 +41,7 @@ const maplibreMock = vi.hoisted(() => {
     handlers = new Map<string, Handler>()
     sources = new Map<string, FakeSource>()
     layers = new Set<string>()
+    layerDefinitions = new Map<string, Record<string, unknown>>()
     addControl = vi.fn()
     remove = vi.fn()
     fitBounds = vi.fn()
@@ -80,8 +81,9 @@ const maplibreMock = vi.hoisted(() => {
       return this.sources.get(id)
     }
 
-    addLayer(layer: { id: string }) {
+    addLayer(layer: { id: string } & Record<string, unknown>) {
       this.layers.add(layer.id)
+      this.layerDefinitions.set(layer.id, layer)
     }
 
     getLayer(id: string) {
@@ -194,6 +196,9 @@ describe('MapLibre RouteMap', () => {
       expect(map.layers).toContain('floodroute-thu-duc-boundary-line')
       expect(map.sources.get('floodroute-nodes')?.setData).toHaveBeenCalled()
       expect(map.sources.get('floodroute-thu-duc-boundary')?.setData).toHaveBeenCalledWith(boundary)
+      expect(map.layerDefinitions.get('floodroute-selectable-node')?.filter).toEqual([
+        '==', ['get', 'selectable'], true,
+      ])
     })
 
     map.emit('click', 'floodroute-node-hitbox', {
@@ -260,6 +265,7 @@ describe('MapLibre RouteMap', () => {
     expect(maplibreMock.FakeMarker.instances[0].element).toHaveClass(
       'route-endpoint-marker--start',
     )
+    expect(maplibreMock.FakeMarker.instances[0].element.querySelector('svg')).not.toBeNull()
   })
 
   it('keeps the camera unchanged and highlights both endpoints when selection changes', async () => {

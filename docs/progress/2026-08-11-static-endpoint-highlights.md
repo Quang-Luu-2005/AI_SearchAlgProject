@@ -9,6 +9,8 @@
 - Giữ `fitBounds` cho lúc nạp graph/boundary và thao tác reset viewport.
 - Thêm hai HTML marker MapLibre dạng ghim lớn, neo tại tọa độ endpoint: START màu cam,
   GOAL màu hồng; không tạo ghim cho node chưa được chọn.
+- Giữ selected node trong layer circle trắng–viền xanh và dùng SVG có đầu ghim nằm đúng
+  giữa anchor, nên ghim chồng lên node mà không làm node biến mất hoặc lệch tọa độ.
 - Cập nhật regression test để xác nhận thay đổi endpoint không làm camera di chuyển và
   tạo đúng hai ghim START/GOAL bên cạnh visual state `start`/`goal` trong node source.
 

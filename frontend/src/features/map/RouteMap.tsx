@@ -197,11 +197,7 @@ function addGraphLayers(map: maplibregl.Map) {
       id: LAYER_SELECTABLE_NODE,
       type: 'circle',
       source: SOURCE_NODES,
-      filter: [
-        'all',
-        ['==', ['get', 'selectable'], true],
-        ['==', ['get', 'visual_state'], 'default'],
-      ],
+      filter: ['==', ['get', 'selectable'], true],
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 10.5, 4.5, 15, 7],
         'circle-color': '#ffffff',
@@ -254,11 +250,32 @@ function endpointPinElement(target: EndpointPickTarget, nodeLabel: string): HTML
   marker.setAttribute('aria-label', `${target}: ${nodeLabel}`)
   marker.title = `${target}: ${nodeLabel}`
 
-  const pin = document.createElement('div')
-  pin.className = 'route-endpoint-marker__pin'
-  const label = document.createElement('span')
+  const svgNamespace = 'http://www.w3.org/2000/svg'
+  const pin = document.createElementNS(svgNamespace, 'svg')
+  pin.setAttribute('viewBox', '0 0 48 60')
+  pin.setAttribute('aria-hidden', 'true')
+
+  const shape = document.createElementNS(svgNamespace, 'path')
+  shape.setAttribute(
+    'd',
+    'M24 59C20 53 4 40 4 23C4 12.5 12.5 4 24 4S44 12.5 44 23C44 40 28 53 24 59Z',
+  )
+  shape.setAttribute('class', 'route-endpoint-marker__shape')
+
+  const center = document.createElementNS(svgNamespace, 'circle')
+  center.setAttribute('class', 'route-endpoint-marker__center')
+  center.setAttribute('cx', '24')
+  center.setAttribute('cy', '23')
+  center.setAttribute('r', '11')
+
+  const label = document.createElementNS(svgNamespace, 'text')
+  label.setAttribute('class', 'route-endpoint-marker__label')
+  label.setAttribute('x', '24')
+  label.setAttribute('y', '28')
+  label.setAttribute('text-anchor', 'middle')
   label.textContent = target === 'START' ? 'S' : 'G'
-  pin.append(label)
+
+  pin.append(shape, center, label)
   marker.append(pin)
   return marker
 }

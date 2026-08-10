@@ -48,8 +48,9 @@ và cũng giới hạn camera trong rectangle fallback đó.
 Thay đổi `startId`/`goalId` chỉ cập nhật GeoJSON node state, không gọi `flyTo` hoặc
 `fitBounds`. Renderer giữ nguyên viewport người dùng đang quan sát và gắn hai HTML marker
 dạng ghim lớn vào đúng tọa độ endpoint: START màu cam, GOAL màu hồng. Các marker này chỉ
-tồn tại cho endpoint đã chọn. `fitBounds` chỉ dùng khi nạp graph, nạp boundary mới hoặc
-khi người dùng bấm nút reset viewport.
+tồn tại cho endpoint đã chọn và được vẽ chồng lên circle node gốc thay vì thay thế node.
+`fitBounds` chỉ dùng khi nạp graph, nạp boundary mới hoặc khi người dùng bấm nút reset
+viewport.
 
 ## Luồng chính
 
