@@ -16,6 +16,39 @@ contract, không phụ thuộc FastAPI hay loại dataset.
 - Demo chính chạy trên dataset snapshot để tái lập và không phụ thuộc API trả phí.
 - Explanation sinh từ cost breakdown và guarantee có cấu trúc.
 
+## Map renderer
+
+Frontend dùng MapLibre GL JS. OpenFreeMap là basemap best-effort; Node, Edge và route
+được chuyển từ API payload sang ba GeoJSON source và render bằng GPU layers. Snapshot
+ranh TP Thủ Đức cũ là GeoJSON source thứ tư, chỉ dùng làm lớp ngữ cảnh. Basemap
+không tham gia snapping, topology, scenario hoặc cost. Khi remote style lỗi, renderer
+dùng style nền trung tính cục bộ và vẫn hiển thị graph.
+
+Landmark graph chỉ gửi node `selectable=true` lên UI. Mỗi node có marker dạng nút nhỏ
+tròn trắng viền xanh và hitbox trong suốt; START/GOAL vẫn dùng style endpoint riêng.
+Dataset cũ vẫn có display label deterministic từ `road_name`, nhưng release mặc định chỉ
+dùng tên POI OSM source-backed.
+
+Khi chọn endpoint, click ngoài marker được snap phía client tới node có thể chọn gần nhất
+trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark edge giữ
+`path_coordinates_json`, là polyline shortest path đã tổng hợp từ mạng nguồn UTraffic
+8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
+benchmark riêng.
+
+Frontend map scope chỉ giữ catalog row `processed/thu_duc_landmarks_v1.0.0`. Pilot 90 node
+và capacity graph vẫn tồn tại qua API/script benchmark, nhưng không được trình bày trong
+dropdown map vì không đúng mục tiêu 65 landmark hiện tại.
+
+Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
+trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%
+padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có một vành ngữ cảnh nhỏ bên
+ngoài đường đỏ. Nếu boundary API lỗi, renderer fallback về context ring động của graph
+và cũng giới hạn camera trong rectangle fallback đó.
+
+Camera endpoint theo dõi riêng thay đổi `startId`/`goalId`: nếu chỉ một endpoint vừa đổi,
+renderer `flyTo` chính node đó ở zoom 16.5. `fitBounds` hai endpoint chỉ dùng khi khởi tạo
+với cả hai điểm hoặc khi cả hai thay đổi cùng lúc, tránh nhảy về trung điểm sau khi chọn.
+
 ## Luồng chính
 
 ```mermaid
@@ -100,5 +133,5 @@ chọn dataset/scenario và vẽ Node/Edge; edge đóng vẫn có trong payload 
 
 Ứng dụng này là một client-side visualization gọi API Python, không cần SSR, SEO
 hay server actions. Vite giảm lớp framework không phục vụ rubric và phù hợp với
-giới hạn React Leaflet hoạt động phía client. Nếu sau này cần auth, persistence
+MapLibre GL JS hoạt động phía client. Nếu sau này cần auth, persistence
 hoặc public portal có SSR, quyết định này phải được xem lại bằng ADR mới.

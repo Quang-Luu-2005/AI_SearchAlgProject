@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { RouteMap } from './features/map/RouteMap'
+import { RouteMap, type EndpointPickTarget } from './features/map/RouteMap'
 import {
+  fetchThuDucBoundary,
   fetchGraph,
   fetchGraphCatalog,
+  interactiveGraphs,
   preferredGraphId,
   type GraphPayload,
   type GraphSummary,
   type InvalidGraphSummary,
+  type ThuDucBoundary,
 } from './lib/graph'
 import {
   fetchLocations,
@@ -96,11 +99,14 @@ export function App() {
   const [invalidGraphs, setInvalidGraphs] = useState<InvalidGraphSummary[]>([])
   const [graphId, setGraphId] = useState('')
   const [graph, setGraph] = useState<GraphPayload | null>(null)
+  const [thuDucBoundary, setThuDucBoundary] = useState<ThuDucBoundary | null>(null)
+  const [boundaryError, setBoundaryError] = useState('')
   const [locations, setLocations] = useState<LocationItem[]>([])
   const [scenarios, setScenarios] = useState<ScenarioItem[]>([])
   const [scenarioId, setScenarioId] = useState('')
   const [startId, setStartId] = useState('')
   const [goalId, setGoalId] = useState('')
+  const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
   const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
@@ -124,6 +130,19 @@ export function App() {
     [result],
   )
   const canRun = Boolean(graphId && scenarioId && startId && goalId && !running)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchThuDucBoundary(controller.signal)
+      .then((payload) => {
+        setThuDucBoundary(payload)
+        setBoundaryError('')
+      })
+      .catch((reason: Error) => {
+        if (reason.name !== 'AbortError') setBoundaryError('Không tải được ranh Thủ Đức.')
+      })
+    return () => controller.abort()
+  }, [])
 
   useEffect(() => {
     const edgeCount = result?.edge_ids.length ?? 0
@@ -152,9 +171,10 @@ export function App() {
     setLoading(true)
     fetchGraphCatalog(controller.signal)
       .then(({ graphs, invalid_graphs }) => {
-        setCatalog(graphs)
+        const nextCatalog = interactiveGraphs(graphs)
+        setCatalog(nextCatalog)
         setInvalidGraphs(invalid_graphs)
-        const initialGraphId = preferredGraphId(graphs, graphId)
+        const initialGraphId = preferredGraphId(nextCatalog, graphId)
         if (initialGraphId) setGraphId(initialGraphId)
         else setError('Không tìm thấy graph hợp lệ trong data/fixtures hoặc data/processed.')
       })
@@ -191,7 +211,9 @@ export function App() {
         setGoalId((current) => (
           nextLocations.some((item) => item.node_id === current)
             ? current
-            : nextLocations.at(-1)?.node_id ?? ''
+            : nextLocations.filter((item) => item.point_id).at(-1)?.node_id
+              ?? nextLocations.at(-1)?.node_id
+              ?? ''
         ))
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
@@ -229,6 +251,40 @@ export function App() {
     setScenarioId('')
     setStartId('')
     setGoalId('')
+    setPickTarget(null)
+  }
+
+  function clearRouteResult() {
+    setResult(null)
+    setComparisonResults([])
+    setVisiblePathEdgeCount(0)
+    setAnimatingPath(false)
+  }
+
+  function selectStart(nodeId: string) {
+    setStartId(nodeId)
+    clearRouteResult()
+  }
+
+  function selectGoal(nodeId: string) {
+    setGoalId(nodeId)
+    clearRouteResult()
+  }
+
+  function pickNode(target: EndpointPickTarget, nodeId: string) {
+    if (target === 'START') selectStart(nodeId)
+    else selectGoal(nodeId)
+  }
+
+  function swapEndpoints() {
+    setStartId(goalId)
+    setGoalId(startId)
+    clearRouteResult()
+  }
+
+  function selectScenario(nextScenarioId: string) {
+    setScenarioId(nextScenarioId)
+    clearRouteResult()
   }
 
   async function executeSearch(event?: FormEvent) {
@@ -260,8 +316,8 @@ export function App() {
   }
 
   function clearBoard() {
-    setResult(null)
-    setComparisonResults([])
+    clearRouteResult()
+    setPickTarget(null)
     setError('')
   }
 
@@ -314,7 +370,7 @@ export function App() {
 
             <label>
               Kịch bản chi phí
-              <select value={scenarioId} onChange={(event) => setScenarioId(event.target.value)}>
+              <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
                 {scenarios.map((item) => (
                   <option key={item.scenario_id} value={item.scenario_id}>
                     {item.scenario_id}
@@ -328,16 +384,13 @@ export function App() {
                 label="Điểm bắt đầu"
                 value={startId}
                 locations={locations}
-                onChange={setStartId}
+                onChange={selectStart}
               />
               <button
                 className="swap-button"
                 type="button"
                 aria-label="Đổi điểm bắt đầu và đích"
-                onClick={() => {
-                  setStartId(goalId)
-                  setGoalId(startId)
-                }}
+                onClick={swapEndpoints}
               >
                 ⇅
               </button>
@@ -345,7 +398,7 @@ export function App() {
                 label="Điểm đích"
                 value={goalId}
                 locations={locations}
-                onChange={setGoalId}
+                onChange={selectGoal}
               />
             </div>
 
@@ -414,12 +467,17 @@ export function App() {
             {graph ? (
               <RouteMap
                 graph={graph}
+                boundary={thuDucBoundary}
+                boundaryWarning={boundaryError}
                 pathEdgeIds={result?.edge_ids}
                 visiblePathEdgeCount={visiblePathEdgeCount}
                 pathNodeIds={result?.path.slice(0, visiblePathEdgeCount + 1)}
                 exploredNodeIds={exploredNodeIds}
                 startId={startId}
                 goalId={goalId}
+                pickTarget={pickTarget}
+                onNodePick={pickNode}
+                onPickTargetChange={setPickTarget}
               />
             ) : (
               <div className="map-placeholder">Chưa có dữ liệu graph</div>
@@ -433,9 +491,9 @@ export function App() {
             )}
           </section>
 
-          {selectedGraph?.graph_id === 'processed/thu_duc_market_v1.0.0' && (
+          {selectedGraph?.graph_id?.startsWith('processed/thu_duc_') && (
             <p className="dataset-attribution">
-              Traffic: UTraffic/HCMUT · Flood records: TP.HCM public reporting · POI{' '}
+              Traffic/road paths: UTraffic/HCMUT · POI/boundary{' '}
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
                 © OpenStreetMap contributors, ODbL 1.0
               </a>
@@ -446,8 +504,9 @@ export function App() {
             <div className="legend">
               <span><i className="legend-line open" />Đường thoáng</span>
               <span><i className="legend-line blocked" />Đường bị chặn</span>
-              <span><i className="legend-node" />Nút giao</span>
+              <span><i className="legend-selectable-node" />Điểm có thể chọn</span>
               <span><i className="legend-line path" />Đường tối ưu</span>
+              <span><i className="legend-line boundary" />Ranh TP Thủ Đức cũ</span>
             </div>
             <div className="metric-pair">
               <div><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>

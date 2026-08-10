@@ -19,6 +19,47 @@ npm run test:data
 Ngoài các file processed tối thiểu, release này có `flood_hotspots.csv`,
 `traffic_profiles.csv`, `mapping_review.csv` và `test_cases.json`.
 
+## Capacity graph Thủ Đức v0.1.0
+
+`thu_duc_core_capacity_v0.1.0` là graph benchmark riêng, sinh từ cùng raw UTraffic nhưng
+dùng bbox lõi Thủ Đức rộng hơn và giữ thành phần liên thông mạnh lớn nhất: 3.229 node,
+5.057 directed edge. Dataset mang trạng thái `CAPACITY_BENCHMARK_ONLY`, không thay thế
+pilot 90/155 và không tuyên bố flood-aware hoặc real-time.
+
+```powershell
+node scripts/python.mjs scripts/data/build_thu_duc_capacity.py
+npm run benchmark:capacity
+```
+
+Node/tọa độ là `SOURCE_BACKED`; free-flow time là `DERIVED`; baseline scenario là
+`ASSUMPTION`. Validator kiểm tra checksum, bbox, ID/FK, weight dương, count và strong
+connectivity cho graph này.
+
+## Snapshot ranh vùng nghiên cứu
+
+`data/raw/thu_duc_boundary_v1.0.0/osm_relation_19407794.geojson` là snapshot bất biến
+của OSM relation `19407794`, tải ngày 2026-08-09 và kiểm tra bằng SHA-256 trong manifest.
+OSM hiện gắn relation này là `historic`, nên UI bắt buộc ghi “Ranh TP Thủ Đức cũ”. Polygon
+chỉ cung cấp ngữ cảnh và rectangle camera; không sửa graph, edge cost hay tuyên bố địa giới
+hành chính hiện hành.
+
+## Landmark graph Thủ Đức v1.0.0
+
+`thu_duc_landmarks_v1.0.0` là release mặc định: 65 named major places và 178 directed
+aggregate road-path edge. “Địa điểm lớn” được định nghĩa bằng nhóm tag OSM có tên:
+university/college, hospital, marketplace, bus station/townhall, mall, railway station,
+stadium, museum hoặc theme park. Snapshot candidate được lưu bất biến tại
+`data/raw/thu_duc_landmarks_v1.0.0/`.
+
+Builder lọc POI trong polygon ranh, snap vào thành phần liên thông mạnh UTraffic
+8.952 node/14.043 cạnh, rồi tạo một bidirectional road-distance MST và hai cạnh gần nhất
+cho mỗi landmark. Edge giữ polyline UTraffic đầy đủ. Marker ở tọa độ OSM thật; connector
+từ POI đến node đường dùng giả định 20 km/h và được công bố trong edge/metadata.
+
+```powershell
+node scripts/python.mjs scripts/data/build_thu_duc_landmarks.py
+```
+
 ## Trạng thái hiện tại
 
 Workbook v0.1 vẫn là nguồn nghiên cứu không routable. Ứng dụng hiện dùng processed
@@ -36,7 +77,7 @@ pilot chợ Thủ Đức, còn fixture phục vụ regression. Manifest giữ
 
 ## Gói processed tối thiểu
 
-Mỗi `data/processed/vX.Y.Z/` phải có:
+Mỗi academic routing release đầy đủ phải có:
 
 ```text
 nodes.csv
@@ -51,6 +92,8 @@ validation_report.json
 `nodes.csv` cần ID, tọa độ WGS84, source và trạng thái xác minh. `edges.csv` là
 directed edge, có distance, free-flow speed/time, direction, road type, restriction,
 hotspot mapping, source và snapshot date. Một đường hai chiều phải thành hai cạnh.
+Capacity-only package có thể bỏ delivery/flood review files nếu metadata công bố rõ
+`CAPACITY_BENCHMARK_ONLY`, nhưng vẫn phải có nodes, edges, scenarios, metadata và checksum.
 
 ## Provenance và nhãn
 

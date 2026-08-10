@@ -4,6 +4,13 @@
 scenario, POI thật, traffic profile lịch sử và flood records có provenance. Release
 được app nạp mặc định nhưng giữ `REVIEW_REQUIRED`, không phải chỉ dẫn an toàn.
 
+`thu_duc_core_capacity_v0.1.0/` là graph stress-test từ UTraffic gồm 3.229 node và
+5.057 directed edge. Nó giữ thành phần liên thông mạnh lớn nhất trong bbox lõi Thủ Đức,
+mang trạng thái `CAPACITY_BENCHMARK_ONLY` và không thay thế release mặc định.
+
+`osm_thu_duc_v1.0.0/` là academic routing release gồm 27 node và 40 directed edge,
+được sinh tự động qua pipeline 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed) từ OSM Overpass snapshot. Dataset đạt trạng thái `ACADEMIC_DEMO_READY`.
+
 Đích của dataset v1.0 dùng trong API. Mỗi release đặt trong thư mục version riêng,
 ví dụ `v1.0.0/`, gồm `nodes.csv`, `edges.csv`, `scenarios.json`, metadata, checksum
 và báo cáo validation. Release chợ Thủ Đức hiện có thể chạy trong app nhưng chưa được

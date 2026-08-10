@@ -15,11 +15,25 @@ không real-time.
 All endpoints use prefix `/api/v1`. Swagger UI is available at `/docs`, and the
 OpenAPI document is available at `/openapi.json`.
 
+## Study-area boundary
+
+`GET /api/v1/boundaries/thu-duc` trả frozen GeoJSON của OSM relation `19407794`.
+Payload giữ source, snapshot, license và `boundary_status=HISTORIC_OSM_RELATION`.
+Frontend dùng polygon để vẽ “Ranh TP Thủ Đức cũ” và tính overview rectangle; endpoint
+không tham gia topology hoặc cost.
+
 ## Search catalog
 
-- `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists selectable nodes.
+- `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists every selectable topology node.
+  Với processed pilot, POI thật đứng trước và node còn lại có tên giao lộ deterministic;
+  response có đúng một row cho mỗi `node_id`.
+- Với `processed/thu_duc_landmarks_v1.0.0`, response chỉ có 65 named landmark; không trả
+  8.952 node đường nguồn dùng trong bước build.
 - `GET /api/v1/scenarios?graph_id=toy_graph_v0.1` lists scenario, preset, weights
   and closed edges.
+
+Basemap feature không được gửi thẳng vào search. Frontend snap click basemap tới node gần
+nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 
 ## Search
 

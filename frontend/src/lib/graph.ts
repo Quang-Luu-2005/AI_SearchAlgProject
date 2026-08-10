@@ -1,3 +1,5 @@
+import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson'
+
 export type GraphSummary = {
   graph_id: string
   label: string
@@ -13,8 +15,22 @@ export type GraphSummary = {
   scenario_ids: string[]
 }
 
+export type ThuDucBoundary = FeatureCollection<Polygon | MultiPolygon> & {
+  snapshot_date: string
+  source_url: string
+  source_id: string
+  license: string
+  attribution: string
+  scope_note: string
+}
+
+export function interactiveGraphs(graphs: GraphSummary[]): GraphSummary[] {
+  return graphs.filter((item) => item.graph_id === 'processed/thu_duc_landmarks_v1.0.0')
+}
+
 export function preferredGraphId(graphs: GraphSummary[], currentId = ''): string {
   return graphs.find((item) => item.graph_id === currentId)?.graph_id
+    ?? graphs.find((item) => item.graph_id === 'processed/thu_duc_landmarks_v1.0.0')?.graph_id
     ?? graphs.find((item) => item.graph_id === 'processed/thu_duc_market_v1.0.0')?.graph_id
     ?? graphs.find((item) => item.graph_id === 'toy_graph_v0.1')?.graph_id
     ?? graphs[0]?.graph_id
@@ -86,4 +102,8 @@ export function fetchGraph(
   signal?: AbortSignal,
 ): Promise<GraphPayload> {
   return getJson(buildGraphUrl(graphId, scenarioId), signal)
+}
+
+export function fetchThuDucBoundary(signal?: AbortSignal): Promise<ThuDucBoundary> {
+  return getJson('/api/v1/boundaries/thu-duc', signal)
 }

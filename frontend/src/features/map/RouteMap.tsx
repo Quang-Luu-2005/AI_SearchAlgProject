@@ -1,246 +1,643 @@
-import { useEffect, useMemo } from 'react'
-import { CircleMarker, MapContainer, Polyline, Tooltip, useMap } from 'react-leaflet'
-import { latLngBounds, type LatLngExpression } from 'leaflet'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import * as maplibregl from 'maplibre-gl'
+import {
+  type GeoJSONSource,
+  type MapGeoJSONFeature,
+  type MapLayerMouseEvent,
+  type MapMouseEvent,
+  type StyleSpecification,
+} from 'maplibre-gl'
 import recenterGraphIcon from '../../assets/recenter-graph.png'
-import type { GraphPayload } from '../../lib/graph'
+import type { GraphPayload, ThuDucBoundary } from '../../lib/graph'
+import {
+  buildEdgeFeatureCollection,
+  buildNodeFeatureCollection,
+  buildRouteFeatureCollection,
+  findNearestGraphNode,
+  type NodeFeatureProperties,
+} from './mapData'
+
+export type EndpointPickTarget = 'START' | 'GOAL'
 
 type RouteMapProps = {
   graph: GraphPayload
+  boundary?: ThuDucBoundary | null
+  boundaryWarning?: string
   pathEdgeIds?: string[]
   visiblePathEdgeCount?: number
   pathNodeIds?: string[]
   exploredNodeIds?: string[]
   startId?: string
   goalId?: string
+  pickTarget: EndpointPickTarget | null
+  onNodePick: (target: EndpointPickTarget, nodeId: string) => void
+  onPickTargetChange: (target: EndpointPickTarget | null) => void
 }
 
-function FitGraphBounds({ positions }: { positions: LatLngExpression[] }) {
-  const map = useMap()
-
-  useEffect(() => {
-    map.invalidateSize()
-    if (positions.length > 1) {
-      map.fitBounds(latLngBounds(positions), { padding: [52, 52], maxZoom: 16 })
-    }
-  }, [map, positions])
-
-  return null
+const BASEMAP_STYLE_URL = import.meta.env.VITE_BASEMAP_STYLE_URL
+  || 'https://tiles.openfreemap.org/styles/liberty'
+const EMPTY_FEATURE_COLLECTION = { type: 'FeatureCollection' as const, features: [] }
+const FALLBACK_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {},
+  layers: [{
+    id: 'fallback-background',
+    type: 'background',
+    paint: { 'background-color': '#eef1f2' },
+  }],
 }
 
-function FocusEndpoints({ positions }: { positions: LatLngExpression[] }) {
-  const map = useMap()
+const SOURCE_EDGES = 'floodroute-edges'
+const SOURCE_ROUTE = 'floodroute-route'
+const SOURCE_NODES = 'floodroute-nodes'
+const SOURCE_BOUNDARY = 'floodroute-thu-duc-boundary'
+const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
+const LAYER_SELECTABLE_NODE = 'floodroute-selectable-node'
+const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
+const MIN_CITY_ZOOM = 10.5
+const MAX_BASEMAP_SNAP_DISTANCE_M = 200
 
-  useEffect(() => {
-    if (positions.length === 2) {
-      map.fitBounds(latLngBounds(positions), { padding: [84, 84], maxZoom: 17 })
-    } else if (positions.length === 1) {
-      map.setView(positions[0], 16)
-    }
-  }, [map, positions])
-
-  return null
-}
-
-function ResetGraphView({ positions }: { positions: LatLngExpression[] }) {
-  const map = useMap()
-
-  function resetView() {
-    if (positions.length > 1) {
-      map.fitBounds(latLngBounds(positions), { padding: [52, 52], maxZoom: 16 })
-    } else if (positions[0]) {
-      map.setView(positions[0], 15)
-    }
+function addGraphLayers(map: maplibregl.Map) {
+  if (!map.getSource(SOURCE_BOUNDARY)) {
+    map.addSource(SOURCE_BOUNDARY, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
+  }
+  if (!map.getSource(SOURCE_EDGES)) {
+    map.addSource(SOURCE_EDGES, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
+  }
+  if (!map.getSource(SOURCE_ROUTE)) {
+    map.addSource(SOURCE_ROUTE, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
+  }
+  if (!map.getSource(SOURCE_NODES)) {
+    map.addSource(SOURCE_NODES, { type: 'geojson', data: EMPTY_FEATURE_COLLECTION })
   }
 
-  return (
-    <button
-      type="button"
-      className="map-reset-button"
-      title="Đưa bản đồ về vị trí graph"
-      aria-label="Đưa bản đồ về vị trí graph"
-      onMouseDown={(event) => event.stopPropagation()}
-      onDoubleClick={(event) => event.stopPropagation()}
-      onClick={(event) => {
-        event.stopPropagation()
-        resetView()
-      }}
-    >
-      <img src={recenterGraphIcon} alt="" aria-hidden="true" />
-    </button>
+  if (!map.getLayer('floodroute-thu-duc-boundary-fill')) {
+    map.addLayer({
+      id: 'floodroute-thu-duc-boundary-fill',
+      type: 'fill',
+      source: SOURCE_BOUNDARY,
+      paint: {
+        'fill-color': '#d52b1e',
+        'fill-opacity': 0.035,
+      },
+    })
+  }
+  if (!map.getLayer('floodroute-thu-duc-boundary-line')) {
+    map.addLayer({
+      id: 'floodroute-thu-duc-boundary-line',
+      type: 'line',
+      source: SOURCE_BOUNDARY,
+      paint: {
+        'line-color': '#d52b1e',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 2, 15, 4],
+        'line-opacity': 0.95,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+
+  if (!map.getLayer('floodroute-edge-open')) {
+    map.addLayer({
+      id: 'floodroute-edge-open',
+      type: 'line',
+      source: SOURCE_EDGES,
+      filter: ['==', ['get', 'is_closed'], false],
+      paint: {
+        'line-color': '#00714d',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 1.4, 17, 3.4],
+        'line-opacity': 0.58,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-edge-closed')) {
+    map.addLayer({
+      id: 'floodroute-edge-closed',
+      type: 'line',
+      source: SOURCE_EDGES,
+      filter: ['==', ['get', 'is_closed'], true],
+      paint: {
+        'line-color': '#ba1a1a',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 2, 17, 4],
+        'line-opacity': 0.78,
+        'line-dasharray': [2, 2.5],
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-route-halo')) {
+    map.addLayer({
+      id: 'floodroute-route-halo',
+      type: 'line',
+      source: SOURCE_ROUTE,
+      paint: {
+        'line-color': '#ffffff',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 7, 17, 13],
+        'line-opacity': 0.92,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-route')) {
+    map.addLayer({
+      id: 'floodroute-route',
+      type: 'line',
+      source: SOURCE_ROUTE,
+      paint: {
+        'line-color': '#6d28d9',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 4, 17, 8],
+        'line-opacity': 1,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-nodes')) {
+    map.addLayer({
+      id: 'floodroute-nodes',
+      type: 'circle',
+      source: SOURCE_NODES,
+      paint: {
+        'circle-radius': [
+          'match', ['get', 'visual_state'],
+          'start', 9,
+          'goal', 9,
+          'path', 6,
+          'explored', 5,
+          ['interpolate', ['linear'], ['zoom'], 13, 2.5, 17, 4],
+        ],
+        'circle-color': [
+          'match', ['get', 'visual_state'],
+          'start', '#fef3c7',
+          'goal', '#fce7f3',
+          'path', '#ede9fe',
+          'explored', '#ffddb8',
+          '#ffffff',
+        ],
+        'circle-stroke-color': [
+          'match', ['get', 'visual_state'],
+          'start', '#d97706',
+          'goal', '#db2777',
+          'path', '#6d28d9',
+          'explored', '#a36700',
+          '#424754',
+        ],
+        'circle-stroke-width': [
+          'match', ['get', 'visual_state'],
+          'start', 4,
+          'goal', 4,
+          'path', 2.5,
+          1.5,
+        ],
+        'circle-opacity': 0.94,
+      },
+    })
+  }
+  if (!map.getLayer(LAYER_SELECTABLE_NODE)) {
+    map.addLayer({
+      id: LAYER_SELECTABLE_NODE,
+      type: 'circle',
+      source: SOURCE_NODES,
+      filter: [
+        'all',
+        ['==', ['get', 'selectable'], true],
+        ['==', ['get', 'visual_state'], 'default'],
+      ],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 10.5, 4.5, 15, 7],
+        'circle-color': '#ffffff',
+        'circle-stroke-color': '#0057b8',
+        'circle-stroke-width': 2.4,
+        'circle-opacity': 0.98,
+        'circle-stroke-opacity': 1,
+      },
+    })
+  }
+  if (!map.getLayer(LAYER_NODE_HITBOX)) {
+    map.addLayer({
+      id: LAYER_NODE_HITBOX,
+      type: 'circle',
+      source: SOURCE_NODES,
+      filter: ['==', ['get', 'selectable'], true],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 12, 7, 17, 12],
+        'circle-opacity': 0,
+      },
+    })
+  }
+}
+
+function featureProperties(feature: MapGeoJSONFeature | undefined): NodeFeatureProperties | null {
+  const properties = feature?.properties
+  if (!properties || typeof properties.node_id !== 'string') return null
+  return properties as NodeFeatureProperties
+}
+
+function popupContent(properties: NodeFeatureProperties, snapDistanceM?: number): HTMLElement {
+  const root = document.createElement('div')
+  root.className = 'map-node-popup'
+  const title = document.createElement('strong')
+  title.textContent = properties.display_name
+  const id = document.createElement('span')
+  id.textContent = properties.node_id
+  const meta = document.createElement('small')
+  const snapText = snapDistanceM === undefined ? '' : ` · SNAP ${snapDistanceM.toFixed(0)} m`
+  const category = properties.place_category ? ` · ${properties.place_category}` : ''
+  meta.textContent = `${properties.node_type}${category} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}${snapText}`
+  root.append(title, id, meta)
+  return root
+}
+
+type CoordinateExtent = {
+  west: number
+  south: number
+  east: number
+  north: number
+}
+
+function graphExtent(graph: GraphPayload): CoordinateExtent | null {
+  const coordinates = graph.nodes.flatMap<[number, number]>((node) => (
+    node.latitude === null || node.longitude === null
+      || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)
+      || node.latitude < -90 || node.latitude > 90
+      || node.longitude < -180 || node.longitude > 180
+      ? []
+      : [[node.longitude, node.latitude]]
+  ))
+  if (!coordinates.length) return null
+  return coordinates.reduce<CoordinateExtent>((extent, [longitude, latitude]) => ({
+    west: Math.min(extent.west, longitude),
+    south: Math.min(extent.south, latitude),
+    east: Math.max(extent.east, longitude),
+    north: Math.max(extent.north, latitude),
+  }), {
+    west: coordinates[0][0],
+    south: coordinates[0][1],
+    east: coordinates[0][0],
+    north: coordinates[0][1],
+  })
+}
+
+function graphContextBounds(graph: GraphPayload): maplibregl.LngLatBounds | null {
+  const extent = graphExtent(graph)
+  if (!extent) return null
+  const longitudePadding = Math.max((extent.east - extent.west) * 0.25, 0.006)
+  const latitudePadding = Math.max((extent.north - extent.south) * 0.25, 0.006)
+  return new maplibregl.LngLatBounds(
+    [extent.west - longitudePadding, extent.south - latitudePadding],
+    [extent.east + longitudePadding, extent.north + latitudePadding],
+  )
+}
+
+function boundaryContextBounds(boundary: ThuDucBoundary | null | undefined): maplibregl.LngLatBounds | null {
+  if (!boundary?.features.length) return null
+  const extent: CoordinateExtent = {
+    west: Number.POSITIVE_INFINITY,
+    south: Number.POSITIVE_INFINITY,
+    east: Number.NEGATIVE_INFINITY,
+    north: Number.NEGATIVE_INFINITY,
+  }
+
+  function visitCoordinates(value: unknown): void {
+    if (!Array.isArray(value)) return
+    if (value.length >= 2 && typeof value[0] === 'number' && typeof value[1] === 'number') {
+      const [longitude, latitude] = value
+      if (Number.isFinite(longitude) && Number.isFinite(latitude)) {
+        extent.west = Math.min(extent.west, longitude)
+        extent.south = Math.min(extent.south, latitude)
+        extent.east = Math.max(extent.east, longitude)
+        extent.north = Math.max(extent.north, latitude)
+      }
+      return
+    }
+    value.forEach(visitCoordinates)
+  }
+
+  boundary.features.forEach((feature) => visitCoordinates(feature.geometry.coordinates))
+  if (![extent.west, extent.south, extent.east, extent.north].every(Number.isFinite)) return null
+
+  // B is a padded rectangle that fully contains the irregular Thu Duc polygon A.
+  const longitudePadding = Math.max((extent.east - extent.west) * 0.03, 0.004)
+  const latitudePadding = Math.max((extent.north - extent.south) * 0.03, 0.004)
+  return new maplibregl.LngLatBounds(
+    [extent.west - longitudePadding, extent.south - latitudePadding],
+    [extent.east + longitudePadding, extent.north + latitudePadding],
   )
 }
 
 export function RouteMap({
   graph,
+  boundary,
+  boundaryWarning = '',
   pathEdgeIds = [],
   visiblePathEdgeCount = pathEdgeIds.length,
   pathNodeIds = [],
   exploredNodeIds = [],
   startId,
   goalId,
+  pickTarget,
+  onNodePick,
+  onPickTargetChange,
 }: RouteMapProps) {
-  const drawableNodes = useMemo(
-    () => graph.nodes.filter(
-      (node) => node.latitude !== null && node.longitude !== null,
-    ),
-    [graph.nodes],
+  const containerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<maplibregl.Map | null>(null)
+  const hoverPopupRef = useRef<maplibregl.Popup | null>(null)
+  const clickPopupRef = useRef<maplibregl.Popup | null>(null)
+  const pickTargetRef = useRef(pickTarget)
+  const onNodePickRef = useRef(onNodePick)
+  const onPickTargetChangeRef = useRef(onPickTargetChange)
+  const graphRef = useRef(graph)
+  const fallbackAppliedRef = useRef(false)
+  const styleReadyRef = useRef(false)
+  const [styleRevision, setStyleRevision] = useState(0)
+  const [basemapWarning, setBasemapWarning] = useState('')
+  const [pickFeedback, setPickFeedback] = useState('')
+
+  pickTargetRef.current = pickTarget
+  onNodePickRef.current = onNodePick
+  onPickTargetChangeRef.current = onPickTargetChange
+  graphRef.current = graph
+
+  const edgeData = useMemo(() => buildEdgeFeatureCollection(graph), [graph])
+  const nodeData = useMemo(() => buildNodeFeatureCollection(graph, {
+    startId,
+    goalId,
+    pathNodeIds,
+    exploredNodeIds,
+  }), [exploredNodeIds, goalId, graph, pathNodeIds, startId])
+  const routeData = useMemo(
+    () => buildRouteFeatureCollection(graph, pathEdgeIds.slice(0, visiblePathEdgeCount)),
+    [graph, pathEdgeIds, visiblePathEdgeCount],
   )
-  const nodeById = useMemo(
-    () => new Map(drawableNodes.map((node) => [node.node_id, node])),
-    [drawableNodes],
-  )
-  const visiblePathEdgeIds = pathEdgeIds.slice(0, visiblePathEdgeCount)
-  const pathNodes = new Set(pathNodeIds)
-  const exploredNodes = new Set(exploredNodeIds)
-  const positions = useMemo<LatLngExpression[]>(
-    () => drawableNodes.map((node) => [node.latitude!, node.longitude!]),
-    [drawableNodes],
-  )
-  const endpointPositions = useMemo<LatLngExpression[]>(
-    () => [startId, goalId]
-      .filter((nodeId): nodeId is string => Boolean(nodeId))
-      .map((nodeId) => nodeById.get(nodeId))
-      .filter((node): node is NonNullable<typeof node> => Boolean(node))
-      .map((node) => [node.latitude!, node.longitude!]),
-    [goalId, nodeById, startId],
-  )
-  const center = positions[0] ?? ([10.849, 106.756] as LatLngExpression)
+  const nodeDataRef = useRef(nodeData)
+  nodeDataRef.current = nodeData
+
+  useEffect(() => {
+    if (!containerRef.current || mapRef.current) return
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+      style: BASEMAP_STYLE_URL,
+      center: DEFAULT_CENTER,
+      zoom: 14,
+      minZoom: MIN_CITY_ZOOM,
+      renderWorldCopies: false,
+      attributionControl: false,
+    })
+    mapRef.current = map
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 120 }), 'bottom-left')
+    map.addControl(new maplibregl.AttributionControl({
+      compact: true,
+      customAttribution: 'Basemap © OpenFreeMap · © OpenStreetMap contributors',
+    }), 'bottom-right')
+
+    const onStyleLoad = () => {
+      styleReadyRef.current = true
+      addGraphLayers(map)
+      setStyleRevision((value) => value + 1)
+      if (!fallbackAppliedRef.current) setBasemapWarning('')
+    }
+    const onError = () => {
+      if (!styleReadyRef.current && !fallbackAppliedRef.current) {
+        fallbackAppliedRef.current = true
+        setBasemapWarning('Không tải được basemap; graph vẫn hoạt động trên nền dự phòng.')
+        map.setStyle(FALLBACK_STYLE)
+        return
+      }
+      setBasemapWarning('Một phần basemap không tải được; dữ liệu graph không bị ảnh hưởng.')
+    }
+    const onMouseEnter = (event: MapLayerMouseEvent) => {
+      map.getCanvas().style.cursor = 'pointer'
+      const properties = featureProperties(event.features?.[0])
+      if (!properties) return
+      hoverPopupRef.current?.remove()
+      hoverPopupRef.current = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 12,
+      })
+        .setLngLat(event.lngLat)
+        .setDOMContent(popupContent(properties))
+        .addTo(map)
+    }
+    const onMouseLeave = () => {
+      map.getCanvas().style.cursor = ''
+      hoverPopupRef.current?.remove()
+      hoverPopupRef.current = null
+    }
+    const onNodeClick = (event: MapLayerMouseEvent) => {
+      const properties = featureProperties(event.features?.[0])
+      if (!properties) return
+      const target = pickTargetRef.current
+      if (target) {
+        onNodePickRef.current(target, properties.node_id)
+        onPickTargetChangeRef.current(null)
+      }
+      clickPopupRef.current?.remove()
+      clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
+        .setLngLat(event.lngLat)
+        .setDOMContent(popupContent(properties))
+        .addTo(map)
+    }
+    const onMapClick = (event: MapMouseEvent) => {
+      const target = pickTargetRef.current
+      if (!target) return
+      const directNodeHit = map.getLayer(LAYER_NODE_HITBOX)
+        ? map.queryRenderedFeatures(event.point, { layers: [LAYER_NODE_HITBOX] }).length > 0
+        : false
+      if (directNodeHit) return
+
+      const snap = findNearestGraphNode(
+        graphRef.current,
+        event.lngLat.lng,
+        event.lngLat.lat,
+        MAX_BASEMAP_SNAP_DISTANCE_M,
+      )
+      if (!snap) {
+        setPickFeedback(`Không có node định tuyến trong ${MAX_BASEMAP_SNAP_DISTANCE_M} m.`)
+        return
+      }
+      const feature = nodeDataRef.current.features.find(
+        (item) => item.properties.node_id === snap.nodeId,
+      )
+      if (!feature) return
+
+      onNodePickRef.current(target, snap.nodeId)
+      onPickTargetChangeRef.current(null)
+      clickPopupRef.current?.remove()
+      clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
+        .setLngLat([snap.longitude, snap.latitude])
+        .setDOMContent(popupContent(feature.properties, snap.distanceM))
+        .addTo(map)
+    }
+
+    map.on('style.load', onStyleLoad)
+    map.on('error', onError)
+    map.on('mouseenter', LAYER_NODE_HITBOX, onMouseEnter)
+    map.on('mouseleave', LAYER_NODE_HITBOX, onMouseLeave)
+    map.on('click', LAYER_NODE_HITBOX, onNodeClick)
+    map.on('click', onMapClick)
+
+    return () => {
+      hoverPopupRef.current?.remove()
+      clickPopupRef.current?.remove()
+      map.remove()
+      mapRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !styleReadyRef.current) return
+    ;(map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
+    ;(map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
+    ;(map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
+    ;(map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
+      boundary ?? EMPTY_FEATURE_COLLECTION,
+    )
+  }, [boundary, edgeData, nodeData, routeData, styleRevision])
+
+  const cameraGraphKeyRef = useRef('')
+  const previousEndpointRef = useRef({
+    graphId: graph.graph_id,
+    startId,
+    goalId,
+  })
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !styleReadyRef.current) return
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+    if (!bounds) {
+      map.setCenter(DEFAULT_CENTER)
+      map.setZoom(14)
+      return
+    }
+
+    // Rectangle B contains the irregular boundary A plus a small outside context ring.
+    // Clamp navigation to B so the map remains a Thu Duc study-area crop.
+    map.setMinZoom(MIN_CITY_ZOOM)
+    map.setMaxBounds(bounds)
+    const cameraKey = `${graph.graph_id}:${styleRevision}:${boundary?.source_id ?? 'graph-fallback'}`
+    if (cameraGraphKeyRef.current === cameraKey) return
+    cameraGraphKeyRef.current = cameraKey
+    map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
+  }, [boundary, graph, styleRevision])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !styleReadyRef.current) return
+    const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
+    const previous = previousEndpointRef.current
+    const graphChanged = previous.graphId !== graph.graph_id
+    const startChanged = !graphChanged && previous.startId !== startId
+    const goalChanged = !graphChanged && previous.goalId !== goalId
+    previousEndpointRef.current = { graphId: graph.graph_id, startId, goalId }
+
+    const changedEndpointId = startChanged && !goalChanged
+      ? startId
+      : goalChanged && !startChanged
+        ? goalId
+        : ''
+    const changedEndpoint = changedEndpointId ? nodeById.get(changedEndpointId) : undefined
+
+    map.stop()
+    if (changedEndpoint && changedEndpoint.latitude !== null && changedEndpoint.longitude !== null
+      && Number.isFinite(changedEndpoint.latitude)
+      && Number.isFinite(changedEndpoint.longitude)) {
+      map.flyTo({
+        center: [changedEndpoint.longitude, changedEndpoint.latitude],
+        zoom: 16.5,
+        essential: true,
+        duration: 500,
+      })
+      return
+    }
+
+    const endpoints = [startId, goalId].flatMap<[number, number]>((nodeId) => {
+      if (!nodeId) return []
+      const node = nodeById.get(nodeId)
+      return !node || node.latitude === null || node.longitude === null
+        || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)
+        ? []
+        : [[node.longitude, node.latitude]]
+    })
+    if (endpoints.length === 1) {
+      map.flyTo({ center: endpoints[0], zoom: 16.5, essential: true, duration: 500 })
+    } else if (endpoints.length === 2) {
+      map.fitBounds(new maplibregl.LngLatBounds(endpoints[0], endpoints[1]), {
+        padding: 84,
+        maxZoom: 17,
+        duration: 650,
+      })
+    }
+  }, [goalId, graph, startId, styleRevision])
+
+  useEffect(() => {
+    setPickFeedback('')
+    if (!pickTarget) return
+    const cancel = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onPickTargetChange(null)
+    }
+    window.addEventListener('keydown', cancel)
+    return () => window.removeEventListener('keydown', cancel)
+  }, [onPickTargetChange, pickTarget])
+
+  function resetView() {
+    const map = mapRef.current
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+    if (map && bounds) {
+      map.setMaxBounds(bounds)
+      map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
+    }
+  }
 
   return (
-    <MapContainer
-      key={graph.graph_id}
-      center={center}
-      zoom={14}
-      scrollWheelZoom
-      className="route-map"
-      attributionControl={false}
-    >
-      <FitGraphBounds positions={positions} />
-      <FocusEndpoints positions={endpointPositions} />
-      <ResetGraphView positions={positions} />
-
-      {graph.edges.map((edge) => {
-        const from = nodeById.get(edge.from_node_id)
-        const to = nodeById.get(edge.to_node_id)
-        if (!from || !to) return null
-        return (
-          <Polyline
-            key={edge.edge_id}
-            positions={[
-              [from.latitude!, from.longitude!],
-              [to.latitude!, to.longitude!],
-            ]}
-            pathOptions={{
-              color: edge.is_closed ? '#ba1a1a' : '#00714d',
-              weight: 4,
-              opacity: edge.is_closed ? 0.72 : 0.82,
-              dashArray: edge.is_closed ? '7 9' : undefined,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-          >
-            <Tooltip>
-              {edge.edge_id}: {edge.from_node_id} → {edge.to_node_id}
-              {edge.is_closed ? ' · CLOSED' : ''}
-            </Tooltip>
-          </Polyline>
-        )
-      })}
-
-      {visiblePathEdgeIds.flatMap((edgeId, index) => {
-        const edge = graph.edges.find((item) => item.edge_id === edgeId)
-        if (!edge) return []
-        const from = nodeById.get(edge.from_node_id)
-        const to = nodeById.get(edge.to_node_id)
-        if (!from || !to) return []
-        const segment: LatLngExpression[] = [
-          [from.latitude!, from.longitude!],
-          [to.latitude!, to.longitude!],
-        ]
-        return [
-          <Polyline
-            key={`${edgeId}-halo`}
-            positions={segment}
-            pathOptions={{
-              color: '#ffffff',
-              weight: 13,
-              opacity: 0.94,
-              lineCap: 'round',
-              lineJoin: 'round',
-            }}
-          />,
-          <Polyline
-            key={`${edgeId}-path`}
-            positions={segment}
-            pathOptions={{
-              color: '#6d28d9',
-              weight: 8,
-              opacity: 1,
-              lineCap: 'round',
-              lineJoin: 'round',
-              className: `route-path-segment route-path-segment-${index}`,
-            }}
-          >
-            <Tooltip>{edge.edge_id} · OPTIMAL PATH</Tooltip>
-          </Polyline>,
-        ]
-      })}
-
-      {drawableNodes.map((node) => {
-        const isStart = node.node_id === startId
-        const isGoal = node.node_id === goalId
-        const isPath = pathNodes.has(node.node_id)
-        const isExplored = exploredNodes.has(node.node_id)
-        const color = isStart
-          ? '#d97706'
-          : isGoal
-            ? '#db2777'
-            : isPath
-              ? '#6d28d9'
-              : isExplored
-                ? '#a36700'
-                : '#424754'
-        const fillColor = isStart
-          ? '#fef3c7'
-          : isGoal
-            ? '#fce7f3'
-            : isPath
-              ? '#ede9fe'
-              : isExplored
-                ? '#ffddb8'
-                : '#ffffff'
-
-        return (
-          <CircleMarker
-            key={node.node_id}
-            center={[node.latitude!, node.longitude!]}
-            radius={isStart || isGoal ? 12 : isPath ? 8 : 6}
-            pathOptions={{
-              color,
-              fillColor,
-              fillOpacity: 1,
-              weight: isStart || isGoal ? 5 : 3,
-              className: isStart
-                ? 'endpoint-marker endpoint-start'
-                : isGoal
-                  ? 'endpoint-marker endpoint-goal'
-                  : undefined,
-            }}
-          >
-            <Tooltip
-              direction="top"
-              offset={[0, -10]}
-              permanent={isStart || isGoal}
-              className={isStart ? 'endpoint-label start-label' : isGoal ? 'endpoint-label goal-label' : ''}
-            >
-              {node.label} · {node.node_id}
-              {isStart ? ' · START' : isGoal ? ' · GOAL' : isPath ? ' · PATH' : ''}
-            </Tooltip>
-          </CircleMarker>
-        )
-      })}
-
-      <div className="map-note">{graph.data_status} · {graph.graph_id}</div>
-    </MapContainer>
+    <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
+      <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
+      <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
+        <button
+          type="button"
+          className="pick-start"
+          aria-pressed={pickTarget === 'START'}
+          onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+        >
+          Chọn START
+        </button>
+        <button
+          type="button"
+          className="pick-goal"
+          aria-pressed={pickTarget === 'GOAL'}
+          onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
+        >
+          Chọn GOAL
+        </button>
+        {pickTarget && (
+          <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
+            Hủy chọn
+          </button>
+        )}
+      </div>
+      {pickTarget && (
+        <div className="map-pick-hint">
+          {pickFeedback || `Click node hoặc vị trí trên bản đồ để đặt ${pickTarget} · Esc để hủy`}
+        </div>
+      )}
+      <button
+        type="button"
+        className="map-reset-button"
+        title="Đưa bản đồ về toàn vùng Thủ Đức"
+        aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
+        onClick={resetView}
+      >
+        <img src={recenterGraphIcon} alt="" aria-hidden="true" />
+      </button>
+      {(basemapWarning || boundaryWarning) && (
+        <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
+      )}
+      <div className="map-note">
+        {graph.data_status} · {graph.nodes.length.toLocaleString('vi-VN')} node ·{' '}
+        {graph.edges.length.toLocaleString('vi-VN')} edge
+      </div>
+    </div>
   )
 }

@@ -1,0 +1,23 @@
+{
+  "dataset_id": "thu_duc_core_capacity_v0.1.0",
+  "data_status": "MIXED",
+  "real_time": false,
+  "scenarios": [
+    {
+      "scenario_id": "CAPACITY_BASELINE",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "No live traffic; source max velocity free-flow baseline",
+      "cost_preset": "BALANCED",
+      "traffic_multiplier": 1.0,
+      "default_congestion_level_1_5": 1,
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {}
+    }
+  ]
+}

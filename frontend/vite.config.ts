@@ -3,6 +3,10 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    // Let Vite's worker pipeline handle MapLibre's separate ESM worker.
+    exclude: ['maplibre-gl'],
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:8000',

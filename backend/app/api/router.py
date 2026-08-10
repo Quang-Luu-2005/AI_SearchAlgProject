@@ -10,13 +10,14 @@ from ..core.contracts import (
     CostModelError,
     Graph,
     GraphFormatError,
+    Node,
     NodeNotFoundError,
     RouteNotFoundError,
     ScenarioNotFoundError,
     SearchExecution,
 )
 from ..core.graph import GraphLoader
-from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT
+from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT, THU_DUC_BOUNDARY
 from ..services import SearchService
 from .models import (
     CompareRequest,
@@ -42,6 +43,13 @@ def dataset_meta() -> dict[str, object]:
     """Expose dataset provenance without loading the routing graph."""
     with DATASET_MANIFEST.open(encoding="utf-8") as manifest_file:
         return json.load(manifest_file)
+
+
+@router.get("/boundaries/thu-duc", tags=["dataset"])
+def thu_duc_boundary() -> dict[str, object]:
+    """Return the frozen historic OSM boundary used as Thu Duc study context."""
+    with THU_DUC_BOUNDARY.open(encoding="utf-8") as boundary_file:
+        return json.load(boundary_file)
 
 
 def _json_value(value: Any) -> Any:
@@ -120,30 +128,72 @@ def graph_catalog() -> dict[str, object]:
 def locations(graph_id: str = Query(default="toy_graph_v0.1")) -> dict[str, object]:
     """List selectable graph nodes for search inputs."""
     graph_path, graph, dataset_kind = _load_graph(graph_id)
+    incident_roads: dict[str, set[str]] = {node.node_id: set() for node in graph.nodes}
+    for edge in graph.edges:
+        road_name = str(edge.attributes.get("road_name") or "").strip()
+        if not road_name:
+            continue
+        incident_roads[edge.from_node_id].add(road_name)
+        incident_roads[edge.to_node_id].add(road_name)
+
+    def topology_name(node: Node) -> str:
+        node_id = node.node_id
+        raw_name = str(node.attributes.get("name") or "").strip()
+        if raw_name and raw_name != node_id and not raw_name.casefold().startswith("utraffic node "):
+            return raw_name
+        roads = sorted(incident_roads[node_id])
+        if len(roads) >= 2:
+            return f"Giao {' × '.join(roads[:3])}"
+        if roads:
+            return f"Nút trên {roads[0]}"
+        if node.latitude is not None and node.longitude is not None:
+            return f"Node tại {node.latitude:.5f}, {node.longitude:.5f}"
+        return node_id
+
     if dataset_kind == "processed" and (graph_path / "delivery_points.csv").is_file():
         with (graph_path / "delivery_points.csv").open(encoding="utf-8", newline="") as file:
             point_rows = [
                 row for row in csv.DictReader(file)
                 if row.get("selected_for_demo", "").casefold() == "true"
             ]
+        points_by_node: dict[str, list[dict[str, str]]] = {}
+        for row in point_rows:
+            points_by_node.setdefault(row["snap_node_id"], []).append(row)
+        nodes_by_id = {node.node_id: node for node in graph.nodes}
+        ordered_node_ids = list(points_by_node)
+        ordered_node_ids.extend(
+            node_id for node_id in sorted(nodes_by_id) if node_id not in points_by_node
+        )
         location_rows = [
             {
-                "point_id": row["point_id"],
-                "node_id": row["snap_node_id"],
-                "name": row["name"],
-                "node_type": row["point_type"],
-                "latitude": float(row["latitude"]),
-                "longitude": float(row["longitude"]),
-                "data_status": row["location_data_status"],
+                "point_id": points_by_node[node_id][0]["point_id"] if node_id in points_by_node else None,
+                "node_id": node_id,
+                "name": (
+                    " / ".join(dict.fromkeys(row["name"] for row in points_by_node[node_id]))
+                    if node_id in points_by_node
+                    else topology_name(nodes_by_id[node_id])
+                ),
+                "node_type": (
+                    points_by_node[node_id][0]["point_type"]
+                    if node_id in points_by_node
+                    else nodes_by_id[node_id].attributes.get("node_type")
+                ),
+                "latitude": nodes_by_id[node_id].latitude,
+                "longitude": nodes_by_id[node_id].longitude,
+                "data_status": (
+                    points_by_node[node_id][0]["location_data_status"]
+                    if node_id in points_by_node
+                    else nodes_by_id[node_id].attributes.get("data_status", "SOURCE_BACKED")
+                ),
             }
-            for row in point_rows
+            for node_id in ordered_node_ids
         ]
     else:
         location_rows = [
             {
                 "point_id": None,
                 "node_id": node.node_id,
-                "name": node.attributes.get("name", node.node_id),
+                "name": topology_name(node),
                 "node_type": node.attributes.get("node_type"),
                 "latitude": node.latitude,
                 "longitude": node.longitude,

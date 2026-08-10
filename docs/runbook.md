@@ -125,9 +125,19 @@ chọn mặc định.
 
 1. Chọn graph trong ô **Dataset folder**.
 2. Chọn **Scenario** nếu graph có `scenarios.json`.
-3. Bản đồ hiển thị Node và directed Edge từ CSV.
+3. OpenFreeMap hiển thị nền đường/POI; MapLibre overlay Node và directed Edge từ CSV.
 4. Edge đang mở có màu xanh; edge bị đóng có nét đứt màu đỏ.
-5. Sau khi thêm hoặc sửa folder, bấm **Quét và nạp lại**.
+5. Bấm **Chọn START** hoặc **Chọn GOAL**, sau đó click bất kỳ node; `Escape` để hủy.
+6. Sau khi thêm hoặc sửa folder, bấm **Quét và nạp lại**.
+
+Basemap cần mạng nhưng không bắt buộc cho search. Nếu không tải được, UI báo lỗi nền
+và tiếp tục vẽ graph trên background trung tính. Đổi provider/style bằng cách copy
+`frontend/.env.example` thành `frontend/.env` rồi sửa `VITE_BASEMAP_STYLE_URL`.
+
+Nếu Vite báo thiếu `frontend/node_modules/.vite/deps/maplibre-gl-worker.mjs`, dừng
+frontend rồi khởi động lại với `npm run dev:frontend -- --force`. Cấu hình Vite đã
+đóng gói worker bằng `?worker&url`/`setWorkerUrl` và loại `maplibre-gl` khỏi dependency
+optimizer; tùy chọn `--force` chỉ dùng để làm mới cache cũ của lần chạy trước.
 
 Các fixture có sẵn:
 
@@ -138,6 +148,19 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
 | `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
+| `processed/thu_duc_landmarks_v1.0.0` | Mặc định: 65 landmark chọn được/178 road-path edge |
+| `processed/thu_duc_core_capacity_v0.1.0` | Chỉ dùng benchmark 3.229/5.057; ẩn khỏi dropdown UI |
+
+Trong landmark dataset, circle trắng viền xanh là nút có thể chọn. Trong chế độ START/GOAL
+có thể click trực tiếp marker hoặc vị trí gần marker trên basemap; trường hợp thứ hai snap
+tới landmark gần nhất trong 200 m. Nếu không có landmark trong bán kính này, chế độ chọn
+được giữ nguyên và UI báo lỗi.
+
+Map vẽ đường đỏ “Ranh TP Thủ Đức cũ” từ frozen OSM boundary snapshot. Camera chỉ pan
+trong rectangle B có lề bao trọn polygon ranh A; min zoom 10.5 và
+`renderWorldCopies=false` ngăn viewport đi ra toàn TP.HCM hoặc bản đồ thế giới. Nút reset
+fit lại B, nhờ vậy các cạnh sát biên và một vành nhỏ bên ngoài đường đỏ vẫn nhìn thấy.
+Nếu boundary API lỗi, camera fallback và giới hạn theo graph context bounds.
 
 ## 6. Thêm dataset folder mới
 

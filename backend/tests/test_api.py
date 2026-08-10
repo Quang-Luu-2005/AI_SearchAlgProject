@@ -23,6 +23,17 @@ def test_dataset_metadata_exposes_provenance() -> None:
     assert payload["fixtures"][0]["data_status"] == "SIMULATED"
 
 
+def test_thu_duc_boundary_returns_frozen_historic_osm_polygon() -> None:
+    response = client.get("/api/v1/boundaries/thu-duc")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["source_id"] == "OSM-THU-DUC-BOUNDARY-2026-08-09"
+    assert payload["features"][0]["geometry"]["type"] == "Polygon"
+    assert payload["features"][0]["properties"]["osm_id"] == 19407794
+    assert payload["features"][0]["properties"]["boundary_status"] == "HISTORIC_OSM_RELATION"
+
+
 def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
     response = client.get("/api/v1/graphs")
 
@@ -42,6 +53,12 @@ def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
     assert real_graph["data_status"] == "MIXED"
     assert real_graph["real_time"] is False
     assert real_graph["routing_dataset_status"] == "REVIEW_REQUIRED"
+    capacity_graph = graph_by_id["processed/thu_duc_core_capacity_v0.1.0"]
+    assert (capacity_graph["node_count"], capacity_graph["edge_count"]) == (3229, 5057)
+    assert capacity_graph["routing_dataset_status"] == "CAPACITY_BENCHMARK_ONLY"
+    landmark_graph = graph_by_id["processed/thu_duc_landmarks_v1.0.0"]
+    assert (landmark_graph["node_count"], landmark_graph["edge_count"]) == (65, 178)
+    assert landmark_graph["routing_dataset_status"] == "ACADEMIC_LANDMARK_DEMO"
 
 
 def test_graph_detail_applies_scenario_without_hiding_closed_edge() -> None:
@@ -81,7 +98,7 @@ def test_locations_returns_selectable_simulated_nodes() -> None:
     assert all(item["data_status"] == "SIMULATED" for item in payload["locations"])
 
 
-def test_processed_locations_only_return_source_backed_pois() -> None:
+def test_processed_locations_return_every_topology_node_with_pois_first() -> None:
     response = client.get(
         "/api/v1/locations",
         params={"graph_id": "processed/thu_duc_market_v1.0.0"},
@@ -89,11 +106,64 @@ def test_processed_locations_only_return_source_backed_pois() -> None:
 
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload["locations"]) == 6
-    assert [item["point_id"] for item in payload["locations"]] == [
-        "DP00", "DP01", "DP02", "DP03", "DP04", "DP05"
-    ]
+    assert len(payload["locations"]) == 90
+    assert payload["locations"][0]["point_id"] == "DP00"
+    assert "Chợ Thủ Đức" in payload["locations"][0]["name"]
+    assert len({item["node_id"] for item in payload["locations"]}) == 90
+    assert any(item["name"].startswith("Giao ") for item in payload["locations"])
     assert all(item["data_status"] == "SOURCE_BACKED" for item in payload["locations"])
+
+
+def test_capacity_graph_exposes_all_nodes_as_selectable_locations() -> None:
+    response = client.get(
+        "/api/v1/locations",
+        params={"graph_id": "processed/thu_duc_core_capacity_v0.1.0"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload["locations"]) == 3229
+    assert len({item["node_id"] for item in payload["locations"]}) == 3229
+    assert all(item["name"] for item in payload["locations"])
+
+
+def test_landmark_graph_exposes_only_named_selectable_places() -> None:
+    response = client.get(
+        "/api/v1/locations",
+        params={"graph_id": "processed/thu_duc_landmarks_v1.0.0"},
+    )
+
+    assert response.status_code == 200
+    locations = response.json()["locations"]
+    assert len(locations) == 65
+    assert len({item["node_id"] for item in locations}) == 65
+    assert all(item["node_type"] == "SELECTABLE_LANDMARK" for item in locations)
+    assert all(item["name"] and not item["name"].startswith("Nút trên") for item in locations)
+
+
+def test_landmark_graph_search_uses_derived_road_path_edges() -> None:
+    graph_response = client.get(
+        "/api/v1/graphs/processed/thu_duc_landmarks_v1.0.0",
+        params={"scenario_id": "LANDMARK_HISTORICAL_BASELINE"},
+    )
+    search_response = client.post(
+        "/api/v1/search",
+        json={
+            "graph_id": "processed/thu_duc_landmarks_v1.0.0",
+            "start": "LM_001",
+            "goal": "LM_065",
+            "algorithm": "A_STAR",
+            "scenario": "LANDMARK_HISTORICAL_BASELINE",
+        },
+    )
+
+    assert graph_response.status_code == 200
+    graph_payload = graph_response.json()
+    assert all(node["attributes"]["selectable"] is True for node in graph_payload["nodes"])
+    assert all(edge["attributes"]["path_coordinates_json"] for edge in graph_payload["edges"])
+    assert search_response.status_code == 200
+    assert search_response.json()["path"][0] == "LM_001"
+    assert search_response.json()["path"][-1] == "LM_065"
 
 
 def test_scenarios_returns_three_cost_presets() -> None:
@@ -243,6 +313,7 @@ def test_openapi_documents_be03_endpoints_and_handoff_example() -> None:
     assert response.status_code == 200
     schema = response.json()
     for path in (
+        "/api/v1/boundaries/thu-duc",
         "/api/v1/locations",
         "/api/v1/scenarios",
         "/api/v1/search",
