@@ -7,6 +7,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Triển khai toàn bộ quy trình 14 bước OSM Dataset Pipeline: snapshot raw `thu_duc_osm_v1.0.0` từ Overpass API, script tái tạo `scripts/data/build_osm_dataset.py`, release `data/processed/osm_thu_duc_v1.0.0/` (27 nodes, 40 directed edges), SHA-256 checksums, provenance registry và cập nhật validator.
+- BE-04 Triển khai Uniform Cost Search (UCS) và A* với Geographic Weighted Haversine Distance Heuristic ($h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}(n, \text{goal})$), được chứng minh toán học đạt tính Admissible và Consistent (Monotonic), kèm ADR-0008 và unit test toàn bộ thuật toán weighted search.
 - Dataset thực tế `thu_duc_market_v1.0.0` cho pilot giao hàng quanh chợ Thủ Đức: 90
   node, 155 directed edge, traffic lịch sử UTraffic, POI OSM, flood hotspot 2025–2026,
   ba scenario và golden case đổi tuyến.

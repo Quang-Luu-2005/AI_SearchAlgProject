@@ -1,8 +1,7 @@
 # Processed datasets
 
-`thu_duc_market_v1.0.0/` là release hiện hành: 90 node, 155 directed edge, ba
-scenario, POI thật, traffic profile lịch sử và flood records có provenance. Release
-được app nạp mặc định nhưng giữ `REVIEW_REQUIRED`, không phải chỉ dẫn an toàn.
+- `thu_duc_market_v1.0.0/`: 90 node, 155 directed edge, UTraffic historical dataset.
+- `osm_thu_duc_v1.0.0/`: 27 node, 40 directed edge, release trích xuất trực tiếp từ OSM Overpass API snapshot (bbox Chợ Thủ Đức), có metadata, provenance, checksums và trạng thái `ACADEMIC_DEMO_READY`.
 
 Đích của dataset v1.0 dùng trong API. Mỗi release đặt trong thư mục version riêng,
 ví dụ `v1.0.0/`, gồm `nodes.csv`, `edges.csv`, `scenarios.json`, metadata, checksum

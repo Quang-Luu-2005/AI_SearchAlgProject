@@ -8,6 +8,7 @@ from collections.abc import Callable
 from ..core.contracts import (
     AlgorithmName,
     AlgorithmNotFoundError,
+    CostModelError,
     Graph,
     RouteNotFoundError,
     SearchPath,
@@ -17,10 +18,57 @@ from ..core.contracts import (
 from ..core.cost import ScenarioCostEngine
 
 
+import math
+
 SearchImplementation = Callable[
     [Graph, ScenarioCostEngine, str, str, str],
     SearchPath,
 ]
+
+
+def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Calculate the great-circle distance between two WGS84 points in kilometers."""
+    r = 6371.0  # Earth's mean radius in kilometers
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    delta_phi = math.radians(lat2 - lat1)
+    delta_lambda = math.radians(lon2 - lon1)
+    a = (
+        math.sin(delta_phi / 2.0) ** 2
+        + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+    )
+    c = 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
+    return r * c
+
+
+def compute_heuristic(
+    graph: Graph,
+    cost_engine: ScenarioCostEngine,
+    node_id: str,
+    goal_id: str,
+    scenario_id: str,
+) -> float:
+    """Compute the admissible and consistent geographic weighted Haversine distance heuristic."""
+    if node_id == goal_id:
+        return 0.0
+    node = graph.get_node(node_id)
+    goal_node = graph.get_node(goal_id)
+    if (
+        node.latitude is None
+        or node.longitude is None
+        or goal_node.latitude is None
+        or goal_node.longitude is None
+    ):
+        return 0.0
+    dist_km = haversine_distance_km(
+        node.latitude, node.longitude, goal_node.latitude, goal_node.longitude
+    )
+    try:
+        preset = cost_engine.preset_for_scenario(scenario_id)
+        w_dist = preset.weights.get("distance", 0.0)
+    except CostModelError:
+        w_dist = 0.0
+    return w_dist * dist_km
 
 
 def _reconstruct_path(
@@ -54,8 +102,14 @@ def _weighted_search(
     graph.get_node(goal)
     graph.scenario(scenario_id)
 
-    frontier: list[tuple[float, float, str]] = [(0.0, 0.0, start)]
-    best_cost = {start: 0.0}
+    is_astar = algorithm == AlgorithmName.A_STAR
+    start_h = compute_heuristic(graph, cost_engine, start, goal, scenario_id) if is_astar else 0.0
+
+    # Priority queue element: (f_cost, g_cost, node_id) for A*, (g_cost, node_id) for UCS
+    frontier: list[tuple[float, ...]] = (
+        [(start_h, 0.0, start)] if is_astar else [(0.0, start)]
+    )
+    best_cost: dict[str, float] = {start: 0.0}
     parents: dict[str, tuple[str, str]] = {}
     expanded: set[str] = set()
     trace: list[TraceEvent] = []
@@ -84,21 +138,28 @@ def _weighted_search(
         )
         step += 1
 
-    record(TraceEventKind.OPEN, start, g_cost=0.0, h_cost=0.0)
+    record(TraceEventKind.OPEN, start, g_cost=0.0, h_cost=start_h)
     while frontier:
-        _, current_cost, node_id = heapq.heappop(frontier)
+        pop_item = heapq.heappop(frontier)
+        if is_astar:
+            _, current_cost, node_id = pop_item
+        else:
+            current_cost, node_id = pop_item
+
         if current_cost != best_cost.get(node_id) or node_id in expanded:
             continue
 
         expanded.add(node_id)
-        record(TraceEventKind.EXPAND, node_id, g_cost=current_cost, h_cost=0.0)
+        current_h = compute_heuristic(graph, cost_engine, node_id, goal, scenario_id) if is_astar else 0.0
+        record(TraceEventKind.EXPAND, node_id, g_cost=current_cost, h_cost=current_h)
+
         if node_id == goal:
             record(TraceEventKind.GOAL, node_id, g_cost=current_cost, h_cost=0.0)
             path, edge_ids = _reconstruct_path(start, goal, parents)
             guarantee = (
                 "Optimal for non-negative edge costs (UCS)."
                 if algorithm == AlgorithmName.UCS
-                else "Optimal for non-negative edge costs; A* uses admissible h=0."
+                else "Optimal for non-negative edge costs; A* uses admissible and consistent geographic weighted Haversine heuristic."
             )
             return SearchPath(
                 path=path,
@@ -118,16 +179,23 @@ def _weighted_search(
                 continue
             best_cost[edge.to_node_id] = candidate_cost
             parents[edge.to_node_id] = (node_id, edge.edge_id)
-            heapq.heappush(frontier, (candidate_cost, candidate_cost, edge.to_node_id))
+
+            next_h = compute_heuristic(graph, cost_engine, edge.to_node_id, goal, scenario_id) if is_astar else 0.0
+            if is_astar:
+                f_cost = candidate_cost + next_h
+                heapq.heappush(frontier, (f_cost, candidate_cost, edge.to_node_id))
+            else:
+                heapq.heappush(frontier, (candidate_cost, edge.to_node_id))
+
             record(
                 TraceEventKind.RELAX,
                 edge.to_node_id,
                 parent_id=node_id,
                 g_cost=candidate_cost,
-                h_cost=0.0,
+                h_cost=next_h,
                 details={"edge_id": edge.edge_id, "edge_cost": breakdown.total_cost},
             )
-        record(TraceEventKind.CLOSE, node_id, g_cost=current_cost, h_cost=0.0)
+        record(TraceEventKind.CLOSE, node_id, g_cost=current_cost, h_cost=current_h)
 
     record(TraceEventKind.FAIL, goal, details={"reason": "NO_ROUTE"})
     raise RouteNotFoundError(
@@ -192,6 +260,8 @@ def resolve_algorithm(name: str) -> tuple[AlgorithmName, SearchImplementation]:
 __all__ = [
     "ALGORITHM_REGISTRY",
     "a_star_search",
+    "compute_heuristic",
+    "haversine_distance_km",
     "resolve_algorithm",
     "uniform_cost_search",
 ]
