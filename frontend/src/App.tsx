@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
+import { TracePlayer } from './features/player/TracePlayer'
 
 import {
   fetchThuDucBoundary,
@@ -123,6 +124,10 @@ export function App() {
   const [error, setError] = useState('')
   const [reloadVersion, setReloadVersion] = useState(0)
 
+  const [currentStep, setCurrentStep] = useState(1)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+
   const selectedGraph = useMemo(
     () => catalog.find((item) => item.graph_id === graphId),
     [catalog, graphId],
@@ -132,8 +137,8 @@ export function App() {
     [scenarios, scenarioId],
   )
   const exploredNodeIds = useMemo(
-    () => result?.trace.map((event) => event.node_id) ?? [],
-    [result],
+    () => result?.trace.slice(0, currentStep).map((event) => event.node_id) ?? [],
+    [result, currentStep],
   )
   const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
   const canRun = Boolean(
@@ -237,6 +242,33 @@ export function App() {
 
     return () => window.clearInterval(timer)
   }, [result])
+
+  useEffect(() => {
+    if (!result || !result.trace.length) {
+      setCurrentStep(1)
+      setIsPlaying(false)
+      return
+    }
+    setCurrentStep(1)
+    setIsPlaying(true)
+  }, [result])
+
+  useEffect(() => {
+    if (!isPlaying || !result || !result.trace.length) return
+
+    const intervalMs = Math.max(Math.floor(350 / playbackSpeed), 30)
+    const timer = window.setInterval(() => {
+      setCurrentStep((prev) => {
+        if (prev >= result.trace.length) {
+          setIsPlaying(false)
+          return prev
+        }
+        return prev + 1
+      })
+    }, intervalMs)
+
+    return () => window.clearInterval(timer)
+  }, [isPlaying, result, playbackSpeed])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -362,6 +394,8 @@ export function App() {
     setComparisonResults([])
     setVisiblePathEdgeCount(0)
     setAnimatingPath(false)
+    setCurrentStep(1)
+    setIsPlaying(false)
   }
 
   function selectStart(nodeId: string) {
@@ -723,6 +757,33 @@ export function App() {
               </div>
             )}
           </section>
+
+          {result && result.trace.length > 0 && (
+            <TracePlayer
+              trace={result.trace}
+              currentStep={currentStep}
+              isPlaying={isPlaying}
+              playbackSpeed={playbackSpeed}
+              onPlayToggle={() => setIsPlaying(!isPlaying)}
+              onNextStep={() => {
+                setIsPlaying(false)
+                setCurrentStep((prev) => Math.min(prev + 1, result.trace.length))
+              }}
+              onPreviousStep={() => {
+                setIsPlaying(false)
+                setCurrentStep((prev) => Math.max(prev - 1, 1))
+              }}
+              onReset={() => {
+                setIsPlaying(false)
+                setCurrentStep(1)
+              }}
+              onStepChange={(step) => {
+                setIsPlaying(false)
+                setCurrentStep(step)
+              }}
+              onSpeedChange={setPlaybackSpeed}
+            />
+          )}
 
           {selectedGraph?.graph_id?.startsWith('processed/thu_duc_') && (
             <p className="dataset-attribution">
