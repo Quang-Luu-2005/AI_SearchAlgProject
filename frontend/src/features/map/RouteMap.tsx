@@ -448,7 +448,7 @@ export function RouteMap({
     })
     mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
-    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 120 }), 'bottom-left')
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 200 }), 'bottom-left')
     map.addControl(new maplibregl.AttributionControl({
       compact: true,
       customAttribution: 'Basemap © OpenFreeMap · © OpenStreetMap contributors',
