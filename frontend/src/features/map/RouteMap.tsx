@@ -376,20 +376,7 @@ function boundaryContextBounds(boundary: ThuDucBoundary | null | undefined): map
   )
 }
 
-function default4KmBounds(graph: GraphPayload): maplibregl.LngLatBounds {
-  const extent = graphExtent(graph)
-  const centerLng = extent ? (extent.west + extent.east) / 2 : DEFAULT_CENTER[0]
-  const centerLat = extent ? (extent.south + extent.north) / 2 : DEFAULT_CENTER[1]
 
-  // ~4.0 km view extent at latitude 10.85 deg (±0.0183° long, ±0.0181° lat)
-  const lngRadius = 0.0183
-  const latRadius = 0.0181
-
-  return new maplibregl.LngLatBounds(
-    [centerLng - lngRadius, centerLat - latRadius],
-    [centerLng + lngRadius, centerLat + latRadius],
-  )
-}
 
 export function RouteMap({
   graph,
@@ -575,22 +562,21 @@ export function RouteMap({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
-    const maxConstraintBounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
-    const bounds4km = default4KmBounds(graph)
-    if (!maxConstraintBounds) {
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+    if (!bounds) {
       map.setCenter(DEFAULT_CENTER)
-      map.setZoom(14.5)
+      map.setZoom(14)
       return
     }
 
     // Rectangle B contains the irregular boundary A plus a small outside context ring.
     // Clamp navigation to B so the map remains a Thu Duc study-area crop.
     map.setMinZoom(MIN_CITY_ZOOM)
-    map.setMaxBounds(maxConstraintBounds)
+    map.setMaxBounds(bounds)
     const cameraKey = `${graph.graph_id}:${styleRevision}:${boundary?.source_id ?? 'graph-fallback'}`
     if (cameraGraphKeyRef.current === cameraKey) return
     cameraGraphKeyRef.current = cameraKey
-    map.fitBounds(bounds4km, { padding: 52, maxZoom: 16, duration: 0 })
+    map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
   }, [boundary, graph, styleRevision])
 
   useEffect(() => {
@@ -689,11 +675,10 @@ export function RouteMap({
 
   function resetView() {
     const map = mapRef.current
-    const maxConstraintBounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
-    const bounds4km = default4KmBounds(graph)
-    if (map) {
-      if (maxConstraintBounds) map.setMaxBounds(maxConstraintBounds)
-      map.fitBounds(bounds4km, { padding: 52, maxZoom: 16, duration: 500 })
+    const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+    if (map && bounds) {
+      map.setMaxBounds(bounds)
+      map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
     }
   }
 
