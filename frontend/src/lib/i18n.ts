@@ -46,10 +46,6 @@ export const translations = {
     alg_prompt: '💡 Please select an Algorithm to display Starting and Ending Point input fields.',
     reload_graph: 'Reload graph',
     swap_endpoints: 'Swap start and goal',
-    swap_depot_title: 'Swap starting depot with first delivery stop',
-    swap_stops_title: 'Reverse order of delivery stops',
-    swap_stops_label: 'Reverse Order',
-    swap_next_title: 'Swap with next stop',
 
     // Map & Heading
     eyebrow_title: 'Optimal path visualizer',
@@ -180,10 +176,6 @@ export const translations = {
     alg_prompt: '💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.',
     reload_graph: 'Nạp lại graph',
     swap_endpoints: 'Đổi điểm bắt đầu và đích',
-    swap_depot_title: 'Đổi điểm xuất phát với điểm giao hàng đầu tiên',
-    swap_stops_title: 'Đảo ngược thứ tự các điểm giao hàng',
-    swap_stops_label: 'Đổi thứ tự',
-    swap_next_title: 'Đổi vị trí với điểm tiếp theo',
 
     // Map & Heading
     eyebrow_title: 'Trực quan hóa lộ trình tối ưu',
