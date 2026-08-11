@@ -118,6 +118,8 @@ export function App() {
   const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
   const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('')
   const [tourStops, setTourStops] = useState<string[]>([])
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [tourResult, setTourResult] = useState<OptimizeTourResult | null>(null)
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
@@ -540,12 +542,45 @@ export function App() {
     }
   }
 
+  function handleStopDragStart(event: React.DragEvent, index: number) {
+    setDraggedIndex(index)
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', String(index))
+  }
+
+  function handleStopDragOver(event: React.DragEvent, index: number) {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'move'
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index)
+    }
+  }
+
+  function handleStopDrop(event: React.DragEvent, targetIndex: number) {
+    event.preventDefault()
+    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+      const updated = [...tourStops]
+      const [movedItem] = updated.splice(draggedIndex, 1)
+      updated.splice(targetIndex, 0, movedItem)
+      setTourStops(updated)
+    }
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  function handleStopDragEnd() {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
   function clearBoard() {
     clearRouteResult()
     setAlgorithm('') // Reset thuật toán về không chọn
     setStartId('') // Reset điểm bắt đầu
     setGoalId('') // Reset điểm đích/kết thúc
     setTourStops([]) // Reset toàn bộ điểm kết thúc/giao hàng
+    setDraggedIndex(null)
+    setDragOverIndex(null)
     setPickTarget(null)
     setError('')
   }
@@ -653,12 +688,25 @@ export function App() {
                   <div className="stops-chips">
                     {tourStops.map((stopId, idx) => {
                       const loc = locations.find((item) => item.node_id === stopId)
+                      const isDragging = draggedIndex === idx
+                      const isDragOver = dragOverIndex === idx
                       return (
-                        <span key={`${stopId}-${idx}`} className="stop-chip">
+                        <span
+                          key={`${stopId}-${idx}`}
+                          className={`stop-chip${isDragging ? ' is-dragging' : ''}${isDragOver ? ' is-drag-over' : ''}`}
+                          draggable={true}
+                          onDragStart={(event) => handleStopDragStart(event, idx)}
+                          onDragOver={(event) => handleStopDragOver(event, idx)}
+                          onDrop={(event) => handleStopDrop(event, idx)}
+                          onDragEnd={handleStopDragEnd}
+                          title="Kéo thả để di chuyển thứ tự điểm dừng"
+                        >
+                          <span className="drag-handle" aria-hidden="true">⋮⋮</span>
                           <small>#{idx + 1}</small> {loc ? loc.name : stopId}
                           <button
                             type="button"
                             className="remove-chip-btn"
+                            title="Xóa điểm dừng"
                             onClick={() => setTourStops(tourStops.filter((_, i) => i !== idx))}
                           >
                             ×
