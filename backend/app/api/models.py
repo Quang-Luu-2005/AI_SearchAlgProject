@@ -117,10 +117,11 @@ class CompareResponse(BaseModel):
 
 class OptimizeTourRequest(BaseModel):
     depot: str = Field(min_length=1, examples=["N01"])
-    stops: list[str] = Field(min_length=1, max_length=10, examples=[["N02", "N03", "N05"]])
+    stops: list[str] = Field(min_length=5, max_length=10, examples=[["N02", "N03", "N04", "N05", "N06"]])
     scenario: str = Field(min_length=1, examples=["HEAVY_RAIN_SAFE"])
     graph_id: str = Field(default="toy_graph_v0.1", min_length=1)
     algorithm: str = Field(default="A_STAR", min_length=1)
+    tour_algorithm: str = Field(default="HELD_KARP", min_length=1)
     return_to_depot: bool = Field(default=True)
 
     model_config = {

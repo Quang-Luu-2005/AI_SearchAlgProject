@@ -28,6 +28,3 @@ Triển khai hoàn chỉnh tính năng tối ưu hóa lộ trình giao hàng qua
 - Chạy toàn bộ backend test suite với pytest:
   `node scripts/python.mjs -m pytest backend/tests -v`
   **Kết quả: 58 PASS, 3 SKIPPED, 0 FAIL (100% PASS)**.
-
-## Bước tiếp theo
-- Kết nối giao diện người dùng React (Pathfinder AI UI) với endpoint `POST /api/v1/optimize-tour` để cho phép chọn nhiều marker giao hàng trực tiếp trên bản đồ MapLibre GL JS.

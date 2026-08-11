@@ -371,6 +371,7 @@ def optimize_tour(payload: OptimizeTourRequest) -> dict[str, object]:
             stops=payload.stops,
             scenario_id=payload.scenario,
             algorithm=payload.algorithm,
+            tour_algorithm=payload.tour_algorithm,
             return_to_depot=payload.return_to_depot,
         )
     except (

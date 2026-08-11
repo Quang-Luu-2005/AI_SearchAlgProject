@@ -108,7 +108,7 @@ def test_tc04_tour_optimizer_service_and_stitching(toy_graph: Graph) -> None:
     service = TourOptimizerService(toy_graph)
     result = service.optimize_tour(
         depot="N01",
-        stops=["N02", "N03", "N04"],
+        stops=["N02", "N03", "N04", "N05", "N06"],
         scenario_id="OFFPEAK_BALANCED",
         return_to_depot=True,
     )
@@ -116,7 +116,7 @@ def test_tc04_tour_optimizer_service_and_stitching(toy_graph: Graph) -> None:
     assert result.depot == "N01"
     assert result.visit_order[0] == "N01"
     assert result.visit_order[-1] == "N01"
-    assert len(result.legs) == 4
+    assert len(result.legs) == 6
     assert result.total_cost > 0
     assert result.total_distance_m > 0
     assert result.guarantee == "OPTIMAL_HELD_KARP"
@@ -135,7 +135,7 @@ def test_tc04_api_optimize_tour_endpoint() -> None:
         "/api/v1/optimize-tour",
         json={
             "depot": "N01",
-            "stops": ["N02", "N03", "N04"],
+            "stops": ["N02", "N03", "N04", "N05", "N06"],
             "scenario": "OFFPEAK_BALANCED",
             "graph_id": "toy_graph_v0.1",
         },
@@ -161,7 +161,7 @@ def test_tc04_api_invalid_stop_node() -> None:
         "/api/v1/optimize-tour",
         json={
             "depot": "N01",
-            "stops": ["INVALID_NODE_ID"],
+            "stops": ["INVALID_NODE_ID", "N02", "N03", "N04", "N05"],
             "scenario": "OFFPEAK_BALANCED",
             "graph_id": "toy_graph_v0.1",
         },
@@ -169,3 +169,37 @@ def test_tc04_api_invalid_stop_node() -> None:
 
     assert response.status_code == 404
     assert "not found in graph" in response.json()["detail"]
+
+
+def test_tc04_api_fewer_than_5_stops_validation() -> None:
+    response = client.post(
+        "/api/v1/optimize-tour",
+        json={
+            "depot": "N01",
+            "stops": ["N02", "N03", "N04"],
+            "scenario": "OFFPEAK_BALANCED",
+            "graph_id": "toy_graph_v0.1",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_tc04_api_optimize_tour_nearest_neighbor() -> None:
+    response = client.post(
+        "/api/v1/optimize-tour",
+        json={
+            "depot": "N01",
+            "stops": ["N02", "N03", "N04", "N05", "N06"],
+            "scenario": "OFFPEAK_BALANCED",
+            "graph_id": "toy_graph_v0.1",
+            "tour_algorithm": "NEAREST_NEIGHBOR",
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["guarantee"] == "APPROXIMATE_NEAREST_NEIGHBOR"
+    assert "Nearest Neighbor" in data["explanation"]
+
+

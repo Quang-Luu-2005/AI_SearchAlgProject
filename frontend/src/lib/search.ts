@@ -1,5 +1,6 @@
 export type Algorithm = 'UCS' | 'A_STAR'
-export type AlgorithmSelection = Algorithm | 'COMPARE'
+export type AlgorithmSelection = Algorithm | 'COMPARE' | 'HELD_KARP' | 'NEAREST_NEIGHBOR' | 'OPTIMIZE_TOUR'
+
 
 export type LocationItem = {
   point_id: string | null
@@ -124,3 +125,61 @@ export function runComparison(
     signal,
   })
 }
+
+export type TourLeg = {
+  from_node_id: string
+  to_node_id: string
+  path: string[]
+  edge_ids: string[]
+  distance_m: number
+  distance_km: number
+  travel_time_min: number
+  total_cost: number
+}
+
+export type TourComparison = {
+  held_karp_cost: number
+  nearest_neighbor_cost: number
+  approximation_gap_percent: number
+}
+
+export type OptimizeTourResult = {
+  depot: string
+  scenario: string
+  data_status: string
+  visit_order: string[]
+  full_path: string[]
+  edge_ids: string[]
+  total_distance_m: number
+  total_distance_km: number
+  estimated_time_min: number
+  total_cost: number
+  comparison: TourComparison
+  legs: TourLeg[]
+  guarantee: string
+  explanation: string
+  limitations: string[]
+}
+
+export type OptimizeTourInput = {
+  graph_id: string
+  depot: string
+  stops: string[]
+  scenario: string
+  algorithm?: string
+  tour_algorithm?: string
+  return_to_depot?: boolean
+}
+
+export function optimizeTour(
+  input: OptimizeTourInput,
+  signal?: AbortSignal,
+): Promise<OptimizeTourResult> {
+  return requestJson('/api/v1/optimize-tour', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+    signal,
+  })
+}
+

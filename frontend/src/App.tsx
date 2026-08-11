@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { RouteMap, type EndpointPickTarget } from './features/map/RouteMap'
+import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
+
 import {
   fetchThuDucBoundary,
   fetchGraph,
@@ -14,13 +15,16 @@ import {
 import {
   fetchLocations,
   fetchScenarios,
+  optimizeTour,
   runComparison,
   runSearch,
   type AlgorithmSelection,
   type LocationItem,
+  type OptimizeTourResult,
   type ScenarioItem,
   type SearchResult,
 } from './lib/search'
+
 
 function metric(value: number | undefined, digits = 1): string {
   return value === undefined ? '—' : value.toFixed(digits)
@@ -108,6 +112,8 @@ export function App() {
   const [goalId, setGoalId] = useState('')
   const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
   const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
+  const [tourStops, setTourStops] = useState<string[]>([])
+  const [tourResult, setTourResult] = useState<OptimizeTourResult | null>(null)
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
   const [visiblePathEdgeCount, setVisiblePathEdgeCount] = useState(0)
@@ -129,7 +135,73 @@ export function App() {
     () => result?.trace.map((event) => event.node_id) ?? [],
     [result],
   )
-  const canRun = Boolean(graphId && scenarioId && startId && goalId && !running)
+  const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
+  const canRun = Boolean(
+    graphId &&
+    scenarioId &&
+    startId &&
+    (isTourMode ? tourStops.length >= 5 : goalId) &&
+    !running,
+  )
+
+  const currentAnimatedNodeInfo = useMemo(() => {
+    if (!animatingPath || !result || !result.path.length) return null
+    const idx = Math.min(visiblePathEdgeCount, result.path.length - 1)
+    const nodeId = result.path[idx]
+    if (!nodeId) return null
+
+    const loc = locations.find((item) => item.node_id === nodeId)
+    const name = loc ? loc.name : nodeId
+
+    if (tourResult) {
+      const visitIdx = tourResult.visit_order.indexOf(nodeId)
+      if (visitIdx !== -1) {
+        return {
+          nodeId,
+          name,
+          stopIndex: visitIdx + 1,
+          isStop: true,
+          label: `Điểm #${visitIdx + 1} · ${name} (${nodeId})`,
+        }
+      }
+    }
+
+    return {
+      nodeId,
+      name,
+      stopIndex: idx + 1,
+      isStop: false,
+      label: `Nút ${idx + 1}/${result.path.length} · ${name} (${nodeId})`,
+    }
+  }, [animatingPath, result, visiblePathEdgeCount, locations, tourResult])
+
+  const tourStopMarkers = useMemo<TourStopMarker[]>(() => {
+    if (!tourResult || !graph) return []
+    const nodeById = new Map(graph.nodes.map((n) => [n.node_id, n]))
+    const currentVisitedPath = result ? result.path.slice(0, visiblePathEdgeCount + 1) : []
+    const visitedSet = new Set(currentVisitedPath)
+
+    return tourResult.visit_order.map((nodeId, idx) => {
+      const node = nodeById.get(nodeId)
+      const loc = locations.find((l) => l.node_id === nodeId)
+      const name = loc ? loc.name : (node?.label || nodeId)
+      const isVisited = !animatingPath || visitedSet.has(nodeId)
+
+      return {
+        nodeId,
+        name,
+        stopIndex: idx + 1,
+        latitude: node?.latitude ?? 0,
+        longitude: node?.longitude ?? 0,
+        isVisited,
+      }
+    }).filter((item) => item.latitude !== 0 && item.longitude !== 0)
+  }, [tourResult, graph, result, visiblePathEdgeCount, animatingPath, locations])
+
+
+
+
+
 
   useEffect(() => {
     const controller = new AbortController()
@@ -203,25 +275,35 @@ export function App() {
         const nextScenarios = scenarioPayload.scenarios
         setLocations(nextLocations)
         setScenarios(nextScenarios)
+        const isTourAlg = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
         setStartId((current) => (
-          nextLocations.some((item) => item.node_id === current)
-            ? current
-            : nextLocations[0]?.node_id ?? ''
+          isTourAlg
+            ? ''
+            : nextLocations.some((item) => item.node_id === current)
+              ? current
+              : nextLocations[0]?.node_id ?? ''
         ))
         setGoalId((current) => (
-          nextLocations.some((item) => item.node_id === current)
-            ? current
-            : nextLocations.filter((item) => item.point_id).at(-1)?.node_id
+          isTourAlg
+            ? ''
+            : nextLocations.some((item) => item.node_id === current)
+              ? current
+              : nextLocations.filter((item) => item.point_id).at(-1)?.node_id
               ?? nextLocations.at(-1)?.node_id
               ?? ''
+        ))
+        setTourStops((current) => (
+          isTourAlg
+            ? []
+            : current
         ))
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
             : nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
-              ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
-              ?? nextScenarios[0]?.scenario_id
-              ?? ''
+            ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
+            ?? nextScenarios[0]?.scenario_id
+            ?? ''
         ))
       })
       .catch((reason: Error) => {
@@ -251,11 +333,32 @@ export function App() {
     setScenarioId('')
     setStartId('')
     setGoalId('')
+    setTourStops([])
     setPickTarget(null)
+    clearRouteResult()
+  }
+
+  function changeAlgorithm(nextAlg: AlgorithmSelection) {
+    setAlgorithm(nextAlg)
+    setStartId('') // Reset điểm bắt đầu mỗi khi chuyển thuật toán
+    setGoalId('') // Reset điểm đích
+    setTourStops([]) // Reset toàn bộ các điểm kết thúc/giao hàng
+    clearRouteResult()
+  }
+
+  function reloadGraph() {
+    setStartId('') // Reset điểm bắt đầu
+    setGoalId('') // Reset điểm đích
+    setTourStops([]) // Reset các điểm kết thúc/giao hàng
+    setPickTarget(null)
+    setError('')
+    clearRouteResult()
+    setReloadVersion((value) => value + 1)
   }
 
   function clearRouteResult() {
     setResult(null)
+    setTourResult(null)
     setComparisonResults([])
     setVisiblePathEdgeCount(0)
     setAnimatingPath(false)
@@ -293,7 +396,67 @@ export function App() {
     setRunning(true)
     setError('')
     setResult(null)
+    setTourResult(null)
     setComparisonResults([])
+
+    if (isTourMode) {
+      if (tourStops.length < 5) {
+        setError('Vui lòng chọn ít nhất 5 tọa độ điểm.')
+        setRunning(false)
+        return
+      }
+
+      try {
+        const tourAlgParam = algorithm === 'NEAREST_NEIGHBOR' ? 'NEAREST_NEIGHBOR' : 'HELD_KARP'
+        const tourPayload = await optimizeTour({
+          graph_id: graphId,
+          depot: startId,
+          stops: tourStops,
+          scenario: scenarioId,
+          algorithm: 'A_STAR',
+          tour_algorithm: tourAlgParam,
+          return_to_depot: true,
+        })
+        setTourResult(tourPayload)
+
+        const stitchedResult: SearchResult = {
+          algorithm: (algorithm === 'NEAREST_NEIGHBOR' ? 'NEAREST_NEIGHBOR' : 'HELD_KARP') as any,
+          scenario: tourPayload.scenario,
+          data_status: tourPayload.data_status,
+          path: tourPayload.full_path,
+          edge_ids: tourPayload.edge_ids,
+          metrics: {
+            distance_m: tourPayload.total_distance_m,
+            distance_km: tourPayload.total_distance_km,
+            estimated_time_min: tourPayload.estimated_time_min,
+            total_cost: tourPayload.total_cost,
+            explored_nodes: tourPayload.full_path.length,
+            processing_time_ms: 0,
+          },
+          trace: tourPayload.full_path.map((node_id, idx) => ({
+            step: idx + 1,
+            kind: idx === 0 ? 'OPEN' : idx === tourPayload.full_path.length - 1 ? 'GOAL' : 'EXPAND',
+            node_id,
+            parent_id: idx > 0 ? tourPayload.full_path[idx - 1] : null,
+            g_cost: null,
+            h_cost: null,
+            details: {},
+          })),
+          guarantee: tourPayload.guarantee,
+          explanation: tourPayload.explanation,
+          edge_breakdown: [],
+          limitations: tourPayload.limitations,
+        }
+        setResult(stitchedResult)
+      } catch (reason) {
+        setError(reason instanceof Error ? reason.message : 'Không thể tối ưu tour.')
+      } finally {
+        setRunning(false)
+      }
+      return
+    }
+
+
     const input = {
       graph_id: graphId,
       start: startId,
@@ -317,9 +480,11 @@ export function App() {
 
   function clearBoard() {
     clearRouteResult()
+    setTourStops([])
     setPickTarget(null)
     setError('')
   }
+
 
   return (
     <div className="app-shell">
@@ -360,11 +525,14 @@ export function App() {
               Chọn thuật toán
               <select
                 value={algorithm}
-                onChange={(event) => setAlgorithm(event.target.value as AlgorithmSelection)}
+                onChange={(event) => changeAlgorithm(event.target.value as AlgorithmSelection)}
               >
-                <option value="A_STAR">A* Search</option>
-                <option value="UCS">Uniform Cost Search</option>
-                <option value="COMPARE">So sánh UCS và A*</option>
+                <option value="A_STAR">A* Search (2 điểm)</option>
+                <option value="UCS">Uniform Cost Search (2 điểm)</option>
+                <option value="COMPARE">So sánh UCS và A* (2 điểm)</option>
+                <option value="HELD_KARP">Tour Held-Karp DP (Tối ưu tuyệt đối)</option>
+                <option value="NEAREST_NEIGHBOR">Tour Nearest Neighbor (Tham lam xấp xỉ)</option>
+                <option value="OPTIMIZE_TOUR">So sánh Tour (Held-Karp vs Nearest Neighbor)</option>
               </select>
             </label>
 
@@ -379,30 +547,83 @@ export function App() {
               </select>
             </label>
 
-            <div className="route-fields">
-              <LocationPicker
-                label="Điểm bắt đầu"
-                value={startId}
-                locations={locations}
-                onChange={selectStart}
-              />
-              <button
-                className="swap-button"
-                type="button"
-                aria-label="Đổi điểm bắt đầu và đích"
-                onClick={swapEndpoints}
-              >
-                ⇅
-              </button>
-              <LocationPicker
-                label="Điểm đích"
-                value={goalId}
-                locations={locations}
-                onChange={selectGoal}
-              />
-            </div>
+            {isTourMode ? (
+              <div className="tour-stops-field">
+                <LocationPicker
+                  label="ĐIỂM BẮT ĐẦU"
+                  value={startId}
+                  locations={locations}
+                  onChange={selectStart}
+                />
+                {!startId && (
+                  <p className="warning-note" style={{ margin: '4px 0 8px 0', color: '#b45309' }}>
+                    Vui lòng chọn Điểm bắt đầu (Depot).
+                  </p>
+                )}
+                <div className="stops-list-container">
+                  <label>ĐIỂM KẾT THÚC ({tourStops.length}/10 điểm)</label>
+                  <div className="stops-chips">
+                    {tourStops.map((stopId, idx) => {
+                      const loc = locations.find((item) => item.node_id === stopId)
+                      return (
+                        <span key={`${stopId}-${idx}`} className="stop-chip">
+                          <small>#{idx + 1}</small> {loc ? loc.name : stopId}
+                          <button
+                            type="button"
+                            className="remove-chip-btn"
+                            onClick={() => setTourStops(tourStops.filter((_, i) => i !== idx))}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      )
+                    })}
+                  </div>
+                  {tourStops.length < 5 && (
+                    <p className="warning-note" style={{ margin: '4px 0 8px 0' }}>
+                      Cần chọn thêm {5 - tourStops.length} điểm nữa (tối thiểu 5 điểm giao hàng).
+                    </p>
+                  )}
+                  {tourStops.length < 10 && (
+                    <LocationPicker
+                      label="THÊM TỌA ĐỘ ĐIỂM"
+                      value=""
+                      locations={locations.filter((item) => item.node_id !== startId && !tourStops.includes(item.node_id))}
+                      onChange={(nodeId) => {
+                        if (nodeId && !tourStops.includes(nodeId)) {
+                          setTourStops([...tourStops, nodeId])
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="route-fields">
+                <LocationPicker
+                  label="Điểm bắt đầu"
+                  value={startId}
+                  locations={locations}
+                  onChange={selectStart}
+                />
+                <button
+                  className="swap-button"
+                  type="button"
+                  aria-label="Đổi điểm bắt đầu và đích"
+                  onClick={swapEndpoints}
+                >
+                  ⇅
+                </button>
+                <LocationPicker
+                  label="Điểm đích"
+                  value={goalId}
+                  locations={locations}
+                  onChange={selectGoal}
+                />
+              </div>
+            )}
 
-            <button className="generate-button" type="button" onClick={() => setReloadVersion((value) => value + 1)}>
+            <button className="generate-button" type="button" onClick={reloadGraph}>
               <span aria-hidden="true">⌘</span>
               Nạp lại graph
             </button>
@@ -478,15 +699,27 @@ export function App() {
                 pickTarget={pickTarget}
                 onNodePick={pickNode}
                 onPickTargetChange={setPickTarget}
+                activeAnimatedNodeId={currentAnimatedNodeInfo?.nodeId}
+                activeAnimatedNodeLabel={currentAnimatedNodeInfo?.label}
+                tourStopMarkers={tourStopMarkers}
+                isTourMode={isTourMode}
               />
             ) : (
               <div className="map-placeholder">Chưa có dữ liệu graph</div>
             )}
             {loading && <div className="loading-overlay">Đang nạp dữ liệu…</div>}
             {animatingPath && result && (
-              <div className="route-animation-status">
+              <div className="route-animation-status" role="status">
                 <span className="animation-pulse" />
-                Đang mô phỏng tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}
+                {currentAnimatedNodeInfo ? (
+                  <span>
+                    <strong>{currentAnimatedNodeInfo.label}</strong>
+                    {' · '}
+                    <small>Tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</small>
+                  </span>
+                ) : (
+                  <span>Đang mô phỏng tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</span>
+                )}
               </div>
             )}
           </section>
@@ -527,6 +760,133 @@ export function App() {
                   <small>{item.metrics.explored_nodes} nodes · {item.metrics.processing_time_ms.toFixed(3)} ms</small>
                 </button>
               ))}
+            </section>
+          )}
+
+          {tourResult && (
+            <section className="tour-result-card" aria-label="Kết quả tối ưu tour">
+              <div className="tour-header">
+                <span className="tour-kicker">Multi-Stop Delivery Tour · {tourResult.scenario}</span>
+                <h3>Lộ trình: {tourResult.visit_order.join(' → ')}</h3>
+                <p>{tourResult.explanation}</p>
+              </div>
+              {algorithm === 'OPTIMIZE_TOUR' ? (
+                <div className="tour-guarantee-comparison" aria-label="So sánh bảo đảm thuật toán">
+                  <div className="tour-guarantee-card optimal-card">
+                    <span className="guarantee-tag">🛡️ Exact Optimal (DP)</span>
+                    <h4>Held-Karp DP</h4>
+                    <div className="card-cost">{tourResult.comparison.held_karp_cost.toFixed(3)} cost</div>
+                    <div className="card-guarantee">OPTIMAL_HELD_KARP</div>
+                    <p>Đảm bảo 100% chi phí tối ưu tuyệt đối (Global Optimum).</p>
+                  </div>
+                  <div className="tour-guarantee-card heuristic-card">
+                    <span className="guarantee-tag">⚡ Greedy Heuristic</span>
+                    <h4>Nearest Neighbor</h4>
+                    <div className="card-cost">{tourResult.comparison.nearest_neighbor_cost.toFixed(3)} cost</div>
+                    <div className="card-guarantee">APPROXIMATE_NEAREST_NEIGHBOR</div>
+                    <p>Thuật toán tham lam xấp xỉ, thời gian phản hồi siêu nhanh.</p>
+                  </div>
+                  <div className="tour-guarantee-card gap-card">
+                    <span className="guarantee-tag">📊 Approximation Gap</span>
+                    <h4>Độ lệch Xấp xỉ</h4>
+                    <div className={`card-cost ${tourResult.comparison.approximation_gap_percent === 0 ? 'gap-zero' : 'gap-positive'}`}>
+                      +{tourResult.comparison.approximation_gap_percent.toFixed(2)}%
+                    </div>
+                    <div className="card-guarantee">Held-Karp vs Nearest Neighbor</div>
+                    <p>{tourResult.comparison.approximation_gap_percent === 0 ? 'Nearest Neighbor đạt chi phí tối ưu bằng Held-Karp!' : 'Mức chênh lệch chi phí giữa Heuristic và Tối ưu'}</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className={`tour-guarantee-banner ${tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? 'tour-guarantee-banner--optimal' : 'tour-guarantee-banner--heuristic'}`}>
+                    <div className="guarantee-badge-header">
+                      <span className="guarantee-tag-pill">
+                        {tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? '🛡️ Optimal Guarantee' : '⚡ Heuristic Guarantee'}
+                      </span>
+                      <span className="guarantee-title-text">
+                        Guarantee Code: <code>{tourResult.guarantee}</code>
+                      </span>
+                    </div>
+                    <p className="guarantee-desc-text">
+                      {tourResult.guarantee === 'OPTIMAL_HELD_KARP'
+                        ? 'ĐẢM BẢO TỐI ƯU TUYỆT ĐỐI (Exact DP): Thuật toán Held-Karp duyệt không gian trạng thái bitmask O(n²2ⁿ) đảm bảo 100% tìm ra tour có chi phí nhỏ nhất.'
+                        : 'ĐẢM BẢO THAM LAM XẤP XỈ (Greedy Heuristic): Thuật toán Nearest Neighbor O(n²) luôn chọn điểm giao gần nhất tiếp theo, phản hồi tức thì nhưng mang tính chất xấp xỉ.'}
+                    </p>
+                  </div>
+
+                  <div className="tour-summary-box">
+                    <div className="comp-item">
+                      <span>Thuật toán</span>
+                      <strong>{algorithm === 'HELD_KARP' ? 'Held-Karp DP (Exact Optimal)' : 'Nearest Neighbor (Greedy Heuristic)'}</strong>
+                    </div>
+                    <div className="comp-item">
+                      <span>Tổng khoảng cách</span>
+                      <strong>{tourResult.total_distance_km.toFixed(2)} km</strong>
+                    </div>
+                    <div className="comp-item">
+                      <span>Thời gian dự kiến (ETA)</span>
+                      <strong>{tourResult.estimated_time_min.toFixed(2)} phút</strong>
+                    </div>
+                    <div className="comp-item">
+                      <span>Tổng chi phí (Cost)</span>
+                      <strong>{tourResult.total_cost.toFixed(3)}</strong>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="legs-table-container">
+                <h4>Chi tiết từng chặng ({tourResult.legs.length} chặng)</h4>
+                <table className="legs-table">
+                  <thead>
+                    <tr>
+                      <th>Chặng</th>
+                      <th>Điểm xuất phát</th>
+                      <th>Điểm kết thúc</th>
+                      <th>Lộ trình qua các nút</th>
+                      <th>Khoảng cách</th>
+                      <th>ETA</th>
+                      <th>Chi phí (Cost)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tourResult.legs.map((leg, idx) => {
+                      const fromLoc = locations.find((loc) => loc.node_id === leg.from_node_id)
+                      const toLoc = locations.find((loc) => loc.node_id === leg.to_node_id)
+                      const fromName = fromLoc ? fromLoc.name : leg.from_node_id
+                      const toName = toLoc ? toLoc.name : leg.to_node_id
+
+                      return (
+                        <tr key={`${leg.from_node_id}-${leg.to_node_id}-${idx}`}>
+                          <td><strong>#{idx + 1}</strong></td>
+                          <td>
+                            <div className="leg-node-block">
+                              <span className="leg-node-name">{fromName}</span>
+                              <span className="leg-node-id"><code>{leg.from_node_id}</code></span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="leg-node-block">
+                              <span className="leg-node-name">{toName}</span>
+                              <span className="leg-node-id"><code>{leg.to_node_id}</code></span>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="leg-path-seq">{leg.path.join(' → ')}</span>
+                            <small style={{ display: 'block', color: 'var(--muted)', marginTop: '2px' }}>
+                              ({leg.path.length} nút)
+                            </small>
+                          </td>
+                          <td>{leg.distance_km.toFixed(2)} km</td>
+                          <td>{leg.travel_time_min.toFixed(2)} phút</td>
+                          <td><strong>{leg.total_cost.toFixed(3)}</strong></td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
             </section>
           )}
 

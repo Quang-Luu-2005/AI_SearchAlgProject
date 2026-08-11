@@ -106,12 +106,13 @@ class TourOptimizerService:
         stops: list[str] | tuple[str, ...],
         scenario_id: str,
         algorithm: str = "A_STAR",
+        tour_algorithm: str = "HELD_KARP",
         return_to_depot: bool = True,
     ) -> TourExecutionResult:
         if not self._graph.has_node(depot):
             raise NodeNotFoundError(f"Depot node '{depot}' not found in graph")
-        if not stops:
-            raise ValueError("Tour optimization requires at least 1 delivery stop")
+        if len(stops) < 5:
+            raise ValueError("Tour optimization requires at least 5 delivery stops")
         if len(stops) > 10:
             raise ValueError("Tour optimization supports up to 10 delivery stops per request")
 
@@ -155,19 +156,32 @@ class TourOptimizerService:
             approximation_gap_percent=round(approx_gap, 2),
         )
 
-        # Reconstruct visit order of point IDs
-        visit_order = tuple(matrix.points[idx] for idx in hk_indices)
+        # Select indices based on tour_algorithm choice
+        normalized_alg = tour_algorithm.upper()
+        if normalized_alg == "NEAREST_NEIGHBOR":
+            selected_indices = nn_indices
+            selected_cost = nn_cost
+            guarantee = "APPROXIMATE_NEAREST_NEIGHBOR"
+            alg_label = "Nearest Neighbor heuristic tour"
+        else:
+            selected_indices = hk_indices
+            selected_cost = hk_cost
+            guarantee = "OPTIMAL_HELD_KARP"
+            alg_label = "Held-Karp DP optimal tour"
 
-        # Subpath stitching for consecutive legs in optimal tour
+        # Reconstruct visit order of point IDs
+        visit_order = tuple(matrix.points[idx] for idx in selected_indices)
+
+        # Subpath stitching for consecutive legs in chosen tour
         legs: list[TourLeg] = []
         full_path_nodes: list[str] = []
         full_edge_ids: list[str] = []
         total_distance_m = 0.0
         total_time_min = 0.0
 
-        for i in range(len(hk_indices) - 1):
-            u_idx = hk_indices[i]
-            v_idx = hk_indices[i + 1]
+        for i in range(len(selected_indices) - 1):
+            u_idx = selected_indices[i]
+            v_idx = selected_indices[i + 1]
             subpath = matrix.get_subpath(u_idx, v_idx)
 
             leg = TourLeg(
@@ -199,14 +213,12 @@ class TourOptimizerService:
             data_note += " Traffic profiles are historical, not real-time."
 
         explanation = (
-            f"Held-Karp DP optimal tour selected visit sequence {' -> '.join(visit_order)} under "
-            f"scenario {scenario_id}. Total weighted cost is {hk_cost:.6f}; "
+            f"{alg_label} selected visit sequence {' -> '.join(visit_order)} under "
+            f"scenario {scenario_id}. Total weighted cost is {selected_cost:.6f}; "
             f"distance is {total_distance_m / 1000.0:.3f} km and ETA is "
-            f"{total_time_min:.3f} min. Nearest Neighbor heuristic cost is "
-            f"{nn_cost:.6f} (approximation gap: {approx_gap:.2f}%). {data_note}"
+            f"{total_time_min:.3f} min. Held-Karp exact cost is {hk_cost:.6f}, "
+            f"Nearest Neighbor cost is {nn_cost:.6f} (approximation gap: {approx_gap:.2f}%). {data_note}"
         )
-
-        guarantee = "OPTIMAL_HELD_KARP"
 
         return TourExecutionResult(
             depot=depot,
@@ -216,7 +228,7 @@ class TourOptimizerService:
             total_distance_m=total_distance_m,
             total_distance_km=total_distance_m / 1000.0,
             estimated_time_min=total_time_min,
-            total_cost=hk_cost,
+            total_cost=selected_cost,
             comparison=comparison,
             legs=tuple(legs),
             guarantee=guarantee,

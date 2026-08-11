@@ -19,6 +19,15 @@ import {
 
 export type EndpointPickTarget = 'START' | 'GOAL'
 
+export type TourStopMarker = {
+  nodeId: string
+  name: string
+  stopIndex: number
+  latitude: number
+  longitude: number
+  isVisited: boolean
+}
+
 type RouteMapProps = {
   graph: GraphPayload
   boundary?: ThuDucBoundary | null
@@ -32,7 +41,14 @@ type RouteMapProps = {
   pickTarget: EndpointPickTarget | null
   onNodePick: (target: EndpointPickTarget, nodeId: string) => void
   onPickTargetChange: (target: EndpointPickTarget | null) => void
+  activeAnimatedNodeId?: string | null
+  activeAnimatedNodeLabel?: string | null
+  tourStopMarkers?: TourStopMarker[]
+  hideEndpoints?: boolean
+  isTourMode?: boolean
 }
+
+
 
 const BASEMAP_STYLE_URL = import.meta.env.VITE_BASEMAP_STYLE_URL
   || 'https://tiles.openfreemap.org/styles/liberty'
@@ -370,6 +386,11 @@ export function RouteMap({
   pickTarget,
   onNodePick,
   onPickTargetChange,
+  activeAnimatedNodeId,
+  activeAnimatedNodeLabel,
+  tourStopMarkers = [],
+  hideEndpoints = false,
+  isTourMode = false,
 }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -553,18 +574,22 @@ export function RouteMap({
 
   useEffect(() => {
     const map = mapRef.current
-    if (!map) return
+    if (!map || hideEndpoints) return
     const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
-    const markers = ([
-      ['START', startId],
-      ['GOAL', goalId],
-    ] as const).flatMap<maplibregl.Marker>(([target, nodeId]) => {
+
+    const targets = isTourMode
+      ? ([['START', startId]] as const)
+      : ([['START', startId], ['GOAL', goalId]] as const)
+
+    const markers = targets.flatMap<maplibregl.Marker>(([target, nodeId]) => {
       if (!nodeId) return []
       const node = nodeById.get(nodeId)
       if (!node || node.latitude === null || node.longitude === null
         || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)) return []
+
+      const labelText = isTourMode ? `START/GOAL · ${node.label || node.node_id}` : (node.label || node.node_id)
       const marker = new maplibregl.Marker({
-        element: endpointPinElement(target, node.label || node.node_id),
+        element: endpointPinElement(target, labelText),
         anchor: 'bottom',
       })
         .setLngLat([node.longitude, node.latitude])
@@ -573,7 +598,63 @@ export function RouteMap({
     })
 
     return () => markers.forEach((marker) => marker.remove())
-  }, [goalId, graph, startId])
+  }, [goalId, graph, startId, hideEndpoints, isTourMode])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !activeAnimatedNodeId) return
+    const node = graph.nodes.find((item) => item.node_id === activeAnimatedNodeId)
+    if (!node || node.latitude === null || node.longitude === null
+      || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)) return
+
+    const el = document.createElement('div')
+    el.className = 'animated-node-pin'
+    el.innerHTML = `
+      <div class="pin-tooltip">${activeAnimatedNodeLabel || node.label || node.node_id}</div>
+      <div class="pin-pulse"></div>
+    `
+
+    const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([node.longitude, node.latitude])
+      .addTo(map)
+
+    return () => {
+      marker.remove()
+    }
+  }, [activeAnimatedNodeId, activeAnimatedNodeLabel, graph])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !tourStopMarkers || !tourStopMarkers.length) return
+
+    const markers = tourStopMarkers.flatMap((item) => {
+      // Khi đã hoàn thành đi đến điểm dừng, không vẽ marker màu vàng đậm nữa
+      if (item.isVisited) return []
+      if (!item.latitude || !item.longitude || !Number.isFinite(item.latitude) || !Number.isFinite(item.longitude)) return []
+
+      const el = document.createElement('div')
+      el.className = 'visited-stop-marker'
+      el.innerHTML = `
+        <div class="visited-stop-badge">#${item.stopIndex}</div>
+        <div class="visited-stop-name">${item.name}</div>
+      `
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([item.longitude, item.latitude])
+        .addTo(map)
+
+      return [marker]
+    })
+
+    return () => {
+      markers.forEach((marker) => marker.remove())
+    }
+  }, [tourStopMarkers])
+
+
+
+
+
 
   useEffect(() => {
     setPickFeedback('')
@@ -598,22 +679,35 @@ export function RouteMap({
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
       <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
       <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
-        <button
-          type="button"
-          className="pick-start"
-          aria-pressed={pickTarget === 'START'}
-          onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
-        >
-          Chọn START
-        </button>
-        <button
-          type="button"
-          className="pick-goal"
-          aria-pressed={pickTarget === 'GOAL'}
-          onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
-        >
-          Chọn GOAL
-        </button>
+        {isTourMode ? (
+          <button
+            type="button"
+            className="pick-start"
+            aria-pressed={pickTarget === 'START'}
+            onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+          >
+            {pickTarget === 'START' ? 'Đang chọn điểm xuất phát…' : 'Chọn START/GOAL'}
+          </button>
+        ) : (
+          <>
+            <button
+              type="button"
+              className="pick-start"
+              aria-pressed={pickTarget === 'START'}
+              onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+            >
+              Chọn START
+            </button>
+            <button
+              type="button"
+              className="pick-goal"
+              aria-pressed={pickTarget === 'GOAL'}
+              onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
+            >
+              Chọn GOAL
+            </button>
+          </>
+        )}
         {pickTarget && (
           <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
             Hủy chọn
@@ -622,7 +716,7 @@ export function RouteMap({
       </div>
       {pickTarget && (
         <div className="map-pick-hint">
-          {pickFeedback || `Click node hoặc vị trí trên bản đồ để đặt ${pickTarget} · Esc để hủy`}
+          {pickFeedback || `Click node hoặc vị trí trên bản đồ để chọn ${isTourMode ? 'START/GOAL (Điểm xuất phát)' : pickTarget} · Esc để hủy`}
         </div>
       )}
       <button
