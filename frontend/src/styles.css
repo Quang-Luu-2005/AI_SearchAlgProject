@@ -214,11 +214,16 @@ select {
   border-radius: 14px;
   color: var(--ink);
   outline: none;
-  background: #fff;
+  background: var(--surface-low);
   font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
+}
+
+select option {
+  background-color: var(--surface-low);
+  color: var(--ink);
 }
 
 select:focus {
@@ -239,7 +244,7 @@ select:focus {
   border-radius: 14px;
   color: var(--ink);
   outline: none;
-  background: #fff;
+  background: var(--surface-low);
   font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -262,8 +267,8 @@ select:focus {
   padding: 5px;
   border: 1px solid var(--outline);
   border-radius: 12px;
-  background: white;
-  box-shadow: 0 12px 30px rgba(25, 28, 29, 0.16);
+  background: var(--surface-low);
+  box-shadow: var(--card-shadow);
 }
 
 .location-results button {
@@ -370,11 +375,22 @@ select:focus {
   margin-top: 18px;
   padding: 10px 12px;
   border-radius: 11px;
-  color: #5c3a00;
-  background: #ffedda;
+  color: var(--ink);
+  background: var(--surface-high);
+  border: 1px solid var(--border-glass);
   font-size: 0.68rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.algorithm-prompt-note {
+  padding: 14px 16px;
+  background: var(--surface-low);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
 }
 
 .warning-note {
@@ -901,11 +917,11 @@ select:focus {
   display: grid;
   gap: 4px;
   padding: 14px 16px;
-  border: 1px solid var(--outline);
+  border: 1px solid var(--border-glass);
   border-radius: 14px;
   color: var(--ink);
   text-align: left;
-  background: white;
+  background: var(--surface-low);
 }
 
 .comparison-grid button:hover {
@@ -925,15 +941,19 @@ select:focus {
   gap: 22px;
   margin-top: 16px;
   padding: 20px;
-  border: 1px solid #c8dcff;
+  border: 1px solid var(--border-glass);
   border-radius: 18px;
-  background: #f5f8ff;
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  color: var(--ink);
+  box-shadow: var(--card-shadow);
 }
 
 .result-details h3 {
   margin: 6px 0 8px;
   overflow-wrap: anywhere;
   font-size: 1.12rem;
+  color: var(--ink);
 }
 
 .result-details p {
@@ -949,8 +969,9 @@ select:focus {
   gap: 5px;
   padding: 14px;
   border-radius: 13px;
-  color: #004395;
-  background: #d8e2ff;
+  color: var(--primary);
+  background: var(--surface-low);
+  border: 1px solid var(--border-glass);
 }
 
 .guarantee-card span {
@@ -1171,11 +1192,13 @@ select:focus {
 
 .tour-result-card {
   margin-top: 16px;
-  background: white;
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
   border-radius: 12px;
   padding: 18px;
-  border: 1px solid var(--outline);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--ink);
+  box-shadow: var(--card-shadow);
 }
 
 .tour-header h3 {
@@ -1239,15 +1262,15 @@ select:focus {
 }
 
 .tour-guarantee-banner--optimal {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: var(--ink);
 }
 
 .tour-guarantee-banner--heuristic {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  color: #78350f;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: var(--ink);
 }
 
 .guarantee-badge-header {
@@ -1300,23 +1323,24 @@ select:focus {
   gap: 6px;
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid var(--outline);
-  background: #ffffff;
+  border: 1px solid var(--border-glass);
+  background: var(--surface-low);
+  color: var(--ink);
 }
 
 .tour-guarantee-card.optimal-card {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .tour-guarantee-card.heuristic-card {
-  background: #fffdf0;
-  border-color: #fef08a;
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .tour-guarantee-card.gap-card {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--surface-low);
+  border-color: var(--border-glass);
 }
 
 .tour-guarantee-card .guarantee-tag {
@@ -1340,12 +1364,13 @@ select:focus {
 }
 
 .tour-guarantee-card .card-guarantee {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--surface-high);
+  color: var(--ink);
   align-self: flex-start;
 }
 
@@ -1364,24 +1389,28 @@ select:focus {
 .legs-table-container h4 {
   margin: 0 0 10px 0;
   font-size: 14px;
+  color: var(--ink);
 }
 
 .legs-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  color: var(--ink);
 }
 
 .legs-table th,
 .legs-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid var(--surface-high);
+  border-bottom: 1px solid var(--border-glass);
   text-align: left;
+  color: var(--ink);
 }
 
 .legs-table th {
-  background: var(--surface-low);
+  background: var(--surface-high);
   font-weight: 600;
+  color: var(--ink);
 }
 
 .leg-node-block {
@@ -1396,16 +1425,16 @@ select:focus {
 }
 
 .leg-node-id {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--muted);
 }
 
 .leg-path-seq {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
-  color: #374151;
-  background: var(--surface-low);
+  color: var(--ink);
+  background: var(--surface-high);
   padding: 2px 6px;
   border-radius: 4px;
 }

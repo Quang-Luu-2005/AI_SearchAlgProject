@@ -631,7 +631,7 @@ export function App() {
             </label>
 
             {!algorithm ? (
-              <div className="algorithm-prompt-note" style={{ padding: '14px 16px', background: '#f8fafc', border: '1px solid var(--outline)', borderRadius: '12px', color: 'var(--muted)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              <div className="algorithm-prompt-note">
                 💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.
               </div>
             ) : isTourMode ? (
