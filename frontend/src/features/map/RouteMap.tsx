@@ -586,13 +586,21 @@ export function RouteMap({
     const map = mapRef.current
     if (!map) return
 
-    map.resize?.()
-    const timer1 = setTimeout(() => map.resize?.(), 100)
-    const timer2 = setTimeout(() => map.resize?.(), 360)
+    let animationFrameId: number
+    const startTime = performance.now()
+    const durationMs = 450
+
+    function smoothResizeStep(now: number) {
+      mapRef.current?.resize?.()
+      if (now - startTime < durationMs) {
+        animationFrameId = requestAnimationFrame(smoothResizeStep)
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(smoothResizeStep)
 
     return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
+      cancelAnimationFrame(animationFrameId)
     }
   }, [isSidebarCollapsed])
 

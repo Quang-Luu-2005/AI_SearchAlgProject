@@ -180,39 +180,44 @@ button:disabled {
 
 
 .workspace {
-  display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
+  display: flex;
   min-height: calc(100vh - 80px);
-  transition: grid-template-columns 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.workspace.is-sidebar-collapsed {
-  grid-template-columns: 0px minmax(0, 1fr);
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 .control-panel {
   position: sticky;
   top: 80px;
   display: flex;
-  height: calc(100vh - 80px);
   flex-direction: column;
+  width: 360px;
+  min-width: 360px;
+  height: calc(100vh - 80px);
   overflow-y: auto;
   padding: 34px 30px 24px;
   border-right: 1px solid var(--outline);
   background: var(--surface-low);
   box-shadow: 5px 0 18px rgba(25, 28, 29, 0.035);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 0;
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  transition: margin-left 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.35s ease;
+  will-change: margin-left, transform, opacity;
+  z-index: 10;
 }
 
+.workspace.is-sidebar-collapsed .control-panel,
 .control-panel.is-collapsed {
-  width: 0;
-  min-width: 0;
-  padding: 0;
-  margin: 0;
+  margin-left: -360px;
+  transform: translateX(-100%);
   opacity: 0;
   visibility: hidden;
-  border-right: none;
-  overflow: hidden;
+  pointer-events: none;
 }
 
 .panel-heading {
@@ -467,9 +472,11 @@ select:focus {
 }
 
 .canvas-area {
+  flex: 1;
   min-width: 0;
   padding: 30px 34px 38px;
   background: #fbfcfd;
+  transition: all 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .canvas-heading {
