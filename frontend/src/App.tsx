@@ -117,8 +117,6 @@ export function App() {
   const [tourResult, setTourResult] = useState<OptimizeTourResult | null>(null)
   const [result, setResult] = useState<SearchResult | null>(null)
   const [comparisonResults, setComparisonResults] = useState<SearchResult[]>([])
-  const [visiblePathEdgeCount, setVisiblePathEdgeCount] = useState(0)
-  const [animatingPath, setAnimatingPath] = useState(false)
   const [loading, setLoading] = useState(true)
   const [running, setRunning] = useState(false)
   const [error, setError] = useState('')
@@ -149,12 +147,20 @@ export function App() {
     !running,
   )
 
-  const currentAnimatedNodeInfo = useMemo(() => {
-    if (!animatingPath || !result || !result.path.length) return null
-    const idx = Math.min(visiblePathEdgeCount, result.path.length - 1)
-    const nodeId = result.path[idx]
-    if (!nodeId) return null
+  const visiblePathEdgeCount = useMemo(() => {
+    if (!result || !result.edge_ids.length) return 0
+    if (!result.trace.length || currentStep >= result.trace.length) return result.edge_ids.length
+    const ratio = currentStep / result.trace.length
+    return Math.max(1, Math.floor(ratio * result.edge_ids.length))
+  }, [result, currentStep])
 
+  const currentAnimatedNodeInfo = useMemo(() => {
+    if (!result || !result.trace.length) return null
+    const safeIdx = Math.min(Math.max(currentStep, 1), result.trace.length) - 1
+    const event = result.trace[safeIdx]
+    if (!event) return null
+
+    const nodeId = event.node_id
     const loc = locations.find((item) => item.node_id === nodeId)
     const name = loc ? loc.name : nodeId
 
@@ -166,7 +172,7 @@ export function App() {
           name,
           stopIndex: visitIdx + 1,
           isStop: true,
-          label: `Điểm #${visitIdx + 1} · ${name} (${nodeId})`,
+          label: `Bước ${event.step}/${result.trace.length} · ${event.kind} · Điểm #${visitIdx + 1} · ${name}`,
         }
       }
     }
@@ -174,23 +180,23 @@ export function App() {
     return {
       nodeId,
       name,
-      stopIndex: idx + 1,
+      stopIndex: event.step,
       isStop: false,
-      label: `Nút ${idx + 1}/${result.path.length} · ${name} (${nodeId})`,
+      label: `Bước ${event.step}/${result.trace.length} · [${event.kind}] · ${name} (${nodeId})`,
     }
-  }, [animatingPath, result, visiblePathEdgeCount, locations, tourResult])
+  }, [result, currentStep, locations, tourResult])
 
   const tourStopMarkers = useMemo<TourStopMarker[]>(() => {
     if (!tourResult || !graph) return []
     const nodeById = new Map(graph.nodes.map((n) => [n.node_id, n]))
-    const currentVisitedPath = result ? result.path.slice(0, visiblePathEdgeCount + 1) : []
-    const visitedSet = new Set(currentVisitedPath)
+    const currentVisitedNodes = result ? result.trace.slice(0, currentStep).map((e) => e.node_id) : []
+    const visitedSet = new Set(currentVisitedNodes)
 
     return tourResult.visit_order.map((nodeId, idx) => {
       const node = nodeById.get(nodeId)
       const loc = locations.find((l) => l.node_id === nodeId)
       const name = loc ? loc.name : (node?.label || nodeId)
-      const isVisited = !animatingPath || visitedSet.has(nodeId)
+      const isVisited = visitedSet.has(nodeId)
 
       return {
         nodeId,
@@ -200,13 +206,8 @@ export function App() {
         longitude: node?.longitude ?? 0,
         isVisited,
       }
-    }).filter((item) => item.latitude !== 0 && item.longitude !== 0)
-  }, [tourResult, graph, result, visiblePathEdgeCount, animatingPath, locations])
-
-
-
-
-
+    })
+  }, [tourResult, graph, result, currentStep, locations])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -221,27 +222,7 @@ export function App() {
     return () => controller.abort()
   }, [])
 
-  useEffect(() => {
-    const edgeCount = result?.edge_ids.length ?? 0
-    setVisiblePathEdgeCount(0)
-    if (!edgeCount) {
-      setAnimatingPath(false)
-      return
-    }
 
-    setAnimatingPath(true)
-    let nextEdgeCount = 0
-    const timer = window.setInterval(() => {
-      nextEdgeCount += 1
-      setVisiblePathEdgeCount(nextEdgeCount)
-      if (nextEdgeCount >= edgeCount) {
-        window.clearInterval(timer)
-        setAnimatingPath(false)
-      }
-    }, 480)
-
-    return () => window.clearInterval(timer)
-  }, [result])
 
   useEffect(() => {
     if (!result || !result.trace.length) {
@@ -392,8 +373,6 @@ export function App() {
     setResult(null)
     setTourResult(null)
     setComparisonResults([])
-    setVisiblePathEdgeCount(0)
-    setAnimatingPath(false)
     setCurrentStep(1)
     setIsPlaying(false)
   }
@@ -742,7 +721,7 @@ export function App() {
               <div className="map-placeholder">Chưa có dữ liệu graph</div>
             )}
             {loading && <div className="loading-overlay">Đang nạp dữ liệu…</div>}
-            {animatingPath && result && (
+            {isPlaying && result && (
               <div className="route-animation-status" role="status">
                 <span className="animation-pulse" />
                 {currentAnimatedNodeInfo ? (
