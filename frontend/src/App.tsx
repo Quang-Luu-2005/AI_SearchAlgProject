@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
 import { TracePlayer } from './features/player/TracePlayer'
-import { ThemeToggle } from './features/theme/ThemeToggle'
 import { LanguageToggle } from './features/i18n/LanguageToggle'
 import { BenchmarkCharts } from './features/analytics/BenchmarkCharts'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
@@ -570,7 +569,6 @@ export function App() {
           >
             {t('shortcuts_btn', lang)}
           </button>
-          <ThemeToggle />
           <LanguageToggle lang={lang} onLanguageChange={setLang} />
           <button className="clear-button" type="button" onClick={clearBoard}>
             {t('clear_results', lang)}
