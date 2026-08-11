@@ -28,6 +28,8 @@ export type TourStopMarker = {
   isVisited: boolean
 }
 
+import { t, type Language } from '../../lib/i18n'
+
 type RouteMapProps = {
   graph: GraphPayload
   boundary?: ThuDucBoundary | null
@@ -46,6 +48,7 @@ type RouteMapProps = {
   tourStopMarkers?: TourStopMarker[]
   hideEndpoints?: boolean
   isTourMode?: boolean
+  lang?: Language
 }
 
 
@@ -391,6 +394,7 @@ export function RouteMap({
   tourStopMarkers = [],
   hideEndpoints = false,
   isTourMode = false,
+  lang = 'en',
 }: RouteMapProps) {
   const [is3dView, setIs3dView] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -690,9 +694,9 @@ export function RouteMap({
 
   return (
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
-      <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
+      <div ref={containerRef} className="route-map" aria-label={t('map_aria', lang)} />
       {!hideEndpoints && (
-        <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
+        <div className="map-pick-toolbar" aria-label={t('pick_toolbar', lang)}>
           {isTourMode ? (
             <button
               type="button"
@@ -700,7 +704,7 @@ export function RouteMap({
               aria-pressed={pickTarget === 'START'}
               onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
             >
-              {pickTarget === 'START' ? 'Đang chọn điểm xuất phát…' : 'Chọn START/GOAL'}
+              {pickTarget === 'START' ? t('picking_start_goal', lang) : t('pick_start_goal_action', lang)}
             </button>
           ) : (
             <>
@@ -710,7 +714,7 @@ export function RouteMap({
                 aria-pressed={pickTarget === 'START'}
                 onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
               >
-                Chọn START
+                {t('pick_start', lang)}
               </button>
               <button
                 type="button"
@@ -718,37 +722,37 @@ export function RouteMap({
                 aria-pressed={pickTarget === 'GOAL'}
                 onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
               >
-                Chọn GOAL
+                {t('pick_goal', lang)}
               </button>
             </>
           )}
           {pickTarget && (
             <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
-              Hủy chọn
+              {t('cancel', lang)}
             </button>
           )}
         </div>
       )}
       {pickTarget && (
         <div className="map-pick-hint">
-          {pickFeedback || `Click node hoặc vị trí trên bản đồ để chọn ${isTourMode ? 'START/GOAL (Điểm xuất phát)' : pickTarget} · Esc để hủy`}
+          {pickFeedback || (isTourMode ? t('pick_hint_tour', lang) : t('pick_hint_generic', lang, { target: pickTarget }))}
         </div>
       )}
       <div className="map-controls-group">
         <button
           type="button"
           className={`map-3d-toggle-button ${is3dView ? 'is-active' : ''}`}
-          title={is3dView ? 'Chuyển về góc nhìn phẳng 2D' : 'Chuyển sang góc nhìn nghiêng 3D (Pitch 52°)'}
-          aria-label={is3dView ? 'Góc nhìn 2D' : 'Góc nhìn 3D'}
+          title={is3dView ? t('toggle_2d_title', lang) : t('toggle_3d_title', lang)}
+          aria-label={is3dView ? t('toggle_2d_aria', lang) : t('toggle_3d_aria', lang)}
           onClick={toggle3dView}
         >
-          {is3dView ? '🏙️ 3D On' : '🗺️ 2D View'}
+          {is3dView ? t('toggle_3d_label', lang) : t('toggle_2d_label', lang)}
         </button>
         <button
           type="button"
           className="map-reset-button"
-          title="Đưa bản đồ về toàn vùng Thủ Đức"
-          aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
+          title={t('reset_view', lang)}
+          aria-label={t('reset_view', lang)}
           onClick={resetView}
         >
           <img src={recenterGraphIcon} alt="" aria-hidden="true" />
@@ -758,8 +762,8 @@ export function RouteMap({
         <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
       )}
       <div className="map-note">
-        {graph.data_status} · {graph.nodes.length.toLocaleString('vi-VN')} node ·{' '}
-        {graph.edges.length.toLocaleString('vi-VN')} edge
+        {graph.data_status} · {graph.nodes.length.toLocaleString(lang)} node ·{' '}
+        {graph.edges.length.toLocaleString(lang)} edge
       </div>
     </div>
   )

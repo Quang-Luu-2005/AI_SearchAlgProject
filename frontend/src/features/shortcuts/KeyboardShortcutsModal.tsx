@@ -1,17 +1,20 @@
+import { t, type Language } from '../../lib/i18n'
+
 export type KeyboardShortcutsModalProps = {
   isOpen: boolean
   onClose: () => void
+  lang?: Language
 }
 
-export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsModalProps) {
+export function KeyboardShortcutsModal({ isOpen, onClose, lang = 'en' }: KeyboardShortcutsModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="shortcuts-modal-overlay" role="dialog" aria-label="Danh sách phím tắt hệ thống" onClick={onClose}>
+    <div className="shortcuts-modal-overlay" role="dialog" aria-label={t('shortcuts_modal_title', lang)} onClick={onClose}>
       <div className="shortcuts-modal-card" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>⌨️ Danh sách Phím tắt Hệ thống</h3>
-          <button type="button" className="close-modal-btn" onClick={onClose} aria-label="Đóng cửa sổ phím tắt">
+          <h3>{t('shortcuts_modal_title', lang)}</h3>
+          <button type="button" className="close-modal-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
@@ -19,38 +22,38 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
         <div className="shortcuts-list">
           <div className="shortcut-row">
             <kbd className="key-cap">Space</kbd>
-            <span>Bật / Tạm dừng phát Trace Player (Play / Pause)</span>
+            <span>{t('shortcut_space', lang)}</span>
           </div>
 
           <div className="shortcut-row">
             <kbd className="key-cap">←</kbd>
-            <span>Tua lùi 1 bước trong mảng Trace Events (Previous Step)</span>
+            <span>{t('shortcut_prev', lang)}</span>
           </div>
 
           <div className="shortcut-row">
             <kbd className="key-cap">→</kbd>
-            <span>Tua tiến 1 bước trong mảng Trace Events (Next Step)</span>
+            <span>{t('shortcut_next', lang)}</span>
           </div>
 
           <div className="shortcut-row">
             <kbd className="key-cap">Ctrl + R / Cmd + R</kbd>
-            <span>Nạp lại dữ liệu Graph & Reset lựa chọn</span>
+            <span>{t('shortcut_reload', lang)}</span>
           </div>
 
           <div className="shortcut-row">
             <kbd className="key-cap">Esc</kbd>
-            <span>Hủy chế độ chọn điểm trên bản đồ / Đóng cửa sổ trợ giúp</span>
+            <span>{t('shortcut_esc', lang)}</span>
           </div>
 
           <div className="shortcut-row">
             <kbd className="key-cap">?</kbd>
-            <span>Mở / Đóng bảng trợ giúp phím tắt</span>
+            <span>{t('shortcut_help', lang)}</span>
           </div>
         </div>
 
         <div className="modal-footer">
           <button type="button" className="btn-done" onClick={onClose}>
-            Đã hiểu
+            {t('done', lang)}
           </button>
         </div>
       </div>

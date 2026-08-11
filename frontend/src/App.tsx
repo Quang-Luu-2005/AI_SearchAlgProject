@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
 import { TracePlayer } from './features/player/TracePlayer'
 import { ThemeToggle } from './features/theme/ThemeToggle'
+import { LanguageToggle } from './features/i18n/LanguageToggle'
 import { BenchmarkCharts } from './features/analytics/BenchmarkCharts'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
 import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
+import { getInitialLanguage, t, type Language } from './lib/i18n'
 
 import {
   fetchThuDucBoundary,
@@ -130,6 +132,7 @@ export function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
+  const [lang, setLang] = useState<Language>(getInitialLanguage)
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -554,7 +557,7 @@ export function App() {
     <div className="app-shell">
       <header className="topbar">
         <div className="brand-block">
-          <strong>Pathfinder AI</strong>
+          <strong>PathFinder AI</strong>
           <span>FloodRoute HCMC</span>
         </div>
         <div className="topbar-actions">
@@ -562,24 +565,25 @@ export function App() {
             type="button"
             className="shortcuts-help-btn"
             onClick={() => setIsShortcutsOpen(true)}
-            title="Xem danh sách phím tắt (?)"
-            aria-label="Xem phím tắt"
+            title={t('shortcuts_btn', lang)}
+            aria-label={t('shortcuts_btn', lang)}
           >
-            ⌨️ Phím tắt
+            {t('shortcuts_btn', lang)}
           </button>
           <ThemeToggle />
+          <LanguageToggle lang={lang} onLanguageChange={setLang} />
           <button className="clear-button" type="button" onClick={clearBoard}>
-            Xóa kết quả
+            {t('clear_results', lang)}
           </button>
           <button
             className="top-run-button"
             type="button"
             onClick={() => executeSearch()}
             disabled={!canRun}
-            title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
+            title={!algorithm ? t('select_alg_first', lang) : !startId ? t('select_start_first', lang) : t('run_algorithm', lang)}
           >
             <span aria-hidden="true">▷</span>
-            {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
+            {running ? t('running', lang) : t('run_algorithm', lang)}
           </button>
         </div>
       </header>
@@ -587,40 +591,40 @@ export function App() {
       <div className="workspace">
         <aside className="control-panel">
           <div className="panel-heading">
-            <h1>Bảng điều khiển</h1>
-            <p>Cấu hình tìm đường trên graph</p>
+            <h1>{t('panel_title', lang)}</h1>
+            <p>{t('panel_subtitle', lang)}</p>
           </div>
 
           <form onSubmit={executeSearch}>
             <label>
-              Dataset
+              {t('dataset_label', lang)}
               <select value={graphId} onChange={(event) => selectGraph(event.target.value)}>
                 {catalog.map((item) => (
                   <option key={item.graph_id} value={item.graph_id}>
-                    {item.label} · {item.node_count} nút
+                    {item.label} · {item.node_count} {t('nodes_count', lang)}
                   </option>
                 ))}
               </select>
             </label>
 
             <label>
-              Chọn thuật toán
+              {t('select_alg_label', lang)}
               <select
                 value={algorithm}
                 onChange={(event) => changeAlgorithm(event.target.value as AlgorithmSelection)}
               >
-                <option value="">-- Chọn thuật toán --</option>
-                <option value="A_STAR">A* Search (2 điểm)</option>
-                <option value="UCS">Uniform Cost Search (2 điểm)</option>
-                <option value="COMPARE">So sánh UCS và A* (2 điểm)</option>
-                <option value="HELD_KARP">Tour Held-Karp DP (Tối ưu tuyệt đối)</option>
-                <option value="NEAREST_NEIGHBOR">Tour Nearest Neighbor (Tham lam xấp xỉ)</option>
-                <option value="OPTIMIZE_TOUR">So sánh Tour (Held-Karp vs Nearest Neighbor)</option>
+                <option value="">{t('select_alg_placeholder', lang)}</option>
+                <option value="A_STAR">{t('alg_a_star', lang)}</option>
+                <option value="UCS">{t('alg_ucs', lang)}</option>
+                <option value="COMPARE">{t('alg_compare', lang)}</option>
+                <option value="HELD_KARP">{t('alg_held_karp', lang)}</option>
+                <option value="NEAREST_NEIGHBOR">{t('alg_nearest_neighbor', lang)}</option>
+                <option value="OPTIMIZE_TOUR">{t('alg_optimize_tour', lang)}</option>
               </select>
             </label>
 
             <label>
-              Kịch bản chi phí
+              {t('scenario_label', lang)}
               <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
                 {scenarios.map((item) => (
                   <option key={item.scenario_id} value={item.scenario_id}>
@@ -632,23 +636,23 @@ export function App() {
 
             {!algorithm ? (
               <div className="algorithm-prompt-note">
-                💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.
+                {t('alg_prompt', lang)}
               </div>
             ) : isTourMode ? (
               <div className="tour-stops-field">
                 <LocationPicker
-                  label="ĐIỂM BẮT ĐẦU"
+                  label={t('start_label', lang)}
                   value={startId}
                   locations={locations}
                   onChange={selectStart}
                 />
                 {!startId && (
                   <p className="warning-note" style={{ margin: '4px 0 8px 0', color: '#b45309' }}>
-                    Vui lòng chọn Điểm bắt đầu (Depot).
+                    {t('depot_warning', lang)}
                   </p>
                 )}
                 <div className="stops-list-container">
-                  <label>ĐIỂM KẾT THÚC ({tourStops.length}/10 điểm)</label>
+                  <label>{t('stops_header', lang)} ({tourStops.length}/10)</label>
                   <div className="stops-chips">
                     {tourStops.map((stopId, idx) => {
                       const loc = locations.find((item) => item.node_id === stopId)
@@ -668,12 +672,12 @@ export function App() {
                   </div>
                   {tourStops.length < 5 && (
                     <p className="warning-note" style={{ margin: '4px 0 8px 0' }}>
-                      Cần chọn thêm {5 - tourStops.length} điểm nữa (tối thiểu 5 điểm giao hàng).
+                      {t('stops_needed', lang, { count: 5 - tourStops.length })}
                     </p>
                   )}
                   {tourStops.length < 10 && (
                     <LocationPicker
-                      label="THÊM TỌA ĐỘ ĐIỂM"
+                      label={t('add_stop_label', lang)}
                       value=""
                       locations={locations.filter((item) => item.node_id !== startId && !tourStops.includes(item.node_id))}
                       onChange={(nodeId) => {
@@ -688,7 +692,7 @@ export function App() {
             ) : (
               <div className="route-fields">
                 <LocationPicker
-                  label="ĐIỂM BẮT ĐẦU"
+                  label={t('start_label', lang)}
                   value={startId}
                   locations={locations}
                   onChange={selectStart}
@@ -696,13 +700,13 @@ export function App() {
                 <button
                   className="swap-button"
                   type="button"
-                  aria-label="Đổi điểm bắt đầu và đích"
+                  aria-label={t('swap_endpoints', lang)}
                   onClick={swapEndpoints}
                 >
                   ⇅
                 </button>
                 <LocationPicker
-                  label="ĐIỂM KẾT THÚC"
+                  label={t('goal_label', lang)}
                   value={goalId}
                   locations={locations}
                   onChange={selectGoal}
@@ -712,15 +716,15 @@ export function App() {
 
             <button className="generate-button" type="button" onClick={reloadGraph}>
               <span aria-hidden="true">⌘</span>
-              Nạp lại graph
+              {t('reload_graph', lang)}
             </button>
             <button
               className="mobile-run-button"
               type="submit"
               disabled={!canRun}
-              title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
+              title={!algorithm ? t('select_alg_first', lang) : !startId ? t('select_start_first', lang) : t('run_algorithm', lang)}
             >
-              {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
+              {running ? t('running', lang) : t('run_algorithm', lang)}
             </button>
           </form>
 
@@ -796,11 +800,12 @@ export function App() {
                 tourStopMarkers={tourStopMarkers}
                 isTourMode={isTourMode}
                 hideEndpoints={!algorithm}
+                lang={lang}
               />
             ) : (
-              <div className="map-placeholder">Chưa có dữ liệu graph</div>
+              <div className="map-placeholder">{t('panel_subtitle', lang)}</div>
             )}
-            {loading && <div className="loading-overlay">Đang nạp dữ liệu…</div>}
+            {loading && <div className="loading-overlay">{t('running', lang)}</div>}
             {isPlaying && result && (
               <div className="route-animation-status" role="status">
                 <span className="animation-pulse" />
@@ -808,10 +813,10 @@ export function App() {
                   <span>
                     <strong>{currentAnimatedNodeInfo.label}</strong>
                     {' · '}
-                    <small>Tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</small>
+                    <small>{t('trace_animating', lang)} {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</small>
                   </span>
                 ) : (
-                  <span>Đang mô phỏng tuyến {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</span>
+                  <span>{t('trace_animating', lang)} {Math.min(visiblePathEdgeCount + 1, result.edge_ids.length)}/{result.edge_ids.length}</span>
                 )}
               </div>
             )}
@@ -842,6 +847,7 @@ export function App() {
                   setCurrentStep(step)
                 }}
                 onSpeedChange={setPlaybackSpeed}
+                lang={lang}
               />
 
               <EventTimelineFeed
@@ -851,6 +857,7 @@ export function App() {
                   setIsPlaying(false)
                   setCurrentStep(step)
                 }}
+                lang={lang}
               />
             </>
           )}
@@ -859,31 +866,25 @@ export function App() {
             <p className="dataset-attribution">
               Traffic/road paths: UTraffic/HCMUT · POI/boundary{' '}
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-                © OpenStreetMap contributors, ODbL 1.0
-              </a>
+                OpenStreetMap
+              </a>{' '}
+              contributors
             </p>
           )}
 
-          <section className="status-bar">
-            <div className="legend">
-              <span><i className="legend-line open" />Đường thoáng</span>
-              <span><i className="legend-line blocked" />Đường bị chặn</span>
-              <span><i className="legend-selectable-node" />Điểm có thể chọn</span>
-              <span><i className="legend-line path" />Đường tối ưu</span>
-              <span><i className="legend-line boundary" />Ranh TP Thủ Đức cũ</span>
-            </div>
-            <div className="metric-pair">
-              <div><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
-              <div><span>Path Length (km)</span><strong>{metric(result?.metrics.distance_km, 2)}</strong></div>
-              <div><span>ETA (min)</span><strong>{metric(result?.metrics.estimated_time_min, 2)}</strong></div>
-              <div><span>Total Cost</span><strong>{metric(result?.metrics.total_cost, 2)}</strong></div>
-            </div>
+          <section className="metrics-bar" aria-label="Route search metrics">
+            <div className="metric-chip"><span>Algorithm</span><strong>{algorithm || '—'}</strong></div>
+            <div className="metric-chip"><span>Scenario</span><strong>{scenarioId || '—'}</strong></div>
+            <div className="metric-chip"><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
+            <div className="metric-chip"><span>Path Length (km)</span><strong>{metric(result?.metrics.distance_km, 2)}</strong></div>
+            <div className="metric-chip"><span>ETA (min)</span><strong>{metric(result?.metrics.estimated_time_min, 2)}</strong></div>
+            <div className="metric-chip"><span>Total Cost</span><strong>{metric(result?.metrics.total_cost, 2)}</strong></div>
           </section>
 
           {error && <div className="error-banner" role="alert">{error}</div>}
 
           {comparisonResults.length > 0 && (
-            <section className="comparison-grid" aria-label="Kết quả so sánh">
+            <section className="comparison-grid" aria-label="Comparison results">
               {comparisonResults.map((item) => (
                 <button key={item.algorithm} type="button" onClick={() => setResult(item)}>
                   <span>{item.algorithm}</span>
@@ -895,36 +896,36 @@ export function App() {
           )}
 
           {tourResult && (
-            <section className="tour-result-card" aria-label="Kết quả tối ưu tour">
+            <section className="tour-result-card" aria-label="Tour result">
               <div className="tour-header">
-                <span className="tour-kicker">Multi-Stop Delivery Tour · {tourResult.scenario}</span>
-                <h3>Lộ trình: {tourResult.visit_order.join(' → ')}</h3>
+                <span className="tour-kicker">{t('tour_kicker', lang)} · {tourResult.scenario}</span>
+                <h3>{t('tour_route', lang)} {tourResult.visit_order.join(' → ')}</h3>
                 <p>{tourResult.explanation}</p>
               </div>
               {algorithm === 'OPTIMIZE_TOUR' ? (
-                <div className="tour-guarantee-comparison" aria-label="So sánh bảo đảm thuật toán">
+                <div className="tour-guarantee-comparison" aria-label="Guarantee comparison">
                   <div className="tour-guarantee-card optimal-card">
-                    <span className="guarantee-tag">🛡️ Exact Optimal (DP)</span>
+                    <span className="guarantee-tag">{t('optimal_tag', lang)}</span>
                     <h4>Held-Karp DP</h4>
                     <div className="card-cost">{tourResult.comparison.held_karp_cost.toFixed(3)} cost</div>
                     <div className="card-guarantee">OPTIMAL_HELD_KARP</div>
-                    <p>Đảm bảo 100% chi phí tối ưu tuyệt đối (Global Optimum).</p>
+                    <p>{t('optimal_tag', lang)}</p>
                   </div>
                   <div className="tour-guarantee-card heuristic-card">
-                    <span className="guarantee-tag">⚡ Greedy Heuristic</span>
+                    <span className="guarantee-tag">{t('heuristic_tag', lang)}</span>
                     <h4>Nearest Neighbor</h4>
                     <div className="card-cost">{tourResult.comparison.nearest_neighbor_cost.toFixed(3)} cost</div>
                     <div className="card-guarantee">APPROXIMATE_NEAREST_NEIGHBOR</div>
-                    <p>Thuật toán tham lam xấp xỉ, thời gian phản hồi siêu nhanh.</p>
+                    <p>{t('heuristic_tag', lang)}</p>
                   </div>
                   <div className="tour-guarantee-card gap-card">
-                    <span className="guarantee-tag">📊 Approximation Gap</span>
-                    <h4>Độ lệch Xấp xỉ</h4>
+                    <span className="guarantee-tag">📊 {t('approx_gap_title', lang)}</span>
+                    <h4>{t('approx_gap_title', lang)}</h4>
                     <div className={`card-cost ${tourResult.comparison.approximation_gap_percent === 0 ? 'gap-zero' : 'gap-positive'}`}>
                       +{tourResult.comparison.approximation_gap_percent.toFixed(2)}%
                     </div>
                     <div className="card-guarantee">Held-Karp vs Nearest Neighbor</div>
-                    <p>{tourResult.comparison.approximation_gap_percent === 0 ? 'Nearest Neighbor đạt chi phí tối ưu bằng Held-Karp!' : 'Mức chênh lệch chi phí giữa Heuristic và Tối ưu'}</p>
+                    <p>{tourResult.comparison.approximation_gap_percent === 0 ? t('gap_zero_desc', lang) : t('gap_pos_desc', lang)}</p>
                   </div>
                 </div>
               ) : (
@@ -932,34 +933,29 @@ export function App() {
                   <div className={`tour-guarantee-banner ${tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? 'tour-guarantee-banner--optimal' : 'tour-guarantee-banner--heuristic'}`}>
                     <div className="guarantee-badge-header">
                       <span className="guarantee-tag-pill">
-                        {tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? '🛡️ Optimal Guarantee' : '⚡ Heuristic Guarantee'}
+                        {tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? t('optimal_tag', lang) : t('heuristic_tag', lang)}
                       </span>
                       <span className="guarantee-title-text">
-                        Guarantee Code: <code>{tourResult.guarantee}</code>
+                        {t('guarantee', lang)}: <code>{tourResult.guarantee}</code>
                       </span>
                     </div>
-                    <p className="guarantee-desc-text">
-                      {tourResult.guarantee === 'OPTIMAL_HELD_KARP'
-                        ? 'ĐẢM BẢO TỐI ƯU TUYỆT ĐỐI (Exact DP): Thuật toán Held-Karp duyệt không gian trạng thái bitmask O(n²2ⁿ) đảm bảo 100% tìm ra tour có chi phí nhỏ nhất.'
-                        : 'ĐẢM BẢO THAM LAM XẤP XỈ (Greedy Heuristic): Thuật toán Nearest Neighbor O(n²) luôn chọn điểm giao gần nhất tiếp theo, phản hồi tức thì nhưng mang tính chất xấp xỉ.'}
-                    </p>
                   </div>
 
                   <div className="tour-summary-box">
                     <div className="comp-item">
-                      <span>Thuật toán</span>
-                      <strong>{algorithm === 'HELD_KARP' ? 'Held-Karp DP (Exact Optimal)' : 'Nearest Neighbor (Greedy Heuristic)'}</strong>
+                      <span>{t('select_alg_label', lang)}</span>
+                      <strong>{algorithm === 'HELD_KARP' ? t('alg_held_karp', lang) : t('alg_nearest_neighbor', lang)}</strong>
                     </div>
                     <div className="comp-item">
-                      <span>Tổng khoảng cách</span>
+                      <span>{t('dist_total', lang)}</span>
                       <strong>{tourResult.total_distance_km.toFixed(2)} km</strong>
                     </div>
                     <div className="comp-item">
-                      <span>Thời gian dự kiến (ETA)</span>
-                      <strong>{tourResult.estimated_time_min.toFixed(2)} phút</strong>
+                      <span>{t('time_eta', lang)}</span>
+                      <strong>{tourResult.estimated_time_min.toFixed(2)} {t('minutes', lang)}</strong>
                     </div>
                     <div className="comp-item">
-                      <span>Tổng chi phí (Cost)</span>
+                      <span>{t('total_cost', lang)}</span>
                       <strong>{tourResult.total_cost.toFixed(3)}</strong>
                     </div>
                   </div>
@@ -967,17 +963,17 @@ export function App() {
               )}
 
               <div className="legs-table-container">
-                <h4>Chi tiết từng chặng ({tourResult.legs.length} chặng)</h4>
+                <h4>{t('legs_breakdown', lang, { count: tourResult.legs.length })}</h4>
                 <table className="legs-table">
                   <thead>
                     <tr>
-                      <th>Chặng</th>
-                      <th>Điểm xuất phát</th>
-                      <th>Điểm kết thúc</th>
-                      <th>Lộ trình qua các nút</th>
-                      <th>Khoảng cách</th>
-                      <th>ETA</th>
-                      <th>Chi phí (Cost)</th>
+                      <th>{t('leg_no', lang)}</th>
+                      <th>{t('from_node', lang)}</th>
+                      <th>{t('to_node', lang)}</th>
+                      <th>{t('path_nodes', lang)}</th>
+                      <th>{t('leg_dist', lang)}</th>
+                      <th>{t('leg_time', lang)}</th>
+                      <th>{t('leg_cost', lang)}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1005,11 +1001,11 @@ export function App() {
                           <td>
                             <span className="leg-path-seq">{leg.path.join(' → ')}</span>
                             <small style={{ display: 'block', color: 'var(--muted)', marginTop: '2px' }}>
-                              ({leg.path.length} nút)
+                              ({leg.path.length} {t('nodes_count', lang)})
                             </small>
                           </td>
                           <td>{leg.distance_km.toFixed(2)} km</td>
-                          <td>{leg.travel_time_min.toFixed(2)} phút</td>
+                          <td>{leg.travel_time_min.toFixed(2)} {t('minutes', lang)}</td>
                           <td><strong>{leg.total_cost.toFixed(3)}</strong></td>
                         </tr>
                       )
@@ -1022,9 +1018,9 @@ export function App() {
           )}
 
           {tourResult?.comparison ? (
-            <BenchmarkCharts comparison={tourResult.comparison} />
+            <BenchmarkCharts comparison={tourResult.comparison} lang={lang} />
           ) : result ? (
-            <BenchmarkCharts singleMetrics={result.metrics} />
+            <BenchmarkCharts singleMetrics={result.metrics} lang={lang} />
           ) : null}
 
           {result && (
@@ -1035,7 +1031,7 @@ export function App() {
                 <p>{result.explanation}</p>
               </div>
               <div className="guarantee-card">
-                <span>Guarantee</span>
+                <span>{t('guarantee', lang)}</span>
                 <strong>{result.guarantee}</strong>
               </div>
             </section>

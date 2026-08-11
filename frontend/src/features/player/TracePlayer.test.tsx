@@ -23,6 +23,7 @@ describe('TracePlayer component', () => {
         onReset={vi.fn()}
         onStepChange={vi.fn()}
         onSpeedChange={vi.fn()}
+        lang="vi"
       />,
     )
 
@@ -47,10 +48,11 @@ describe('TracePlayer component', () => {
         onReset={vi.fn()}
         onStepChange={vi.fn()}
         onSpeedChange={vi.fn()}
+        lang="vi"
       />,
     )
 
-    const playBtn = screen.getByRole('button', { name: 'Phát tự động' })
+    const playBtn = screen.getByRole('button', { name: 'Phát' })
     fireEvent.click(playBtn)
     expect(handlePlayToggle).toHaveBeenCalledTimes(1)
     unmount()
@@ -72,13 +74,14 @@ describe('TracePlayer component', () => {
         onReset={vi.fn()}
         onStepChange={vi.fn()}
         onSpeedChange={vi.fn()}
+        lang="vi"
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bước kế tiếp' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Tiến' }))
     expect(handleNext).toHaveBeenCalledTimes(1)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Bước trước' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Lùi' }))
     expect(handlePrev).toHaveBeenCalledTimes(1)
     unmount()
   })
@@ -97,10 +100,11 @@ describe('TracePlayer component', () => {
         onReset={handleReset}
         onStepChange={vi.fn()}
         onSpeedChange={vi.fn()}
+        lang="vi"
       />,
     )
 
-    fireEvent.click(screen.getByRole('button', { name: 'Reset về bước 1' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }))
     expect(handleReset).toHaveBeenCalledTimes(1)
     unmount()
   })
@@ -119,10 +123,11 @@ describe('TracePlayer component', () => {
         onReset={vi.fn()}
         onStepChange={handleStepChange}
         onSpeedChange={vi.fn()}
+        lang="vi"
       />,
     )
 
-    const slider = screen.getByLabelText('Thanh trượt thời gian trace')
+    const slider = screen.getByLabelText('Trace step slider')
     fireEvent.change(slider, { target: { value: '3' } })
     expect(handleStepChange).toHaveBeenCalledWith(3)
     unmount()
@@ -142,10 +147,11 @@ describe('TracePlayer component', () => {
         onReset={vi.fn()}
         onStepChange={vi.fn()}
         onSpeedChange={handleSpeedChange}
+        lang="vi"
       />,
     )
 
-    const select = screen.getByLabelText('Tốc độ phát trace')
+    const select = screen.getByLabelText('Trace playback speed')
     fireEvent.change(select, { target: { value: '5' } })
     expect(handleSpeedChange).toHaveBeenCalledWith(5)
     unmount()

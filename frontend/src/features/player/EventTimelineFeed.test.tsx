@@ -11,7 +11,7 @@ const mockTrace: TraceEvent[] = [
 describe('EventTimelineFeed component', () => {
   it('renders trace feed items correctly', () => {
     const { unmount } = render(
-      <EventTimelineFeed trace={mockTrace} currentStep={1} onStepSelect={vi.fn()} />,
+      <EventTimelineFeed trace={mockTrace} currentStep={1} onStepSelect={vi.fn()} lang="vi" />,
     )
 
     expect(screen.getByText('📋 Nhật ký Trace Events (2 bước)')).toBeInTheDocument()
@@ -23,10 +23,11 @@ describe('EventTimelineFeed component', () => {
   it('triggers onStepSelect when an item is clicked', () => {
     const handleStepSelect = vi.fn()
     const { unmount } = render(
-      <EventTimelineFeed trace={mockTrace} currentStep={1} onStepSelect={handleStepSelect} />,
+      <EventTimelineFeed trace={mockTrace} currentStep={1} onStepSelect={handleStepSelect} lang="vi" />,
     )
 
-    const secondItem = screen.getByText('N02').closest('button')
+    const items = screen.getAllByText('N02')
+    const secondItem = items[0].closest('button')
     expect(secondItem).not.toBeNull()
     fireEvent.click(secondItem!)
 

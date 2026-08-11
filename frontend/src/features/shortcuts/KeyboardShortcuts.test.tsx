@@ -4,7 +4,7 @@ import { KeyboardShortcutsModal } from './KeyboardShortcutsModal'
 
 describe('KeyboardShortcutsModal component', () => {
   it('renders modal content when open', () => {
-    const { unmount } = render(<KeyboardShortcutsModal isOpen={true} onClose={vi.fn()} />)
+    const { unmount } = render(<KeyboardShortcutsModal isOpen={true} onClose={vi.fn()} lang="vi" />)
     expect(screen.getByText('⌨️ Danh sách Phím tắt Hệ thống')).toBeInTheDocument()
     expect(screen.getByText('Space')).toBeInTheDocument()
     expect(screen.getByText('Bật / Tạm dừng phát Trace Player (Play / Pause)')).toBeInTheDocument()
@@ -13,9 +13,9 @@ describe('KeyboardShortcutsModal component', () => {
 
   it('triggers onClose when close button is clicked', () => {
     const handleClose = vi.fn()
-    const { unmount } = render(<KeyboardShortcutsModal isOpen={true} onClose={handleClose} />)
+    const { unmount } = render(<KeyboardShortcutsModal isOpen={true} onClose={handleClose} lang="vi" />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Đóng cửa sổ phím tắt' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }))
     expect(handleClose).toHaveBeenCalledTimes(1)
     unmount()
   })

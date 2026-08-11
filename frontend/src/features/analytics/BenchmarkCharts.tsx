@@ -1,4 +1,5 @@
 import type { TourComparison } from '../../lib/search'
+import { t, type Language } from '../../lib/i18n'
 
 export type BenchmarkChartsProps = {
   comparison?: TourComparison | null
@@ -9,9 +10,10 @@ export type BenchmarkChartsProps = {
     explored_nodes: number
     processing_time_ms: number
   } | null
+  lang?: Language
 }
 
-export function BenchmarkCharts({ comparison, singleMetrics }: BenchmarkChartsProps) {
+export function BenchmarkCharts({ comparison, singleMetrics, lang = 'en' }: BenchmarkChartsProps) {
   if (!comparison && !singleMetrics) return null
 
   if (comparison) {
@@ -23,11 +25,11 @@ export function BenchmarkCharts({ comparison, singleMetrics }: BenchmarkChartsPr
     const nnWidth = `${Math.round((nnCost / maxCost) * 100)}%`
 
     return (
-      <div className="benchmark-charts-card" aria-label="Biểu đồ so sánh thuật toán">
+      <div className="benchmark-charts-card" aria-label={t('charts_title', lang)}>
         <div className="charts-header">
-          <h4>📊 Biểu đồ Trực quan hóa So sánh Multi-Stop Tour</h4>
+          <h4>{t('charts_title', lang)}</h4>
           <span className="gap-pill">
-            Approximation Gap: +{comparison.approximation_gap_percent.toFixed(2)}%
+            {t('gap_label', lang)}: +{comparison.approximation_gap_percent.toFixed(2)}%
           </span>
         </div>
 
@@ -61,26 +63,26 @@ export function BenchmarkCharts({ comparison, singleMetrics }: BenchmarkChartsPr
   }
 
   return (
-    <div className="benchmark-charts-card" aria-label="Bảng chỉ số tìm đường">
+    <div className="benchmark-charts-card" aria-label={t('metrics_title', lang)}>
       <div className="charts-header">
-        <h4>📊 Bảng Thống kê Chỉ số Thuật toán</h4>
+        <h4>{t('metrics_title', lang)}</h4>
       </div>
       <div className="metrics-summary-grid">
         <div className="summary-metric-box">
-          <span>Tổng khoảng cách</span>
+          <span>{t('dist_total', lang)}</span>
           <strong>{singleMetrics?.distance_km.toFixed(2)} km</strong>
         </div>
         <div className="summary-metric-box">
-          <span>Thời gian dự kiến (ETA)</span>
-          <strong>{singleMetrics?.estimated_time_min.toFixed(2)} phút</strong>
+          <span>{t('time_eta', lang)}</span>
+          <strong>{singleMetrics?.estimated_time_min.toFixed(2)} {t('minutes', lang)}</strong>
         </div>
         <div className="summary-metric-box">
-          <span>Tổng chi phí (Cost)</span>
+          <span>{t('total_cost', lang)}</span>
           <strong>{singleMetrics?.total_cost.toFixed(3)}</strong>
         </div>
         <div className="summary-metric-box">
-          <span>Số node đã mở rộng</span>
-          <strong>{singleMetrics?.explored_nodes} nodes</strong>
+          <span>{t('explored_nodes', lang)}</span>
+          <strong>{singleMetrics?.explored_nodes} {t('nodes_count', lang)}</strong>
         </div>
       </div>
     </div>

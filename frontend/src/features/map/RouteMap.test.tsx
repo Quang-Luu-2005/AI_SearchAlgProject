@@ -232,6 +232,7 @@ describe('MapLibre RouteMap', () => {
         pickTarget={null}
         onNodePick={vi.fn()}
         onPickTargetChange={onPickTargetChange}
+        lang="vi"
       />,
     )
 

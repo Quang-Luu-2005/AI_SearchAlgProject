@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
 import type { TraceEvent } from '../../lib/search'
+import { t, type Language } from '../../lib/i18n'
 
 export type TracePlayerProps = {
   trace: TraceEvent[]
@@ -12,6 +13,7 @@ export type TracePlayerProps = {
   onReset: () => void
   onStepChange: (step: number) => void
   onSpeedChange: (speed: number) => void
+  lang?: Language
 }
 
 export function TracePlayer({
@@ -25,6 +27,7 @@ export function TracePlayer({
   onReset,
   onStepChange,
   onSpeedChange,
+  lang = 'en',
 }: TracePlayerProps) {
   const totalSteps = Math.max(trace.length, 1)
   const safeStep = Math.min(Math.max(currentStep, 1), totalSteps)
@@ -42,13 +45,13 @@ export function TracePlayer({
   }
 
   return (
-    <section className="trace-player-bar" aria-label="Bộ điều khiển Trace Player">
+    <section className="trace-player-bar" aria-label="Trace Player">
       <div className="player-main-controls">
         <button
           type="button"
           className="player-btn btn-reset"
-          title="Reset về bước 1"
-          aria-label="Reset về bước 1"
+          title={t('trace_reset', lang)}
+          aria-label={t('trace_reset', lang)}
           onClick={onReset}
           disabled={isAtStart && !isPlaying}
         >
@@ -58,8 +61,8 @@ export function TracePlayer({
         <button
           type="button"
           className="player-btn btn-prev"
-          title="Bước trước (Previous Step)"
-          aria-label="Bước trước"
+          title={t('trace_prev', lang)}
+          aria-label={t('trace_prev', lang)}
           onClick={onPreviousStep}
           disabled={isAtStart || isPlaying}
         >
@@ -69,18 +72,18 @@ export function TracePlayer({
         <button
           type="button"
           className={`player-btn btn-play ${isPlaying ? 'is-playing' : ''}`}
-          title={isPlaying ? 'Tạm dừng (Pause)' : 'Phát tự động (Play)'}
-          aria-label={isPlaying ? 'Tạm dừng' : 'Phát tự động'}
+          title={isPlaying ? t('trace_pause', lang) : t('trace_play', lang)}
+          aria-label={isPlaying ? t('trace_pause', lang) : t('trace_play', lang)}
           onClick={onPlayToggle}
         >
-          {isPlaying ? '⏸ Tạm dừng' : isAtEnd ? '🔄 Phát lại' : '▶ Phát Trace'}
+          {isPlaying ? `⏸ ${t('trace_pause', lang)}` : isAtEnd ? `🔄 ${t('trace_play', lang)}` : `▶ ${t('trace_play', lang)}`}
         </button>
 
         <button
           type="button"
           className="player-btn btn-next"
-          title="Bước kế tiếp (Next Step)"
-          aria-label="Bước kế tiếp"
+          title={t('trace_next', lang)}
+          aria-label={t('trace_next', lang)}
           onClick={onNextStep}
           disabled={isAtEnd || isPlaying}
         >
@@ -90,7 +93,7 @@ export function TracePlayer({
 
       <div className="player-timeline">
         <div className="step-counter-badge">
-          <span>Bước</span>
+          <span>{t('trace_step', lang)}</span>
           <strong>{safeStep} / {totalSteps}</strong>
         </div>
 
@@ -101,22 +104,22 @@ export function TracePlayer({
           max={totalSteps}
           value={safeStep}
           onChange={handleSliderChange}
-          aria-label="Thanh trượt thời gian trace"
+          aria-label="Trace step slider"
         />
 
         <div className="speed-selector-group">
-          <label htmlFor="speed-select">Tốc độ:</label>
+          <label htmlFor="speed-select">{t('trace_speed', lang)}:</label>
           <select
             id="speed-select"
             className="speed-select"
             value={playbackSpeed}
             onChange={handleSpeedSelect}
-            aria-label="Tốc độ phát trace"
+            aria-label="Trace playback speed"
           >
-            <option value={1}>1x (Chậm)</option>
-            <option value={2}>2x (Vừa)</option>
-            <option value={5}>5x (Nhanh)</option>
-            <option value={10}>10x (Siêu nhanh)</option>
+            <option value={1}>1x</option>
+            <option value={2}>2x</option>
+            <option value={5}>5x</option>
+            <option value={10}>10x</option>
           </select>
         </div>
       </div>
