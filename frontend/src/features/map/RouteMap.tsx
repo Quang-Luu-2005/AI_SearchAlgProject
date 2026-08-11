@@ -448,7 +448,7 @@ export function RouteMap({
     })
     mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
-    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 200 }), 'bottom-left')
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 400 }), 'bottom-left')
     map.addControl(new maplibregl.AttributionControl({
       compact: true,
       customAttribution: 'Basemap © OpenFreeMap · © OpenStreetMap contributors',
@@ -552,12 +552,12 @@ export function RouteMap({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
-    ;(map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
-    ;(map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
-    ;(map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
-    ;(map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
-      boundary ?? EMPTY_FEATURE_COLLECTION,
-    )
+      ; (map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
+      ; (map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
+      ; (map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
+      ; (map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
+        boundary ?? EMPTY_FEATURE_COLLECTION,
+      )
   }, [boundary, edgeData, nodeData, routeData, styleRevision])
 
   const cameraGraphKeyRef = useRef('')
