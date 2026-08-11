@@ -647,6 +647,8 @@ class TraceEventKind(StrEnum):
 class AlgorithmName(StrEnum):
     UCS = "UCS"
     A_STAR = "A_STAR"
+    BFS = "BFS"
+    DFS = "DFS"
 
 
 @dataclass(frozen=True, slots=True)
