@@ -571,7 +571,11 @@ export function App() {
               </select>
             </label>
 
-            {isTourMode ? (
+            {!algorithm ? (
+              <div className="algorithm-prompt-note" style={{ padding: '14px 16px', background: '#f8fafc', border: '1px solid var(--outline)', borderRadius: '12px', color: 'var(--muted)', fontSize: '0.85rem', marginBottom: '16px' }}>
+                💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.
+              </div>
+            ) : isTourMode ? (
               <div className="tour-stops-field">
                 <LocationPicker
                   label="ĐIỂM BẮT ĐẦU"
@@ -732,6 +736,7 @@ export function App() {
                 activeAnimatedNodeLabel={currentAnimatedNodeInfo?.label}
                 tourStopMarkers={tourStopMarkers}
                 isTourMode={isTourMode}
+                hideEndpoints={!algorithm}
               />
             ) : (
               <div className="map-placeholder">Chưa có dữ liệu graph</div>
