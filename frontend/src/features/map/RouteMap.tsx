@@ -678,42 +678,44 @@ export function RouteMap({
   return (
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
       <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
-      <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
-        {isTourMode ? (
-          <button
-            type="button"
-            className="pick-start"
-            aria-pressed={pickTarget === 'START'}
-            onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
-          >
-            {pickTarget === 'START' ? 'Đang chọn điểm xuất phát…' : 'Chọn START/GOAL'}
-          </button>
-        ) : (
-          <>
+      {!hideEndpoints && (
+        <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
+          {isTourMode ? (
             <button
               type="button"
               className="pick-start"
               aria-pressed={pickTarget === 'START'}
               onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
             >
-              Chọn START
+              {pickTarget === 'START' ? 'Đang chọn điểm xuất phát…' : 'Chọn START/GOAL'}
             </button>
-            <button
-              type="button"
-              className="pick-goal"
-              aria-pressed={pickTarget === 'GOAL'}
-              onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
-            >
-              Chọn GOAL
+          ) : (
+            <>
+              <button
+                type="button"
+                className="pick-start"
+                aria-pressed={pickTarget === 'START'}
+                onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+              >
+                Chọn START
+              </button>
+              <button
+                type="button"
+                className="pick-goal"
+                aria-pressed={pickTarget === 'GOAL'}
+                onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
+              >
+                Chọn GOAL
+              </button>
+            </>
+          )}
+          {pickTarget && (
+            <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
+              Hủy chọn
             </button>
-          </>
-        )}
-        {pickTarget && (
-          <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
-            Hủy chọn
-          </button>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       {pickTarget && (
         <div className="map-pick-hint">
           {pickFeedback || `Click node hoặc vị trí trên bản đồ để chọn ${isTourMode ? 'START/GOAL (Điểm xuất phát)' : pickTarget} · Esc để hủy`}
