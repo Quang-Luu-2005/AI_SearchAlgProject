@@ -850,6 +850,13 @@ export function App() {
             ) : (
               <div className="map-placeholder">{t('panel_subtitle', lang)}</div>
             )}
+            <div className="legend">
+              <span><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
+              <span><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+              <span><i className="legend-node" />{t('legend_node', lang)}</span>
+              <span><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
+              <span><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
+            </div>
             {loading && <div className="loading-overlay">{t('running', lang)}</div>}
             {isPlaying && result && (
               <div className="route-animation-status" role="status">

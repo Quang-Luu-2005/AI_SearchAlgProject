@@ -808,17 +808,23 @@ select:focus {
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 13px 20px;
-  padding-right: 24px;
-  border-right: 1px solid var(--outline);
+  align-items: center;
+  gap: 12px 20px;
+  padding: 12px 18px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-glass);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 .legend span {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 0.7rem;
+  gap: 8px;
+  font-size: 0.76rem;
   font-weight: 650;
+  color: var(--ink);
   white-space: nowrap;
 }
 

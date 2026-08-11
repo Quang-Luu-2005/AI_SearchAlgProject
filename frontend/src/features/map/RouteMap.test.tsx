@@ -106,9 +106,9 @@ vi.mock('maplibre-gl', () => ({
   Marker: maplibreMock.FakeMarker,
   Popup: maplibreMock.FakePopup,
   LngLatBounds: maplibreMock.FakeBounds,
-  NavigationControl: class {},
-  ScaleControl: class {},
-  AttributionControl: class {},
+  NavigationControl: class { },
+  ScaleControl: class { },
+  AttributionControl: class { },
 }))
 
 const graph: GraphPayload = {
