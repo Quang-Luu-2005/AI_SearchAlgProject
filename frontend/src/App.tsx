@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
 import { TracePlayer } from './features/player/TracePlayer'
 import { LanguageToggle } from './features/i18n/LanguageToggle'
-import { BenchmarkCharts } from './features/analytics/BenchmarkCharts'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
 import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
 import { getInitialLanguage, t, translateGraphLabel, type Language } from './lib/i18n'
@@ -1015,9 +1014,6 @@ export function App() {
             </section>
           )}
 
-          {result ? (
-            <BenchmarkCharts singleMetrics={result.metrics} lang={lang} />
-          ) : null}
 
           {result && (
             <section className="result-details">
