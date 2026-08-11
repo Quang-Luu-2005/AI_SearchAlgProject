@@ -1015,9 +1015,7 @@ export function App() {
             </section>
           )}
 
-          {tourResult?.comparison ? (
-            <BenchmarkCharts comparison={tourResult.comparison} lang={lang} />
-          ) : result ? (
+          {result ? (
             <BenchmarkCharts singleMetrics={result.metrics} lang={lang} />
           ) : null}
 
