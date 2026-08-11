@@ -140,6 +140,7 @@ export function App() {
   )
   const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
   const canRun = Boolean(
+    algorithm &&
     graphId &&
     scenarioId &&
     startId &&
@@ -512,7 +513,13 @@ export function App() {
         <button className="clear-button" type="button" onClick={clearBoard}>
           Xóa kết quả
         </button>
-        <button className="top-run-button" type="button" onClick={() => executeSearch()} disabled={!canRun}>
+        <button
+          className="top-run-button"
+          type="button"
+          onClick={() => executeSearch()}
+          disabled={!canRun}
+          title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
+        >
           <span aria-hidden="true">▷</span>
           {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
         </button>
@@ -644,7 +651,12 @@ export function App() {
               <span aria-hidden="true">⌘</span>
               Nạp lại graph
             </button>
-            <button className="mobile-run-button" type="submit" disabled={!canRun}>
+            <button
+              className="mobile-run-button"
+              type="submit"
+              disabled={!canRun}
+              title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
+            >
               {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
             </button>
           </form>
