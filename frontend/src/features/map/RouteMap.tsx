@@ -392,6 +392,7 @@ export function RouteMap({
   hideEndpoints = false,
   isTourMode = false,
 }: RouteMapProps) {
+  const [is3dView, setIs3dView] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const hoverPopupRef = useRef<maplibregl.Popup | null>(null)
@@ -675,6 +676,18 @@ export function RouteMap({
     }
   }
 
+  function toggle3dView() {
+    const map = mapRef.current
+    if (!map) return
+    const nextIs3d = !is3dView
+    setIs3dView(nextIs3d)
+    if (nextIs3d) {
+      map.easeTo({ pitch: 52, bearing: -18, duration: 800 })
+    } else {
+      map.easeTo({ pitch: 0, bearing: 0, duration: 800 })
+    }
+  }
+
   return (
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
       <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
@@ -721,15 +734,26 @@ export function RouteMap({
           {pickFeedback || `Click node hoặc vị trí trên bản đồ để chọn ${isTourMode ? 'START/GOAL (Điểm xuất phát)' : pickTarget} · Esc để hủy`}
         </div>
       )}
-      <button
-        type="button"
-        className="map-reset-button"
-        title="Đưa bản đồ về toàn vùng Thủ Đức"
-        aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
-        onClick={resetView}
-      >
-        <img src={recenterGraphIcon} alt="" aria-hidden="true" />
-      </button>
+      <div className="map-controls-group">
+        <button
+          type="button"
+          className={`map-3d-toggle-button ${is3dView ? 'is-active' : ''}`}
+          title={is3dView ? 'Chuyển về góc nhìn phẳng 2D' : 'Chuyển sang góc nhìn nghiêng 3D (Pitch 52°)'}
+          aria-label={is3dView ? 'Góc nhìn 2D' : 'Góc nhìn 3D'}
+          onClick={toggle3dView}
+        >
+          {is3dView ? '🏙️ 3D On' : '🗺️ 2D View'}
+        </button>
+        <button
+          type="button"
+          className="map-reset-button"
+          title="Đưa bản đồ về toàn vùng Thủ Đức"
+          aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
+          onClick={resetView}
+        >
+          <img src={recenterGraphIcon} alt="" aria-hidden="true" />
+        </button>
+      </div>
       {(basemapWarning || boundaryWarning) && (
         <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
       )}

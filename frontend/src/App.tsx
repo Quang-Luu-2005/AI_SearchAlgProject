@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './features/map/RouteMap'
 import { TracePlayer } from './features/player/TracePlayer'
+import { ThemeToggle } from './features/theme/ThemeToggle'
+import { BenchmarkCharts } from './features/analytics/BenchmarkCharts'
+import { EventTimelineFeed } from './features/player/EventTimelineFeed'
+import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
 
 import {
   fetchThuDucBoundary,
@@ -125,6 +129,49 @@ export function App() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isPlaying, setIsPlaying] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      const activeEl = document.activeElement
+      const isInput = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT' || activeEl.tagName === 'TEXTAREA')
+
+      if (event.key === '?') {
+        if (!isInput) {
+          event.preventDefault()
+          setIsShortcutsOpen((prev) => !prev)
+        }
+        return
+      }
+
+      if (isInput) return
+
+      if (event.code === 'Space') {
+        if (result && result.trace.length > 0) {
+          event.preventDefault()
+          setIsPlaying((prev) => !prev)
+        }
+      } else if (event.key === 'ArrowRight') {
+        if (result && result.trace.length > 0) {
+          event.preventDefault()
+          setIsPlaying(false)
+          setCurrentStep((prev) => Math.min(prev + 1, result.trace.length))
+        }
+      } else if (event.key === 'ArrowLeft') {
+        if (result && result.trace.length > 0) {
+          event.preventDefault()
+          setIsPlaying(false)
+          setCurrentStep((prev) => Math.max(prev - 1, 1))
+        }
+      } else if (event.key === 'Escape') {
+        if (pickTarget) setPickTarget(null)
+        if (isShortcutsOpen) setIsShortcutsOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [result, pickTarget, isShortcutsOpen])
 
   const selectedGraph = useMemo(
     () => catalog.find((item) => item.graph_id === graphId),
@@ -510,19 +557,31 @@ export function App() {
           <strong>Pathfinder AI</strong>
           <span>FloodRoute HCMC</span>
         </div>
-        <button className="clear-button" type="button" onClick={clearBoard}>
-          Xóa kết quả
-        </button>
-        <button
-          className="top-run-button"
-          type="button"
-          onClick={() => executeSearch()}
-          disabled={!canRun}
-          title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
-        >
-          <span aria-hidden="true">▷</span>
-          {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
-        </button>
+        <div className="topbar-actions">
+          <button
+            type="button"
+            className="shortcuts-help-btn"
+            onClick={() => setIsShortcutsOpen(true)}
+            title="Xem danh sách phím tắt (?)"
+            aria-label="Xem phím tắt"
+          >
+            ⌨️ Phím tắt
+          </button>
+          <ThemeToggle />
+          <button className="clear-button" type="button" onClick={clearBoard}>
+            Xóa kết quả
+          </button>
+          <button
+            className="top-run-button"
+            type="button"
+            onClick={() => executeSearch()}
+            disabled={!canRun}
+            title={!algorithm ? 'Vui lòng chọn thuật toán' : !startId ? 'Vui lòng chọn Điểm bắt đầu' : 'Chạy thuật toán'}
+          >
+            <span aria-hidden="true">▷</span>
+            {running ? 'Đang tìm đường…' : 'Chạy thuật toán'}
+          </button>
+        </div>
       </header>
 
       <div className="workspace">
@@ -759,30 +818,41 @@ export function App() {
           </section>
 
           {result && result.trace.length > 0 && (
-            <TracePlayer
-              trace={result.trace}
-              currentStep={currentStep}
-              isPlaying={isPlaying}
-              playbackSpeed={playbackSpeed}
-              onPlayToggle={() => setIsPlaying(!isPlaying)}
-              onNextStep={() => {
-                setIsPlaying(false)
-                setCurrentStep((prev) => Math.min(prev + 1, result.trace.length))
-              }}
-              onPreviousStep={() => {
-                setIsPlaying(false)
-                setCurrentStep((prev) => Math.max(prev - 1, 1))
-              }}
-              onReset={() => {
-                setIsPlaying(false)
-                setCurrentStep(1)
-              }}
-              onStepChange={(step) => {
-                setIsPlaying(false)
-                setCurrentStep(step)
-              }}
-              onSpeedChange={setPlaybackSpeed}
-            />
+            <>
+              <TracePlayer
+                trace={result.trace}
+                currentStep={currentStep}
+                isPlaying={isPlaying}
+                playbackSpeed={playbackSpeed}
+                onPlayToggle={() => setIsPlaying(!isPlaying)}
+                onNextStep={() => {
+                  setIsPlaying(false)
+                  setCurrentStep((prev) => Math.min(prev + 1, result.trace.length))
+                }}
+                onPreviousStep={() => {
+                  setIsPlaying(false)
+                  setCurrentStep((prev) => Math.max(prev - 1, 1))
+                }}
+                onReset={() => {
+                  setIsPlaying(false)
+                  setCurrentStep(1)
+                }}
+                onStepChange={(step) => {
+                  setIsPlaying(false)
+                  setCurrentStep(step)
+                }}
+                onSpeedChange={setPlaybackSpeed}
+              />
+
+              <EventTimelineFeed
+                trace={result.trace}
+                currentStep={currentStep}
+                onStepSelect={(step) => {
+                  setIsPlaying(false)
+                  setCurrentStep(step)
+                }}
+              />
+            </>
           )}
 
           {selectedGraph?.graph_id?.startsWith('processed/thu_duc_') && (
@@ -951,6 +1021,12 @@ export function App() {
             </section>
           )}
 
+          {tourResult?.comparison ? (
+            <BenchmarkCharts comparison={tourResult.comparison} />
+          ) : result ? (
+            <BenchmarkCharts singleMetrics={result.metrics} />
+          ) : null}
+
           {result && (
             <section className="result-details">
               <div>
@@ -966,6 +1042,8 @@ export function App() {
           )}
         </main>
       </div>
+
+      <KeyboardShortcutsModal isOpen={isShortcutsOpen} onClose={() => setIsShortcutsOpen(false)} />
     </div>
   )
 }
