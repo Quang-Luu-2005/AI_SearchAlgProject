@@ -5,7 +5,7 @@ import { LanguageToggle } from './features/i18n/LanguageToggle'
 import { BenchmarkCharts } from './features/analytics/BenchmarkCharts'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
 import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
-import { getInitialLanguage, t, type Language } from './lib/i18n'
+import { getInitialLanguage, t, translateGraphLabel, type Language } from './lib/i18n'
 
 import {
   fetchThuDucBoundary,
@@ -32,7 +32,7 @@ import {
 } from './lib/search'
 
 
-function metric(value: number | undefined, digits = 1): string {
+export function metric(value: number | undefined, digits = 1): string {
   return value === undefined ? '—' : value.toFixed(digits)
 }
 
@@ -599,7 +599,7 @@ export function App() {
               <select value={graphId} onChange={(event) => selectGraph(event.target.value)}>
                 {catalog.map((item) => (
                   <option key={item.graph_id} value={item.graph_id}>
-                    {item.label} · {item.node_count} {t('nodes_count', lang)}
+                    {translateGraphLabel(item.label, lang)} · {item.node_count} {t('nodes_count', lang)}
                   </option>
                 ))}
               </select>
@@ -740,7 +740,7 @@ export function App() {
                 <small>No flood record does not mean a road is safe.</small>
               )}
               <details>
-                <summary>Nguồn và giới hạn dataset</summary>
+                <summary>{t('dataset_summary_title', lang)}</summary>
                 <ul>
                   {selectedGraph.limitations.map((item) => <li key={item}>{item}</li>)}
                 </ul>
@@ -763,15 +763,15 @@ export function App() {
           )}
           <div className="connection-state">
             <span className="status-dot" />
-            Backend API đã kết nối
+            {t('api_connected', lang)}
           </div>
         </aside>
 
         <main className="canvas-area" aria-live="polite">
           <div className="canvas-heading">
             <div>
-              <span className="eyebrow">Optimal path visualizer</span>
-              <h2>{selectedGraph?.label ?? 'Đang tải graph'}</h2>
+              <span className="eyebrow">{t('eyebrow_title', lang)}</span>
+              <h2>{selectedGraph ? translateGraphLabel(selectedGraph.label, lang) : t('loading_graph', lang)}</h2>
             </div>
             <span className={`data-badge data-badge--${(selectedGraph?.data_status ?? 'unknown').toLowerCase()}`}>
               {selectedGraph?.data_status ?? 'UNKNOWN'}
@@ -870,14 +870,14 @@ export function App() {
             </p>
           )}
 
-          <section className="metrics-bar" aria-label="Route search metrics">
+          {/* <section className="metrics-bar" aria-label="Route search metrics">
             <div className="metric-chip"><span>Algorithm</span><strong>{algorithm || '—'}</strong></div>
             <div className="metric-chip"><span>Scenario</span><strong>{scenarioId || '—'}</strong></div>
             <div className="metric-chip"><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
             <div className="metric-chip"><span>Path Length (km)</span><strong>{metric(result?.metrics.distance_km, 2)}</strong></div>
             <div className="metric-chip"><span>ETA (min)</span><strong>{metric(result?.metrics.estimated_time_min, 2)}</strong></div>
             <div className="metric-chip"><span>Total Cost</span><strong>{metric(result?.metrics.total_cost, 2)}</strong></div>
-          </section>
+          </section> */}
 
           {error && <div className="error-banner" role="alert">{error}</div>}
 

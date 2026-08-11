@@ -33,6 +33,8 @@ export const translations = {
     alg_optimize_tour: 'Compare Tours (Held-Karp vs Nearest Neighbor)',
     scenario_label: 'Cost Scenario',
     preset: 'preset',
+    dataset_summary_title: 'Dataset sources & limitations',
+    api_connected: 'Backend API connected',
 
     // Form fields & prompts
     start_label: 'STARTING POINT',
@@ -44,6 +46,12 @@ export const translations = {
     alg_prompt: '💡 Please select an Algorithm to display Starting and Ending Point input fields.',
     reload_graph: 'Reload graph',
     swap_endpoints: 'Swap start and goal',
+
+    // Map & Heading
+    eyebrow_title: 'Optimal path visualizer',
+    graph_label_thu_duc_landmarks: 'Thu Duc major landmarks road graph',
+    loading_graph: 'Loading graph…',
+    no_graph_data: 'No graph data available',
 
     // Map & Map Controls
     map_aria: 'FloodRoute Graph Map',
@@ -152,6 +160,8 @@ export const translations = {
     alg_optimize_tour: 'So sánh Tour (Held-Karp vs Nearest Neighbor)',
     scenario_label: 'Kịch bản chi phí',
     preset: 'preset',
+    dataset_summary_title: 'Nguồn và giới hạn dataset',
+    api_connected: 'Backend API đã kết nối',
 
     // Form fields & prompts
     start_label: 'ĐIỂM BẮT ĐẦU',
@@ -163,6 +173,12 @@ export const translations = {
     alg_prompt: '💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.',
     reload_graph: 'Nạp lại graph',
     swap_endpoints: 'Đổi điểm bắt đầu và đích',
+
+    // Map & Heading
+    eyebrow_title: 'Trực quan hóa lộ trình tối ưu',
+    graph_label_thu_duc_landmarks: 'Mạng lưới giao thông các địa điểm chính TP. Thủ Đức',
+    loading_graph: 'Đang tải graph…',
+    no_graph_data: 'Chưa có dữ liệu graph',
 
     // Map & Map Controls
     map_aria: 'Bản đồ graph FloodRoute',
@@ -259,4 +275,13 @@ export function t(key: TranslationKey, lang: Language = 'en', params?: Record<st
     })
   }
   return text
+}
+
+export function translateGraphLabel(label: string, lang: Language = 'en'): string {
+  if (lang === 'vi') {
+    if (label === 'Thu Duc major landmarks road graph') {
+      return translations.vi.graph_label_thu_duc_landmarks
+    }
+  }
+  return label
 }
