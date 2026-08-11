@@ -7,6 +7,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Triển khai Service/API tối ưu hóa lộ trình giao hàng qua 5–10 điểm (`POST /api/v1/optimize-tour`): tính toán `PairwiseMatrix` cho $N$ điểm, giải thuật chính xác **Held-Karp DP** ($O(N^2 \cdot 2^N)$), giải thuật xấp xỉ **Nearest Neighbor**, đo % Approximation Gap, ghép nối subpath liên tục không lặp nút và bộ unit test suite `TC04_MULTI_STOP`.
 - Refactor toàn bộ [`backend/app/algorithms/weighted.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/backend/app/algorithms/weighted.py) thành kiến trúc modular: tách `haversine_distance_km`, `compute_geographic_heuristic` ($h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}$), hàm lõi `_weighted_search` và entry points `uniform_cost_search`, `a_star_search`. Đã chứng minh toán học tính Admissible, Consistency, 100% Global Optimality và Completeness kèm ADR-0012 và unit test suite mới.
 - Triển khai quy trình dữ liệu OSM 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed) chuẩn hóa: raw snapshot `thu_duc_osm_v1.0.0`, interim topology `data/interim/osm_thu_duc_v1.0.0/` (27 nodes, 40 edges), script tái tạo [`scripts/data/build_osm_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/build_osm_dataset.py), SHA-256 checksums, metadata và cập nhật validator.
 - UI map scope cố định về `thu_duc_landmarks_v1.0.0` với đúng 65 selectable landmark;

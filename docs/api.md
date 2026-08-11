@@ -61,6 +61,24 @@ are always marked `SIMULATED`.
 `algorithms` array. When omitted, it compares `UCS` and `A_STAR` using exactly the
 same graph and cost engine.
 
+## Optimize Tour
+
+`POST /api/v1/optimize-tour` accepts:
+
+```json
+{
+  "depot": "N01",
+  "stops": ["N02", "N03", "N05"],
+  "scenario": "HEAVY_RAIN_SAFE",
+  "graph_id": "toy_graph_v0.1",
+  "algorithm": "A_STAR",
+  "return_to_depot": true
+}
+```
+
+The request supports 1 to 10 delivery stops. The service computes a pairwise cost/distance matrix using the search engine, solves exact DP Held-Karp and Nearest Neighbor heuristic, measures % approximation gap, and returns seamless stitched subpaths, total distance, total cost, comparison metrics, guarantee (`OPTIMAL_HELD_KARP`), and structured explanation.
+
+
 ## Errors
 
 | Condition | Status |
