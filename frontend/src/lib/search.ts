@@ -1,5 +1,5 @@
 export type Algorithm = 'UCS' | 'A_STAR'
-export type AlgorithmSelection = Algorithm | 'COMPARE' | 'HELD_KARP' | 'NEAREST_NEIGHBOR' | 'OPTIMIZE_TOUR'
+export type AlgorithmSelection = '' | Algorithm | 'COMPARE' | 'HELD_KARP' | 'NEAREST_NEIGHBOR' | 'OPTIMIZE_TOUR'
 
 
 export type LocationItem = {

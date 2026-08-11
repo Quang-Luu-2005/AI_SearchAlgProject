@@ -112,7 +112,7 @@ export function App() {
   const [startId, setStartId] = useState('')
   const [goalId, setGoalId] = useState('')
   const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
-  const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('A_STAR')
+  const [algorithm, setAlgorithm] = useState<AlgorithmSelection>('')
   const [tourStops, setTourStops] = useState<string[]>([])
   const [tourResult, setTourResult] = useState<OptimizeTourResult | null>(null)
   const [result, setResult] = useState<SearchResult | null>(null)
@@ -481,7 +481,7 @@ export function App() {
         const payload = await runComparison(input)
         setComparisonResults(payload.results)
         setResult(payload.results[0] ?? null)
-      } else {
+      } else if (algorithm === 'A_STAR' || algorithm === 'UCS') {
         setResult(await runSearch({ ...input, algorithm }))
       }
     } catch (reason) {
@@ -493,7 +493,10 @@ export function App() {
 
   function clearBoard() {
     clearRouteResult()
-    setTourStops([])
+    setAlgorithm('') // Reset thuật toán về không chọn
+    setStartId('') // Reset điểm bắt đầu
+    setGoalId('') // Reset điểm đích/kết thúc
+    setTourStops([]) // Reset toàn bộ điểm kết thúc/giao hàng
     setPickTarget(null)
     setError('')
   }
@@ -540,6 +543,7 @@ export function App() {
                 value={algorithm}
                 onChange={(event) => changeAlgorithm(event.target.value as AlgorithmSelection)}
               >
+                <option value="">-- Chọn thuật toán --</option>
                 <option value="A_STAR">A* Search (2 điểm)</option>
                 <option value="UCS">Uniform Cost Search (2 điểm)</option>
                 <option value="COMPARE">So sánh UCS và A* (2 điểm)</option>
@@ -614,7 +618,7 @@ export function App() {
             ) : (
               <div className="route-fields">
                 <LocationPicker
-                  label="Điểm bắt đầu"
+                  label="ĐIỂM BẮT ĐẦU"
                   value={startId}
                   locations={locations}
                   onChange={selectStart}
@@ -628,7 +632,7 @@ export function App() {
                   ⇅
                 </button>
                 <LocationPicker
-                  label="Điểm đích"
+                  label="ĐIỂM KẾT THÚC"
                   value={goalId}
                   locations={locations}
                   onChange={selectGoal}
