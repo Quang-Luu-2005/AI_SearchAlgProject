@@ -178,26 +178,6 @@ button:disabled {
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
 }
 
-.panel-collapse-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1px solid var(--border-glass);
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.panel-collapse-btn:hover {
-  background: var(--surface-high);
-  color: var(--primary);
-  border-color: var(--primary);
-}
 
 .workspace {
   display: grid;

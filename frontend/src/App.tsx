@@ -633,18 +633,7 @@ export function App() {
       <div className={`workspace${isSidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
         <aside className={`control-panel${isSidebarCollapsed ? ' is-collapsed' : ''}`}>
           <div className="panel-heading">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h1>{t('panel_title', lang)}</h1>
-              <button
-                type="button"
-                className="panel-collapse-btn"
-                onClick={() => setIsSidebarCollapsed(true)}
-                title={t('collapse_sidebar', lang)}
-                aria-label={t('collapse_sidebar', lang)}
-              >
-                ◀
-              </button>
-            </div>
+            <h1>{t('panel_title', lang)}</h1>
             <p>{t('panel_subtitle', lang)}</p>
           </div>
 
