@@ -599,10 +599,18 @@ export function RouteMap({
 
     animationFrameId = requestAnimationFrame(smoothResizeStep)
 
+    const recenterTimer = setTimeout(() => {
+      const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+      if (bounds && mapRef.current) {
+        mapRef.current.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 300 })
+      }
+    }, 450)
+
     return () => {
       cancelAnimationFrame(animationFrameId)
+      clearTimeout(recenterTimer)
     }
-  }, [isSidebarCollapsed])
+  }, [isSidebarCollapsed, boundary, graph])
 
   useEffect(() => {
     if (!containerRef.current || typeof ResizeObserver === 'undefined') return

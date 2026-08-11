@@ -570,6 +570,8 @@ select:focus {
   border-radius: 20px;
   background: white;
   box-shadow: 0 8px 28px rgba(25, 28, 29, 0.07);
+  transition: width 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .route-map-shell,
@@ -577,6 +579,20 @@ select:focus {
   width: 100%;
   height: clamp(390px, 55vh, 650px);
   border-radius: 14px;
+  transition: height 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Expanded Fullscreen Map Mode when Sidebar is Collapsed */
+.workspace.is-sidebar-collapsed .canvas-heading,
+.workspace.is-sidebar-collapsed .map-card,
+.workspace.is-sidebar-collapsed .dataset-attribution {
+  width: 100%;
+  max-width: 100%;
+}
+
+.workspace.is-sidebar-collapsed .route-map-shell,
+.workspace.is-sidebar-collapsed .map-placeholder {
+  height: clamp(540px, 76vh, 880px);
 }
 
 .route-map-shell {
