@@ -115,56 +115,7 @@ function addGraphLayers(map: maplibregl.Map) {
     })
   }
 
-  if (map.getSource('openmaptiles') && !map.getLayer('floodroute-buildings-3d')) {
-    try {
-      const layers = map.getStyle()?.layers || []
-      let labelLayerId: string | undefined
-      for (let i = 0; i < layers.length; i++) {
-        const layout = layers[i].layout as Record<string, unknown> | undefined
-        if (layers[i].type === 'symbol' && layout?.['text-field']) {
-          labelLayerId = layers[i].id
-          break
-        }
-      }
 
-      map.addLayer(
-        {
-          id: 'floodroute-buildings-3d',
-          type: 'fill-extrusion',
-          source: 'openmaptiles',
-          'source-layer': 'building',
-          minzoom: 13,
-          paint: {
-            'fill-extrusion-color': [
-              'interpolate',
-              ['linear'],
-              ['coalesce', ['get', 'render_height'], ['get', 'height'], 0],
-              0, '#cbd5e1',
-              30, '#94a3b8',
-              80, '#64748b',
-            ],
-            'fill-extrusion-height': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              13, 0,
-              14.5, ['coalesce', ['get', 'render_height'], ['get', 'height'], 12],
-            ],
-            'fill-extrusion-base': [
-              'coalesce',
-              ['get', 'render_min_height'],
-              ['get', 'min_height'],
-              0,
-            ],
-            'fill-extrusion-opacity': 0.82,
-          },
-        },
-        labelLayerId,
-      )
-    } catch {
-      // Ignore if style does not support buildings layer
-    }
-  }
 
   if (!map.getLayer('floodroute-edge-open')) {
     map.addLayer({
@@ -449,7 +400,6 @@ export function RouteMap({
   isTourMode = false,
   lang = 'en',
 }: RouteMapProps) {
-  const [is3dView, setIs3dView] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const hoverPopupRef = useRef<maplibregl.Popup | null>(null)
@@ -733,49 +683,8 @@ export function RouteMap({
     }
   }
 
-  function apply3dLighting(map: maplibregl.Map, active3d: boolean) {
-    if (typeof map.setLight !== 'function') return
-    if (active3d) {
-      map.setLight({
-        anchor: 'viewport',
-        color: '#ffffff',
-        intensity: 0.55,
-      })
-    } else {
-      map.setLight({
-        anchor: 'viewport',
-        color: '#ffffff',
-        intensity: 0.2,
-      })
-    }
-  }
-
-  function setPerspective(mode: '2d' | '3d-iso' | '3d-cinematic') {
-    const map = mapRef.current
-    if (!map) return
-    if (mode === '2d') {
-      setIs3dView(false)
-      apply3dLighting(map, false)
-      map.easeTo({ pitch: 0, duration: 700 })
-    } else if (mode === '3d-iso') {
-      setIs3dView(true)
-      apply3dLighting(map, true)
-      map.easeTo({ pitch: 55, bearing: -25, duration: 700 })
-    } else if (mode === '3d-cinematic') {
-      setIs3dView(true)
-      apply3dLighting(map, true)
-      map.easeTo({ pitch: 68, bearing: -45, duration: 700 })
-    }
-  }
-
-  function resetNorth() {
-    const map = mapRef.current
-    if (!map) return
-    map.easeTo({ bearing: 0, duration: 500 })
-  }
-
   return (
-    <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}${is3dView ? ' is-3d-active' : ''}`}>
+    <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
       <div ref={containerRef} className="route-map" aria-label={t('map_aria', lang)} />
       {!hideEndpoints && (
         <div className="map-pick-toolbar" aria-label={t('pick_toolbar', lang)}>
@@ -821,40 +730,6 @@ export function RouteMap({
         </div>
       )}
       <div className="map-controls-group">
-        <div className="map-3d-presets-group" aria-label="3D View Perspective Presets">
-          <button
-            type="button"
-            className={`map-3d-preset-btn ${!is3dView ? 'is-active' : ''}`}
-            title={t('tooltip_2d', lang)}
-            onClick={() => setPerspective('2d')}
-          >
-            {t('view_2d', lang)}
-          </button>
-          <button
-            type="button"
-            className={`map-3d-preset-btn ${is3dView ? 'is-active' : ''}`}
-            title={t('tooltip_3d', lang)}
-            onClick={() => setPerspective('3d-iso')}
-          >
-            {t('view_3d_iso', lang)}
-          </button>
-          <button
-            type="button"
-            className="map-3d-preset-btn"
-            title="Góc nhìn nghiêng cận cảnh 68°"
-            onClick={() => setPerspective('3d-cinematic')}
-          >
-            {t('view_3d_cinematic', lang)}
-          </button>
-        </div>
-        <button
-          type="button"
-          className="map-reset-north-button"
-          title={t('reset_north', lang)}
-          onClick={resetNorth}
-        >
-          {t('reset_north', lang)}
-        </button>
         <button
           type="button"
           className="map-reset-button"
