@@ -540,6 +540,28 @@ export function App() {
     }
   }
 
+  function swapTourStops(indexA: number, indexB: number) {
+    if (indexA < 0 || indexA >= tourStops.length || indexB < 0 || indexB >= tourStops.length) return
+    const next = [...tourStops]
+    const temp = next[indexA]
+    next[indexA] = next[indexB]
+    next[indexB] = temp
+    setTourStops(next)
+  }
+
+  function reverseTourStops() {
+    if (tourStops.length < 2) return
+    setTourStops([...tourStops].reverse())
+  }
+
+  function swapDepotWithFirstStop() {
+    if (!startId || tourStops.length === 0) return
+    const firstStop = tourStops[0]
+    const newStops = [startId, ...tourStops.slice(1)]
+    selectStart(firstStop)
+    setTourStops(newStops)
+  }
+
   function clearBoard() {
     clearRouteResult()
     setAlgorithm('') // Reset thuật toán về không chọn
@@ -637,25 +659,62 @@ export function App() {
               </div>
             ) : isTourMode ? (
               <div className="tour-stops-field">
-                <LocationPicker
-                  label={t('start_label', lang)}
-                  value={startId}
-                  locations={locations}
-                  onChange={selectStart}
-                />
+                <div className="tour-depot-row">
+                  <LocationPicker
+                    label={t('start_label', lang)}
+                    value={startId}
+                    locations={locations}
+                    onChange={selectStart}
+                  />
+                  {startId && tourStops.length > 0 && (
+                    <button
+                      className="swap-button"
+                      type="button"
+                      title={t('swap_depot_title', lang)}
+                      aria-label={t('swap_depot_title', lang)}
+                      onClick={swapDepotWithFirstStop}
+                    >
+                      ⇅
+                    </button>
+                  )}
+                </div>
                 {!startId && (
                   <p className="warning-note" style={{ margin: '4px 0 8px 0', color: '#b45309' }}>
                     {t('depot_warning', lang)}
                   </p>
                 )}
                 <div className="stops-list-container">
-                  <label>{t('stops_header', lang)} ({tourStops.length}/10)</label>
+                  <div className="stops-list-header">
+                    <label>{t('stops_header', lang)} ({tourStops.length}/10)</label>
+                    {tourStops.length >= 2 && (
+                      <button
+                        type="button"
+                        className="swap-button swap-button--mini"
+                        title={t('swap_stops_title', lang)}
+                        aria-label={t('swap_stops_title', lang)}
+                        onClick={reverseTourStops}
+                      >
+                        ⇅ {t('swap_stops_label', lang)}
+                      </button>
+                    )}
+                  </div>
                   <div className="stops-chips">
                     {tourStops.map((stopId, idx) => {
                       const loc = locations.find((item) => item.node_id === stopId)
                       return (
                         <span key={`${stopId}-${idx}`} className="stop-chip">
                           <small>#{idx + 1}</small> {loc ? loc.name : stopId}
+                          {idx < tourStops.length - 1 && (
+                            <button
+                              type="button"
+                              className="swap-chip-btn"
+                              title={t('swap_next_title', lang)}
+                              aria-label={t('swap_next_title', lang)}
+                              onClick={() => swapTourStops(idx, idx + 1)}
+                            >
+                              ⇅
+                            </button>
+                          )}
                           <button
                             type="button"
                             className="remove-chip-btn"
