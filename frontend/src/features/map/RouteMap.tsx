@@ -48,6 +48,7 @@ type RouteMapProps = {
   tourStopMarkers?: TourStopMarker[]
   hideEndpoints?: boolean
   isTourMode?: boolean
+  isSidebarCollapsed?: boolean
   lang?: Language
 }
 
@@ -398,6 +399,7 @@ export function RouteMap({
   tourStopMarkers = [],
   hideEndpoints = false,
   isTourMode = false,
+  isSidebarCollapsed = false,
   lang = 'en',
 }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -579,6 +581,29 @@ export function RouteMap({
     cameraGraphKeyRef.current = cameraKey
     map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 0 })
   }, [boundary, graph, styleRevision])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    map.resize?.()
+    const timer1 = setTimeout(() => map.resize?.(), 100)
+    const timer2 = setTimeout(() => map.resize?.(), 360)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
+  }, [isSidebarCollapsed])
+
+  useEffect(() => {
+    if (!containerRef.current || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.resize?.()
+    })
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const map = mapRef.current

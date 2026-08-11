@@ -132,6 +132,7 @@ export function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [lang, setLang] = useState<Language>(getInitialLanguage)
 
   useEffect(() => {
@@ -603,6 +604,15 @@ export function App() {
           >
             {t('shortcuts_btn', lang)}
           </button>
+          <button
+            type="button"
+            className="sidebar-toggle-btn"
+            onClick={() => setIsSidebarCollapsed((prev) => !prev)}
+            title={isSidebarCollapsed ? t('expand_sidebar', lang) : t('collapse_sidebar', lang)}
+            aria-label={isSidebarCollapsed ? t('expand_sidebar', lang) : t('collapse_sidebar', lang)}
+          >
+            {isSidebarCollapsed ? `▶ ${t('expand_sidebar', lang)}` : `◀ ${t('collapse_sidebar', lang)}`}
+          </button>
           <LanguageToggle lang={lang} onLanguageChange={setLang} />
           <button className="clear-button" type="button" onClick={clearBoard}>
             {t('clear_results', lang)}
@@ -620,10 +630,21 @@ export function App() {
         </div>
       </header>
 
-      <div className="workspace">
-        <aside className="control-panel">
+      <div className={`workspace${isSidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
+        <aside className={`control-panel${isSidebarCollapsed ? ' is-collapsed' : ''}`}>
           <div className="panel-heading">
-            <h1>{t('panel_title', lang)}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h1>{t('panel_title', lang)}</h1>
+              <button
+                type="button"
+                className="panel-collapse-btn"
+                onClick={() => setIsSidebarCollapsed(true)}
+                title={t('collapse_sidebar', lang)}
+                aria-label={t('collapse_sidebar', lang)}
+              >
+                ◀
+              </button>
+            </div>
             <p>{t('panel_subtitle', lang)}</p>
           </div>
 
@@ -844,6 +865,7 @@ export function App() {
                 activeAnimatedNodeLabel={currentAnimatedNodeInfo?.label}
                 tourStopMarkers={tourStopMarkers}
                 isTourMode={isTourMode}
+                isSidebarCollapsed={isSidebarCollapsed}
                 hideEndpoints={!algorithm}
                 lang={lang}
               />

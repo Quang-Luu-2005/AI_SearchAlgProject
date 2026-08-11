@@ -44,6 +44,7 @@ const maplibreMock = vi.hoisted(() => {
     layerDefinitions = new Map<string, Record<string, unknown>>()
     addControl = vi.fn()
     remove = vi.fn()
+    resize = vi.fn()
     fitBounds = vi.fn()
     flyTo = vi.fn()
     easeTo = vi.fn()
