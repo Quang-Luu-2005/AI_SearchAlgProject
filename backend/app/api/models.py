@@ -115,6 +115,62 @@ class CompareResponse(BaseModel):
     results: list[SearchResponse]
 
 
+class OptimizeTourRequest(BaseModel):
+    depot: str = Field(min_length=1, examples=["N01"])
+    stops: list[str] = Field(min_length=5, max_length=10, examples=[["N02", "N03", "N04", "N05", "N06"]])
+    scenario: str = Field(min_length=1, examples=["HEAVY_RAIN_SAFE"])
+    graph_id: str = Field(default="toy_graph_v0.1", min_length=1)
+    algorithm: str = Field(default="A_STAR", min_length=1)
+    tour_algorithm: str = Field(default="HELD_KARP", min_length=1)
+    return_to_depot: bool = Field(default=True)
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "depot": "N01",
+                "stops": ["N02", "N03", "N05"],
+                "scenario": "HEAVY_RAIN_SAFE",
+                "graph_id": "toy_graph_v0.1",
+            }
+        }
+    }
+
+
+class TourLegResponse(BaseModel):
+    from_node_id: str
+    to_node_id: str
+    path: list[str]
+    edge_ids: list[str]
+    distance_m: float
+    distance_km: float
+    travel_time_min: float
+    total_cost: float
+
+
+class TourComparisonResponse(BaseModel):
+    held_karp_cost: float
+    nearest_neighbor_cost: float
+    approximation_gap_percent: float
+
+
+class OptimizeTourResponse(BaseModel):
+    depot: str
+    scenario: str
+    data_status: str
+    visit_order: list[str]
+    full_path: list[str]
+    edge_ids: list[str]
+    total_distance_m: float
+    total_distance_km: float
+    estimated_time_min: float
+    total_cost: float
+    comparison: TourComparisonResponse
+    legs: list[TourLegResponse]
+    guarantee: str
+    explanation: str
+    limitations: list[str]
+
+
 class ErrorResponse(BaseModel):
     detail: str
 
@@ -124,7 +180,12 @@ __all__ = [
     "CompareResponse",
     "ErrorResponse",
     "LocationsResponse",
+    "OptimizeTourRequest",
+    "OptimizeTourResponse",
     "ScenariosResponse",
     "SearchRequest",
     "SearchResponse",
+    "TourComparisonResponse",
+    "TourLegResponse",
 ]
+

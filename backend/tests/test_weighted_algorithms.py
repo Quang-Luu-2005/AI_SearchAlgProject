@@ -26,6 +26,7 @@ def test_haversine_distance_accuracy() -> None:
     assert 5.0 <= dist_km <= 6.0
 
 
+@pytest.mark.skipif(not OSM_THU_DUC_DIR.exists(), reason="osm_thu_duc_v1.0.0 dataset not available")
 def test_heuristic_admissibility_and_consistency() -> None:
     """Test that Geographic Heuristic satisfies h(goal) == 0 and non-negativity."""
     graph = GraphLoader.from_directory(OSM_THU_DUC_DIR)
@@ -44,6 +45,7 @@ def test_heuristic_admissibility_and_consistency() -> None:
     assert h_start >= 0.0
 
 
+@pytest.mark.skipif(not OSM_THU_DUC_DIR.exists(), reason="osm_thu_duc_v1.0.0 dataset not available")
 def test_ucs_and_a_star_optimality_match() -> None:
     """Test that UCS and A* find identical optimal cost on OSM road dataset."""
     graph = GraphLoader.from_directory(OSM_THU_DUC_DIR)
@@ -61,6 +63,7 @@ def test_ucs_and_a_star_optimality_match() -> None:
     assert ucs_result.edge_ids == astar_result.edge_ids
 
 
+@pytest.mark.skipif(not OSM_THU_DUC_DIR.exists(), reason="osm_thu_duc_v1.0.0 dataset not available")
 def test_a_star_pruning_advantage_over_ucs() -> None:
     """Test that A* with Geographic Heuristic expands <= UCS nodes on OSM road graph."""
     graph = GraphLoader.from_directory(OSM_THU_DUC_DIR)

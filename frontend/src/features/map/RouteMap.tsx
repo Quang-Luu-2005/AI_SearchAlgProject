@@ -19,6 +19,17 @@ import {
 
 export type EndpointPickTarget = 'START' | 'GOAL'
 
+export type TourStopMarker = {
+  nodeId: string
+  name: string
+  stopIndex: number
+  latitude: number
+  longitude: number
+  isVisited: boolean
+}
+
+import { t, type Language } from '../../lib/i18n'
+
 type RouteMapProps = {
   graph: GraphPayload
   boundary?: ThuDucBoundary | null
@@ -32,7 +43,16 @@ type RouteMapProps = {
   pickTarget: EndpointPickTarget | null
   onNodePick: (target: EndpointPickTarget, nodeId: string) => void
   onPickTargetChange: (target: EndpointPickTarget | null) => void
+  activeAnimatedNodeId?: string | null
+  activeAnimatedNodeLabel?: string | null
+  tourStopMarkers?: TourStopMarker[]
+  hideEndpoints?: boolean
+  isTourMode?: boolean
+  isSidebarCollapsed?: boolean
+  lang?: Language
 }
+
+
 
 const BASEMAP_STYLE_URL = import.meta.env.VITE_BASEMAP_STYLE_URL
   || 'https://tiles.openfreemap.org/styles/liberty'
@@ -95,6 +115,8 @@ function addGraphLayers(map: maplibregl.Map) {
       layout: { 'line-cap': 'round', 'line-join': 'round' },
     })
   }
+
+
 
   if (!map.getLayer('floodroute-edge-open')) {
     map.addLayer({
@@ -357,6 +379,8 @@ function boundaryContextBounds(boundary: ThuDucBoundary | null | undefined): map
   )
 }
 
+
+
 export function RouteMap({
   graph,
   boundary,
@@ -370,6 +394,13 @@ export function RouteMap({
   pickTarget,
   onNodePick,
   onPickTargetChange,
+  activeAnimatedNodeId,
+  activeAnimatedNodeLabel,
+  tourStopMarkers = [],
+  hideEndpoints = false,
+  isTourMode = false,
+  isSidebarCollapsed = false,
+  lang = 'en',
 }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -384,6 +415,7 @@ export function RouteMap({
   const [styleRevision, setStyleRevision] = useState(0)
   const [basemapWarning, setBasemapWarning] = useState('')
   const [pickFeedback, setPickFeedback] = useState('')
+  const [showMapLegendPopover, setShowMapLegendPopover] = useState(false)
 
   pickTargetRef.current = pickTarget
   onNodePickRef.current = onNodePick
@@ -417,11 +449,7 @@ export function RouteMap({
     })
     mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
-    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 120 }), 'bottom-left')
-    map.addControl(new maplibregl.AttributionControl({
-      compact: true,
-      customAttribution: 'Basemap © OpenFreeMap · © OpenStreetMap contributors',
-    }), 'bottom-right')
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 400 }), 'bottom-left')
 
     const onStyleLoad = () => {
       styleReadyRef.current = true
@@ -521,12 +549,12 @@ export function RouteMap({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !styleReadyRef.current) return
-    ;(map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
-    ;(map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
-    ;(map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
-    ;(map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
-      boundary ?? EMPTY_FEATURE_COLLECTION,
-    )
+      ; (map.getSource(SOURCE_EDGES) as GeoJSONSource | undefined)?.setData(edgeData)
+      ; (map.getSource(SOURCE_NODES) as GeoJSONSource | undefined)?.setData(nodeData)
+      ; (map.getSource(SOURCE_ROUTE) as GeoJSONSource | undefined)?.setData(routeData)
+      ; (map.getSource(SOURCE_BOUNDARY) as GeoJSONSource | undefined)?.setData(
+        boundary ?? EMPTY_FEATURE_COLLECTION,
+      )
   }, [boundary, edgeData, nodeData, routeData, styleRevision])
 
   const cameraGraphKeyRef = useRef('')
@@ -554,17 +582,60 @@ export function RouteMap({
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
+
+    let animationFrameId: number
+    const startTime = performance.now()
+    const durationMs = 450
+
+    function smoothResizeStep(now: number) {
+      mapRef.current?.resize?.()
+      if (now - startTime < durationMs) {
+        animationFrameId = requestAnimationFrame(smoothResizeStep)
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(smoothResizeStep)
+
+    const recenterTimer = setTimeout(() => {
+      const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+      if (bounds && mapRef.current) {
+        mapRef.current.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 300 })
+      }
+    }, 450)
+
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+      clearTimeout(recenterTimer)
+    }
+  }, [isSidebarCollapsed, boundary, graph])
+
+  useEffect(() => {
+    if (!containerRef.current || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.resize?.()
+    })
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || hideEndpoints) return
     const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
-    const markers = ([
-      ['START', startId],
-      ['GOAL', goalId],
-    ] as const).flatMap<maplibregl.Marker>(([target, nodeId]) => {
+
+    const targets = isTourMode
+      ? ([['START', startId]] as const)
+      : ([['START', startId], ['GOAL', goalId]] as const)
+
+    const markers = targets.flatMap<maplibregl.Marker>(([target, nodeId]) => {
       if (!nodeId) return []
       const node = nodeById.get(nodeId)
       if (!node || node.latitude === null || node.longitude === null
         || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)) return []
+
+      const labelText = isTourMode ? `START/GOAL · ${node.label || node.node_id}` : (node.label || node.node_id)
       const marker = new maplibregl.Marker({
-        element: endpointPinElement(target, node.label || node.node_id),
+        element: endpointPinElement(target, labelText),
         anchor: 'bottom',
       })
         .setLngLat([node.longitude, node.latitude])
@@ -573,7 +644,63 @@ export function RouteMap({
     })
 
     return () => markers.forEach((marker) => marker.remove())
-  }, [goalId, graph, startId])
+  }, [goalId, graph, startId, hideEndpoints, isTourMode])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !activeAnimatedNodeId) return
+    const node = graph.nodes.find((item) => item.node_id === activeAnimatedNodeId)
+    if (!node || node.latitude === null || node.longitude === null
+      || !Number.isFinite(node.latitude) || !Number.isFinite(node.longitude)) return
+
+    const el = document.createElement('div')
+    el.className = 'animated-node-pin'
+    el.innerHTML = `
+      <div class="pin-tooltip">${activeAnimatedNodeLabel || node.label || node.node_id}</div>
+      <div class="pin-pulse"></div>
+    `
+
+    const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+      .setLngLat([node.longitude, node.latitude])
+      .addTo(map)
+
+    return () => {
+      marker.remove()
+    }
+  }, [activeAnimatedNodeId, activeAnimatedNodeLabel, graph])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !tourStopMarkers || !tourStopMarkers.length) return
+
+    const markers = tourStopMarkers.flatMap((item) => {
+      // Khi đã hoàn thành đi đến điểm dừng, không vẽ marker màu vàng đậm nữa
+      if (item.isVisited) return []
+      if (!item.latitude || !item.longitude || !Number.isFinite(item.latitude) || !Number.isFinite(item.longitude)) return []
+
+      const el = document.createElement('div')
+      el.className = 'visited-stop-marker'
+      el.innerHTML = `
+        <div class="visited-stop-badge">#${item.stopIndex}</div>
+        <div class="visited-stop-name">${item.name}</div>
+      `
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([item.longitude, item.latitude])
+        .addTo(map)
+
+      return [marker]
+    })
+
+    return () => {
+      markers.forEach((marker) => marker.remove())
+    }
+  }, [tourStopMarkers])
+
+
+
+
+
 
   useEffect(() => {
     setPickFeedback('')
@@ -585,61 +712,128 @@ export function RouteMap({
     return () => window.removeEventListener('keydown', cancel)
   }, [onPickTargetChange, pickTarget])
 
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    map.resize()
+    if (isSidebarCollapsed) {
+      const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+      if (bounds) {
+        map.fitBounds(bounds, { padding: 48, maxZoom: 12.0, duration: 450 })
+      }
+    }
+  }, [boundary, graph, isSidebarCollapsed])
+
   function resetView() {
     const map = mapRef.current
     const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
     if (map && bounds) {
       map.setMaxBounds(bounds)
-      map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
+      map.fitBounds(bounds, { padding: 52, maxZoom: isSidebarCollapsed ? 12.0 : 16.0, duration: 500 })
     }
   }
 
   return (
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
-      <div ref={containerRef} className="route-map" aria-label="Bản đồ graph FloodRoute" />
-      <div className="map-pick-toolbar" aria-label="Chọn điểm trên bản đồ">
-        <button
-          type="button"
-          className="pick-start"
-          aria-pressed={pickTarget === 'START'}
-          onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
-        >
-          Chọn START
-        </button>
-        <button
-          type="button"
-          className="pick-goal"
-          aria-pressed={pickTarget === 'GOAL'}
-          onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
-        >
-          Chọn GOAL
-        </button>
-        {pickTarget && (
-          <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
-            Hủy chọn
-          </button>
-        )}
-      </div>
-      {pickTarget && (
-        <div className="map-pick-hint">
-          {pickFeedback || `Click node hoặc vị trí trên bản đồ để đặt ${pickTarget} · Esc để hủy`}
+      <div ref={containerRef} className="route-map" aria-label={t('map_aria', lang)} />
+      {!hideEndpoints && (
+        <div className="map-pick-toolbar" aria-label={t('pick_toolbar', lang)}>
+          {isTourMode ? (
+            <button
+              type="button"
+              className="pick-start"
+              aria-pressed={pickTarget === 'START'}
+              onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+            >
+              {pickTarget === 'START' ? t('picking_start_goal', lang) : t('pick_start_goal_action', lang)}
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="pick-start"
+                aria-pressed={pickTarget === 'START'}
+                onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+              >
+                {t('pick_start', lang)}
+              </button>
+              <button
+                type="button"
+                className="pick-goal"
+                aria-pressed={pickTarget === 'GOAL'}
+                onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
+              >
+                {t('pick_goal', lang)}
+              </button>
+            </>
+          )}
+          {pickTarget && (
+            <button type="button" className="pick-cancel" onClick={() => onPickTargetChange(null)}>
+              {t('cancel', lang)}
+            </button>
+          )}
         </div>
       )}
-      <button
-        type="button"
-        className="map-reset-button"
-        title="Đưa bản đồ về toàn vùng Thủ Đức"
-        aria-label="Đưa bản đồ về toàn vùng Thủ Đức"
-        onClick={resetView}
-      >
-        <img src={recenterGraphIcon} alt="" aria-hidden="true" />
-      </button>
+      {pickTarget && (
+        <div className="map-pick-hint">
+          {pickFeedback || (isTourMode ? t('pick_hint_tour', lang) : t('pick_hint_generic', lang, { target: pickTarget }))}
+        </div>
+      )}
+      <div className="map-controls-group">
+        <button
+          type="button"
+          className="map-legend-toggle-btn"
+          title={t('legend_title', lang)}
+          aria-label={t('legend_title', lang)}
+          aria-expanded={showMapLegendPopover}
+          onClick={() => setShowMapLegendPopover((prev) => !prev)}
+        >
+          <span className="legend-icon" aria-hidden="true">📌</span>
+          <span className="legend-label">{t('legend_title', lang)}</span>
+          <span className="legend-chevron" aria-hidden="true">▾</span>
+        </button>
+        <button
+          type="button"
+          className="map-reset-button"
+          title={t('reset_view', lang)}
+          aria-label={t('reset_view', lang)}
+          onClick={resetView}
+        >
+          <img src={recenterGraphIcon} alt="" aria-hidden="true" />
+        </button>
+      </div>
+      {showMapLegendPopover && (
+        <div className="map-legend-popover" role="dialog" aria-label={t('legend_title', lang)}>
+          <div className="popover-header">
+            <strong>📌 {t('legend_title', lang)}</strong>
+            <button
+              type="button"
+              className="close-popover-btn"
+              onClick={() => setShowMapLegendPopover(false)}
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="popover-legend-items">
+            <span className="legend-item legend-item--open"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+            <span className="legend-item legend-item--node"><i className="legend-node" />{t('legend_node', lang)}</span>
+            <span className="legend-item legend-item--path"><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
+            <span className="legend-item legend-item--boundary"><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
+          </div>
+        </div>
+      )}
       {(basemapWarning || boundaryWarning) && (
         <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
       )}
       <div className="map-note">
-        {graph.data_status} · {graph.nodes.length.toLocaleString('vi-VN')} node ·{' '}
-        {graph.edges.length.toLocaleString('vi-VN')} edge
+        <span className="map-note-dot" />
+        <span className="map-note-status">{graph.data_status}</span>
+        <span className="map-note-sep">·</span>
+        <span className="map-note-stats">
+          {graph.nodes.length.toLocaleString(lang)} nodes · {graph.edges.length.toLocaleString(lang)} edges
+        </span>
       </div>
     </div>
   )

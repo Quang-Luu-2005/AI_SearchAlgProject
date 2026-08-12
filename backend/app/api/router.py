@@ -18,16 +18,20 @@ from ..core.contracts import (
 )
 from ..core.graph import GraphLoader
 from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT, THU_DUC_BOUNDARY
+from ..optimization import TourOptimizerService
 from ..services import SearchService
 from .models import (
     CompareRequest,
     CompareResponse,
     ErrorResponse,
     LocationsResponse,
+    OptimizeTourRequest,
+    OptimizeTourResponse,
     ScenariosResponse,
     SearchRequest,
     SearchResponse,
 )
+
 
 
 router = APIRouter()
@@ -349,6 +353,41 @@ def compare(payload: CompareRequest) -> dict[str, object]:
         "scenario": payload.scenario,
         "results": [_search_response(execution, graph) for execution in executions],
     }
+
+
+@router.post(
+    "/optimize-tour",
+    tags=["optimization"],
+    response_model=OptimizeTourResponse,
+    responses={404: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
+)
+def optimize_tour(payload: OptimizeTourRequest) -> dict[str, object]:
+    """Optimize delivery tour sequence across 1-10 stops using Held-Karp DP and Nearest Neighbor."""
+    _, graph, limitations = _load_graph(payload.graph_id)
+    try:
+        service = TourOptimizerService(graph)
+        res = service.optimize_tour(
+            depot=payload.depot,
+            stops=payload.stops,
+            scenario_id=payload.scenario,
+            algorithm=payload.algorithm,
+            tour_algorithm=payload.tour_algorithm,
+            return_to_depot=payload.return_to_depot,
+        )
+    except (
+        AlgorithmNotFoundError,
+        CostModelError,
+        NodeNotFoundError,
+        RouteNotFoundError,
+        ScenarioNotFoundError,
+        ValueError,
+    ) as error:
+        _raise_search_http_error(error)
+
+    res_dict = res.to_dict()
+    res_dict["scenario"] = payload.scenario
+    res_dict["limitations"] = list(graph.metadata.get("limitations", []))
+    return res_dict
 
 
 @router.get("/graphs/{graph_id:path}", tags=["graph"])

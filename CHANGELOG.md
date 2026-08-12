@@ -7,6 +7,17 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Tự động điều chỉnh thu phóng bản đồ khi thu gọn Panel ở chế độ Desktop để thước đo tỷ lệ scale hiển thị chính xác mốc **`5 km`**.
+- Xóa / Ẩn dòng chữ thông tin bản quyền và nguồn dữ liệu bản đồ (`Map Attribution` / `.dataset-attribution`) khỏi giao diện bản đồ.
+- Triển khai Giao diện Responsive Đa Thiết Bị (Mobile < 640px, Tablet < 1024px, Desktop > 1024px) toàn bộ ứng dụng FloodRoute HCMC.
+- Triển khai Bảng điều khiển dạng Side Drawer trượt Off-Canvas trên màn hình di động/máy tính bảng kèm Nút Hamburger menu `☰` và Lớp phủ mờ (`.mobile-drawer-backdrop`).
+- Tích hợp `ResizeObserver` căn chỉnh tự động canvas MapLibre GL JS khi chuyển đổi viewport hoặc ẩn/hiện drawer.
+- Tối ưu hóa giao diện responsive cho Trace Player, Bảng chặng tour đa điểm (`.legs-table`), Lưới so sánh thuật toán (`.tour-guarantee-comparison`) và Modal Phím tắt.
+- Triển khai Hệ thống Đa ngôn ngữ (i18n) hai chế độ Tiếng Anh (Mặc định - `en`) và Tiếng Việt (`vi`) toàn bộ giao diện FloodRoute HCMC.
+- Bổ sung Nút chuyển đổi ngôn ngữ `🌐 EN / VI` trên Topbar với cơ chế lưu trạng thái tự động vào `localStorage`.
+- Bổ sung module từ điển tập trung [`frontend/src/lib/i18n.ts`](file:///c:/Users/jason/MyStorages/Admin/Built-In/Apps/Desktop/Int2AI_Lab01/AI_SearchAlgProject/frontend/src/lib/i18n.ts) và bộ kiểm thử Vitest `i18n.test.ts` & `LanguageToggle.test.tsx` (45/45 tests passing).
+
+- Triển khai Service/API tối ưu hóa lộ trình giao hàng qua 5–10 điểm (`POST /api/v1/optimize-tour`): tính toán `PairwiseMatrix` cho $N$ điểm, giải thuật chính xác **Held-Karp DP** ($O(N^2 \cdot 2^N)$), giải thuật xấp xỉ **Nearest Neighbor**, đo % Approximation Gap, ghép nối subpath liên tục không lặp nút và bộ unit test suite `TC04_MULTI_STOP`.
 - Refactor toàn bộ [`backend/app/algorithms/weighted.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/backend/app/algorithms/weighted.py) thành kiến trúc modular: tách `haversine_distance_km`, `compute_geographic_heuristic` ($h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}$), hàm lõi `_weighted_search` và entry points `uniform_cost_search`, `a_star_search`. Đã chứng minh toán học tính Admissible, Consistency, 100% Global Optimality và Completeness kèm ADR-0012 và unit test suite mới.
 - Triển khai quy trình dữ liệu OSM 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed) chuẩn hóa: raw snapshot `thu_duc_osm_v1.0.0`, interim topology `data/interim/osm_thu_duc_v1.0.0/` (27 nodes, 40 edges), script tái tạo [`scripts/data/build_osm_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/build_osm_dataset.py), SHA-256 checksums, metadata và cập nhật validator.
 - UI map scope cố định về `thu_duc_landmarks_v1.0.0` với đúng 65 selectable landmark;

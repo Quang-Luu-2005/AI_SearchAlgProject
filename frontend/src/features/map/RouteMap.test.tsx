@@ -44,8 +44,12 @@ const maplibreMock = vi.hoisted(() => {
     layerDefinitions = new Map<string, Record<string, unknown>>()
     addControl = vi.fn()
     remove = vi.fn()
+    resize = vi.fn()
     fitBounds = vi.fn()
     flyTo = vi.fn()
+    easeTo = vi.fn()
+    setLight = vi.fn()
+    getStyle = vi.fn(() => ({ layers: [] }))
     setStyle = vi.fn()
     getZoom = vi.fn(() => 14)
     setCenter = vi.fn()
@@ -103,9 +107,9 @@ vi.mock('maplibre-gl', () => ({
   Marker: maplibreMock.FakeMarker,
   Popup: maplibreMock.FakePopup,
   LngLatBounds: maplibreMock.FakeBounds,
-  NavigationControl: class {},
-  ScaleControl: class {},
-  AttributionControl: class {},
+  NavigationControl: class { },
+  ScaleControl: class { },
+  AttributionControl: class { },
 }))
 
 const graph: GraphPayload = {
@@ -232,6 +236,7 @@ describe('MapLibre RouteMap', () => {
         pickTarget={null}
         onNodePick={vi.fn()}
         onPickTargetChange={onPickTargetChange}
+        lang="vi"
       />,
     )
 

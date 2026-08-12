@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fetchLocations, runComparison, runSearch } from './search'
+import { fetchLocations, optimizeTour, runComparison, runSearch } from './search'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -61,4 +61,22 @@ describe('BE-03 frontend client', () => {
       algorithms: ['UCS', 'A_STAR'],
     })
   })
+
+  it('calls optimizeTour API for multi-stop tour optimization', async () => {
+    const fetchMock = mockJson({ guarantee: 'OPTIMAL_HELD_KARP' })
+    const input = {
+      graph_id: 'toy_graph_v0.1',
+      depot: 'N01',
+      stops: ['N02', 'N03', 'N04', 'N05', 'N06'],
+      scenario: 'OFFPEAK_BALANCED',
+    }
+
+    await optimizeTour(input)
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/optimize-tour',
+      expect.objectContaining({ method: 'POST', body: JSON.stringify(input) }),
+    )
+  })
 })
+
