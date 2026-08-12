@@ -92,9 +92,27 @@ export function TracePlayer({
       </div>
 
       <div className="player-timeline">
-        <div className="step-counter-badge">
-          <span>{t('trace_step', lang)}</span>
-          <strong>{safeStep} / {totalSteps}</strong>
+        <div className="player-timeline-meta">
+          <div className="step-counter-badge">
+            <span>{t('trace_step', lang)}</span>
+            <strong>{safeStep} / {totalSteps}</strong>
+          </div>
+
+          <div className="speed-selector-group">
+            <label htmlFor="speed-select">{t('trace_speed', lang)}:</label>
+            <select
+              id="speed-select"
+              className="speed-select"
+              value={playbackSpeed}
+              onChange={handleSpeedSelect}
+              aria-label="Trace playback speed"
+            >
+              <option value={1}>1x</option>
+              <option value={2}>2x</option>
+              <option value={5}>5x</option>
+              <option value={10}>10x</option>
+            </select>
+          </div>
         </div>
 
         <input
@@ -106,22 +124,6 @@ export function TracePlayer({
           onChange={handleSliderChange}
           aria-label="Trace step slider"
         />
-
-        <div className="speed-selector-group">
-          <label htmlFor="speed-select">{t('trace_speed', lang)}:</label>
-          <select
-            id="speed-select"
-            className="speed-select"
-            value={playbackSpeed}
-            onChange={handleSpeedSelect}
-            aria-label="Trace playback speed"
-          >
-            <option value={1}>1x</option>
-            <option value={2}>2x</option>
-            <option value={5}>5x</option>
-            <option value={10}>10x</option>
-          </select>
-        </div>
       </div>
 
       {currentEvent && (

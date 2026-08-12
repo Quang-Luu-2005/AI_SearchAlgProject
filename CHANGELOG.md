@@ -7,6 +7,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Tự động điều chỉnh thu phóng bản đồ khi thu gọn Panel ở chế độ Desktop để thước đo tỷ lệ scale hiển thị chính xác mốc **`5 km`**.
+- Xóa / Ẩn dòng chữ thông tin bản quyền và nguồn dữ liệu bản đồ (`Map Attribution` / `.dataset-attribution`) khỏi giao diện bản đồ.
+- Triển khai Giao diện Responsive Đa Thiết Bị (Mobile < 640px, Tablet < 1024px, Desktop > 1024px) toàn bộ ứng dụng FloodRoute HCMC.
+- Triển khai Bảng điều khiển dạng Side Drawer trượt Off-Canvas trên màn hình di động/máy tính bảng kèm Nút Hamburger menu `☰` và Lớp phủ mờ (`.mobile-drawer-backdrop`).
+- Tích hợp `ResizeObserver` căn chỉnh tự động canvas MapLibre GL JS khi chuyển đổi viewport hoặc ẩn/hiện drawer.
+- Tối ưu hóa giao diện responsive cho Trace Player, Bảng chặng tour đa điểm (`.legs-table`), Lưới so sánh thuật toán (`.tour-guarantee-comparison`) và Modal Phím tắt.
 - Triển khai Hệ thống Đa ngôn ngữ (i18n) hai chế độ Tiếng Anh (Mặc định - `en`) và Tiếng Việt (`vi`) toàn bộ giao diện FloodRoute HCMC.
 - Bổ sung Nút chuyển đổi ngôn ngữ `🌐 EN / VI` trên Topbar với cơ chế lưu trạng thái tự động vào `localStorage`.
 - Bổ sung module từ điển tập trung [`frontend/src/lib/i18n.ts`](file:///c:/Users/jason/MyStorages/Admin/Built-In/Apps/Desktop/Int2AI_Lab01/AI_SearchAlgProject/frontend/src/lib/i18n.ts) và bộ kiểm thử Vitest `i18n.test.ts` & `LanguageToggle.test.tsx` (45/45 tests passing).

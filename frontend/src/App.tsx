@@ -133,6 +133,7 @@ export function App() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
   const [lang, setLang] = useState<Language>(getInitialLanguage)
 
   useEffect(() => {
@@ -170,6 +171,7 @@ export function App() {
       } else if (event.key === 'Escape') {
         if (pickTarget) setPickTarget(null)
         if (isShortcutsOpen) setIsShortcutsOpen(false)
+        if (isMobileDrawerOpen) setIsMobileDrawerOpen(false)
       }
     }
 
@@ -543,6 +545,16 @@ export function App() {
     }
   }
 
+  function moveTourStop(fromIndex: number, toIndex: number) {
+    if (fromIndex < 0 || fromIndex >= tourStops.length) return
+    if (toIndex < 0 || toIndex >= tourStops.length) return
+    if (fromIndex === toIndex) return
+    const updated = [...tourStops]
+    const [movedItem] = updated.splice(fromIndex, 1)
+    updated.splice(toIndex, 0, movedItem)
+    setTourStops(updated)
+  }
+
   function handleStopDragStart(event: React.DragEvent, index: number) {
     setDraggedIndex(index)
     event.dataTransfer.effectAllowed = 'move'
@@ -559,11 +571,13 @@ export function App() {
 
   function handleStopDrop(event: React.DragEvent, targetIndex: number) {
     event.preventDefault()
-    if (draggedIndex !== null && draggedIndex !== targetIndex) {
-      const updated = [...tourStops]
-      const [movedItem] = updated.splice(draggedIndex, 1)
-      updated.splice(targetIndex, 0, movedItem)
-      setTourStops(updated)
+    const data = event.dataTransfer.getData('text/plain')
+    let fromIndex = draggedIndex
+    if (data !== '' && !isNaN(Number(data))) {
+      fromIndex = Number(data)
+    }
+    if (fromIndex !== null && fromIndex !== undefined && !isNaN(fromIndex)) {
+      moveTourStop(fromIndex, targetIndex)
     }
     setDraggedIndex(null)
     setDragOverIndex(null)
@@ -591,6 +605,15 @@ export function App() {
     <div className="app-shell">
       <header className="topbar">
         <div className="brand-block">
+          <button
+            type="button"
+            className="mobile-menu-btn"
+            onClick={() => setIsMobileDrawerOpen((prev) => !prev)}
+            title="Menu"
+            aria-label="Toggle menu"
+          >
+            ☰
+          </button>
           <strong>PathFinder AI</strong>
           <span>FloodRoute HCMC</span>
         </div>
@@ -614,9 +637,6 @@ export function App() {
             {isSidebarCollapsed ? `▶ ${t('expand_sidebar', lang)}` : `◀ ${t('collapse_sidebar', lang)}`}
           </button>
           <LanguageToggle lang={lang} onLanguageChange={setLang} />
-          <button className="clear-button" type="button" onClick={clearBoard}>
-            {t('clear_results', lang)}
-          </button>
           <button
             className="top-run-button"
             type="button"
@@ -631,9 +651,26 @@ export function App() {
       </header>
 
       <div className={`workspace${isSidebarCollapsed ? ' is-sidebar-collapsed' : ''}`}>
-        <aside className={`control-panel${isSidebarCollapsed ? ' is-collapsed' : ''}`}>
+        {isMobileDrawerOpen && (
+          <div
+            className="mobile-drawer-backdrop"
+            onClick={() => setIsMobileDrawerOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+        <aside className={`control-panel${isSidebarCollapsed ? ' is-collapsed' : ''}${isMobileDrawerOpen ? ' is-mobile-open' : ''}`}>
           <div className="panel-heading">
-            <h1>{t('panel_title', lang)}</h1>
+            <div className="panel-title-row">
+              <h1>{t('panel_title', lang)}</h1>
+              <button
+                type="button"
+                className="mobile-drawer-close-btn"
+                onClick={() => setIsMobileDrawerOpen(false)}
+                aria-label="Close menu"
+              >
+                ✕
+              </button>
+            </div>
             <p>{t('panel_subtitle', lang)}</p>
           </div>
 
@@ -709,15 +746,48 @@ export function App() {
                           onDragOver={(event) => handleStopDragOver(event, idx)}
                           onDrop={(event) => handleStopDrop(event, idx)}
                           onDragEnd={handleStopDragEnd}
-                          title="Kéo thả để di chuyển thứ tự điểm dừng"
+                          title="Kéo thả hoặc dùng nút ▲ ▼ để thay đổi thứ tự điểm dừng"
                         >
                           <span className="drag-handle" aria-hidden="true">⋮⋮</span>
-                          <small>#{idx + 1}</small> {loc ? loc.name : stopId}
+                          <small>#{idx + 1}</small>
+                          <span className="stop-name-text">{loc ? loc.name : stopId}</span>
+                          <div className="stop-reorder-btns">
+                            <button
+                              type="button"
+                              className="reorder-btn move-up"
+                              title="Di chuyển lên trước"
+                              aria-label={`Di chuyển ${loc ? loc.name : stopId} lên trước`}
+                              disabled={idx === 0}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                moveTourStop(idx, idx - 1)
+                              }}
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              className="reorder-btn move-down"
+                              title="Di chuyển xuống sau"
+                              aria-label={`Di chuyển ${loc ? loc.name : stopId} xuống sau`}
+                              disabled={idx === tourStops.length - 1}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                moveTourStop(idx, idx + 1)
+                              }}
+                            >
+                              ▼
+                            </button>
+                          </div>
                           <button
                             type="button"
                             className="remove-chip-btn"
                             title="Xóa điểm dừng"
-                            onClick={() => setTourStops(tourStops.filter((_, i) => i !== idx))}
+                            aria-label={`Xóa điểm dừng ${loc ? loc.name : stopId}`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setTourStops(tourStops.filter((_, i) => i !== idx))
+                            }}
                           >
                             ×
                           </button>
@@ -769,16 +839,23 @@ export function App() {
               </div>
             )}
 
-            <button className="generate-button" type="button" onClick={reloadGraph}>
-              <span aria-hidden="true">⌘</span>
-              {t('reload_graph', lang)}
-            </button>
+            <div className="panel-actions-group">
+              <button className="generate-button" type="button" onClick={reloadGraph}>
+                <span aria-hidden="true">⌘</span>
+                {t('reload_graph', lang)}
+              </button>
+              <button className="panel-clear-button" type="button" onClick={clearBoard}>
+                <span aria-hidden="true">🗑️</span>
+                {t('clear_results', lang)}
+              </button>
+            </div>
             <button
               className="mobile-run-button"
               type="submit"
               disabled={!canRun}
               title={!algorithm ? t('select_alg_first', lang) : !startId ? t('select_start_first', lang) : t('run_algorithm', lang)}
             >
+              <span aria-hidden="true">▷</span>
               {running ? t('running', lang) : t('run_algorithm', lang)}
             </button>
           </form>
@@ -861,12 +938,18 @@ export function App() {
             ) : (
               <div className="map-placeholder">{t('panel_subtitle', lang)}</div>
             )}
-            <div className="legend">
-              <span><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
-              <span><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
-              <span><i className="legend-node" />{t('legend_node', lang)}</span>
-              <span><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
-              <span><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
+            <div className="legend" aria-label={t('legend_title', lang)}>
+              <div className="legend-header">
+                <span className="legend-icon" aria-hidden="true">📌</span>
+                <strong>{t('legend_title', lang)}</strong>
+              </div>
+              <div className="legend-items">
+                <span className="legend-item"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
+                <span className="legend-item"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+                <span className="legend-item"><i className="legend-node" />{t('legend_node', lang)}</span>
+                <span className="legend-item"><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
+                <span className="legend-item"><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
+              </div>
             </div>
             {loading && <div className="loading-overlay">{t('running', lang)}</div>}
             {isPlaying && result && (
@@ -925,15 +1008,6 @@ export function App() {
             </>
           )}
 
-          {selectedGraph?.graph_id?.startsWith('processed/thu_duc_') && (
-            <p className="dataset-attribution">
-              Traffic/road paths: UTraffic/HCMUT · POI/boundary{' '}
-              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
-                OpenStreetMap
-              </a>{' '}
-              contributors
-            </p>
-          )}
 
           {/* <section className="metrics-bar" aria-label="Route search metrics">
             <div className="metric-chip"><span>Algorithm</span><strong>{algorithm || '—'}</strong></div>

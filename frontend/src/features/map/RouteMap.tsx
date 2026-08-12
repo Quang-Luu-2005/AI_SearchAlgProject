@@ -415,6 +415,7 @@ export function RouteMap({
   const [styleRevision, setStyleRevision] = useState(0)
   const [basemapWarning, setBasemapWarning] = useState('')
   const [pickFeedback, setPickFeedback] = useState('')
+  const [showMapLegendPopover, setShowMapLegendPopover] = useState(false)
 
   pickTargetRef.current = pickTarget
   onNodePickRef.current = onNodePick
@@ -449,10 +450,6 @@ export function RouteMap({
     mapRef.current = map
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
     map.addControl(new maplibregl.ScaleControl({ unit: 'metric', maxWidth: 400 }), 'bottom-left')
-    map.addControl(new maplibregl.AttributionControl({
-      compact: true,
-      customAttribution: 'Basemap © OpenFreeMap · © OpenStreetMap contributors',
-    }), 'bottom-right')
 
     const onStyleLoad = () => {
       styleReadyRef.current = true
@@ -715,12 +712,24 @@ export function RouteMap({
     return () => window.removeEventListener('keydown', cancel)
   }, [onPickTargetChange, pickTarget])
 
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    map.resize()
+    if (isSidebarCollapsed) {
+      const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
+      if (bounds) {
+        map.fitBounds(bounds, { padding: 48, maxZoom: 12.0, duration: 450 })
+      }
+    }
+  }, [boundary, graph, isSidebarCollapsed])
+
   function resetView() {
     const map = mapRef.current
     const bounds = boundaryContextBounds(boundary) ?? graphContextBounds(graph)
     if (map && bounds) {
       map.setMaxBounds(bounds)
-      map.fitBounds(bounds, { padding: 52, maxZoom: 16, duration: 500 })
+      map.fitBounds(bounds, { padding: 52, maxZoom: isSidebarCollapsed ? 12.0 : 16.0, duration: 500 })
     }
   }
 
@@ -773,6 +782,18 @@ export function RouteMap({
       <div className="map-controls-group">
         <button
           type="button"
+          className="map-legend-toggle-btn"
+          title={t('legend_title', lang)}
+          aria-label={t('legend_title', lang)}
+          aria-expanded={showMapLegendPopover}
+          onClick={() => setShowMapLegendPopover((prev) => !prev)}
+        >
+          <span className="legend-icon" aria-hidden="true">📌</span>
+          <span className="legend-label">{t('legend_title', lang)}</span>
+          <span className="legend-chevron" aria-hidden="true">▾</span>
+        </button>
+        <button
+          type="button"
           className="map-reset-button"
           title={t('reset_view', lang)}
           aria-label={t('reset_view', lang)}
@@ -781,12 +802,38 @@ export function RouteMap({
           <img src={recenterGraphIcon} alt="" aria-hidden="true" />
         </button>
       </div>
+      {showMapLegendPopover && (
+        <div className="map-legend-popover" role="dialog" aria-label={t('legend_title', lang)}>
+          <div className="popover-header">
+            <strong>📌 {t('legend_title', lang)}</strong>
+            <button
+              type="button"
+              className="close-popover-btn"
+              onClick={() => setShowMapLegendPopover(false)}
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="popover-legend-items">
+            <span className="legend-item legend-item--open"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+            <span className="legend-item legend-item--node"><i className="legend-node" />{t('legend_node', lang)}</span>
+            <span className="legend-item legend-item--path"><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
+            <span className="legend-item legend-item--boundary"><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
+          </div>
+        </div>
+      )}
       {(basemapWarning || boundaryWarning) && (
         <div className="basemap-warning" role="status">{basemapWarning || boundaryWarning}</div>
       )}
       <div className="map-note">
-        {graph.data_status} · {graph.nodes.length.toLocaleString(lang)} node ·{' '}
-        {graph.edges.length.toLocaleString(lang)} edge
+        <span className="map-note-dot" />
+        <span className="map-note-status">{graph.data_status}</span>
+        <span className="map-note-sep">·</span>
+        <span className="map-note-stats">
+          {graph.nodes.length.toLocaleString(lang)} nodes · {graph.edges.length.toLocaleString(lang)} edges
+        </span>
       </div>
     </div>
   )
