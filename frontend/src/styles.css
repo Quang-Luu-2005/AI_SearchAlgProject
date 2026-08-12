@@ -850,7 +850,7 @@ select:focus {
   border-color: rgba(245, 158, 11, 0.35);
 }
 
-.map-pick-toolbar .pick-start:hover {
+.map-pick-toolbar .pick-start:hover:not(:disabled) {
   background: #fef3c7;
   border-color: #f59e0b;
 }
@@ -868,7 +868,7 @@ select:focus {
   border-color: rgba(236, 72, 153, 0.35);
 }
 
-.map-pick-toolbar .pick-goal:hover {
+.map-pick-toolbar .pick-goal:hover:not(:disabled) {
   background: #fce7f3;
   border-color: #ec4899;
 }

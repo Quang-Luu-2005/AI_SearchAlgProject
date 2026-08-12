@@ -89,6 +89,10 @@ GOAL màu hồng, không làm thay đổi camera hiện tại. Edge hiển thị
 đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính vẫn cho phép
 chạy thuật toán.
 
+Với Held-Karp/Nearest Neighbor/tour comparison, START chọn depot còn GOAL thêm nhiều
+điểm giao hàng. Chế độ GOAL giữ hoạt động để click liên tiếp tối đa 10 stop; các stop
+được đánh số và hiển thị ngay trên bản đồ trước khi chạy.
+
 Bản đồ vẽ đường đỏ theo snapshot ranh TP Thủ Đức cũ. View tổng quan là một hình chữ
 nhật có lề bao trọn polygon ranh thật, nên vẫn thấy được khu vực ngoài biên và các cạnh
 sát ranh. Nút reset đưa camera về rectangle này và camera bị giới hạn trong B, nên không

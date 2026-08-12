@@ -29,6 +29,7 @@ import {
   type ScenarioItem,
   type SearchResult,
 } from './lib/search'
+import { addTourStop, MAX_TOUR_STOPS } from './lib/tourSelection'
 
 
 export function metric(value: number | undefined, digits = 1): string {
@@ -241,12 +242,17 @@ export function App() {
   }, [result, currentStep, locations, tourResult])
 
   const tourStopMarkers = useMemo<TourStopMarker[]>(() => {
-    if (!tourResult || !graph) return []
+    if (!graph) return []
     const nodeById = new Map(graph.nodes.map((n) => [n.node_id, n]))
     const currentVisitedNodes = result ? result.trace.slice(0, currentStep).map((e) => e.node_id) : []
     const visitedSet = new Set(currentVisitedNodes)
+    const orderedStopIds = tourResult
+      ? tourResult.visit_order.filter(
+        (nodeId, index, visitOrder) => nodeId !== startId && visitOrder.indexOf(nodeId) === index,
+      )
+      : tourStops
 
-    return tourResult.visit_order.map((nodeId, idx) => {
+    return orderedStopIds.map((nodeId, idx) => {
       const node = nodeById.get(nodeId)
       const loc = locations.find((l) => l.node_id === nodeId)
       const name = loc ? loc.name : (node?.label || nodeId)
@@ -261,7 +267,7 @@ export function App() {
         isVisited,
       }
     })
-  }, [tourResult, graph, result, currentStep, locations])
+  }, [tourResult, graph, result, currentStep, locations, startId, tourStops])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -410,6 +416,7 @@ export function App() {
     setStartId('') // Reset điểm bắt đầu mỗi khi chuyển thuật toán
     setGoalId('') // Reset điểm đích
     setTourStops([]) // Reset toàn bộ các điểm kết thúc/giao hàng
+    setPickTarget(null)
     clearRouteResult()
   }
 
@@ -433,16 +440,44 @@ export function App() {
 
   function selectStart(nodeId: string) {
     setStartId(nodeId)
+    if (isTourMode) {
+      setTourStops((current) => current.filter((stopId) => stopId !== nodeId))
+    }
+    setError('')
     clearRouteResult()
   }
 
   function selectGoal(nodeId: string) {
     setGoalId(nodeId)
+    setError('')
     clearRouteResult()
+  }
+
+  function selectTourStop(nodeId: string) {
+    const selection = addTourStop(tourStops, startId, nodeId)
+    if (selection.status === 'DEPOT_SELECTED') {
+      setError(t('tour_stop_same_as_depot', lang))
+      return
+    }
+    if (selection.status === 'DUPLICATE') {
+      setError(t('tour_stop_duplicate', lang))
+      return
+    }
+    if (selection.status === 'LIMIT_REACHED') {
+      setError(t('tour_stop_limit', lang, { count: MAX_TOUR_STOPS }))
+      setPickTarget(null)
+      return
+    }
+
+    setTourStops(selection.stops)
+    setError('')
+    clearRouteResult()
+    if (selection.stops.length >= MAX_TOUR_STOPS) setPickTarget(null)
   }
 
   function pickNode(target: EndpointPickTarget, nodeId: string) {
     if (target === 'START') selectStart(nodeId)
+    else if (isTourMode) selectTourStop(nodeId)
     else selectGoal(nodeId)
   }
 
@@ -731,7 +766,7 @@ export function App() {
                   </p>
                 )}
                 <div className="stops-list-container">
-                  <label>{t('stops_header', lang)} ({tourStops.length}/10)</label>
+                  <label>{t('stops_header', lang)} ({tourStops.length}/{MAX_TOUR_STOPS})</label>
                   <div className="stops-chips">
                     {tourStops.map((stopId, idx) => {
                       const loc = locations.find((item) => item.node_id === stopId)
@@ -800,16 +835,12 @@ export function App() {
                       {t('stops_needed', lang, { count: 5 - tourStops.length })}
                     </p>
                   )}
-                  {tourStops.length < 10 && (
+                  {tourStops.length < MAX_TOUR_STOPS && (
                     <LocationPicker
                       label={t('add_stop_label', lang)}
                       value=""
                       locations={locations.filter((item) => item.node_id !== startId && !tourStops.includes(item.node_id))}
-                      onChange={(nodeId) => {
-                        if (nodeId && !tourStops.includes(nodeId)) {
-                          setTourStops([...tourStops, nodeId])
-                        }
-                      }}
+                      onChange={selectTourStop}
                     />
                   )}
                 </div>
@@ -930,6 +961,7 @@ export function App() {
                 activeAnimatedNodeId={currentAnimatedNodeInfo?.nodeId}
                 activeAnimatedNodeLabel={currentAnimatedNodeInfo?.label}
                 tourStopMarkers={tourStopMarkers}
+                tourStopCount={tourStops.length}
                 isTourMode={isTourMode}
                 isSidebarCollapsed={isSidebarCollapsed}
                 hideEndpoints={!algorithm}

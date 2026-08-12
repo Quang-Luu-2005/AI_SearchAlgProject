@@ -23,6 +23,8 @@ describe('i18n module', () => {
   it('interpolates parameters correctly', () => {
     expect(t('stops_needed', 'en', { count: 3 })).toBe('Need to select 3 more stop(s) (minimum 5 delivery stops).')
     expect(t('stops_needed', 'vi', { count: 3 })).toBe('Cần chọn thêm 3 điểm nữa (tối thiểu 5 điểm giao hàng).')
+    expect(t('pick_hint_tour_goal', 'en', { count: 2, max: 10 })).toContain('(2/10)')
+    expect(t('pick_hint_tour_goal', 'vi', { count: 2, max: 10 })).toContain('(2/10)')
   })
 
   it('translates graph label correctly based on selected language', () => {

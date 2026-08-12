@@ -245,6 +245,87 @@ describe('MapLibre RouteMap', () => {
     expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
   })
 
+  it('exposes separate START depot and GOAL stop pick modes for tours', () => {
+    const onPickTargetChange = vi.fn()
+    render(
+      <RouteMap
+        graph={graph}
+        pickTarget={null}
+        onNodePick={vi.fn()}
+        onPickTargetChange={onPickTargetChange}
+        isTourMode
+        tourStopCount={2}
+        lang="vi"
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Chọn START (Depot)' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Thêm GOAL (Điểm dừng)' }))
+    expect(onPickTargetChange.mock.calls).toEqual([['START'], ['GOAL']])
+  })
+
+  it('keeps tour GOAL mode active while adding consecutive stops', async () => {
+    const onNodePick = vi.fn()
+    const onPickTargetChange = vi.fn()
+    render(
+      <RouteMap
+        graph={graph}
+        pickTarget="GOAL"
+        onNodePick={onNodePick}
+        onPickTargetChange={onPickTargetChange}
+        isTourMode
+        tourStopCount={1}
+      />,
+    )
+    const map = maplibreMock.FakeMap.instances[0]
+    map.emit('style.load')
+    await waitFor(() => expect(map.layers).toContain('floodroute-node-hitbox'))
+
+    map.emit('click', 'floodroute-node-hitbox', {
+      lngLat: { lng: 106.75, lat: 10.85 },
+      features: [{
+        properties: {
+          node_id: 'N2',
+          display_name: 'Node 2',
+          node_type: 'POI',
+          data_status: 'SIMULATED',
+          label_status: 'SOURCE_BACKED',
+          visual_state: 'normal',
+        },
+      }],
+    })
+
+    expect(onNodePick).toHaveBeenCalledWith('GOAL', 'N2')
+    expect(onPickTargetChange).not.toHaveBeenCalled()
+  })
+
+  it('renders selected tour stops before execution as safe text markers', async () => {
+    render(
+      <RouteMap
+        graph={graph}
+        pickTarget={null}
+        onNodePick={vi.fn()}
+        onPickTargetChange={vi.fn()}
+        isTourMode
+        tourStopCount={1}
+        tourStopMarkers={[{
+          nodeId: 'N2',
+          name: '<b>Stop 2</b>',
+          stopIndex: 1,
+          latitude: 10.86,
+          longitude: 106.76,
+          isVisited: false,
+        }]}
+      />,
+    )
+
+    await waitFor(() => expect(maplibreMock.FakeMarker.instances).toHaveLength(1))
+    const marker = maplibreMock.FakeMarker.instances[0].element
+    expect(marker).toHaveTextContent('#1')
+    expect(marker).toHaveTextContent('<b>Stop 2</b>')
+    expect(marker.querySelector('b')).toBeNull()
+  })
+
   it('clamps navigation to the city crop without focusing a selected endpoint', async () => {
     render(
       <RouteMap

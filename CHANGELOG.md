@@ -134,6 +134,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 - Bảo toàn byte của `data/raw/**` bằng `.gitattributes` để checkout trên Windows không
   đổi LF thành CRLF và làm sai checksum SHA-256 của manifest.
+- Sửa map picker cho tour đa điểm: START chọn depot, GOAL thêm liên tiếp tối đa 10 stop,
+  chặn điểm trùng và hiển thị marker đánh số ngay trước khi chạy thuật toán.
 
 ### Planned
 

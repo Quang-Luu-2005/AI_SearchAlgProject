@@ -9,6 +9,7 @@ import {
 } from 'maplibre-gl'
 import recenterGraphIcon from '../../assets/recenter-graph.png'
 import type { GraphPayload, ThuDucBoundary } from '../../lib/graph'
+import { MAX_TOUR_STOPS } from '../../lib/tourSelection'
 import {
   buildEdgeFeatureCollection,
   buildNodeFeatureCollection,
@@ -46,6 +47,7 @@ type RouteMapProps = {
   activeAnimatedNodeId?: string | null
   activeAnimatedNodeLabel?: string | null
   tourStopMarkers?: TourStopMarker[]
+  tourStopCount?: number
   hideEndpoints?: boolean
   isTourMode?: boolean
   isSidebarCollapsed?: boolean
@@ -397,6 +399,7 @@ export function RouteMap({
   activeAnimatedNodeId,
   activeAnimatedNodeLabel,
   tourStopMarkers = [],
+  tourStopCount = 0,
   hideEndpoints = false,
   isTourMode = false,
   isSidebarCollapsed = false,
@@ -410,6 +413,7 @@ export function RouteMap({
   const onNodePickRef = useRef(onNodePick)
   const onPickTargetChangeRef = useRef(onPickTargetChange)
   const graphRef = useRef(graph)
+  const isTourModeRef = useRef(isTourMode)
   const fallbackAppliedRef = useRef(false)
   const styleReadyRef = useRef(false)
   const [styleRevision, setStyleRevision] = useState(0)
@@ -421,6 +425,7 @@ export function RouteMap({
   onNodePickRef.current = onNodePick
   onPickTargetChangeRef.current = onPickTargetChange
   graphRef.current = graph
+  isTourModeRef.current = isTourMode
 
   const edgeData = useMemo(() => buildEdgeFeatureCollection(graph), [graph])
   const nodeData = useMemo(() => buildNodeFeatureCollection(graph, {
@@ -490,8 +495,11 @@ export function RouteMap({
       if (!properties) return
       const target = pickTargetRef.current
       if (target) {
+        setPickFeedback('')
         onNodePickRef.current(target, properties.node_id)
-        onPickTargetChangeRef.current(null)
+        if (!(isTourModeRef.current && target === 'GOAL')) {
+          onPickTargetChangeRef.current(null)
+        }
       }
       clickPopupRef.current?.remove()
       clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
@@ -522,8 +530,11 @@ export function RouteMap({
       )
       if (!feature) return
 
+      setPickFeedback('')
       onNodePickRef.current(target, snap.nodeId)
-      onPickTargetChangeRef.current(null)
+      if (!(isTourModeRef.current && target === 'GOAL')) {
+        onPickTargetChangeRef.current(null)
+      }
       clickPopupRef.current?.remove()
       clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
         .setLngLat([snap.longitude, snap.latitude])
@@ -680,10 +691,13 @@ export function RouteMap({
 
       const el = document.createElement('div')
       el.className = 'visited-stop-marker'
-      el.innerHTML = `
-        <div class="visited-stop-badge">#${item.stopIndex}</div>
-        <div class="visited-stop-name">${item.name}</div>
-      `
+      const badge = document.createElement('div')
+      badge.className = 'visited-stop-badge'
+      badge.textContent = `#${item.stopIndex}`
+      const name = document.createElement('div')
+      name.className = 'visited-stop-name'
+      name.textContent = item.name
+      el.append(badge, name)
 
       const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat([item.longitude, item.latitude])
@@ -739,14 +753,25 @@ export function RouteMap({
       {!hideEndpoints && (
         <div className="map-pick-toolbar" aria-label={t('pick_toolbar', lang)}>
           {isTourMode ? (
-            <button
-              type="button"
-              className="pick-start"
-              aria-pressed={pickTarget === 'START'}
-              onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
-            >
-              {pickTarget === 'START' ? t('picking_start_goal', lang) : t('pick_start_goal_action', lang)}
-            </button>
+            <>
+              <button
+                type="button"
+                className="pick-start"
+                aria-pressed={pickTarget === 'START'}
+                onClick={() => onPickTargetChange(pickTarget === 'START' ? null : 'START')}
+              >
+                {pickTarget === 'START' ? t('picking_tour_start', lang) : t('pick_tour_start', lang)}
+              </button>
+              <button
+                type="button"
+                className="pick-goal"
+                aria-pressed={pickTarget === 'GOAL'}
+                disabled={tourStopCount >= MAX_TOUR_STOPS}
+                onClick={() => onPickTargetChange(pickTarget === 'GOAL' ? null : 'GOAL')}
+              >
+                {pickTarget === 'GOAL' ? t('picking_tour_goal', lang) : t('pick_tour_goal', lang)}
+              </button>
+            </>
           ) : (
             <>
               <button
@@ -776,7 +801,11 @@ export function RouteMap({
       )}
       {pickTarget && (
         <div className="map-pick-hint">
-          {pickFeedback || (isTourMode ? t('pick_hint_tour', lang) : t('pick_hint_generic', lang, { target: pickTarget }))}
+          {pickFeedback || (isTourMode
+            ? pickTarget === 'START'
+              ? t('pick_hint_tour_start', lang)
+              : t('pick_hint_tour_goal', lang, { count: tourStopCount, max: MAX_TOUR_STOPS })
+            : t('pick_hint_generic', lang, { target: pickTarget }))}
         </div>
       )}
       <div className="map-controls-group">

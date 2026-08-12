@@ -35,6 +35,11 @@ trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark ed
 8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
 benchmark riêng.
 
+Ở tour mode, map picker ánh xạ START vào depot và GOAL vào danh sách stop. GOAL mode
+không tự đóng sau mỗi click để người dùng chọn liên tiếp, nhưng từ chối depot, stop trùng
+và stop thứ 11. Marker stop được đánh số theo thứ tự nhập trước khi chạy, rồi chuyển sang
+thứ tự tour tối ưu/heuristic khi có kết quả.
+
 Frontend map scope chỉ giữ catalog row `processed/thu_duc_landmarks_v1.0.0`. Pilot 90 node
 và capacity graph vẫn tồn tại qua API/script benchmark, nhưng không được trình bày trong
 dropdown map vì không đúng mục tiêu 65 landmark hiện tại.
