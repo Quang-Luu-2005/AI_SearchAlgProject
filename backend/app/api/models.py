@@ -117,7 +117,11 @@ class CompareResponse(BaseModel):
 
 class OptimizeTourRequest(BaseModel):
     depot: str = Field(min_length=1, examples=["N01"])
-    stops: list[str] = Field(min_length=5, max_length=10, examples=[["N02", "N03", "N04", "N05", "N06"]])
+    stops: list[str] = Field(
+        min_length=5,
+        max_length=10,
+        examples=[["N02", "N03", "N04", "N05", "N06"]],
+    )
     scenario: str = Field(min_length=1, examples=["HEAVY_RAIN_SAFE"])
     graph_id: str = Field(default="toy_graph_v0.1", min_length=1)
     algorithm: str = Field(default="A_STAR", min_length=1)
@@ -128,9 +132,12 @@ class OptimizeTourRequest(BaseModel):
         "json_schema_extra": {
             "example": {
                 "depot": "N01",
-                "stops": ["N02", "N03", "N05"],
+                "stops": ["N02", "N03", "N04", "N05", "N06"],
                 "scenario": "HEAVY_RAIN_SAFE",
                 "graph_id": "toy_graph_v0.1",
+                "algorithm": "A_STAR",
+                "tour_algorithm": "HELD_KARP",
+                "return_to_depot": True,
             }
         }
     }

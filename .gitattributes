@@ -1,0 +1,3 @@
+# Raw dataset snapshots are byte-exact inputs with manifest SHA-256 checksums.
+# Do not let Git rewrite their line endings on checkout on any platform.
+data/raw/** -text

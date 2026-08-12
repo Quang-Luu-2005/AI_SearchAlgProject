@@ -49,7 +49,9 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 ```
 
 `graph_id` is optional and defaults to `toy_graph_v0.1`. Initial algorithm names
-are `UCS` and `A_STAR`; A* currently uses admissible `h=0`.
+are `UCS` and `A_STAR`; A* uses the admissible and consistent scenario-weighted
+geographic Haversine heuristic from ADR-0012, with `h=0` fallback when coordinates
+are unavailable.
 
 The response includes `path`, `edge_ids`, `metrics`, `trace`, `guarantee`,
 `explanation`, `edge_breakdown`, `data_status` and `limitations`. Fixture results
@@ -68,15 +70,21 @@ same graph and cost engine.
 ```json
 {
   "depot": "N01",
-  "stops": ["N02", "N03", "N05"],
+  "stops": ["N02", "N03", "N04", "N05", "N06"],
   "scenario": "HEAVY_RAIN_SAFE",
   "graph_id": "toy_graph_v0.1",
   "algorithm": "A_STAR",
+  "tour_algorithm": "HELD_KARP",
   "return_to_depot": true
 }
 ```
 
-The request supports 1 to 10 delivery stops. The service computes a pairwise cost/distance matrix using the search engine, solves exact DP Held-Karp and Nearest Neighbor heuristic, measures % approximation gap, and returns seamless stitched subpaths, total distance, total cost, comparison metrics, guarantee (`OPTIMAL_HELD_KARP`), and structured explanation.
+The request requires 5 to 10 unique delivery stops; the depot must not be repeated
+in `stops`. `tour_algorithm` accepts `HELD_KARP` or `NEAREST_NEIGHBOR`. The service
+computes a directed pairwise cost/distance matrix using the search engine, solves
+exact DP Held-Karp and the Nearest Neighbor heuristic, measures the approximation
+gap, and returns stitched subpaths, totals, comparison metrics, guarantee, and a
+structured explanation.
 
 
 ## Errors
@@ -86,6 +94,7 @@ The request supports 1 to 10 delivery stops. The service computes a pairwise cos
 | Unknown node or scenario | 404 |
 | No directed route in the active scenario | 404 |
 | Invalid algorithm or cost configuration | 422 |
+| Duplicate tour point or unsupported tour algorithm | 422 |
 | Missing/invalid request field | 422 |
 
 Error responses use `{ "detail": "actionable message" }`.

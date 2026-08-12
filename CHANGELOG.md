@@ -15,11 +15,19 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Tối ưu hóa giao diện responsive cho Trace Player, Bảng chặng tour đa điểm (`.legs-table`), Lưới so sánh thuật toán (`.tour-guarantee-comparison`) và Modal Phím tắt.
 - Triển khai Hệ thống Đa ngôn ngữ (i18n) hai chế độ Tiếng Anh (Mặc định - `en`) và Tiếng Việt (`vi`) toàn bộ giao diện FloodRoute HCMC.
 - Bổ sung Nút chuyển đổi ngôn ngữ `🌐 EN / VI` trên Topbar với cơ chế lưu trạng thái tự động vào `localStorage`.
-- Bổ sung module từ điển tập trung [`frontend/src/lib/i18n.ts`](file:///c:/Users/jason/MyStorages/Admin/Built-In/Apps/Desktop/Int2AI_Lab01/AI_SearchAlgProject/frontend/src/lib/i18n.ts) và bộ kiểm thử Vitest `i18n.test.ts` & `LanguageToggle.test.tsx` (45/45 tests passing).
+- Bổ sung module từ điển tập trung [`frontend/src/lib/i18n.ts`](frontend/src/lib/i18n.ts)
+  và bộ kiểm thử Vitest `i18n.test.ts` cùng `LanguageToggle.test.tsx`.
 
 - Triển khai Service/API tối ưu hóa lộ trình giao hàng qua 5–10 điểm (`POST /api/v1/optimize-tour`): tính toán `PairwiseMatrix` cho $N$ điểm, giải thuật chính xác **Held-Karp DP** ($O(N^2 \cdot 2^N)$), giải thuật xấp xỉ **Nearest Neighbor**, đo % Approximation Gap, ghép nối subpath liên tục không lặp nút và bộ unit test suite `TC04_MULTI_STOP`.
-- Refactor toàn bộ [`backend/app/algorithms/weighted.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/backend/app/algorithms/weighted.py) thành kiến trúc modular: tách `haversine_distance_km`, `compute_geographic_heuristic` ($h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}$), hàm lõi `_weighted_search` và entry points `uniform_cost_search`, `a_star_search`. Đã chứng minh toán học tính Admissible, Consistency, 100% Global Optimality và Completeness kèm ADR-0012 và unit test suite mới.
-- Triển khai quy trình dữ liệu OSM 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed) chuẩn hóa: raw snapshot `thu_duc_osm_v1.0.0`, interim topology `data/interim/osm_thu_duc_v1.0.0/` (27 nodes, 40 edges), script tái tạo [`scripts/data/build_osm_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/build_osm_dataset.py), SHA-256 checksums, metadata và cập nhật validator.
+- Refactor toàn bộ [`backend/app/algorithms/weighted.py`](backend/app/algorithms/weighted.py)
+  thành kiến trúc modular: tách `haversine_distance_km`, `compute_geographic_heuristic`
+  ($h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}$), hàm lõi `_weighted_search` và
+  entry points `uniform_cost_search`, `a_star_search`; kèm ADR-0012 và unit test mới.
+- Triển khai quy trình dữ liệu OSM 3 lớp (raw $\rightarrow$ interim $\rightarrow$ processed)
+  chuẩn hóa: raw snapshot `thu_duc_osm_v1.0.0`, interim topology
+  `data/interim/osm_thu_duc_v1.0.0/` (27 nodes, 40 edges), script tái tạo
+  [`scripts/data/build_osm_dataset.py`](scripts/data/build_osm_dataset.py), SHA-256
+  checksums, metadata và cập nhật validator.
 - UI map scope cố định về `thu_duc_landmarks_v1.0.0` với đúng 65 selectable landmark;
   processed pilot 90 node và capacity graph không còn xuất hiện trong dropdown map.
 
@@ -85,6 +93,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Changed
 
+- Tích hợp PR #2 vào `main`, hoàn thiện trạng thái tài liệu cho Held-Karp/Nearest
+  Neighbor, endpoint optimize-tour và heuristic Haversine của A*.
+- Chuẩn hóa hợp đồng optimize-tour: 5–10 stop duy nhất, depot không lặp trong stops và
+  chỉ chấp nhận `HELD_KARP`/`NEAREST_NEIGHBOR`; bổ sung ADR-0013 cùng test regression.
+
 - Frontend map renderer chuyển từ React Leaflet/nền CSS sang MapLibre WebGL; backend,
   graph schema, cost model và processed dataset giữ nguyên.
 
@@ -116,6 +129,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Chuẩn hóa dev startup bằng `npm run dev`: dùng Python từ `.venv`, chạy Vite
   đúng frontend root, khởi động/dừng đồng thời backend và frontend; vẫn hỗ trợ
   hai lệnh chạy riêng.
+
+### Fixed
+
+- Bảo toàn byte của `data/raw/**` bằng `.gitattributes` để checkout trên Windows không
+  đổi LF thành CRLF và làm sai checksum SHA-256 của manifest.
 
 ### Planned
 

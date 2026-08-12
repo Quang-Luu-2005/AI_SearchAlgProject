@@ -2,6 +2,7 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-13 | [Merge và hậu kiểm PR #2 trên main](2026-08-13-merge-pr-2-main-review.md) | Hoàn tất |
 | 2026-08-12 | [Card OPT — Pairwise Matrix, Held-Karp, Nearest Neighbor & TC04_MULTI_STOP](2026-08-12-card-opt-multi-stop.md) | Hoàn tất |
 | 2026-08-07 | [Thay UI Stitch và tích hợp Backend API](2026-08-07-stitch-ui-integration.md) | Hoàn tất |
 | 2026-08-07 | [Hot reload cho dev server](2026-08-07-hot-reload.md) | Hoàn tất |

@@ -259,8 +259,9 @@ Invoke-RestMethod `
 
 Mở `http://localhost:8000/docs`, chọn `POST /api/v1/search`, bấm **Try it out**
 và **Execute** để kiểm tra cùng example trong Swagger. Registry hiện hỗ trợ
-`UCS` và `A_STAR`; A* dùng `h=0` nên có cùng optimality guarantee với UCS nhưng
-chưa có lợi thế heuristic.
+`UCS` và `A_STAR`; A* dùng heuristic khoảng cách Haversine nhân trọng số distance
+của scenario, fallback về `h=0` khi node thiếu tọa độ. Theo ADR-0012, heuristic
+này admissible/consistent và giữ optimality guarantee với cost không âm.
 
 ## 8. Nạp graph trực tiếp bằng Python
 

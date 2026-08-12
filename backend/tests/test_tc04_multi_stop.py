@@ -185,6 +185,54 @@ def test_tc04_api_fewer_than_5_stops_validation() -> None:
     assert response.status_code == 422
 
 
+@pytest.mark.parametrize(
+    ("stops", "expected_detail"),
+    [
+        (
+            ["N02", "N03", "N04", "N05", "N05"],
+            "Delivery stops must contain unique node IDs",
+        ),
+        (
+            ["N01", "N02", "N03", "N04", "N05"],
+            "Depot must not also appear in delivery stops",
+        ),
+    ],
+)
+def test_tc04_api_rejects_repeated_tour_points(
+    stops: list[str], expected_detail: str
+) -> None:
+    response = client.post(
+        "/api/v1/optimize-tour",
+        json={
+            "depot": "N01",
+            "stops": stops,
+            "scenario": "OFFPEAK_BALANCED",
+            "graph_id": "toy_graph_v0.1",
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == expected_detail
+
+
+def test_tc04_api_rejects_unknown_tour_algorithm() -> None:
+    response = client.post(
+        "/api/v1/optimize-tour",
+        json={
+            "depot": "N01",
+            "stops": ["N02", "N03", "N04", "N05", "N06"],
+            "scenario": "OFFPEAK_BALANCED",
+            "graph_id": "toy_graph_v0.1",
+            "tour_algorithm": "UNKNOWN",
+        },
+    )
+
+    assert response.status_code == 422
+    assert "Available tour algorithms: HELD_KARP, NEAREST_NEIGHBOR" in response.json()[
+        "detail"
+    ]
+
+
 def test_tc04_api_optimize_tour_nearest_neighbor() -> None:
     response = client.post(
         "/api/v1/optimize-tour",

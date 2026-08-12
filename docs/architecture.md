@@ -108,13 +108,19 @@ Engine nhận graph contract, không import FastAPI và không mutate graph.
 | `GET /api/v1/locations` | Có | Node/POI có thể chọn |
 | `GET /api/v1/scenarios` | Có | Scenario và cost preset |
 | `POST /api/v1/search` | Có | Two-point result + trace |
-| `POST /api/v1/optimize-tour` | Sau search | Visiting order + subpaths |
+| `POST /api/v1/optimize-tour` | Có | Visiting order + subpaths |
 | `POST /api/v1/compare` | Có | Cùng input, nhiều thuật toán |
 
 API search dùng Pydantic schema trong `backend/app/api/models.py`, gọi
 `SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS` và
-`A_STAR`; A* dùng `h=0` để giữ admissible/consistent cho cost đa thành phần. Chi
-tiết request, response và error status xem [api.md](api.md).
+`A_STAR`; A* dùng heuristic khoảng cách Haversine nhân trọng số distance của scenario,
+fallback về `h=0` khi node thiếu tọa độ. Heuristic giữ admissible/consistent cho cost đa
+thành phần theo ADR-0012. Chi tiết request, response và error status xem [api.md](api.md).
+
+Tour optimizer nhận depot và 5–10 stop duy nhất, không cho depot lặp trong stops. Ma trận
+chi phí có hướng được tạo qua cùng `SearchService` và scenario cost, sau đó Held-Karp tìm
+nghiệm chính xác còn Nearest Neighbor cung cấp nghiệm heuristic để so sánh. Tên thuật toán
+tour ngoài `HELD_KARP` và `NEAREST_NEIGHBOR` bị từ chối thay vì fallback ngầm.
 
 ## Graph Loader contract
 

@@ -362,7 +362,7 @@ def compare(payload: CompareRequest) -> dict[str, object]:
     responses={404: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
 )
 def optimize_tour(payload: OptimizeTourRequest) -> dict[str, object]:
-    """Optimize delivery tour sequence across 1-10 stops using Held-Karp DP and Nearest Neighbor."""
+    """Optimize 5-10 unique delivery stops using Held-Karp DP or Nearest Neighbor."""
     _, graph, limitations = _load_graph(payload.graph_id)
     try:
         service = TourOptimizerService(graph)

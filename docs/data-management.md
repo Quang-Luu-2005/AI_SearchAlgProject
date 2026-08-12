@@ -151,6 +151,9 @@ python scripts/data/validate_dataset.py
 
 Validator hiện kiểm tra checksum raw workbook, unique ID, foreign key, distance/time
 dương, nhãn fixture, tổng trọng số, edge closure và tính hợp lệ của golden path.
+Các snapshot dưới `data/raw/` được đánh dấu `-text` trong `.gitattributes` để Git không
+đổi LF/CRLF khi checkout; nhờ đó SHA-256 luôn được tính trên đúng byte đã freeze trên
+Windows, macOS và Linux. Đây chỉ là bảo vệ byte, không cho phép sửa trực tiếp raw dataset.
 
 ## Graph loader và format
 

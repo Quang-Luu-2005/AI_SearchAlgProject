@@ -6,7 +6,7 @@
 
 ## Tóm tắt công việc
 
-1. **Refactor Modular Code trong [`backend/app/algorithms/weighted.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/backend/app/algorithms/weighted.py):**
+1. **Refactor Modular Code trong [`backend/app/algorithms/weighted.py`](../../backend/app/algorithms/weighted.py):**
    - Tách biệt trợ lý tính khoảng cách WGS84 `haversine_distance_km(lat1, lon1, lat2, lon2)`.
    - Xây dựng hàm heuristic địa lý độc lập `compute_geographic_heuristic(graph, cost_engine, node_id, goal_id, scenario_id)` với công thức $h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}(n, \text{goal})$.
    - Đóng gói hàm lõi `_weighted_search()` nhận `heuristic_fn` động và quản lý Priority Queue (`heapq`).
@@ -20,8 +20,8 @@
    - **Tính Complete (Đầy đủ):** Tìm thấy lời giải nếu tồn tại đường đi trên đồ thị hữu hạn có chi phí cạnh bị chặn dưới $c(e) \ge \epsilon > 0$.
 
 3. **ADR & Unit Tests:**
-   - Đã tạo [ADR-0012](file:///c:/Study/foundation_AI/AI_SearchAlgProject/docs/decisions/0012-geographic-weighted-haversine-heuristic.md).
-   - Đã viết unit test suite [`backend/tests/test_weighted_algorithms.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/backend/tests/test_weighted_algorithms.py).
+   - Đã tạo [ADR-0012](../decisions/0012-geographic-weighted-haversine-heuristic.md).
+   - Đã viết unit test suite [`backend/tests/test_weighted_algorithms.py`](../../backend/tests/test_weighted_algorithms.py).
 
 ## Kết quả kiểm thử
 

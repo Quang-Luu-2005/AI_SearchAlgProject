@@ -144,9 +144,9 @@ npm test
 | Fixture/golden cases | Hoàn tất |
 | Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
-| UCS và A* (`h=0`) | Hoàn tất |
+| UCS và A* (heuristic Haversine có trọng số) | Hoàn tất |
 | BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
-| Held-Karp/Nearest Neighbor | Chưa thực hiện |
+| Held-Karp/Nearest Neighbor (tour 5–10 điểm) | Hoàn tất |
 
 Ưu tiên tiếp theo là hai reviewer xác nhận flood map-match; không tuyên bố kết quả
 định tuyến thực tế khi `routing_dataset_status` vẫn là `REVIEW_REQUIRED`.

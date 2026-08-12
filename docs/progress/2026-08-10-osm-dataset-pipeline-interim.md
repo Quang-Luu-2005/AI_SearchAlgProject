@@ -19,8 +19,8 @@
    - Xuất gói release chuẩn hóa gồm `nodes.csv`, `edges.csv`, `scenarios.json` (`HISTORICAL_OFFPEAK`, `PEAK_CONGESTION`, `HEAVY_FLOOD_RAIN`), `delivery_points.csv`, `metadata.json`, `checksums.sha256`, `validation_report.json`.
 
 4. **Script tái tạo & Kiểm định (`scripts/data/`):**
-   - Tạo script Python thuần [`scripts/data/build_osm_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/build_osm_dataset.py).
-   - Cập nhật [`scripts/data/validate_dataset.py`](file:///c:/Study/foundation_AI/AI_SearchAlgProject/scripts/data/validate_dataset.py) và `dataset_manifest.json`.
+   - Tạo script Python thuần [`scripts/data/build_osm_dataset.py`](../../scripts/data/build_osm_dataset.py).
+   - Cập nhật [`scripts/data/validate_dataset.py`](../../scripts/data/validate_dataset.py) và `dataset_manifest.json`.
 
 ## Kết quả kiểm thử
 

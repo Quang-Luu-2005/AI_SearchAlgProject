@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for BE-03.
+Superseded in part by ADR-0012 for the A* heuristic. The API contract remains accepted.
 
 ## Context
 

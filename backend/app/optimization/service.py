@@ -5,9 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from ..core.contracts import Graph, NodeNotFoundError, RouteNotFoundError
+from ..core.contracts import Graph, NodeNotFoundError
 from .held_karp import HeldKarpSolver
-from .matrix import PairwiseMatrix, PairwiseSubpath
+from .matrix import PairwiseMatrix
 from .nearest_neighbor import NearestNeighborSolver
 
 
@@ -116,8 +116,23 @@ class TourOptimizerService:
         if len(stops) > 10:
             raise ValueError("Tour optimization supports up to 10 delivery stops per request")
 
-        # Validate unique stop nodes and existence in graph
-        all_points = [depot] + list(stops)
+        normalized_tour_algorithm = tour_algorithm.strip().upper()
+        supported_tour_algorithms = {"HELD_KARP", "NEAREST_NEIGHBOR"}
+        if normalized_tour_algorithm not in supported_tour_algorithms:
+            available = ", ".join(sorted(supported_tour_algorithms))
+            raise ValueError(
+                f"Unknown tour algorithm: {tour_algorithm}. "
+                f"Available tour algorithms: {available}"
+            )
+
+        stop_ids = tuple(stops)
+        if depot in stop_ids:
+            raise ValueError("Depot must not also appear in delivery stops")
+        if len(set(stop_ids)) != len(stop_ids):
+            raise ValueError("Delivery stops must contain unique node IDs")
+
+        # Validate stop existence in graph after enforcing the request contract.
+        all_points = [depot, *stop_ids]
         for node_id in all_points:
             if not self._graph.has_node(node_id):
                 raise NodeNotFoundError(f"Stop node '{node_id}' not found in graph")
@@ -157,8 +172,7 @@ class TourOptimizerService:
         )
 
         # Select indices based on tour_algorithm choice
-        normalized_alg = tour_algorithm.upper()
-        if normalized_alg == "NEAREST_NEIGHBOR":
+        if normalized_tour_algorithm == "NEAREST_NEIGHBOR":
             selected_indices = nn_indices
             selected_cost = nn_cost
             guarantee = "APPROXIMATE_NEAREST_NEIGHBOR"
