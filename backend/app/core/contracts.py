@@ -649,6 +649,8 @@ class AlgorithmName(StrEnum):
     A_STAR = "A_STAR"
     BFS = "BFS"
     DFS = "DFS"
+    GREEDY = "GREEDY"
+    BIDIRECTIONAL = "BIDIRECTIONAL"
 
 
 @dataclass(frozen=True, slots=True)
