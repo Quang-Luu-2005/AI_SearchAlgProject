@@ -36,6 +36,9 @@ def bidirectional_search(
     for edge in graph.list_edges(scenario_id):
         rev_adj[edge.to_node_id].append((edge.from_node_id, edge.edge_id))
 
+    for n_id in rev_adj:
+        rev_adj[n_id].sort(key=lambda x: x[0])
+
     q_fwd: deque[str] = deque([start])
     q_bwd: deque[str] = deque([goal])
     
@@ -63,6 +66,10 @@ def bidirectional_search(
         curr_fwd = q_fwd.popleft()
         expanded_count += 1
         record(TraceEventKind.EXPAND, curr_fwd, "forward")
+
+        neighbors_fwd = sorted(graph.neighbors(curr_fwd, scenario_id), key=lambda e: e.to_node_id)
+        for edge in neighbors_fwd:
+            nxt = edge.to_node_id
         
         for edge in graph.neighbors(curr_fwd, scenario_id):
             nxt = edge.to_node_id

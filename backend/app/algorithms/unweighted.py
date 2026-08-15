@@ -15,7 +15,6 @@ from ..core.contracts import (
 from ..core.cost import ScenarioCostEngine
 from .weighted import _reconstruct_path
 
-
 def _unweighted_search(
     graph: Graph,
     cost_engine: ScenarioCostEngine,
@@ -29,7 +28,6 @@ def _unweighted_search(
     graph.get_node(goal)
     graph.scenario(scenario_id)
 
-    # Sử dụng deque chung: popleft() cho BFS (Queue) và pop() cho DFS (Stack)
     frontier: deque[str] = deque([start])
     parents: dict[str, tuple[str, str]] = {}
     expanded: set[str] = set()
@@ -62,14 +60,12 @@ def _unweighted_search(
     record(TraceEventKind.OPEN, start)
     
     while frontier:
-        # Phân nhánh cấu trúc dữ liệu theo thuật toán
         node_id = (
             frontier.popleft() 
             if algorithm == AlgorithmName.BFS 
             else frontier.pop()
         )
 
-        # Lazy deletion: bỏ qua nếu đã từng được mở rộng
         if node_id in expanded:
             continue
 
@@ -92,8 +88,7 @@ def _unweighted_search(
                 guarantee=guarantee,
             )
 
-        # Đảo ngược danh sách kề cho DFS để giữ đúng luật deterministic tie-break khi pop
-        neighbors = list(graph.neighbors(node_id, scenario_id))
+        neighbors = sorted(graph.neighbors(node_id, scenario_id), key=lambda e: e.to_node_id)
         if algorithm == AlgorithmName.DFS:
             neighbors.reverse()
 
@@ -102,7 +97,6 @@ def _unweighted_search(
                 continue
 
             if algorithm == AlgorithmName.BFS:
-                # BFS: Chỉ đẩy vào Queue và ghi nhận parent nếu node này chưa từng được thấy (bảo đảm đường ngắn nhất theo hop)
                 if edge.to_node_id not in parents:
                     parents[edge.to_node_id] = (node_id, edge.edge_id)
                     frontier.append(edge.to_node_id)
@@ -113,7 +107,6 @@ def _unweighted_search(
                         details={"edge_id": edge.edge_id},
                     )
             else:
-                # DFS: Luôn đẩy vào Stack để đâm sâu, cập nhật lại parent để lùi ngược (backtrack) chính xác
                 parents[edge.to_node_id] = (node_id, edge.edge_id)
                 frontier.append(edge.to_node_id)
                 record(
@@ -129,7 +122,6 @@ def _unweighted_search(
     raise RouteNotFoundError(
         f"No route from {start} to {goal} in scenario {scenario_id}"
     )
-
 
 def breadth_first_search(
     graph: Graph,
@@ -147,7 +139,6 @@ def breadth_first_search(
         algorithm=AlgorithmName.BFS,
     )
 
-
 def depth_first_search(
     graph: Graph,
     cost_engine: ScenarioCostEngine,
@@ -163,7 +154,6 @@ def depth_first_search(
         scenario_id,
         algorithm=AlgorithmName.DFS,
     )
-
 
 __all__ = [
     "breadth_first_search",

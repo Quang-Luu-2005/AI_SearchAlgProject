@@ -27,7 +27,7 @@ def greedy_best_first_search(
     graph.scenario(scenario_id)
 
     start_h = compute_geographic_heuristic(graph, cost_engine, start, goal, scenario_id)
-    frontier: list[tuple[float, int, str]] = [(start_h, 0, start)]
+    frontier: list[tuple[float, str]] = [(start_h, start)]
     
     parents: dict[str, tuple[str, str]] = {}
     expanded: set[str] = set()
@@ -37,7 +37,11 @@ def greedy_best_first_search(
     step = 0
 
     def record(
-        kind: TraceEventKind, node_id: str, parent_id: str | None = None, h_cost: float | None = None
+        kind: TraceEventKind,
+        node_id: str,
+        parent_id: str | None = None,
+        h_cost: float | None = None,
+        details: dict[str, object] | None = None
     ) -> None:
         nonlocal step
         trace.append(
@@ -50,7 +54,7 @@ def greedy_best_first_search(
     record(TraceEventKind.OPEN, start, h_cost=start_h)
 
     while frontier:
-        current_h, _, node_id = heapq.heappop(frontier)
+        current_h, node_id = heapq.heappop(frontier)
 
         if node_id in expanded:
             continue
@@ -83,7 +87,7 @@ def greedy_best_first_search(
             if neighbor not in visited_h:
                 visited_h[neighbor] = h_val
                 parents[neighbor] = (node_id, edge.edge_id)
-                heapq.heappush(frontier, (h_val, step, neighbor))
+                heapq.heappush(frontier, (h_val, neighbor))
                 record(TraceEventKind.OPEN, neighbor, parent_id=node_id, h_cost=h_val)
 
         record(TraceEventKind.CLOSE, node_id, h_cost=current_h)
