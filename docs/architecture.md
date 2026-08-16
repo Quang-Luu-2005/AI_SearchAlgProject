@@ -117,8 +117,9 @@ Engine nhận graph contract, không import FastAPI và không mutate graph.
 | `POST /api/v1/compare` | Có | Cùng input, nhiều thuật toán |
 
 API search dùng Pydantic schema trong `backend/app/api/models.py`, gọi
-`SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS` và
-`A_STAR`; A* dùng heuristic khoảng cách Haversine nhân trọng số distance của scenario,
+`SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS`, `A_STAR`,
+`BFS`, `DFS`, `GREEDY` và `BIDIRECTIONAL`; BFS/DFS dùng neighbor ordering
+deterministic trên graph directed và không mutate graph. A* dùng heuristic khoảng cách Haversine nhân trọng số distance của scenario,
 fallback về `h=0` khi node thiếu tọa độ. Heuristic giữ admissible/consistent cho cost đa
 thành phần theo ADR-0012. Chi tiết request, response và error status xem [api.md](api.md).
 

@@ -149,7 +149,7 @@ npm test
 | Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
 | UCS và A* (heuristic Haversine có trọng số) | Hoàn tất |
-| BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
+| BFS/DFS/Greedy/Bidirectional | BFS/DFS đã tích hợp API/GUI/compare; Greedy/Bidirectional có trong backend registry |
 | Held-Karp/Nearest Neighbor (tour 5–10 điểm) | Hoàn tất |
 
 Ưu tiên tiếp theo là hai reviewer xác nhận flood map-match; không tuyên bố kết quả

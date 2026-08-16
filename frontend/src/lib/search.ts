@@ -1,4 +1,4 @@
-export type Algorithm = 'UCS' | 'A_STAR'
+export type Algorithm = 'UCS' | 'A_STAR' | 'BFS' | 'DFS'
 export type AlgorithmSelection = '' | Algorithm | 'COMPARE' | 'HELD_KARP' | 'NEAREST_NEIGHBOR' | 'OPTIMIZE_TOUR'
 
 
@@ -11,7 +11,6 @@ export type LocationItem = {
   longitude: number | null
   data_status: string
 }
-
 export type ScenarioItem = {
   scenario_id: string
   traffic_scenario: string | null
@@ -111,6 +110,7 @@ export function runSearch(
 
 export function runComparison(
   input: SearchInput,
+  algorithms: Algorithm[] = ['UCS', 'A_STAR', 'BFS', 'DFS'],
   signal?: AbortSignal,
 ): Promise<{
   start: string
@@ -121,7 +121,7 @@ export function runComparison(
   return requestJson('/api/v1/compare', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...input, algorithms: ['UCS', 'A_STAR'] }),
+    body: JSON.stringify({ ...input, algorithms }),
     signal,
   })
 }
@@ -182,4 +182,3 @@ export function optimizeTour(
     signal,
   })
 }
-

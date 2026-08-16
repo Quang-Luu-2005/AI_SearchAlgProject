@@ -30,6 +30,7 @@ def _unweighted_search(
 
     frontier: deque[str] = deque([start])
     parents: dict[str, tuple[str, str]] = {}
+    discovered: set[str] = {start}
     expanded: set[str] = set()
     trace: list[TraceEvent] = []
     step = 0
@@ -58,11 +59,11 @@ def _unweighted_search(
         step += 1
 
     record(TraceEventKind.OPEN, start)
-    
+
     while frontier:
         node_id = (
-            frontier.popleft() 
-            if algorithm == AlgorithmName.BFS 
+            frontier.popleft()
+            if algorithm == AlgorithmName.BFS
             else frontier.pop()
         )
 
@@ -71,7 +72,7 @@ def _unweighted_search(
 
         expanded.add(node_id)
         record(TraceEventKind.EXPAND, node_id)
-        
+
         if node_id == goal:
             record(TraceEventKind.GOAL, node_id)
             path, edge_ids = _reconstruct_path(start, goal, parents)
@@ -93,29 +94,19 @@ def _unweighted_search(
             neighbors.reverse()
 
         for edge in neighbors:
-            if edge.to_node_id in expanded:
+            if edge.to_node_id in discovered:
                 continue
 
-            if algorithm == AlgorithmName.BFS:
-                if edge.to_node_id not in parents:
-                    parents[edge.to_node_id] = (node_id, edge.edge_id)
-                    frontier.append(edge.to_node_id)
-                    record(
-                        TraceEventKind.OPEN,
-                        edge.to_node_id,
-                        parent_id=node_id,
-                        details={"edge_id": edge.edge_id},
-                    )
-            else:
-                parents[edge.to_node_id] = (node_id, edge.edge_id)
-                frontier.append(edge.to_node_id)
-                record(
-                    TraceEventKind.OPEN,
-                    edge.to_node_id,
-                    parent_id=node_id,
-                    details={"edge_id": edge.edge_id},
-                )
-                
+            discovered.add(edge.to_node_id)
+            parents[edge.to_node_id] = (node_id, edge.edge_id)
+            frontier.append(edge.to_node_id)
+            record(
+                TraceEventKind.OPEN,
+                edge.to_node_id,
+                parent_id=node_id,
+                details={"edge_id": edge.edge_id},
+            )
+
         record(TraceEventKind.CLOSE, node_id)
 
     record(TraceEventKind.FAIL, goal, details={"reason": "NO_ROUTE"})

@@ -48,8 +48,8 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 }
 ```
 
-`graph_id` is optional and defaults to `toy_graph_v0.1`. Initial algorithm names
-are `UCS` and `A_STAR`; A* uses the admissible and consistent scenario-weighted
+`graph_id` is optional and defaults to `toy_graph_v0.1`. Supported two-point
+algorithm names are `UCS`, `A_STAR`, `BFS` and `DFS`; A* uses the admissible and consistent scenario-weighted
 geographic Haversine heuristic from ADR-0012, with `h=0` fallback when coordinates
 are unavailable.
 
@@ -60,8 +60,9 @@ are always marked `SIMULATED`.
 ## Compare
 
 `POST /api/v1/compare` accepts the same start, goal and scenario with an
-`algorithms` array. When omitted, it compares `UCS` and `A_STAR` using exactly the
-same graph and cost engine.
+`algorithms` array. When omitted, it compares `UCS` and `A_STAR`; callers may also
+include `BFS` and `DFS`. Every algorithm uses exactly the same graph and scenario
+cost input, and results preserve the request order after duplicate removal.
 
 ## Optimize Tour
 

@@ -44,7 +44,7 @@ describe('BE-03 frontend client', () => {
     )
   })
 
-  it('compares UCS and A* on the same input', async () => {
+  it('compares weighted and unweighted algorithms on the same input', async () => {
     const fetchMock = mockJson({ results: [] })
     const input = {
       graph_id: 'toy_graph_v0.1',
@@ -58,7 +58,7 @@ describe('BE-03 frontend client', () => {
     const request = fetchMock.mock.calls[0][1] as RequestInit
     expect(JSON.parse(request.body as string)).toEqual({
       ...input,
-      algorithms: ['UCS', 'A_STAR'],
+      algorithms: ['UCS', 'A_STAR', 'BFS', 'DFS'],
     })
   })
 

@@ -567,10 +567,10 @@ export function App() {
     }
     try {
       if (algorithm === 'COMPARE') {
-        const payload = await runComparison(input)
+        const payload = await runComparison(input, ['UCS', 'A_STAR', 'BFS', 'DFS'])
         setComparisonResults(payload.results)
         setResult(payload.results[0] ?? null)
-      } else if (algorithm === 'A_STAR' || algorithm === 'UCS') {
+      } else if (algorithm === 'A_STAR' || algorithm === 'UCS' || algorithm === 'BFS' || algorithm === 'DFS') {
         setResult(await runSearch({ ...input, algorithm }))
       }
     } catch (reason) {
@@ -730,6 +730,8 @@ export function App() {
                 <option value="">{t('select_alg_placeholder', lang)}</option>
                 <option value="A_STAR">{t('alg_a_star', lang)}</option>
                 <option value="UCS">{t('alg_ucs', lang)}</option>
+                <option value="BFS">{t('alg_bfs', lang)}</option>
+                <option value="DFS">{t('alg_dfs', lang)}</option>
                 <option value="COMPARE">{t('alg_compare', lang)}</option>
                 <option value="HELD_KARP">{t('alg_held_karp', lang)}</option>
                 <option value="NEAREST_NEIGHBOR">{t('alg_nearest_neighbor', lang)}</option>

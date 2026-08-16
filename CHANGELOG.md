@@ -7,6 +7,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Tích hợp BFS và DFS vào luồng two-point search từ API đến GUI: có lựa chọn thuật toán,
+  chế độ compare UCS/A*/BFS/DFS, trace và test reachable/unreachable/cycle/start=goal.
 - Tự động điều chỉnh thu phóng bản đồ khi thu gọn Panel ở chế độ Desktop để thước đo tỷ lệ scale hiển thị chính xác mốc **`5 km`**.
 - Xóa / Ẩn dòng chữ thông tin bản quyền và nguồn dữ liệu bản đồ (`Map Attribution` / `.dataset-attribution`) khỏi giao diện bản đồ.
 - Triển khai Giao diện Responsive Đa Thiết Bị (Mobile < 640px, Tablet < 1024px, Desktop > 1024px) toàn bộ ứng dụng FloodRoute HCMC.
