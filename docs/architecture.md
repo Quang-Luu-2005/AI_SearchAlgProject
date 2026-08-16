@@ -40,9 +40,9 @@ không tự đóng sau mỗi click để người dùng chọn liên tiếp, nh�
 và stop thứ 11. Marker stop được đánh số theo thứ tự nhập trước khi chạy, rồi chuyển sang
 thứ tự tour tối ưu/heuristic khi có kết quả.
 
-Frontend map scope chỉ giữ catalog row `processed/thu_duc_landmarks_v1.0.0`. Pilot 90 node
-và capacity graph vẫn tồn tại qua API/script benchmark, nhưng không được trình bày trong
-dropdown map vì không đúng mục tiêu 65 landmark hiện tại.
+Frontend giữ landmark 65 node làm mặc định và cho phép chọn pilot 90 node để demo ba
+scenario cùng golden route-change. Pilot vẫn hiển thị nguyên trạng `REVIEW_REQUIRED` và
+traffic lịch sử; capacity graph chỉ tồn tại qua API/script benchmark.
 
 Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
 trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%
@@ -98,6 +98,10 @@ explanation)`. Trace dùng các event `OPEN`, `EXPAND`, `RELAX`, `CLOSE`, `GOAL`
 `FAIL`; UI chỉ phát lại danh sách này. Tie-break mặc định: `g` thấp hơn, sau đó
 `node_id` tăng dần.
 
+Reducer replay của frontend ánh xạ event thành ba tập trực quan frontier/current/closed.
+Card metrics và compare đọc trực tiếp distance, ETA, weighted cost, explored count và
+processing time từ response; không tự tính lại đường đi.
+
 `backend/app/core/cost.py` cung cấp `ScenarioCostEngine`, các preset
 `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE` và breakdown bất biến cho edge/route.
 Engine nhận graph contract, không import FastAPI và không mutate graph.
@@ -127,6 +131,8 @@ Tour optimizer nhận depot và 5–10 stop duy nhất, không cho depot lặp t
 chi phí có hướng được tạo qua cùng `SearchService` và scenario cost, sau đó Held-Karp tìm
 nghiệm chính xác còn Nearest Neighbor cung cấp nghiệm heuristic để so sánh. Tên thuật toán
 tour ngoài `HELD_KARP` và `NEAREST_NEIGHBOR` bị từ chối thay vì fallback ngầm.
+Response comparison còn đánh giá thứ tự stop đầu vào trên cùng pairwise matrix để báo
+baseline và savings có thể kiểm chứng.
 
 ## Graph Loader contract
 

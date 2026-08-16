@@ -3,6 +3,7 @@ import { RouteMap, type EndpointPickTarget, type TourStopMarker } from './featur
 import { TracePlayer } from './features/player/TracePlayer'
 import { LanguageToggle } from './features/i18n/LanguageToggle'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
+import { deriveTraceVisualState } from './features/player/traceState'
 import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
 import { getInitialLanguage, t, translateGraphLabel, type Language } from './lib/i18n'
 
@@ -30,6 +31,7 @@ import {
   type SearchResult,
 } from './lib/search'
 import { addTourStop, MAX_TOUR_STOPS } from './lib/tourSelection'
+import { summarizeComparison } from './lib/comparison'
 
 
 export function metric(value: number | undefined, digits = 1): string {
@@ -188,9 +190,13 @@ export function App() {
     () => scenarios.find((item) => item.scenario_id === scenarioId),
     [scenarios, scenarioId],
   )
-  const exploredNodeIds = useMemo(
-    () => result?.trace.slice(0, currentStep).map((event) => event.node_id) ?? [],
+  const traceVisualState = useMemo(
+    () => deriveTraceVisualState(result?.trace ?? [], currentStep),
     [result, currentStep],
+  )
+  const comparisonInsight = useMemo(
+    () => summarizeComparison(comparisonResults),
+    [comparisonResults],
   )
   const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
   const canRun = Boolean(
@@ -567,10 +573,10 @@ export function App() {
     }
     try {
       if (algorithm === 'COMPARE') {
-        const payload = await runComparison(input, ['UCS', 'A_STAR', 'BFS', 'DFS'])
+        const payload = await runComparison(input, ['UCS', 'A_STAR', 'BFS', 'DFS', 'GREEDY', 'BIDIRECTIONAL'])
         setComparisonResults(payload.results)
         setResult(payload.results[0] ?? null)
-      } else if (algorithm === 'A_STAR' || algorithm === 'UCS' || algorithm === 'BFS' || algorithm === 'DFS') {
+      } else if (algorithm === 'A_STAR' || algorithm === 'UCS' || algorithm === 'BFS' || algorithm === 'DFS' || algorithm === 'GREEDY' || algorithm === 'BIDIRECTIONAL') {
         setResult(await runSearch({ ...input, algorithm }))
       }
     } catch (reason) {
@@ -732,6 +738,8 @@ export function App() {
                 <option value="UCS">{t('alg_ucs', lang)}</option>
                 <option value="BFS">{t('alg_bfs', lang)}</option>
                 <option value="DFS">{t('alg_dfs', lang)}</option>
+                <option value="GREEDY">{t('alg_greedy', lang)}</option>
+                <option value="BIDIRECTIONAL">{t('alg_bidirectional', lang)}</option>
                 <option value="COMPARE">{t('alg_compare', lang)}</option>
                 <option value="HELD_KARP">{t('alg_held_karp', lang)}</option>
                 <option value="NEAREST_NEIGHBOR">{t('alg_nearest_neighbor', lang)}</option>
@@ -954,7 +962,9 @@ export function App() {
                 pathEdgeIds={result?.edge_ids}
                 visiblePathEdgeCount={visiblePathEdgeCount}
                 pathNodeIds={result?.path.slice(0, visiblePathEdgeCount + 1)}
-                exploredNodeIds={exploredNodeIds}
+                frontierNodeIds={traceVisualState.frontierNodeIds}
+                closedNodeIds={traceVisualState.closedNodeIds}
+                currentNodeId={traceVisualState.currentNodeId}
                 startId={startId}
                 goalId={goalId}
                 pickTarget={pickTarget}
@@ -981,6 +991,9 @@ export function App() {
                 <span className="legend-item"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
                 <span className="legend-item"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
                 <span className="legend-item"><i className="legend-node" />{t('legend_node', lang)}</span>
+                <span className="legend-item"><i className="legend-node legend-node--frontier" />{t('legend_frontier', lang)}</span>
+                <span className="legend-item"><i className="legend-node legend-node--current" />{t('legend_current', lang)}</span>
+                <span className="legend-item"><i className="legend-node legend-node--closed" />{t('legend_closed', lang)}</span>
                 <span className="legend-item"><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
                 <span className="legend-item"><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
               </div>
@@ -1043,26 +1056,35 @@ export function App() {
           )}
 
 
-          {/* <section className="metrics-bar" aria-label="Route search metrics">
-            <div className="metric-chip"><span>Algorithm</span><strong>{algorithm || '—'}</strong></div>
-            <div className="metric-chip"><span>Scenario</span><strong>{scenarioId || '—'}</strong></div>
-            <div className="metric-chip"><span>Nodes Visited</span><strong>{result?.metrics.explored_nodes ?? 0}</strong></div>
-            <div className="metric-chip"><span>Path Length (km)</span><strong>{metric(result?.metrics.distance_km, 2)}</strong></div>
-            <div className="metric-chip"><span>ETA (min)</span><strong>{metric(result?.metrics.estimated_time_min, 2)}</strong></div>
-            <div className="metric-chip"><span>Total Cost</span><strong>{metric(result?.metrics.total_cost, 2)}</strong></div>
-          </section> */}
+          {result && (
+            <section className="metrics-bar" aria-label="Route search metrics">
+              <div className="metric-chip"><span>{t('metric_algorithm', lang)}</span><strong>{result.algorithm}</strong></div>
+              <div className="metric-chip"><span>{t('explored_nodes', lang)}</span><strong>{result.metrics.explored_nodes}</strong></div>
+              <div className="metric-chip"><span>{t('dist_total', lang)}</span><strong>{metric(result.metrics.distance_km, 2)} km</strong></div>
+              <div className="metric-chip"><span>{t('time_eta', lang)}</span><strong>{metric(result.metrics.estimated_time_min, 2)} min</strong></div>
+              <div className="metric-chip"><span>{t('total_cost', lang)}</span><strong>{metric(result.metrics.total_cost, 3)}</strong></div>
+              <div className="metric-chip"><span>{t('metric_runtime', lang)}</span><strong>{metric(result.metrics.processing_time_ms, 3)} ms</strong></div>
+            </section>
+          )}
 
           {error && <div className="error-banner" role="alert">{error}</div>}
 
           {comparisonResults.length > 0 && (
-            <section className="comparison-grid" aria-label="Comparison results">
-              {comparisonResults.map((item) => (
+            <section className="comparison-section" aria-label="Comparison results">
+              {comparisonInsight && <p className="comparison-insight">{t('comparison_insight', lang, {
+                cost: comparisonInsight.bestCost.algorithm,
+                distance: comparisonInsight.shortest.algorithm,
+                time: comparisonInsight.fastest.algorithm,
+                routes: comparisonInsight.distinctRouteCount,
+              })}</p>}
+              <div className="comparison-grid">{comparisonResults.map((item) => (
                 <button key={item.algorithm} type="button" onClick={() => setResult(item)}>
                   <span>{item.algorithm}</span>
                   <strong>{item.metrics.total_cost.toFixed(3)} cost</strong>
+                  <small>{item.metrics.distance_km.toFixed(2)} km · {item.metrics.estimated_time_min.toFixed(2)} min</small>
                   <small>{item.metrics.explored_nodes} nodes · {item.metrics.processing_time_ms.toFixed(3)} ms</small>
                 </button>
-              ))}
+              ))}</div>
             </section>
           )}
 
@@ -1072,6 +1094,16 @@ export function App() {
                 <span className="tour-kicker">{t('tour_kicker', lang)} · {tourResult.scenario}</span>
                 <h3>{t('tour_route', lang)} {tourResult.visit_order.join(' → ')}</h3>
                 <p>{tourResult.explanation}</p>
+              </div>
+              <div className="tour-baseline-card">
+                <h4>{t('original_order_title', lang)}</h4>
+                <p>{tourResult.comparison.original_visit_order.join(' → ')}</p>
+                <div className="tour-summary-box">
+                  <div className="comp-item"><span>{t('total_cost', lang)}</span><strong>{tourResult.comparison.original_order_cost.toFixed(3)}</strong></div>
+                  <div className="comp-item"><span>{t('dist_total', lang)}</span><strong>{tourResult.comparison.original_order_distance_km.toFixed(2)} km</strong></div>
+                  <div className="comp-item"><span>{t('time_eta', lang)}</span><strong>{tourResult.comparison.original_order_time_min.toFixed(2)} min</strong></div>
+                  <div className="comp-item"><span>{t('tour_savings', lang)}</span><strong>{tourResult.comparison.selected_savings_cost.toFixed(3)} ({tourResult.comparison.selected_savings_percent.toFixed(2)}%)</strong></div>
+                </div>
               </div>
               {algorithm === 'OPTIMIZE_TOUR' ? (
                 <div className="tour-guarantee-comparison" aria-label="Guarantee comparison">

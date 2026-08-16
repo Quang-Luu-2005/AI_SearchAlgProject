@@ -11,6 +11,7 @@
     "test:backend": "node scripts/python.mjs -m pytest backend/tests",
     "test:data": "node scripts/python.mjs scripts/data/validate_dataset.py",
     "benchmark:capacity": "node scripts/python.mjs scripts/benchmark_capacity.py",
+    "benchmark:search": "node scripts/python.mjs scripts/benchmark_search.py --output experiments/results/search_benchmark_v1.json",
     "test": "npm run test:data && npm run test:backend && npm run test:frontend"
   }
 }

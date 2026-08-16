@@ -1,6 +1,5 @@
 # Experiment cases
 
-Bắt đầu từ golden cases trong `data/fixtures/toy_graph_v0.1/test_cases.json`. Khi
-dataset v1.0 sẵn sàng, bổ sung ít nhất 10 cặp OD × 3 scenario, cố định dataset
-version, source commit và random seed.
-
+`search_benchmark_v1.json` cố định dataset, 10 cặp OD, ba scenario, sáu thuật toán và
+seed 0. OD10 tái sử dụng golden route-change của processed pilot; các cặp còn lại là
+`ASSUMPTION` chọn deterministic từ node ID đã đóng băng.

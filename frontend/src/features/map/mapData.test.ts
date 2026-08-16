@@ -98,12 +98,23 @@ describe('graph GeoJSON', () => {
       startId: '1',
       goalId: '2',
       pathNodeIds: ['1', '2', '3'],
-      exploredNodeIds: ['1', '2', '3'],
+      frontierNodeIds: ['1', '2', '3'],
     })
 
     expect(collection.features).toHaveLength(3)
     expect(collection.features.map((feature) => feature.properties.visual_state))
       .toEqual(['start', 'goal', 'path'])
+  })
+
+  it('distinguishes current, frontier and closed trace states', () => {
+    const collection = buildNodeFeatureCollection(graph, {
+      currentNodeId: '1',
+      frontierNodeIds: ['2'],
+      closedNodeIds: ['3'],
+    })
+
+    expect(collection.features.map((feature) => feature.properties.visual_state))
+      .toEqual(['current', 'frontier', 'closed'])
   })
 
   it('keeps directed edge closure and route ordering', () => {

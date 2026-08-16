@@ -38,7 +38,9 @@ type RouteMapProps = {
   pathEdgeIds?: string[]
   visiblePathEdgeCount?: number
   pathNodeIds?: string[]
-  exploredNodeIds?: string[]
+  frontierNodeIds?: string[]
+  closedNodeIds?: string[]
+  currentNodeId?: string | null
   startId?: string
   goalId?: string
   pickTarget: EndpointPickTarget | null
@@ -186,7 +188,9 @@ function addGraphLayers(map: maplibregl.Map) {
           'start', 9,
           'goal', 9,
           'path', 6,
-          'explored', 5,
+          'current', 8,
+          'frontier', 6,
+          'closed', 5,
           ['interpolate', ['linear'], ['zoom'], 13, 2.5, 17, 4],
         ],
         'circle-color': [
@@ -194,7 +198,9 @@ function addGraphLayers(map: maplibregl.Map) {
           'start', '#fef3c7',
           'goal', '#fce7f3',
           'path', '#ede9fe',
-          'explored', '#ffddb8',
+          'current', '#fff3b0',
+          'frontier', '#bfdbfe',
+          'closed', '#d1d5db',
           '#ffffff',
         ],
         'circle-stroke-color': [
@@ -202,7 +208,9 @@ function addGraphLayers(map: maplibregl.Map) {
           'start', '#d97706',
           'goal', '#db2777',
           'path', '#6d28d9',
-          'explored', '#a36700',
+          'current', '#ea580c',
+          'frontier', '#2563eb',
+          'closed', '#4b5563',
           '#424754',
         ],
         'circle-stroke-width': [
@@ -221,7 +229,7 @@ function addGraphLayers(map: maplibregl.Map) {
       id: LAYER_SELECTABLE_NODE,
       type: 'circle',
       source: SOURCE_NODES,
-      filter: ['==', ['get', 'selectable'], true],
+      filter: ['all', ['==', ['get', 'selectable'], true], ['==', ['get', 'visual_state'], 'default']],
       paint: {
         'circle-radius': ['interpolate', ['linear'], ['zoom'], 10.5, 4.5, 15, 7],
         'circle-color': '#ffffff',
@@ -390,7 +398,9 @@ export function RouteMap({
   pathEdgeIds = [],
   visiblePathEdgeCount = pathEdgeIds.length,
   pathNodeIds = [],
-  exploredNodeIds = [],
+  frontierNodeIds = [],
+  closedNodeIds = [],
+  currentNodeId = null,
   startId,
   goalId,
   pickTarget,
@@ -432,8 +442,10 @@ export function RouteMap({
     startId,
     goalId,
     pathNodeIds,
-    exploredNodeIds,
-  }), [exploredNodeIds, goalId, graph, pathNodeIds, startId])
+    frontierNodeIds,
+    closedNodeIds,
+    currentNodeId,
+  }), [closedNodeIds, currentNodeId, frontierNodeIds, goalId, graph, pathNodeIds, startId])
   const routeData = useMemo(
     () => buildRouteFeatureCollection(graph, pathEdgeIds.slice(0, visiblePathEdgeCount)),
     [graph, pathEdgeIds, visiblePathEdgeCount],
@@ -848,6 +860,9 @@ export function RouteMap({
             <span className="legend-item legend-item--open"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
             <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
             <span className="legend-item legend-item--node"><i className="legend-node" />{t('legend_node', lang)}</span>
+            <span className="legend-item"><i className="legend-node legend-node--frontier" />{t('legend_frontier', lang)}</span>
+            <span className="legend-item"><i className="legend-node legend-node--current" />{t('legend_current', lang)}</span>
+            <span className="legend-item"><i className="legend-node legend-node--closed" />{t('legend_closed', lang)}</span>
             <span className="legend-item legend-item--path"><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
             <span className="legend-item legend-item--boundary"><i className="legend-line boundary" />{t('legend_boundary', lang)}</span>
           </div>

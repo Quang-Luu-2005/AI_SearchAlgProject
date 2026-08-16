@@ -58,7 +58,7 @@ describe('BE-03 frontend client', () => {
     const request = fetchMock.mock.calls[0][1] as RequestInit
     expect(JSON.parse(request.body as string)).toEqual({
       ...input,
-      algorithms: ['UCS', 'A_STAR', 'BFS', 'DFS'],
+      algorithms: ['UCS', 'A_STAR', 'BFS', 'DFS', 'GREEDY', 'BIDIRECTIONAL'],
     })
   })
 

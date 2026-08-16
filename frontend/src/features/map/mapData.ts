@@ -1,7 +1,7 @@
 import type { Feature, FeatureCollection, LineString, Point } from 'geojson'
 import type { GraphEdge, GraphNode, GraphPayload } from '../../lib/graph'
 
-export type NodeVisualState = 'default' | 'explored' | 'path' | 'start' | 'goal'
+export type NodeVisualState = 'default' | 'frontier' | 'current' | 'closed' | 'path' | 'start' | 'goal'
 
 export type NodeFeatureProperties = {
   node_id: string
@@ -28,7 +28,9 @@ type GraphState = {
   startId?: string
   goalId?: string
   pathNodeIds?: string[]
-  exploredNodeIds?: string[]
+  frontierNodeIds?: string[]
+  closedNodeIds?: string[]
+  currentNodeId?: string | null
 }
 
 export type NodeSnapResult = {
@@ -139,7 +141,8 @@ export function buildNodeFeatureCollection(
     )
   }
   const pathNodes = new Set(state.pathNodeIds ?? [])
-  const exploredNodes = new Set(state.exploredNodeIds ?? [])
+  const frontierNodes = new Set(state.frontierNodeIds ?? [])
+  const closedNodes = new Set(state.closedNodeIds ?? [])
 
   const features = graph.nodes.flatMap<Feature<Point, NodeFeatureProperties>>((node) => {
     if (node.latitude === null || node.longitude === null) return []
@@ -153,8 +156,12 @@ export function buildNodeFeatureCollection(
         ? 'goal'
         : pathNodes.has(node.node_id)
           ? 'path'
-          : exploredNodes.has(node.node_id)
-            ? 'explored'
+          : node.node_id === state.currentNodeId
+            ? 'current'
+            : frontierNodes.has(node.node_id)
+              ? 'frontier'
+              : closedNodes.has(node.node_id)
+                ? 'closed'
             : 'default'
     return [{
       type: 'Feature',

@@ -206,6 +206,7 @@ def test_search_accepts_handoff_request_and_returns_complete_result() -> None:
     )
     assert "Optimal" in payload["guarantee"]
     assert "SIMULATED" in payload["explanation"]
+    assert "highest traffic/flood penalty segment" in payload["explanation"]
     assert payload["data_status"] == "SIMULATED"
 
 

@@ -7,6 +7,13 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ### Added
 
+- Hoàn thiện demo technical: GUI đủ sáu thuật toán two-point, trace frontier/current/closed,
+  metrics đầy đủ, so sánh shortest/fastest/best weighted cost và giải thích edge penalty.
+- Bổ sung baseline thứ tự nhập cho multi-stop cùng cost/distance/ETA và mức tiết kiệm;
+  mở pilot 90 node/ba scenario trong dropdown với nguyên trạng nhãn dữ liệu.
+- Thêm benchmark tái lập 10 OD × 3 scenario × 6 thuật toán × 20 lần chạy và artifact
+  `DERIVED_BENCHMARK`; ADR-0014 ghi nhận thay đổi contract/demo scope.
+
 - Tích hợp BFS và DFS vào luồng two-point search từ API đến GUI: có lựa chọn thuật toán,
   chế độ compare UCS/A*/BFS/DFS, trace và test reachable/unreachable/cycle/start=goal.
 - Tự động điều chỉnh thu phóng bản đồ khi thu gọn Panel ở chế độ Desktop để thước đo tỷ lệ scale hiển thị chính xác mốc **`5 km`**.

@@ -67,6 +67,23 @@ class SearchService:
             component_totals,
             key=lambda component: (component_totals[component], component),
         )
+        highest_penalty_edge = max(
+            route_cost.edge_costs,
+            key=lambda edge_cost: (
+                edge_cost.weighted_components.get("congestion", 0.0)
+                + edge_cost.weighted_components.get("flood_risk", 0.0),
+                edge_cost.edge_id,
+            ),
+            default=None,
+        )
+        if highest_penalty_edge is None:
+            penalty_note = "The route has no traversed edge to evaluate for penalties."
+        else:
+            penalty_note = (
+                f"The highest traffic/flood penalty segment is {highest_penalty_edge.edge_id}: "
+                f"traffic penalty {highest_penalty_edge.traffic_penalty:.3f} min and "
+                f"flood risk {highest_penalty_edge.flood_risk:.3f}."
+            )
         data_note = f"Data status is {route_cost.data_status}."
         if self._graph.metadata.get("real_time") is False:
             data_note += " Traffic profiles are historical, not real-time."
@@ -76,7 +93,7 @@ class SearchService:
             f"distance is {distance_m / 1000:.3f} km and ETA is "
             f"{estimated_time_min:.3f} min. The largest weighted component is "
             f"{dominant_component} ({component_totals[dominant_component]:.6f}). "
-            f"{data_note}"
+            f"{penalty_note} {data_note}"
         )
         result = SearchResult(
             path=search_path.path,

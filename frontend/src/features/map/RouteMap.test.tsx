@@ -201,7 +201,9 @@ describe('MapLibre RouteMap', () => {
       expect(map.sources.get('floodroute-nodes')?.setData).toHaveBeenCalled()
       expect(map.sources.get('floodroute-thu-duc-boundary')?.setData).toHaveBeenCalledWith(boundary)
       expect(map.layerDefinitions.get('floodroute-selectable-node')?.filter).toEqual([
-        '==', ['get', 'selectable'], true,
+        'all',
+        ['==', ['get', 'selectable'], true],
+        ['==', ['get', 'visual_state'], 'default'],
       ])
     })
 

@@ -158,6 +158,12 @@ class TourComparisonResponse(BaseModel):
     held_karp_cost: float
     nearest_neighbor_cost: float
     approximation_gap_percent: float
+    original_visit_order: list[str]
+    original_order_cost: float
+    original_order_distance_km: float
+    original_order_time_min: float
+    selected_savings_cost: float
+    selected_savings_percent: float
 
 
 class OptimizeTourResponse(BaseModel):

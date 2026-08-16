@@ -49,7 +49,7 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 ```
 
 `graph_id` is optional and defaults to `toy_graph_v0.1`. Supported two-point
-algorithm names are `UCS`, `A_STAR`, `BFS` and `DFS`; A* uses the admissible and consistent scenario-weighted
+algorithm names are `UCS`, `A_STAR`, `BFS`, `DFS`, `GREEDY` and `BIDIRECTIONAL`; A* and Greedy use the scenario-weighted
 geographic Haversine heuristic from ADR-0012, with `h=0` fallback when coordinates
 are unavailable.
 
@@ -61,7 +61,7 @@ are always marked `SIMULATED`.
 
 `POST /api/v1/compare` accepts the same start, goal and scenario with an
 `algorithms` array. When omitted, it compares `UCS` and `A_STAR`; callers may also
-include `BFS` and `DFS`. Every algorithm uses exactly the same graph and scenario
+include `BFS`, `DFS`, `GREEDY` and `BIDIRECTIONAL`. The GUI compares all six. Every algorithm uses exactly the same graph and scenario
 cost input, and results preserve the request order after duplicate removal.
 
 ## Optimize Tour
@@ -85,7 +85,8 @@ in `stops`. `tour_algorithm` accepts `HELD_KARP` or `NEAREST_NEIGHBOR`. The serv
 computes a directed pairwise cost/distance matrix using the search engine, solves
 exact DP Held-Karp and the Nearest Neighbor heuristic, measures the approximation
 gap, and returns stitched subpaths, totals, comparison metrics, guarantee, and a
-structured explanation.
+structured explanation. `comparison` also contains the original input visit order and
+its cost/distance/ETA plus absolute and percentage savings of the selected tour.
 
 
 ## Errors
