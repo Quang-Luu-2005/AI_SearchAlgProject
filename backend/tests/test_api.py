@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+import pytest
 
 from backend.app.main import app
 
@@ -281,6 +282,46 @@ def test_compare_runs_ucs_and_a_star_on_same_input() -> None:
     assert [result["algorithm"] for result in results] == ["UCS", "A_STAR"]
     assert results[0]["path"] == results[1]["path"]
     assert results[0]["metrics"]["total_cost"] == results[1]["metrics"]["total_cost"]
+
+
+@pytest.mark.parametrize("algorithm", ["BFS", "DFS"])
+def test_search_exposes_unweighted_algorithms_through_api(algorithm: str) -> None:
+    response = client.post(
+        "/api/v1/search",
+        json={
+            "start": "N01",
+            "goal": "N06",
+            "algorithm": algorithm,
+            "scenario": "OFFPEAK_BALANCED",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["algorithm"] == algorithm
+    assert payload["path"][0] == "N01"
+    assert payload["path"][-1] == "N06"
+    assert payload["trace"][-1]["kind"] == "GOAL"
+
+
+def test_compare_can_run_bfs_and_dfs_with_weighted_algorithms() -> None:
+    response = client.post(
+        "/api/v1/compare",
+        json={
+            "start": "N01",
+            "goal": "N06",
+            "scenario": "OFFPEAK_BALANCED",
+            "algorithms": ["UCS", "A_STAR", "BFS", "DFS"],
+        },
+    )
+
+    assert response.status_code == 200
+    assert [result["algorithm"] for result in response.json()["results"]] == [
+        "UCS",
+        "A_STAR",
+        "BFS",
+        "DFS",
+    ]
 
 
 def test_processed_search_discloses_historical_limitations() -> None:

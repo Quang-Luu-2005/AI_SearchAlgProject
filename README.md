@@ -84,9 +84,14 @@ UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và 
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
 Điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn marker tròn trắng viền xanh bằng
-toolbar START/GOAL. Marker này biểu thị rõ địa điểm có thể chọn. Edge hiển thị polyline
-đường UTraffic đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính
-vẫn cho phép chạy thuật toán.
+toolbar START/GOAL. Hai điểm đã chọn dùng ghim lớn neo đúng tọa độ: START màu cam và
+GOAL màu hồng, không làm thay đổi camera hiện tại. Edge hiển thị polyline đường UTraffic
+đã đóng băng, không phải đường thẳng nối POI. Nếu mất mạng, nền trung tính vẫn cho phép
+chạy thuật toán.
+
+Với Held-Karp/Nearest Neighbor/tour comparison, START chọn depot còn GOAL thêm nhiều
+điểm giao hàng. Chế độ GOAL giữ hoạt động để click liên tiếp tối đa 10 stop; các stop
+được đánh số và hiển thị ngay trên bản đồ trước khi chạy.
 
 Bản đồ vẽ đường đỏ theo snapshot ranh TP Thủ Đức cũ. View tổng quan là một hình chữ
 nhật có lề bao trọn polygon ranh thật, nên vẫn thấy được khu vực ngoài biên và các cạnh
@@ -143,9 +148,9 @@ npm test
 | Fixture/golden cases | Hoàn tất |
 | Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
-| UCS và A* (`h=0`) | Hoàn tất |
-| BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
-| Held-Karp/Nearest Neighbor | Chưa thực hiện |
+| UCS và A* (heuristic Haversine có trọng số) | Hoàn tất |
+| BFS/DFS/Greedy/Bidirectional | BFS/DFS đã tích hợp API/GUI/compare; Greedy/Bidirectional có trong backend registry |
+| Held-Karp/Nearest Neighbor (tour 5–10 điểm) | Hoàn tất |
 
 Ưu tiên tiếp theo là hai reviewer xác nhận flood map-match; không tuyên bố kết quả
 định tuyến thực tế khi `routing_dataset_status` vẫn là `REVIEW_REQUIRED`.

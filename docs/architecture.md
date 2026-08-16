@@ -35,6 +35,11 @@ trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark ed
 8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
 benchmark riêng.
 
+Ở tour mode, map picker ánh xạ START vào depot và GOAL vào danh sách stop. GOAL mode
+không tự đóng sau mỗi click để người dùng chọn liên tiếp, nhưng từ chối depot, stop trùng
+và stop thứ 11. Marker stop được đánh số theo thứ tự nhập trước khi chạy, rồi chuyển sang
+thứ tự tour tối ưu/heuristic khi có kết quả.
+
 Frontend map scope chỉ giữ catalog row `processed/thu_duc_landmarks_v1.0.0`. Pilot 90 node
 và capacity graph vẫn tồn tại qua API/script benchmark, nhưng không được trình bày trong
 dropdown map vì không đúng mục tiêu 65 landmark hiện tại.
@@ -45,9 +50,12 @@ padding (tối thiểu 0,004 độ), vì vậy B bao trọn A và vẫn có mộ
 ngoài đường đỏ. Nếu boundary API lỗi, renderer fallback về context ring động của graph
 và cũng giới hạn camera trong rectangle fallback đó.
 
-Camera endpoint theo dõi riêng thay đổi `startId`/`goalId`: nếu chỉ một endpoint vừa đổi,
-renderer `flyTo` chính node đó ở zoom 16.5. `fitBounds` hai endpoint chỉ dùng khi khởi tạo
-với cả hai điểm hoặc khi cả hai thay đổi cùng lúc, tránh nhảy về trung điểm sau khi chọn.
+Thay đổi `startId`/`goalId` chỉ cập nhật GeoJSON node state, không gọi `flyTo` hoặc
+`fitBounds`. Renderer giữ nguyên viewport người dùng đang quan sát và gắn hai HTML marker
+dạng ghim lớn vào đúng tọa độ endpoint: START màu cam, GOAL màu hồng. Các marker này chỉ
+tồn tại cho endpoint đã chọn và được vẽ chồng lên circle node gốc thay vì thay thế node.
+`fitBounds` chỉ dùng khi nạp graph, nạp boundary mới hoặc khi người dùng bấm nút reset
+viewport.
 
 ## Luồng chính
 
@@ -105,13 +113,20 @@ Engine nhận graph contract, không import FastAPI và không mutate graph.
 | `GET /api/v1/locations` | Có | Node/POI có thể chọn |
 | `GET /api/v1/scenarios` | Có | Scenario và cost preset |
 | `POST /api/v1/search` | Có | Two-point result + trace |
-| `POST /api/v1/optimize-tour` | Sau search | Visiting order + subpaths |
+| `POST /api/v1/optimize-tour` | Có | Visiting order + subpaths |
 | `POST /api/v1/compare` | Có | Cùng input, nhiều thuật toán |
 
 API search dùng Pydantic schema trong `backend/app/api/models.py`, gọi
-`SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS` và
-`A_STAR`; A* dùng `h=0` để giữ admissible/consistent cho cost đa thành phần. Chi
-tiết request, response và error status xem [api.md](api.md).
+`SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS`, `A_STAR`,
+`BFS`, `DFS`, `GREEDY` và `BIDIRECTIONAL`; BFS/DFS dùng neighbor ordering
+deterministic trên graph directed và không mutate graph. A* dùng heuristic khoảng cách Haversine nhân trọng số distance của scenario,
+fallback về `h=0` khi node thiếu tọa độ. Heuristic giữ admissible/consistent cho cost đa
+thành phần theo ADR-0012. Chi tiết request, response và error status xem [api.md](api.md).
+
+Tour optimizer nhận depot và 5–10 stop duy nhất, không cho depot lặp trong stops. Ma trận
+chi phí có hướng được tạo qua cùng `SearchService` và scenario cost, sau đó Held-Karp tìm
+nghiệm chính xác còn Nearest Neighbor cung cấp nghiệm heuristic để so sánh. Tên thuật toán
+tour ngoài `HELD_KARP` và `NEAREST_NEIGHBOR` bị từ chối thay vì fallback ngầm.
 
 ## Graph Loader contract
 

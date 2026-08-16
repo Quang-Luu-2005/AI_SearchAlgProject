@@ -48,8 +48,10 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 }
 ```
 
-`graph_id` is optional and defaults to `toy_graph_v0.1`. Initial algorithm names
-are `UCS` and `A_STAR`; A* currently uses admissible `h=0`.
+`graph_id` is optional and defaults to `toy_graph_v0.1`. Supported two-point
+algorithm names are `UCS`, `A_STAR`, `BFS` and `DFS`; A* uses the admissible and consistent scenario-weighted
+geographic Haversine heuristic from ADR-0012, with `h=0` fallback when coordinates
+are unavailable.
 
 The response includes `path`, `edge_ids`, `metrics`, `trace`, `guarantee`,
 `explanation`, `edge_breakdown`, `data_status` and `limitations`. Fixture results
@@ -58,8 +60,33 @@ are always marked `SIMULATED`.
 ## Compare
 
 `POST /api/v1/compare` accepts the same start, goal and scenario with an
-`algorithms` array. When omitted, it compares `UCS` and `A_STAR` using exactly the
-same graph and cost engine.
+`algorithms` array. When omitted, it compares `UCS` and `A_STAR`; callers may also
+include `BFS` and `DFS`. Every algorithm uses exactly the same graph and scenario
+cost input, and results preserve the request order after duplicate removal.
+
+## Optimize Tour
+
+`POST /api/v1/optimize-tour` accepts:
+
+```json
+{
+  "depot": "N01",
+  "stops": ["N02", "N03", "N04", "N05", "N06"],
+  "scenario": "HEAVY_RAIN_SAFE",
+  "graph_id": "toy_graph_v0.1",
+  "algorithm": "A_STAR",
+  "tour_algorithm": "HELD_KARP",
+  "return_to_depot": true
+}
+```
+
+The request requires 5 to 10 unique delivery stops; the depot must not be repeated
+in `stops`. `tour_algorithm` accepts `HELD_KARP` or `NEAREST_NEIGHBOR`. The service
+computes a directed pairwise cost/distance matrix using the search engine, solves
+exact DP Held-Karp and the Nearest Neighbor heuristic, measures the approximation
+gap, and returns stitched subpaths, totals, comparison metrics, guarantee, and a
+structured explanation.
+
 
 ## Errors
 
@@ -68,6 +95,7 @@ same graph and cost engine.
 | Unknown node or scenario | 404 |
 | No directed route in the active scenario | 404 |
 | Invalid algorithm or cost configuration | 422 |
+| Duplicate tour point or unsupported tour algorithm | 422 |
 | Missing/invalid request field | 422 |
 
 Error responses use `{ "detail": "actionable message" }`.

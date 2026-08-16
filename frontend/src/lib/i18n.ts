@@ -1,0 +1,331 @@
+export type Language = 'en' | 'vi'
+
+export function getInitialLanguage(): Language {
+  if (typeof window === 'undefined') return 'en'
+  const saved = localStorage.getItem('floodroute_lang') as Language | null
+  if (saved === 'en' || saved === 'vi') return saved
+  return 'en' // Default to English as requested
+}
+
+export const translations = {
+  en: {
+    // Topbar & Brand
+    brand_sub: 'FloodRoute HCMC',
+    shortcuts_btn: '⌨️ Shortcuts',
+    clear_results: 'Clear Results',
+    run_algorithm: 'Run Algorithm',
+    running: 'Finding Route…',
+    select_alg_first: 'Please select an algorithm',
+    select_start_first: 'Please select a Starting Point',
+
+    // Control Panel
+    panel_title: 'Control Panel',
+    panel_subtitle: 'Configure route search on graph',
+    dataset_label: 'Dataset',
+    nodes_count: 'nodes',
+    select_alg_label: 'Choose Algorithm',
+    select_alg_placeholder: '-- Choose Algorithm --',
+    alg_a_star: 'A* Search (2 Points)',
+    alg_ucs: 'Uniform Cost Search (2 Points)',
+    alg_bfs: 'Breadth-First Search (2 Points)',
+    alg_dfs: 'Depth-First Search (2 Points)',
+    alg_compare: 'Compare UCS, A*, BFS & DFS (2 Points)',
+    alg_held_karp: 'Tour Held-Karp DP (Exact Optimal)',
+    alg_nearest_neighbor: 'Tour Nearest Neighbor (Greedy Approx)',
+    alg_optimize_tour: 'Compare Tours (Held-Karp vs Nearest Neighbor)',
+    scenario_label: 'Cost Scenario',
+    preset: 'preset',
+    dataset_summary_title: 'Dataset sources & limitations',
+    api_connected: 'Backend API connected',
+
+    // Form fields & prompts
+    start_label: 'STARTING POINT',
+    goal_label: 'ENDING POINT',
+    add_stop_label: 'ADD STOP COORDINATE',
+    stops_header: 'DELIVERY STOPS',
+    depot_warning: 'Please select a Starting Point (Depot).',
+    stops_needed: 'Need to select {count} more stop(s) (minimum 5 delivery stops).',
+    alg_prompt: '💡 Please select an Algorithm to display Starting and Ending Point input fields.',
+    reload_graph: 'Reload graph',
+    swap_endpoints: 'Swap start and goal',
+
+    // Map & Heading
+    eyebrow_title: 'Optimal path visualizer',
+    graph_label_thu_duc_landmarks: 'Thu Duc major landmarks road graph',
+    loading_graph: 'Loading graph…',
+    no_graph_data: 'No graph data available',
+
+    // Map & Map Controls
+    map_aria: 'FloodRoute Graph Map',
+    pick_toolbar: 'Select points on map',
+    pick_start: 'Pick START',
+    pick_goal: 'Pick GOAL',
+    pick_start_goal: 'Pick START/GOAL',
+    picking_start: 'Picking starting point…',
+    picking_start_goal: 'Picking starting point…',
+    pick_start_goal_action: 'Pick START/GOAL',
+    picking_goal: 'Picking ending point…',
+    pick_tour_start: 'Pick START (Depot)',
+    pick_tour_goal: 'Add GOAL (Stop)',
+    picking_tour_start: 'Picking START depot…',
+    picking_tour_goal: 'Adding GOAL stops…',
+    cancel: 'Cancel pick',
+    cancel_pick: 'Cancel pick',
+    pick_hint_start_goal: 'Click a node or map position to select START/GOAL (Starting Point) · Esc to cancel',
+    pick_hint_tour: 'Click a node or map position to select START/GOAL (Starting Point) · Esc to cancel',
+    pick_hint_tour_start: 'Click a node or map position to select the START depot · Esc to cancel',
+    pick_hint_tour_goal: 'Click nodes or map positions to add GOAL stops ({count}/{max}); selection stays active · Esc to finish',
+    pick_hint_generic: 'Click a node or map position to select {target} · Esc to cancel',
+    tour_stop_same_as_depot: 'A delivery stop cannot be the same as the START depot.',
+    tour_stop_duplicate: 'This delivery stop has already been selected.',
+    tour_stop_limit: 'A tour supports at most {count} delivery stops.',
+    recenter_map: 'Recenter map to Thu Duc area',
+    reset_view: 'Recenter map to Thu Duc area',
+    collapse_sidebar: 'Collapse Panel',
+    expand_sidebar: 'Expand Panel',
+    legend_title: 'Map Legend',
+    legend_normal_road: 'Normal road',
+    legend_blocked_road: 'Flooded / Blocked road',
+    legend_optimal_path: 'Optimal route',
+    legend_boundary: 'Thu Duc Boundary',
+    legend_node: 'Intersection node',
+    view_2d: '🗺️ 2D View',
+    view_3d: '🏙️ 3D On',
+    view_3d_iso: '🏙️ 3D Iso (55°)',
+    view_3d_cinematic: '🎬 3D Cinematic (68°)',
+    reset_north: '🧭 Reset North',
+    toggle_2d_title: 'Switch to 2D flat view',
+    toggle_3d_title: 'Switch to 3D view with extruded buildings',
+    toggle_2d_aria: '2D View',
+    toggle_3d_aria: '3D View',
+    toggle_2d_label: '🗺️ 2D View',
+    toggle_3d_label: '🏙️ 3D On',
+    tooltip_2d: 'Switch to flat 2D view',
+    tooltip_3d: 'Switch to 3D isometric view with buildings',
+    map_data_status: 'node · edge',
+
+    // Trace Player
+    trace_step: 'Step',
+    trace_play: 'Play',
+    trace_pause: 'Pause',
+    trace_prev: 'Prev',
+    trace_next: 'Next',
+    trace_reset: 'Reset',
+    trace_speed: 'Speed',
+    trace_animating: 'Simulating route',
+
+    // Event Timeline Feed
+    event_feed_title: '📋 Trace Events Log ({count} steps)',
+    event_feed_subtitle: 'Click any step to jump to that position',
+    via: 'via',
+
+    // Benchmark Charts
+    charts_title: '📊 Multi-Stop Tour Comparison Dashboard',
+    metrics_title: '📊 Algorithm Metrics Summary',
+    gap_label: 'Approximation Gap',
+    dist_total: 'Total Distance',
+    time_eta: 'Estimated Time (ETA)',
+    total_cost: 'Total Cost',
+    explored_nodes: 'Explored Nodes',
+    minutes: 'min',
+
+    // Tour Results
+    tour_kicker: 'Multi-Stop Delivery Tour',
+    tour_route: 'Route:',
+    optimal_tag: '🛡️ Exact Optimal (DP)',
+    heuristic_tag: '⚡ Greedy Heuristic',
+    approx_gap_title: 'Approximation Gap',
+    gap_zero_desc: 'Nearest Neighbor achieved exact optimal cost equal to Held-Karp!',
+    gap_pos_desc: 'Cost difference between Heuristic and Optimal solution',
+    legs_breakdown: '📌 Detailed Route Leg Breakdown ({count} legs)',
+    leg_no: 'Leg #',
+    from_node: 'From Node',
+    to_node: 'To Node',
+    path_nodes: 'Path Sequence',
+    leg_dist: 'Distance',
+    leg_time: 'Travel Time',
+    leg_cost: 'Cost',
+    guarantee: 'Guarantee',
+
+    // Shortcuts Modal
+    shortcuts_modal_title: '⌨️ System Keyboard Shortcuts',
+    shortcut_space: 'Toggle Play / Pause on Trace Player',
+    shortcut_prev: 'Step backward 1 event in Trace array',
+    shortcut_next: 'Step forward 1 event in Trace array',
+    shortcut_reload: 'Reload Graph data & Reset selections',
+    shortcut_esc: 'Cancel map node pick / Close modal window',
+    shortcut_help: 'Toggle keyboard shortcuts help modal',
+    done: 'Got it',
+  },
+  vi: {
+    // Topbar & Brand
+    brand_sub: 'FloodRoute HCMC',
+    shortcuts_btn: '⌨️ Phím tắt',
+    clear_results: 'Xóa kết quả',
+    run_algorithm: 'Chạy thuật toán',
+    running: 'Đang tìm đường…',
+    select_alg_first: 'Vui lòng chọn thuật toán',
+    select_start_first: 'Vui lòng chọn Điểm bắt đầu',
+
+    // Control Panel
+    panel_title: 'Bảng điều khiển',
+    panel_subtitle: 'Cấu hình tìm đường trên graph',
+    dataset_label: 'Dataset',
+    nodes_count: 'nút',
+    select_alg_label: 'Chọn thuật toán',
+    select_alg_placeholder: '-- Chọn thuật toán --',
+    alg_a_star: 'A* Search (2 điểm)',
+    alg_ucs: 'Uniform Cost Search (2 điểm)',
+    alg_bfs: 'Breadth-First Search (2 điểm)',
+    alg_dfs: 'Depth-First Search (2 điểm)',
+    alg_compare: 'So sánh UCS, A*, BFS và DFS (2 điểm)',
+    alg_held_karp: 'Tour Held-Karp DP (Tối ưu tuyệt đối)',
+    alg_nearest_neighbor: 'Tour Nearest Neighbor (Tham lam xấp xỉ)',
+    alg_optimize_tour: 'So sánh Tour (Held-Karp vs Nearest Neighbor)',
+    scenario_label: 'Kịch bản chi phí',
+    preset: 'preset',
+    dataset_summary_title: 'Nguồn và giới hạn dataset',
+    api_connected: 'Backend API đã kết nối',
+
+    // Form fields & prompts
+    start_label: 'ĐIỂM BẮT ĐẦU',
+    goal_label: 'ĐIỂM KẾT THÚC',
+    add_stop_label: 'THÊM TỌA ĐỘ ĐIỂM',
+    stops_header: 'ĐIỂM KẾT THÚC',
+    depot_warning: 'Vui lòng chọn Điểm bắt đầu (Depot).',
+    stops_needed: 'Cần chọn thêm {count} điểm nữa (tối thiểu 5 điểm giao hàng).',
+    alg_prompt: '💡 Vui lòng chọn Thuật toán để hiển thị ô chọn điểm xuất phát và điểm kết thúc.',
+    reload_graph: 'Nạp lại graph',
+    swap_endpoints: 'Đổi điểm bắt đầu và đích',
+
+    // Map & Heading
+    eyebrow_title: 'Trực quan hóa lộ trình tối ưu',
+    graph_label_thu_duc_landmarks: 'Mạng lưới giao thông các địa điểm chính TP. Thủ Đức',
+    loading_graph: 'Đang tải graph…',
+    no_graph_data: 'Chưa có dữ liệu graph',
+
+    // Map & Map Controls
+    map_aria: 'Bản đồ graph FloodRoute',
+    pick_toolbar: 'Chọn điểm trên bản đồ',
+    pick_start: 'Chọn START',
+    pick_goal: 'Chọn GOAL',
+    pick_start_goal: 'Chọn START/GOAL',
+    picking_start: 'Đang chọn điểm xuất phát…',
+    picking_start_goal: 'Đang chọn điểm xuất phát…',
+    pick_start_goal_action: 'Chọn START/GOAL',
+    picking_goal: 'Đang chọn điểm kết thúc…',
+    pick_tour_start: 'Chọn START (Depot)',
+    pick_tour_goal: 'Thêm GOAL (Điểm dừng)',
+    picking_tour_start: 'Đang chọn START depot…',
+    picking_tour_goal: 'Đang thêm các GOAL…',
+    cancel: 'Hủy chọn',
+    cancel_pick: 'Hủy chọn',
+    pick_hint_start_goal: 'Click node hoặc vị trí trên bản đồ để chọn START/GOAL (Điểm xuất phát) · Esc để hủy',
+    pick_hint_tour: 'Click node hoặc vị trí trên bản đồ để chọn START/GOAL (Điểm xuất phát) · Esc để hủy',
+    pick_hint_tour_start: 'Click node hoặc vị trí trên bản đồ để chọn START depot · Esc để hủy',
+    pick_hint_tour_goal: 'Click liên tiếp để thêm GOAL ({count}/{max}); chế độ chọn vẫn được giữ · Esc để kết thúc',
+    pick_hint_generic: 'Click node hoặc vị trí trên bản đồ để chọn {target} · Esc để hủy',
+    tour_stop_same_as_depot: 'Điểm giao hàng không được trùng với START depot.',
+    tour_stop_duplicate: 'Điểm giao hàng này đã được chọn.',
+    tour_stop_limit: 'Một tour hỗ trợ tối đa {count} điểm giao hàng.',
+    recenter_map: 'Căn góc nhìn về TP. Thủ Đức',
+    reset_view: 'Căn góc nhìn về TP. Thủ Đức',
+    collapse_sidebar: 'Thu gọn Panel',
+    expand_sidebar: 'Mở rộng Panel',
+    legend_title: 'Chú thích bản đồ',
+    legend_normal_road: 'Đường lưu thông',
+    legend_blocked_road: 'Đường bị ngập/chặn',
+    legend_optimal_path: 'Đường tối ưu',
+    legend_boundary: 'Ranh TP. Thủ Đức',
+    legend_node: 'Nút giao',
+    view_2d: '🗺️ 2D View',
+    view_3d: '🏙️ 3D On',
+    view_3d_iso: '🏙️ 3D Iso (55°)',
+    view_3d_cinematic: '🎬 3D Cận cảnh (68°)',
+    reset_north: '🧭 Hướng Bắc',
+    toggle_2d_title: 'Chuyển về góc nhìn phẳng 2D',
+    toggle_3d_title: 'Chuyển sang góc nhìn nghiêng 3D có khối tòa nhà',
+    toggle_2d_aria: 'Góc nhìn 2D',
+    toggle_3d_aria: 'Góc nhìn 3D',
+    toggle_2d_label: '🗺️ 2D View',
+    toggle_3d_label: '🏙️ 3D On',
+    tooltip_2d: 'Chuyển về góc nhìn phẳng 2D',
+    tooltip_3d: 'Chuyển sang góc nhìn nghiêng 3D có khối tòa nhà',
+    map_data_status: 'node · edge',
+
+    // Trace Player
+    trace_step: 'Bước',
+    trace_play: 'Phát',
+    trace_pause: 'Dừng',
+    trace_prev: 'Lùi',
+    trace_next: 'Tiến',
+    trace_reset: 'Reset',
+    trace_speed: 'Tốc độ',
+    trace_animating: 'Đang mô phỏng tuyến',
+
+    // Event Timeline Feed
+    event_feed_title: '📋 Nhật ký Trace Events ({count} bước)',
+    event_feed_subtitle: 'Click chọn bước để tua nhanh tới vị trí đó',
+    via: 'qua',
+
+    // Benchmark Charts
+    charts_title: '📊 Biểu đồ Trực quan hóa So sánh Multi-Stop Tour',
+    metrics_title: '📊 Bảng Thống kê Chỉ số Thuật toán',
+    gap_label: 'Approximation Gap',
+    dist_total: 'Tổng khoảng cách',
+    time_eta: 'Thời gian dự kiến (ETA)',
+    total_cost: 'Tổng chi phí (Cost)',
+    explored_nodes: 'Số node đã mở rộng',
+    minutes: 'phút',
+
+    // Tour Results
+    tour_kicker: 'Multi-Stop Delivery Tour',
+    tour_route: 'Lộ trình:',
+    optimal_tag: '🛡️ Exact Optimal (DP)',
+    heuristic_tag: '⚡ Greedy Heuristic',
+    approx_gap_title: 'Độ lệch Xấp xỉ',
+    gap_zero_desc: 'Nearest Neighbor đạt chi phí tối ưu bằng Held-Karp!',
+    gap_pos_desc: 'Mức chênh lệch chi phí giữa Heuristic và Tối ưu',
+    legs_breakdown: '📌 Chi tiết Lộ trình theo từng Chặng ({count} chặng)',
+    leg_no: 'Chặng #',
+    from_node: 'Từ Node',
+    to_node: 'Đến Node',
+    path_nodes: 'Chuỗi Node lộ trình',
+    leg_dist: 'Khoảng cách',
+    leg_time: 'Thời gian đi',
+    leg_cost: 'Chi phí',
+    guarantee: 'Guarantee',
+
+    // Shortcuts Modal
+    shortcuts_modal_title: '⌨️ Danh sách Phím tắt Hệ thống',
+    shortcut_space: 'Bật / Tạm dừng phát Trace Player (Play / Pause)',
+    shortcut_prev: 'Tua lùi 1 bước trong mảng Trace Events (Previous Step)',
+    shortcut_next: 'Tua tiến 1 bước trong mảng Trace Events (Next Step)',
+    shortcut_reload: 'Nạp lại dữ liệu Graph & Reset lựa chọn',
+    shortcut_esc: 'Hủy chế độ chọn điểm trên bản đồ / Đóng cửa sổ trợ giúp',
+    shortcut_help: 'Mở / Đóng bảng trợ giúp phím tắt',
+    done: 'Đã hiểu',
+  },
+} as const
+
+export type TranslationKey = keyof typeof translations.en
+
+export function t(key: TranslationKey, lang: Language = 'en', params?: Record<string, string | number>): string {
+  const dict = translations[lang] ?? translations.en
+  let text: string = dict[key] ?? translations.en[key] ?? key
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v))
+    })
+  }
+  return text
+}
+
+export function translateGraphLabel(label: string, lang: Language = 'en'): string {
+  if (lang === 'vi') {
+    if (label === 'Thu Duc major landmarks road graph') {
+      return translations.vi.graph_label_thu_duc_landmarks
+    }
+  }
+  return label
+}
