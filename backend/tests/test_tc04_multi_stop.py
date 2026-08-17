@@ -123,6 +123,13 @@ def test_tc04_tour_optimizer_service_and_stitching(toy_graph: Graph) -> None:
     assert "Held-Karp DP optimal tour" in result.explanation
     assert result.comparison.held_karp_cost <= result.comparison.nearest_neighbor_cost + 1e-6
     assert result.comparison.approximation_gap_percent >= 0.0
+    assert result.comparison.original_visit_order == (
+        "N01", "N02", "N03", "N04", "N05", "N06", "N01"
+    )
+    assert result.comparison.original_order_cost > 0
+    assert result.comparison.selected_savings_cost == pytest.approx(
+        result.comparison.original_order_cost - result.total_cost
+    )
 
     # Verify seamless path stitching (no consecutive duplicate nodes)
     full_path = result.full_path
@@ -153,6 +160,12 @@ def test_tc04_api_optimize_tour_endpoint() -> None:
     assert "held_karp_cost" in data["comparison"]
     assert "nearest_neighbor_cost" in data["comparison"]
     assert "approximation_gap_percent" in data["comparison"]
+    assert data["comparison"]["original_visit_order"] == [
+        "N01", "N02", "N03", "N04", "N05", "N06", "N01"
+    ]
+    assert data["comparison"]["original_order_distance_km"] > 0
+    assert data["comparison"]["original_order_time_min"] > 0
+    assert "selected_savings_percent" in data["comparison"]
     assert data["guarantee"] == "OPTIMAL_HELD_KARP"
 
 

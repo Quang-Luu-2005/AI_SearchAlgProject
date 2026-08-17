@@ -31,6 +31,11 @@ node scripts/python.mjs scripts/data/build_thu_duc_capacity.py
 npm run benchmark:capacity
 ```
 
+Benchmark search canonical không sửa processed data. Lệnh `npm run benchmark:search`
+đọc case `experiments/cases/search_benchmark_v1.json`, warm-up rồi đo 10 OD × 3 scenario
+× 6 thuật toán × 20 lần. Output là `DERIVED_BENCHMARK`, không phải nguồn traffic mới và
+không thay đổi provenance của dataset.
+
 Node/tọa độ là `SOURCE_BACKED`; free-flow time là `DERIVED`; baseline scenario là
 `ASSUMPTION`. Validator kiểm tra checksum, bbox, ID/FK, weight dương, count và strong
 connectivity cho graph này.

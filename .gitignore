@@ -29,6 +29,7 @@ data/processed/*
 !data/processed/thu_duc_landmarks_v1.0.0/**
 experiments/results/*
 !experiments/results/README.md
+!experiments/results/search_benchmark_v1.json
 
 # Office temporary files
 ~$*

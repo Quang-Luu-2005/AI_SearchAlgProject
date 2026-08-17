@@ -1,5 +1,10 @@
 # Kế hoạch lập báo cáo đánh giá kỹ thuật Lab 1
 
+> Cập nhật triển khai 2026-08-16: các mục 1, 3, 5, 6 và đồng bộ tài liệu ở mục 7 đã
+> hoàn tất; mục 2 đã mở pilot ba scenario và giữ đúng nhãn review. Mục 4 đã có penalty
+> edge và so sánh shortest/fastest/best cost; việc sinh một tuyến thay thế k-shortest
+> riêng chưa được thêm vì compare hiện dùng các tuyến khác nhau từ sáu thuật toán.
+
 ## Tóm tắt
 
 - Tạo báo cáo tiếng Việt tại `docs/assessment/lab-1-technical-gap-analysis.md`.

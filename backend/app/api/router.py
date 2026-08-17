@@ -280,8 +280,7 @@ def _search_response(execution: SearchExecution, graph: Graph) -> dict[str, obje
             }
             for edge_cost in execution.edge_costs
         ],
-        "limitations": list(graph.metadata.get("limitations", []))
-        + ["A_STAR currently uses h=0 and therefore behaves like UCS."],
+        "limitations": list(graph.metadata.get("limitations", [])),
     }
 
 

@@ -1,0 +1,25 @@
+{
+  "case_set_id": "SEARCH_BENCHMARK_V1",
+  "graph_id": "processed/thu_duc_market_v1.0.0",
+  "data_status": "MIXED",
+  "selection_method": "ASSUMPTION: deterministic evenly spaced node IDs; no random sampling",
+  "seed": 0,
+  "scenarios": [
+    "HISTORICAL_OFFPEAK",
+    "HISTORICAL_PM_PEAK",
+    "RAIN_FLOOD_AWARE_2025_2026"
+  ],
+  "algorithms": ["UCS", "A_STAR", "BFS", "DFS", "GREEDY", "BIDIRECTIONAL"],
+  "pairs": [
+    {"case_id": "OD01", "start": "UTR_NODE_2326571617", "goal": "UTR_NODE_5764780958"},
+    {"case_id": "OD02", "start": "UTR_NODE_2332788956", "goal": "UTR_NODE_5763147358"},
+    {"case_id": "OD03", "start": "UTR_NODE_2332788962", "goal": "UTR_NODE_5762874772"},
+    {"case_id": "OD04", "start": "UTR_NODE_2332788971", "goal": "UTR_NODE_5762610255"},
+    {"case_id": "OD05", "start": "UTR_NODE_2332788977", "goal": "UTR_NODE_5758041296"},
+    {"case_id": "OD06", "start": "UTR_NODE_2984717728", "goal": "UTR_NODE_5758041268"},
+    {"case_id": "OD07", "start": "UTR_NODE_3116282962", "goal": "UTR_NODE_5758041263"},
+    {"case_id": "OD08", "start": "UTR_NODE_366385739", "goal": "UTR_NODE_5758041258"},
+    {"case_id": "OD09", "start": "UTR_NODE_366444178", "goal": "UTR_NODE_5758041252"},
+    {"case_id": "OD10", "start": "UTR_NODE_2947068442", "goal": "UTR_NODE_366385739", "note": "Golden route-change case from dataset test_cases.json"}
+  ]
+}

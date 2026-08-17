@@ -7,8 +7,8 @@ từ OSM và 178 cạnh có hướng được tổng hợp theo đường đi ng
 Mạng nguồn 8.952 node/14.043 cạnh chỉ dùng lúc build; UI chỉ nhận landmark nên bản đồ
 không bị phủ bởi node kỹ thuật. Traffic là dữ liệu lịch sử, **không phải real-time**.
 
-Pilot flood-aware quanh chợ Thủ Đức 90/155 vẫn được giữ riêng và còn trạng thái
-`REVIEW_REQUIRED`. Chi tiết landmark release nằm trong
+Pilot flood-aware quanh chợ Thủ Đức 90/155 có thể chọn trong GUI để demo ba scenario,
+nhưng vẫn còn trạng thái `REVIEW_REQUIRED`. Chi tiết landmark release nằm trong
 [`metadata.json`](data/processed/thu_duc_landmarks_v1.0.0/metadata.json) và
 [ADR 0011](docs/decisions/0011-thu-duc-selectable-landmark-graph.md).
 
@@ -80,7 +80,8 @@ npm run dev
 - Swagger: `http://localhost:8000/docs`
 
 Giao diện Pathfinder AI cho phép chọn dataset, scenario, điểm đầu/đích và chạy
-UCS, A* hoặc so sánh hai thuật toán. Đường đi, node đã duyệt và metrics đều lấy
+UCS, A*, BFS, DFS, Greedy, Bidirectional hoặc so sánh cả sáu. Đường đi, trạng thái
+frontier/current/closed và metrics đều lấy
 trực tiếp từ Backend API; dữ liệu fixture được hiển thị với nhãn `SIMULATED`.
 
 Điểm đầu/đích có thể tìm theo tên/`node_id` hoặc chọn marker tròn trắng viền xanh bằng
@@ -99,11 +100,12 @@ sát ranh. Nút reset đưa camera về rectangle này và camera bị giới h�
 thể kéo bản đồ ra toàn TP.HCM hoặc world view.
 
 Catalog có thêm `processed/thu_duc_core_capacity_v0.1.0` gồm 3.229 node/5.057 directed
-edge để stress-test. Dataset 90 node và `CAPACITY_BENCHMARK_ONLY` không xuất hiện trong
-dropdown map; giao diện chỉ giữ 65 landmark. Chạy benchmark riêng bằng:
+edge để stress-test. Capacity graph không xuất hiện trong dropdown; landmark 65 node là
+mặc định và pilot 90 node là lựa chọn demo scenario. Chạy benchmark bằng:
 
 ```powershell
 npm run benchmark:capacity
+npm run benchmark:search
 ```
 
 Basemap mặc định có thể đổi trong `frontend/.env`:
@@ -149,7 +151,7 @@ npm test
 | Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
 | UCS và A* (heuristic Haversine có trọng số) | Hoàn tất |
-| BFS/DFS/Greedy/Bidirectional | Chưa thực hiện |
+| BFS/DFS/Greedy/Bidirectional | Hoàn tất API/GUI/compare |
 | Held-Karp/Nearest Neighbor (tour 5–10 điểm) | Hoàn tất |
 
 Ưu tiên tiếp theo là hai reviewer xác nhận flood map-match; không tuyên bố kết quả

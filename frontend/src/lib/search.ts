@@ -1,4 +1,4 @@
-export type Algorithm = 'UCS' | 'A_STAR'
+export type Algorithm = 'UCS' | 'A_STAR' | 'BFS' | 'DFS' | 'GREEDY' | 'BIDIRECTIONAL'
 export type AlgorithmSelection = '' | Algorithm | 'COMPARE' | 'HELD_KARP' | 'NEAREST_NEIGHBOR' | 'OPTIMIZE_TOUR'
 
 
@@ -11,7 +11,6 @@ export type LocationItem = {
   longitude: number | null
   data_status: string
 }
-
 export type ScenarioItem = {
   scenario_id: string
   traffic_scenario: string | null
@@ -111,6 +110,7 @@ export function runSearch(
 
 export function runComparison(
   input: SearchInput,
+  algorithms: Algorithm[] = ['UCS', 'A_STAR', 'BFS', 'DFS', 'GREEDY', 'BIDIRECTIONAL'],
   signal?: AbortSignal,
 ): Promise<{
   start: string
@@ -121,7 +121,7 @@ export function runComparison(
   return requestJson('/api/v1/compare', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...input, algorithms: ['UCS', 'A_STAR'] }),
+    body: JSON.stringify({ ...input, algorithms }),
     signal,
   })
 }
@@ -141,6 +141,12 @@ export type TourComparison = {
   held_karp_cost: number
   nearest_neighbor_cost: number
   approximation_gap_percent: number
+  original_visit_order: string[]
+  original_order_cost: number
+  original_order_distance_km: number
+  original_order_time_min: number
+  selected_savings_cost: number
+  selected_savings_percent: number
 }
 
 export type OptimizeTourResult = {
@@ -182,4 +188,3 @@ export function optimizeTour(
     signal,
   })
 }
-

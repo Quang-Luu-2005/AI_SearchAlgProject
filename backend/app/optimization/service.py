@@ -44,12 +44,24 @@ class TourComparison:
     held_karp_cost: float
     nearest_neighbor_cost: float
     approximation_gap_percent: float
+    original_visit_order: tuple[str, ...]
+    original_order_cost: float
+    original_order_distance_km: float
+    original_order_time_min: float
+    selected_savings_cost: float
+    selected_savings_percent: float
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "held_karp_cost": self.held_karp_cost,
             "nearest_neighbor_cost": self.nearest_neighbor_cost,
             "approximation_gap_percent": self.approximation_gap_percent,
+            "original_visit_order": list(self.original_visit_order),
+            "original_order_cost": self.original_order_cost,
+            "original_order_distance_km": self.original_order_distance_km,
+            "original_order_time_min": self.original_order_time_min,
+            "selected_savings_cost": self.selected_savings_cost,
+            "selected_savings_percent": self.selected_savings_percent,
         }
 
 
@@ -165,12 +177,6 @@ class TourOptimizerService:
         else:
             approx_gap = 0.0
 
-        comparison = TourComparison(
-            held_karp_cost=hk_cost,
-            nearest_neighbor_cost=nn_cost,
-            approximation_gap_percent=round(approx_gap, 2),
-        )
-
         # Select indices based on tour_algorithm choice
         if normalized_tour_algorithm == "NEAREST_NEIGHBOR":
             selected_indices = nn_indices
@@ -182,6 +188,37 @@ class TourOptimizerService:
             selected_cost = hk_cost
             guarantee = "OPTIMAL_HELD_KARP"
             alg_label = "Held-Karp DP optimal tour"
+
+        original_indices = list(range(len(all_points)))
+        if return_to_depot:
+            original_indices.append(0)
+        original_cost = sum(
+            matrix.cost_matrix[u_idx][v_idx]
+            for u_idx, v_idx in zip(original_indices, original_indices[1:])
+        )
+        original_distance_m = sum(
+            matrix.get_subpath(u_idx, v_idx).distance_m
+            for u_idx, v_idx in zip(original_indices, original_indices[1:])
+        )
+        original_time_min = sum(
+            matrix.get_subpath(u_idx, v_idx).travel_time_min
+            for u_idx, v_idx in zip(original_indices, original_indices[1:])
+        )
+        selected_savings = original_cost - selected_cost
+        selected_savings_percent = (
+            selected_savings / original_cost * 100.0 if original_cost > 0 else 0.0
+        )
+        comparison = TourComparison(
+            held_karp_cost=hk_cost,
+            nearest_neighbor_cost=nn_cost,
+            approximation_gap_percent=round(approx_gap, 2),
+            original_visit_order=tuple(matrix.points[idx] for idx in original_indices),
+            original_order_cost=original_cost,
+            original_order_distance_km=original_distance_m / 1000.0,
+            original_order_time_min=original_time_min,
+            selected_savings_cost=selected_savings,
+            selected_savings_percent=round(selected_savings_percent, 2),
+        )
 
         # Reconstruct visit order of point IDs
         visit_order = tuple(matrix.points[idx] for idx in selected_indices)
@@ -232,6 +269,9 @@ class TourOptimizerService:
             f"distance is {total_distance_m / 1000.0:.3f} km and ETA is "
             f"{total_time_min:.3f} min. Held-Karp exact cost is {hk_cost:.6f}, "
             f"Nearest Neighbor cost is {nn_cost:.6f} (approximation gap: {approx_gap:.2f}%). {data_note}"
+            f" Compared with the original input order ({original_cost:.6f}), the selected "
+            f"tour changes weighted cost by {-selected_savings:+.6f} and saves "
+            f"{selected_savings_percent:.2f}%."
         )
 
         return TourExecutionResult(

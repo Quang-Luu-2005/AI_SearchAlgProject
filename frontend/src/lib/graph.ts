@@ -25,7 +25,11 @@ export type ThuDucBoundary = FeatureCollection<Polygon | MultiPolygon> & {
 }
 
 export function interactiveGraphs(graphs: GraphSummary[]): GraphSummary[] {
-  return graphs.filter((item) => item.graph_id === 'processed/thu_duc_landmarks_v1.0.0')
+  const interactiveIds = new Set([
+    'processed/thu_duc_landmarks_v1.0.0',
+    'processed/thu_duc_market_v1.0.0',
+  ])
+  return graphs.filter((item) => interactiveIds.has(item.graph_id))
 }
 
 export function preferredGraphId(graphs: GraphSummary[], currentId = ''): string {

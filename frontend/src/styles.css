@@ -1287,6 +1287,38 @@ select:focus {
   background: white;
 }
 
+@media (max-width: 1024px) {
+  .metrics-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .metrics-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.legend-node--frontier { border-color: #2563eb; background: #bfdbfe; }
+.legend-node--current { border-color: #ea580c; background: #fff3b0; box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.2); }
+.legend-node--closed { border-color: #4b5563; background: #d1d5db; }
+
+.metrics-bar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(110px, 1fr));
+  gap: 10px;
+  width: min(1180px, 100%);
+  margin: 16px auto 0;
+}
+
+.metric-chip {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--surface-low);
+}
+
+.metric-chip span { color: var(--muted); font-size: 0.68rem; }
+.metric-chip strong { color: var(--primary); font-size: 0.9rem; }
+
 .legend-selectable-node {
   width: 14px;
   height: 14px;
@@ -1350,6 +1382,32 @@ select:focus {
   gap: 12px;
   margin-top: 16px;
 }
+
+.comparison-section {
+  width: min(1180px, 100%);
+  margin: 16px auto 0;
+}
+
+.comparison-section .comparison-grid { width: 100%; margin-top: 10px; }
+.comparison-insight {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  background: var(--surface-low);
+  color: var(--ink);
+  font-size: 0.82rem;
+}
+
+.tour-baseline-card {
+  margin: 16px 0;
+  padding: 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  background: var(--surface-low);
+}
+
+.tour-baseline-card h4, .tour-baseline-card p { margin-top: 0; }
 
 .comparison-grid button {
   display: grid;
