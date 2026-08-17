@@ -1,0 +1,35 @@
+\section{Kiến trúc Hệ thống \& Luồng Thực thi}
+\label{sec:program_flow}
+
+\subsection{Sơ đồ Kiến trúc Phân lớp (Clean Architecture)}
+Hệ thống được thiết kế theo mô hình phân lớp rõ ràng, đảm bảo tính độc lập giữa giao diện người dùng, API và động cơ thuật toán:
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    layer/.style={rectangle, draw=blue!70!black, fill=blue!5, rounded corners=3pt, text width=12cm, minimum height=1.3cm, align=center, font=\small},
+    arrow/.style={thick, <->, >=stealth, color=blue!80!black}
+]
+    \node[layer] (fe) {\textbf{Frontend Layer (React + MapLibre GL JS)}\\ \footnotesize Map GPU Layers (Boundary, Edges, Nodes, Route), Trace Player, Dashboard};
+    \node[layer, below=0.8cm of fe] (api) {\textbf{API Layer (FastAPI)}\\ \footnotesize Endpoints: \texttt{/search}, \texttt{/compare}, \texttt{/optimize-tour}, \texttt{/locations}, \texttt{/scenarios}};
+    \node[layer, below=0.8cm of api] (service) {\textbf{Core Services \& Search Engine}\\ \footnotesize \texttt{SearchService}, \texttt{TourOptimizerService}, \texttt{ScenarioCostEngine}, \texttt{ExplanationEngine}};
+    \node[layer, below=0.8cm of service] (algo) {\textbf{Algorithms \& Data Layer (Pure Python)}\\ \footnotesize BFS, DFS, UCS, A*, Greedy, Bidirectional, Held-Karp DP, Immutable Graph Contracts};
+
+    \draw[arrow] (fe) -- node[right, font=\footnotesize] {HTTP / JSON} (api);
+    \draw[arrow] (api) -- node[right, font=\footnotesize] {Pydantic Schemas} (service);
+    \draw[arrow] (service) -- node[right, font=\footnotesize] {Contracts} (algo);
+\end{tikzpicture}
+\caption{Kiến trúc phân tầng Clean Architecture của FloodRoute HCMC.}
+\label{fig:system_architecture}
+\end{figure}
+
+\subsection{Luồng Xử lý Tìm kiếm 2 Điểm (Two-Point Search Workflow)}
+Khi người dùng thực hiện tìm đường trên giao diện:
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Khởi tạo Yêu cầu}: Người dùng chọn điểm Start, Goal (qua click map hoặc tìm kiếm), chọn Kịch bản (vd: Mưa lớn) và Thuật toán (vd: A*).
+    \item \textbf{Gửi API Request}: React gửi request \texttt{POST /api/v1/search} đến FastAPI Backend.
+    \item \textbf{Xác thực \& Điều phối}: \texttt{SearchService} nạp graph từ catalog, áp dụng kịch bản qua \texttt{GraphView} và gọi hàm thuật toán tương ứng.
+    \item \textbf{Tính toán \& Ghi nhận Trace}: Thuật toán duyệt đồ thị, tính chi phí cạnh qua \texttt{ScenarioCostEngine} và sinh danh sách \texttt{TraceEvent} (\texttt{OPEN}, \texttt{EXPAND}, \texttt{RELAX}, \texttt{CLOSE}, \texttt{GOAL}).
+    \item \textbf{Giải thích Tuyến đường}: \texttt{ExplanationEngine} phân tích thành phần chi phí chiếm ưu thế và xác định đoạn đường có penalty kẹt xe/ngập lớn nhất.
+    \item \textbf{Hiển thị Trực quan}: React vẽ đường đi tối ưu lên bản đồ vector và kích hoạt \textbf{Trace Player} cho phép người dùng xem lại toàn bộ quá trình mở rộng nút.
+\end{enumerate}

@@ -5,8 +5,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
-### Added
-
+- Hoàn thành toàn diện Báo cáo Kỹ thuật Mục 4.9 (`docs/reports/FloodRoute_HCMC_Technical_Report.md`)
+  gồm 10 chương mục chuẩn (a–j), đồng bộ phân công trách nhiệm thành viên từ Trello Board `AI_Project_1`,
+  tích hợp bảng so sánh lý thuyết, số liệu thực nghiệm từ 3.600 lượt chạy benchmark và kết quả tối ưu hóa TSP.
 - Hoàn thiện demo technical: GUI đủ sáu thuật toán two-point, trace frontier/current/closed,
   metrics đầy đủ, so sánh shortest/fastest/best weighted cost và giải thích edge penalty.
 - Bổ sung baseline thứ tự nhập cho multi-stop cùng cost/distance/ETA và mức tiết kiệm;

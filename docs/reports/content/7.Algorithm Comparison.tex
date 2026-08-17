@@ -1,0 +1,53 @@
+\section{So sánh Thuật toán \& Kết quả Thực nghiệm}
+\label{sec:algorithm_comparison}
+
+\subsection{Bảng So sánh Lý thuyết Toàn diện giữa 6 Thuật toán}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l c c c c c c}
+\toprule
+\textbf{Tiêu chí} & \textbf{BFS} & \textbf{DFS} & \textbf{UCS} & \textbf{A* Search} & \textbf{Greedy} & \textbf{Bidirectional} \\
+\midrule
+\textbf{Cấu trúc} & Queue & Stack & Min-Heap & Min-Heap ($g+h$) & Min-Heap ($h$) & 2 Queues \\
+\textbf{Thời gian} & $O(b^d)$ & $O(b^m)$ & $O(b^{1 + \lfloor C^*/\epsilon \rfloor})$ & $O(b^d)$ & $O(b^m)$ & $O(2 \cdot b^{d/2})$ \\
+\textbf{Bộ nhớ} & $O(b^d)$ & $O(bm)$ & $O(b^{1 + \lfloor C^*/\epsilon \rfloor})$ & $O(b^d)$ & $O(bm)$ & $O(2 \cdot b^{d/2})$ \\
+\textbf{Đầy đủ} & Có & Có (hữu hạn) & Có ($c \ge \epsilon$) & Có ($h$ Admissible) & Không & Có \\
+\textbf{Tối ưu} & Số chặng & Không & \textbf{Chi phí $C^*$} & \textbf{Chi phí $C^*$} & Không & Số chặng \\
+\textbf{Heuristic} & Không & Không & Không & Bắt buộc & Bắt buộc & Không \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng so sánh cơ sở lý thuyết giữa 6 thuật toán tìm kiếm.}
+\label{tab:theoretical_comparison}
+\end{table}
+
+\subsection{Kết quả Thực nghiệm Khoa học từ 3.600 Lượt chạy Benchmark}
+Dữ liệu được trích xuất trực tiếp từ artifact thực nghiệm chuẩn \texttt{experiments/results/search\_benchmark\_v1.json} (10 cặp O-D $\times$ 3 kịch bản $\times$ 6 thuật toán $\times$ 20 lần lặp độc lập):
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l c c c c c c c}
+\toprule
+\textbf{Thuật toán} & \textbf{Node duyệt} & \textbf{Node (Med)} & \textbf{Thời gian (Med)} & \textbf{P95 (ms)} & \textbf{Chi phí $C^*$} & \textbf{Cự ly (km)} & \textbf{ETA (p)} \\
+\midrule
+\textbf{A\_STAR} & \textbf{46.5} & \textbf{42.5} & 1.5082 ms & 1.9687 ms & \textbf{0.5715} & \textbf{0.322} & \textbf{0.89} \\
+\textbf{UCS} & 49.7 & 47.0 & 1.2712 ms & 1.6317 ms & \textbf{0.5715} & \textbf{0.322} & \textbf{0.89} \\
+\textbf{GREEDY} & \textbf{17.3} & \textbf{17.0} & 0.3825 ms & 0.5998 ms & 0.5825 & 0.321 & 0.85 \\
+\textbf{BIDIRECTIONAL} & 27.0 & 22.5 & \textbf{0.0997 ms} & \textbf{0.1424 ms} & 0.6469 & 0.356 & 0.96 \\
+\textbf{BFS} & 43.8 & 39.0 & 0.2053 ms & 0.3059 ms & 0.6469 & 0.356 & 0.96 \\
+\textbf{DFS} & 59.7 & 70.0 & 0.2723 ms & 0.3762 ms & 0.5963 & 0.332 & 0.90 \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng tổng hợp số liệu thực nghiệm toàn cục (Global Benchmark Summary - 3.600 runs).}
+\label{tab:benchmark_summary}
+\end{table}
+
+\subsection{Phân tích Tuyến đường Thay đổi theo Kịch bản (Case Study OD03)}
+Xét cặp điểm O-D số \textbf{\texttt{OD03}} kết nối xuyên qua khu vực Chợ Thủ Đức:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Kịch bản \texttt{HISTORICAL\_OFFPEAK}}: Đường phố thông thoáng, thuật toán chọn tuyến đường thẳng ngắn nhất xuyên qua trung tâm Chợ Thủ Đức ($D = 0.163$ km, Chi phí $C = 0.1045$, ETA $0.22$ phút).
+    \item \textbf{Kịch bản \texttt{HISTORICAL\_PM\_PEAK}}: Giao thông quanh chợ ùn tắc, thành phần $P_{\text{traffic}}$ làm chi phí tăng lên $C = 0.1250$ (ETA tăng lên $0.31$ phút).
+    \item \textbf{Kịch bản \texttt{RAIN\_FLOOD\_AWARE\_2025\_2026}}: Cạnh qua đường Dương Văn Cam và Đặng Thị Rành có rủi ro ngập $R_{\text{flood}} = 1.0$. Thuật toán tự động chuyển hướng đường đi vòng qua đường vành đai cao ráo, bảo đảm phương tiện không bị chết máy.
+\end{itemize}

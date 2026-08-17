@@ -1,0 +1,32 @@
+\section{Hướng dẫn Cài đặt \& Sử dụng Ứng dụng}
+\label{sec:program_instructions}
+
+\subsection{Yêu cầu Hệ thống \& Cài đặt Môi trường}
+Yêu cầu phần mềm: Python 3.11+, Node.js 22.12+ và npm.
+
+\begin{lstlisting}[language=bash, caption={Các lệnh cài đặt và khởi chạy hệ thống FloodRoute HCMC.}]
+# 1. Khoi tao moi truong ao Python va cai dat Backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".\backend[dev]"
+
+# 2. Cai dat cac thu vien Frontend
+npm --prefix frontend install
+
+# 3. Khoi chay dong thoi ca Backend va Frontend
+npm run dev
+\end{lstlisting}
+
+Địa chỉ truy cập ứng dụng:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Giao diện Web UI}: \url{http://localhost:5173}
+    \item \textbf{FastAPI Documentation (Swagger UI)}: \url{http://localhost:8000/docs}
+\end{itemize}
+
+\subsection{Hướng dẫn Sử dụng Giao diện Người dùng (GUI Guide)}
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Chọn Điểm Trực quan trên Bản đồ (Auto-snapping 200m)}: Người dùng có thể click trực tiếp lên bản đồ; hệ thống sẽ tự động snap vào điểm nút giao thông gần nhất trong bán kính 200m mà không làm giật camera. Điểm Start được đánh dấu bằng ghim màu cam, điểm Goal bằng ghim màu hồng.
+    \item \textbf{Chế độ Giao hàng Đa điểm (Multi-Stop Tour Mode)}: Cho phép click chọn liên tiếp tối đa 10 điểm dừng trên bản đồ; hệ thống đánh số thứ tự trực quan và tự động tính toán lộ trình tối ưu qua Held-Karp DP.
+    \item \textbf{Thanh điều khiển Trace Player}: Hỗ trợ xem từng bước duyệt nút thuật toán với 3 màu phân biệt: Vàng (\textit{frontier} -- nút đang chờ), Xanh lá (\textit{current} -- nút đang duyệt), Xám (\textit{closed} -- nút đã duyệt xong).
+    \item \textbf{Chế độ So sánh (Compare Mode)}: Chạy song song cả 6 thuật toán trên cùng một cặp điểm và kịch bản, hiển thị bảng so sánh trực quan đa tiêu chí.
+    \item \textbf{Chuyển đổi Ngôn ngữ \& Responsive}: Hỗ trợ song ngữ Tiếng Việt (\texttt{vi}) / Tiếng Anh (\texttt{en}) và tự động co giãn menu ngăn kéo trên thiết bị di động/tablet.
+\end{enumerate}

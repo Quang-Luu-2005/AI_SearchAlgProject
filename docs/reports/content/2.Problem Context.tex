@@ -1,0 +1,44 @@
+\section{Bối cảnh Đề tài Thực tế}
+\label{sec:problem_context}
+
+\subsection{Thực trạng Giao thông Đô thị tại TP. Hồ Chí Minh và TP. Thủ Đức}
+Tại các đô thị lớn của Việt Nam, đặc biệt là TP. Hồ Chí Minh, giao thông đô thị có mật độ phương tiện xe máy rất cao kết hợp với mạng lưới hẻm và đường một chiều dày đặc. Vào các khung giờ cao điểm (07:00 -- 08:30 sáng và 16:30 -- 18:30 chiều), các trục đường huyết mạch khu vực TP. Thủ Đức như \textbf{Võ Văn Ngân, Kha Vạn Cân, Đặng Văn Bi, Tô Ngọc Vân, Quốc lộ 13} thường xuyên rơi vào tình trạng ùn ứ nghiêm trọng, làm gia tăng thời gian di chuyển gấp 2--4 lần so với điều kiện lưu thông tự do (\textit{Free-Flow}).
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    box/.style={rectangle, draw=blue!70!black, fill=blue!5, rounded corners=4pt, text width=6.5cm, minimum height=3.2cm, inner sep=10pt, align=left},
+    title/.style={font=\bfseries\small, color=blue!80!black}
+]
+    \node[box] (traffic) at (0,0) {
+        \textbf{\color{red!70!black} 🚗 Ùn tắc Giờ Cao Điểm}\\[0.2cm]
+        \textbullet\ Trục đường: Võ Văn Ngân, Kha Vạn Cân, Tô Ngọc Vân\\
+        \textbullet\ Vận tốc giảm: 5 -- 10 km/h\\
+        \textbullet\ Độ trễ: Tăng gấp 2 -- 4 lần\\
+        \textbullet\ Hệ quả: Trễ giờ giao nhận hàng
+    };
+    
+    \node[box] (flood) at (7.5,0) {
+        \textbf{\color{blue!70!black} 🌧️ Triều Cường \& Mưa Lớn}\\[0.2cm]
+        \textbullet\ Rốn ngập: Chợ Thủ Đức, Dương Văn Cam, Đặng Thị Rành\\
+        \textbullet\ Mực nước ngập: 0.3m -- 0.6m\\
+        \textbullet\ Hệ quả: Chết máy, cấm đường, hư hỏng hàng hóa
+    };
+\end{tikzpicture}
+\caption{Đặc thù giao thông đô thị kép tại khu vực nghiên cứu TP. Thủ Đức.}
+\label{fig:traffic_context}
+\end{figure}
+
+\subsection{Vấn đề Ngập nước do Triều cường và Mưa lớn}
+Đặc thù địa hình trũng thấp và hệ thống thoát nước quá tải khiến khu vực xung quanh \textbf{Chợ Thủ Đức (đường Dương Văn Cam, Đặng Thị Rành, Kha Vạn Cân, Hồ Văn Tư)} trở thành ``rốn ngập'' kinh niên mỗi khi có mưa lớn hoặc triều cường dâng cao (mực nước ngập thường từ 0.3m đến 0.6m). Đối với người giao hàng bằng xe máy:
+\begin{itemize}[leftmargin=1.5cm]
+    \item Việc đi vào đường ngập sâu gây chết máy, hư hỏng hàng hóa và nguy cơ tai nạn nghiêm trọng.
+    \item Tuyến đường ngắn nhất về mặt khoảng cách địa lý ($D$) nếu băng qua rốn ngập sẽ trở thành \textbf{tuyến đường bất khả thi} hoặc có chi phí rủi ro cực cao.
+\end{itemize}
+
+\subsection{Mục tiêu của Ứng dụng FloodRoute HCMC}
+Hệ thống \textbf{FloodRoute HCMC} giải quyết triệt để hai bài toán thực tế:
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Tìm đường 2 điểm thích ứng động}: Không chỉ dựa trên cự ly hình học, mà kết hợp đồng thời khoảng cách, thời gian lưu thông, mức độ kẹt xe và nguy cơ ngập lụt để đề xuất lộ trình an toàn, tối ưu nhất.
+    \item \textbf{Tối ưu hóa hành trình giao hàng đa điểm (TSP)}: Cho phép shipper nhập 1 kho hàng (\textit{depot}) và 5--10 điểm giao hàng (\textit{stops}), từ đó giải thuật tự động sắp xếp thứ tự giao hàng tối ưu nhằm giảm thiểu tổng chi phí, thời gian và nhiên liệu.
+\end{enumerate}

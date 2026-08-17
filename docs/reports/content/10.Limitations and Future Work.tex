@@ -1,0 +1,23 @@
+\section{Hạn chế \& Hướng Phát triển Tương lai}
+\label{sec:limitations_future_work}
+
+\subsection{Khó khăn Kỹ thuật Đã Vượt qua}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường}: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 178 cạnh nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
+    \item \textbf{Đảm bảo Tính Đúng đắn của Heuristic Đa Chi phí}: Chứng minh và thiết lập hàm heuristic Haversine có trọng số vừa thỏa mãn tính chấp nhận được (\textit{Admissible}), vừa thỏa mãn tính đơn điệu (\textit{Consistent}) trong không gian chi phí 4 thành phần.
+    \item \textbf{Kiến trúc Bất biến \& Deterministic Tie-breaking}: Đảm bảo thuật toán độc lập 100\% với framework HTTP và luôn cho kết quả tái lập tuyệt đối trên mọi nền tảng.
+\end{itemize}
+
+\subsection{Các Hạn chế Hiện tại của Hệ thống}
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Dữ liệu Giao thông Lịch sử}: Hiện tại mô hình sử dụng hồ sơ giao thông lịch sử phân chia theo khung giờ (\textit{Historical Traffic Profile}), chưa kết nối với luồng dữ liệu GPS xe máy theo thời gian thực (\textit{Live Telemetry Feed}).
+    \item \textbf{Mô hình Ngập nước Tĩnh}: Kịch bản ngập dựa trên danh mục các điểm đen thống kê, chưa tích hợp mô hình mô phỏng thủy lực/thủy văn động lực học (\textit{Hydraulic Dynamic Inundation}) theo lượng mưa tức thời.
+    \item \textbf{Phạm vi Bài toán TSP}: Hiện tại giải quyết tối ưu cho 1 shipper xe máy đơn lẻ (Single-vehicle TSP), chưa mở rộng cho bài toán phân phối đội xe nhiều phương tiện có ràng buộc tải trọng và khung giờ giao hàng (\textit{Capacitated Vehicle Routing Problem with Time Windows -- CVRPTW}).
+\end{enumerate}
+
+\subsection{Định hướng Mở rộng Tương lai}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Tích hợp API Bản đồ Thời gian Thực}: Kết nối Live Traffic API (Here Maps, TomTom, Vietbando) để cập nhật độ trễ thời gian thực vào $P_{\text{traffic}}$.
+    \item \textbf{Ứng dụng Meta-heuristics cho Bài toán Quy mô Lớn}: Cài đặt thuật toán Di truyền (\textit{Genetic Algorithm -- GA}) và Tối ưu hóa Đàn kiến (\textit{Ant Colony Optimization -- ACO}) để giải bài toán VRP cho đội xe quy mô lớn ($N > 50$ điểm giao hàng).
+    \item \textbf{Hệ thống Cảnh báo Dự báo Mưa ngập Tức thời (Nowcasting)}: Kết hợp dữ liệu radar thời tiết để dự báo trước 30--60 phút các cung đường sắp ngập và tự động tái định tuyến (\textit{dynamic rerouting}) cho shipper đang di chuyển.
+\end{itemize}

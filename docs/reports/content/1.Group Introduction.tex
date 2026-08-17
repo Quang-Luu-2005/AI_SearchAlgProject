@@ -1,0 +1,73 @@
+\section{Giới thiệu Nhóm \& Phân công Đóng góp}
+\label{sec:group_intro}
+
+\subsection{Thông tin Nhóm}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Tên nhóm}: FloodRoute Team
+    \item \textbf{Trello Board Quản lý Dự án}: \href{https://trello.com/b/AGK7CP4q/aiproject1}{\texttt{AI\_Project\_1 (https://trello.com/b/AGK7CP4q/aiproject1)}}
+\end{itemize}
+
+\subsection{Bảng Phân công Trách nhiệm \& Đóng góp Chi tiết}
+Dựa trên hệ thống thẻ công việc và lịch sử commit thực tế từ Trello Board dự án:
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{l p{2.6cm} p{2.2cm} X c}
+\toprule
+\textbf{Thành viên} & \textbf{Tài khoản / MSSV} & \textbf{Thẻ Trello} & \textbf{Đóng góp \& Trách nhiệm chi tiết} & \textbf{Tỷ lệ} \\
+\midrule
+\textbf{Lưu Huy Minh Quang} & \texttt{lhmquang232} \newline \textbf{23127016} & Card BE-01 \newline Card BE-02 \newline Card BE-03 & 
+\textbullet\ \textbf{BE-01}: Thiết kế mô hình dữ liệu bất biến \texttt{Graph}, \texttt{Node}, \texttt{Edge}, \texttt{GraphView}; kiểm soát đồ thị có hướng, deterministic neighbor sorting, phát hiện chu trình. \newline
+\textbullet\ \textbf{BE-02}: Xây dựng \texttt{ScenarioCostEngine}, 3 kịch bản \texttt{BALANCED}, \texttt{PEAK\_TRAFFIC}, \texttt{RAIN\_SAFE}, mô hình chi phí 4 thành phần, breakdown chi tiết từng cạnh và xử lý đóng cạnh. \newline
+\textbullet\ \textbf{BE-03}: Xây dựng FastAPI Router (\texttt{/locations}, \texttt{/scenarios}, \texttt{/search}, \texttt{/compare}), validate schema Pydantic, xử lý lỗi chuẩn và sinh giải thích đường đi.
+& 25\% \\
+\midrule
+\textbf{Vũ Lê Trọng Văn} & \texttt{vuletrngvan} \newline \textbf{20127095} & Card FE-01 \newline Card FE-02 \newline Card OPT & 
+\textbullet\ \textbf{FE-01}: Xây dựng API client TypeScript, hệ thống controls chọn Start/Goal/Algorithm/Scenario, tích hợp loading/error state và phím tắt. \newline
+\textbullet\ \textbf{FE-02}: Tích hợp MapLibre GL JS, hiển thị đồ thị qua GPU layers, phát triển Trace Player (Play/Pause/Step/Speed) và Dashboard hiển thị metrics, explanation. \newline
+\textbullet\ \textbf{OPT}: Giải bài toán giao hàng đa điểm (TSP): xây dựng \texttt{PairwiseMatrix}, giải thuật chính xác \textbf{Held-Karp DP} ($O(N^2 \cdot 2^N)$), giải thuật xấp xỉ \textbf{Nearest Neighbor}, đo \% Approximation Gap và \% Baseline Savings.
+& 25\% \\
+\midrule
+\textbf{Nguyễn Duy Khang} & \texttt{11nguynduykhang} \newline \textbf{23127202} & Card ALG-01 \newline Card ALG-03 \newline Card QA-01 & 
+\textbullet\ \textbf{ALG-01}: Cài đặt thuật toán BFS (Queue) và DFS (Stack) với cơ chế deterministic tie-breaking, ghi nhận trace, và xây dựng phản ví dụ chứng minh giới hạn của BFS/DFS. \newline
+\textbullet\ \textbf{ALG-03}: Cài đặt Greedy Best-First Search và Bidirectional Search, xác định điểm giao nhau và chốt điều kiện dừng, viết ADR Bidirectional Search. \newline
+\textbullet\ \textbf{QA-01}: Xây dựng bộ kiểm thử so sánh thuật toán, golden regression test suite, kịch bản demo và kiểm thử tính hợp lệ của hệ thống.
+& 25\% \\
+\midrule
+\textbf{Ngô Quang Thắng} & \texttt{tartzuser} \newline \textbf{23127473} & Card ALG-02 \newline Card DATA-01 \newline Card DATA-02 & 
+\textbullet\ \textbf{ALG-02}: Cài đặt thuật toán UCS và A* Search, phát triển hàm Heuristic Haversine có trọng số, chứng minh toán học tính Admissible và Consistent của heuristic. \newline
+\textbullet\ \textbf{DATA-01}: Xây dựng pipeline dữ liệu OSM 4 lớp (\texttt{raw} $\rightarrow$ \texttt{interim} $\rightarrow$ \texttt{processed} $\rightarrow$ \texttt{fixtures}), quản lý metadata manifest và SHA-256 checksums. \newline
+\textbullet\ \textbf{DATA-02}: Map-match danh mục 24 điểm ngập lụt TP. Thủ Đức vào đồ thị, thiết lập kịch bản triều cường/mưa lớn, kiểm định chất lượng dữ liệu (QC) và gán nhãn provenance.
+& 25\% \\
+\bottomrule
+\end{tabularx}
+\caption{Bảng phân công trách nhiệm và đóng góp của các thành viên trong nhóm.}
+\label{tab:member_contributions}
+\end{table}
+
+\subsection{Bảng Tự Đánh giá Mức độ Hoàn thành Mục tiêu Đề cương (Rubric Matrix)}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{X c c p{7.5cm}}
+\toprule
+\textbf{Tiêu chí Đánh giá (Rubric)} & \textbf{Điểm} & \textbf{Đánh giá} & \textbf{Minh chứng mã nguồn \& Kết quả thực tế} \\
+\midrule
+1. Bối cảnh giao thông Việt Nam \& Kịch bản thực tế & 10 & 10/10 & Bối cảnh shipper giao hàng TP. Thủ Đức, kẹt xe giờ cao điểm và ngập nước triều cường/mưa lớn thực tế. \\
+2. Mô hình đồ thị, tập dữ liệu \& Hàm chi phí & 15 & 15/15 & Đồ thị có hướng bất biến, 3 dataset (Landmark 65, Market 90, Capacity 3229), chi phí tổng hợp 4 thành phần ($D, T_{\text{ff}}, P_{\text{traffic}}, R_{\text{flood}}$). \\
+3. Cài đặt các thuật toán bắt buộc (BFS, DFS, UCS, A*) & 20 & 20/20 & 4 thuật toán chuẩn với deterministic tie-break, sinh trace từng bước, chứng minh toán học Heuristic Haversine Admissible/Consistent. \\
+4. Cài đặt các thuật toán mở rộng (Greedy, Bidirectional) & 10 & 10/10 & Cài đặt Greedy Best-First Search và Bidirectional Search trên đồ thị có hướng chuyển vị; kèm phản ví dụ và ADR. \\
+5. Bài toán tối ưu hóa nhiều địa điểm (TSP) & 10 & 10/10 & Xây dựng Pairwise Matrix có hướng, giải thuật chính xác Held-Karp DP ($O(N^2 \cdot 2^N)$), Nearest Neighbor, đo \% Gap và \% Baseline Savings. \\
+6. Giao diện người dùng (GUI) \& Trực quan hóa tiến trình & 10 & 10/10 & Web app React + MapLibre GL JS vector tiles, GPU layers, snap 200m, Trace Player (Frontier/Current/Visited), i18n EN/VI, Responsive. \\
+7. Giải thích tuyến đường \& So sánh phương án & 10 & 10/10 & Tự động sinh diễn giải ngôn ngữ tự nhiên: phân tích thành phần chi phí chiếm ưu thế, chỉ ra đoạn đường gây penalty lớn nhất, so sánh shortest vs fastest vs best cost. \\
+8. Chất lượng Báo cáo Kỹ thuật & 10 & 10/10 & Đầy đủ 10 chương mục (a–j), trình bày học thuật, số liệu thực nghiệm từ 3.600 lượt chạy benchmark, công thức toán và sơ đồ rõ ràng. \\
+9. Chất lượng Video Demo & 5 & 5/5 & Video demo trực quan đầy đủ các tính năng, giải thích thuật toán từng bước qua trace player và so sánh kịch bản. \\
+\midrule
+\textbf{TỔNG CỘNG} & \textbf{100} & \textbf{100/100} & \textbf{Dự án hoàn thành toàn diện 100\% các tiêu chí kỹ thuật.} \\
+\bottomrule
+\end{tabularx}
+\caption{Ma trận tự đánh giá mức độ hoàn thành theo chuẩn Rubric Lab 1.}
+\label{tab:rubric_matrix}
+\end{table}
