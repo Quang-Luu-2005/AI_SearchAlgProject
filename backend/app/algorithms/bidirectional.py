@@ -70,9 +70,6 @@ def bidirectional_search(
         neighbors_fwd = sorted(graph.neighbors(curr_fwd, scenario_id), key=lambda e: e.to_node_id)
         for edge in neighbors_fwd:
             nxt = edge.to_node_id
-        
-        for edge in graph.neighbors(curr_fwd, scenario_id):
-            nxt = edge.to_node_id
             if nxt not in visited_fwd:
                 visited_fwd.add(nxt)
                 parent_fwd[nxt] = (curr_fwd, edge.edge_id)
@@ -117,9 +114,8 @@ def bidirectional_search(
             path_bwd.append(c)
             edges_bwd.append(e_id)
             curr = c
-        path_bwd.append(goal)
 
-        final_path = tuple(path_fwd[:-1] + path_bwd)
+        final_path = tuple(path_fwd + path_bwd)
         final_edges = tuple(edges_fwd + edges_bwd)
 
         record(TraceEventKind.GOAL, intersect_node, "intersection_found")

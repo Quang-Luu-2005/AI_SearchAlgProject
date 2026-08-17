@@ -46,7 +46,7 @@ def greedy_best_first_search(
         nonlocal step
         trace.append(
             TraceEvent(
-                step=step, kind=kind, node_id=node_id, parent_id=parent_id, h_cost=h_cost, details={}
+                step=step, kind=kind, node_id=node_id, parent_id=parent_id, h_cost=h_cost, details=dict(details or {})
             )
         )
         step += 1
