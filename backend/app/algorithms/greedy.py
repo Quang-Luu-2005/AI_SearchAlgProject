@@ -12,7 +12,11 @@ from ..core.contracts import (
     TraceEventKind,
 )
 from ..core.cost import ScenarioCostEngine
-from .weighted import _reconstruct_path, compute_geographic_heuristic
+from .weighted import (
+    _reconstruct_path,
+    compute_lower_bound_heuristic,
+    compute_scenario_rho,
+)
 
 
 def greedy_best_first_search(
@@ -26,7 +30,10 @@ def greedy_best_first_search(
     graph.get_node(goal)
     graph.scenario(scenario_id)
 
-    start_h = compute_geographic_heuristic(graph, cost_engine, start, goal, scenario_id)
+    rho_s = compute_scenario_rho(graph, cost_engine, scenario_id)
+    start_h = compute_lower_bound_heuristic(
+        graph, cost_engine, start, goal, scenario_id, rho_s=rho_s
+    )
     frontier: list[tuple[float, str]] = [(start_h, start)]
     
     parents: dict[str, tuple[str, str]] = {}
@@ -82,7 +89,9 @@ def greedy_best_first_search(
             if breakdown.is_closed or breakdown.total_cost is None:
                 continue
 
-            h_val = compute_geographic_heuristic(graph, cost_engine, neighbor, goal, scenario_id)
+            h_val = compute_lower_bound_heuristic(
+                graph, cost_engine, neighbor, goal, scenario_id, rho_s=rho_s
+            )
 
             if neighbor not in visited_h:
                 visited_h[neighbor] = h_val

@@ -1,8 +1,8 @@
-"""Deterministic Non-Negative Weighted Search Algorithms (UCS & A*).
+"""Deterministic non-negative weighted search algorithms (UCS & A*).
 
 This module implements two foundational search algorithms for road routing:
 1. Uniform Cost Search (UCS): f(n) = g(n)
-2. A* Search: f(n) = g(n) + h(n) using Geographic Weighted Haversine Distance Heuristic.
+2. A* Search: f(n) = g(n) + h(n) using a scenario-aware cost lower-bound heuristic.
 
 Theoretical Guarantees:
 - Admissibility: 0 <= h(n) <= h*(n) for all nodes n.
@@ -35,6 +35,11 @@ SearchImplementation = Callable[
     SearchPath,
 ]
 
+# Geographic distances below one millimetre are not useful denominators for a
+# cost-per-distance ratio.  Such edges are still valid for routing; they are
+# only excluded from rho_s estimation.
+MIN_GEO_DISTANCE_KM = 1e-6
+
 
 def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Calculate the great-circle distance between two WGS84 coordinates in kilometers.
@@ -57,6 +62,91 @@ def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) ->
     return r * c
 
 
+def compute_scenario_rho(
+    graph: Graph,
+    cost_engine: ScenarioCostEngine,
+    scenario_id: str,
+    *,
+    min_geographic_distance_km: float = MIN_GEO_DISTANCE_KM,
+) -> float:
+    """Return ``rho_s = min(Cost_s(e) / d_geo(e))`` for open edges.
+
+    The graph and scenario are treated as immutable inputs.  Edges closed by
+    the scenario view or by an edge override are excluded.  Edges without two
+    finite coordinates, with a near-zero Haversine denominator, or with a
+    non-finite cost are skipped.  If no usable edge remains, ``0.0`` is the
+    safe fallback, making A* equivalent to UCS for that snapshot.
+    """
+    if min_geographic_distance_km < 0:
+        raise ValueError("min_geographic_distance_km must be non-negative")
+
+    graph.scenario(scenario_id)
+    ratios: list[float] = []
+
+    for edge in graph.list_edges(scenario_id):
+        # list_edges already excludes scenario.closed_edge_ids.  The cost
+        # engine additionally handles an override such as {"is_closed": true}.
+        try:
+            breakdown = cost_engine.cost_for_edge_value(edge, scenario_id)
+        except CostModelError:
+            # A malformed cost declaration is not a usable rho sample.  The
+            # weighted search still validates cost when it actually traverses
+            # an edge, preserving the API's normal invalid-cost error path.
+            continue
+        if breakdown.is_closed or breakdown.total_cost is None:
+            continue
+
+        source = graph.get_node(edge.from_node_id)
+        target = graph.get_node(edge.to_node_id)
+        coordinates = (source.latitude, source.longitude, target.latitude, target.longitude)
+        if any(value is None or not math.isfinite(value) for value in coordinates):
+            continue
+
+        geographic_distance_km = haversine_distance_km(*coordinates)  # type: ignore[arg-type]
+        if (
+            not math.isfinite(geographic_distance_km)
+            or geographic_distance_km <= min_geographic_distance_km
+        ):
+            continue
+
+        cost = breakdown.total_cost
+        if cost is None or not math.isfinite(cost):
+            continue
+        ratios.append(cost / geographic_distance_km)
+
+    return min(ratios) if ratios else 0.0
+
+
+def compute_lower_bound_heuristic(
+    graph: Graph,
+    cost_engine: ScenarioCostEngine,
+    node_id: str,
+    goal_id: str,
+    scenario_id: str,
+    *,
+    rho_s: float | None = None,
+) -> float:
+    """Compute ``h_s(n) = rho_s * Haversine(n, goal)``.
+
+    ``rho_s`` may be supplied by a caller that already computed the frozen
+    scenario scale, as A* does once per search.  Omitting it keeps this public
+    helper convenient for tests and other informed-search consumers.
+    """
+    if node_id == goal_id:
+        return 0.0
+
+    node = graph.get_node(node_id)
+    goal_node = graph.get_node(goal_id)
+    coordinates = (node.latitude, node.longitude, goal_node.latitude, goal_node.longitude)
+    if any(value is None or not math.isfinite(value) for value in coordinates):
+        return 0.0
+
+    scale = compute_scenario_rho(graph, cost_engine, scenario_id) if rho_s is None else rho_s
+    if scale < 0 or not math.isfinite(scale):
+        raise ValueError("rho_s must be a finite non-negative number")
+    return scale * haversine_distance_km(*coordinates)  # type: ignore[arg-type]
+
+
 def compute_geographic_heuristic(
     graph: Graph,
     cost_engine: ScenarioCostEngine,
@@ -64,43 +154,10 @@ def compute_geographic_heuristic(
     goal_id: str,
     scenario_id: str,
 ) -> float:
-    """Compute the admissible and consistent Geographic Weighted Haversine Distance Heuristic.
-
-    Formula:
-        h(n) = w_distance * Haversine(n, goal)
-
-    Properties:
-        - Admissible: Since straight-line distance is the shortest physical distance between two points,
-          Haversine(n, goal) <= d*(n, goal). Because edge cost c(e) >= w_dist * d(e),
-          h(n) <= c*(n, goal) = h*(n).
-        - Consistent: By geographic triangle inequality, Haversine(n, goal) <= Haversine(n, n') + Haversine(n', goal).
-          Multiplying by w_dist >= 0 yields h(n) <= c(n, n') + h(n').
-    """
-    if node_id == goal_id:
-        return 0.0
-
-    node = graph.get_node(node_id)
-    goal_node = graph.get_node(goal_id)
-
-    if (
-        node.latitude is None
-        or node.longitude is None
-        or goal_node.latitude is None
-        or goal_node.longitude is None
-    ):
-        return 0.0
-
-    dist_km = haversine_distance_km(
-        node.latitude, node.longitude, goal_node.latitude, goal_node.longitude
+    """Backward-compatible name for the scenario-aware lower-bound heuristic."""
+    return compute_lower_bound_heuristic(
+        graph, cost_engine, node_id, goal_id, scenario_id
     )
-
-    try:
-        preset = cost_engine.preset_for_scenario(scenario_id)
-        w_dist = preset.weights.get("distance", 0.0)
-    except CostModelError:
-        w_dist = 0.0
-
-    return w_dist * dist_km
 
 
 def _reconstruct_path(
@@ -287,14 +344,32 @@ def a_star_search(
     goal: str,
     scenario_id: str,
 ) -> SearchPath:
-    """A* Search: Weighted search using Geographic Weighted Haversine Distance Heuristic.
+    """A* Search using one frozen scenario-aware lower-bound scale.
 
     Evaluation function: f(n) = g(n) + h(n)
-    Heuristic: h(n) = w_distance * Haversine_km(n, goal)
-    Optimality: 100% Globally Optimal because h(n) is admissible and consistent.
+    Heuristic: h_s(n) = rho_s * Haversine_km(n, goal)
+    Optimality: guaranteed when the scenario is static and edge costs are non-negative.
     Completeness: Complete on finite graphs if edge costs c(e) >= epsilon > 0.
     Pruning Advantage: Significantly reduces expanded nodes compared to UCS.
     """
+    rho_s = compute_scenario_rho(graph, cost_engine, scenario_id)
+
+    def lower_bound(
+        active_graph: Graph,
+        active_cost_engine: ScenarioCostEngine,
+        node_id: str,
+        goal_id: str,
+        active_scenario_id: str,
+    ) -> float:
+        return compute_lower_bound_heuristic(
+            active_graph,
+            active_cost_engine,
+            node_id,
+            goal_id,
+            active_scenario_id,
+            rho_s=rho_s,
+        )
+
     return _weighted_search(
         graph,
         cost_engine,
@@ -302,7 +377,7 @@ def a_star_search(
         goal,
         scenario_id,
         algorithm=AlgorithmName.A_STAR,
-        heuristic_fn=compute_geographic_heuristic,
+        heuristic_fn=lower_bound,
     )
 
 
@@ -330,7 +405,9 @@ def resolve_algorithm(name: str) -> tuple[AlgorithmName, SearchImplementation]:
 __all__ = [
     "ALGORITHM_REGISTRY",
     "a_star_search",
+    "compute_lower_bound_heuristic",
     "compute_geographic_heuristic",
+    "compute_scenario_rho",
     "haversine_distance_km",
     "resolve_algorithm",
     "uniform_cost_search",

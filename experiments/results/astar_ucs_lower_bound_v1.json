@@ -1,0 +1,426 @@
+{
+  "benchmark_id": "ASTAR_UCS_LOWER_BOUND_V1",
+  "generated_at_utc": "2026-08-18T18:40:05.555198+00:00",
+  "result_status": "DERIVED_BENCHMARK",
+  "data_status": "SIMULATED",
+  "graph_id": "fixtures/toy_graph_v0.1",
+  "selection_method": "ASSUMPTION: deterministic fixture pairs; no random sampling",
+  "heuristic": {
+    "formula": "h_s(n) = rho_s * Haversine(n, goal)",
+    "rho_formula": "rho_s = min(Cost_s(e) / Haversine(e)) over open usable edges",
+    "near_zero_threshold_km": 1e-06
+  },
+  "environment": {
+    "python": "3.12.4",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "note": "Processing times are local measurements; costs and explored nodes are deterministic."
+  },
+  "design": {
+    "od_pairs": 5,
+    "scenarios": [
+      "OFFPEAK_BALANCED",
+      "PEAK_TRAFFIC",
+      "HEAVY_RAIN_SAFE"
+    ],
+    "algorithms": [
+      "UCS",
+      "A_STAR"
+    ]
+  },
+  "results": [
+    {
+      "case_id": "OD01",
+      "start": "N01",
+      "goal": "N06",
+      "scenario": "OFFPEAK_BALANCED",
+      "rho_s": 0.368004796,
+      "ucs_cost": 2.343,
+      "astar_cost": 2.343,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 5,
+      "astar_explored_nodes": 5,
+      "ucs_processing_time_ms": 0.209,
+      "astar_processing_time_ms": 0.4177,
+      "ucs_path": [
+        "N01",
+        "N02",
+        "N06"
+      ],
+      "astar_path": [
+        "N01",
+        "N02",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD02",
+      "start": "N03",
+      "goal": "N06",
+      "scenario": "OFFPEAK_BALANCED",
+      "rho_s": 0.368004796,
+      "ucs_cost": 2.0,
+      "astar_cost": 2.0,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.3066,
+      "astar_processing_time_ms": 0.3438,
+      "ucs_path": [
+        "N03",
+        "N04",
+        "N06"
+      ],
+      "astar_path": [
+        "N03",
+        "N04",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD03",
+      "start": "N01",
+      "goal": "N05",
+      "scenario": "OFFPEAK_BALANCED",
+      "rho_s": 0.368004796,
+      "ucs_cost": 2.755,
+      "astar_cost": 2.755,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.2121,
+      "astar_processing_time_ms": 0.5079,
+      "ucs_path": [
+        "N01",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N01",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD04",
+      "start": "N02",
+      "goal": "N05",
+      "scenario": "OFFPEAK_BALANCED",
+      "rho_s": 0.368004796,
+      "ucs_cost": 3.281,
+      "astar_cost": 3.281,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 6,
+      "ucs_processing_time_ms": 0.3077,
+      "astar_processing_time_ms": 0.4817,
+      "ucs_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD05",
+      "start": "N06",
+      "goal": "N05",
+      "scenario": "OFFPEAK_BALANCED",
+      "rho_s": 0.368004796,
+      "ucs_cost": 3.455,
+      "astar_cost": 3.455,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 5,
+      "ucs_processing_time_ms": 0.2075,
+      "astar_processing_time_ms": 0.4132,
+      "ucs_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD01",
+      "start": "N01",
+      "goal": "N06",
+      "scenario": "PEAK_TRAFFIC",
+      "rho_s": 0.467035595,
+      "ucs_cost": 2.9209,
+      "astar_cost": 2.9209,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 5,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.1712,
+      "astar_processing_time_ms": 0.4886,
+      "ucs_path": [
+        "N01",
+        "N02",
+        "N06"
+      ],
+      "astar_path": [
+        "N01",
+        "N02",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD02",
+      "start": "N03",
+      "goal": "N06",
+      "scenario": "PEAK_TRAFFIC",
+      "rho_s": 0.467035595,
+      "ucs_cost": 2.5625,
+      "astar_cost": 2.5625,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.1987,
+      "astar_processing_time_ms": 0.3288,
+      "ucs_path": [
+        "N03",
+        "N04",
+        "N06"
+      ],
+      "astar_path": [
+        "N03",
+        "N04",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD03",
+      "start": "N01",
+      "goal": "N05",
+      "scenario": "PEAK_TRAFFIC",
+      "rho_s": 0.467035595,
+      "ucs_cost": 3.4515,
+      "astar_cost": 3.4515,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.221,
+      "astar_processing_time_ms": 0.3868,
+      "ucs_path": [
+        "N01",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N01",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD04",
+      "start": "N02",
+      "goal": "N05",
+      "scenario": "PEAK_TRAFFIC",
+      "rho_s": 0.467035595,
+      "ucs_cost": 4.222175,
+      "astar_cost": 4.222175,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 6,
+      "ucs_processing_time_ms": 0.2039,
+      "astar_processing_time_ms": 0.4309,
+      "ucs_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD05",
+      "start": "N06",
+      "goal": "N05",
+      "scenario": "PEAK_TRAFFIC",
+      "rho_s": 0.467035595,
+      "ucs_cost": 4.4165,
+      "astar_cost": 4.4165,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 5,
+      "ucs_processing_time_ms": 0.2011,
+      "astar_processing_time_ms": 0.3766,
+      "ucs_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD01",
+      "start": "N01",
+      "goal": "N06",
+      "scenario": "HEAVY_RAIN_SAFE",
+      "rho_s": 0.298932016,
+      "ucs_cost": 2.562625,
+      "astar_cost": 2.562625,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 5,
+      "ucs_processing_time_ms": 0.1715,
+      "astar_processing_time_ms": 0.3469,
+      "ucs_path": [
+        "N01",
+        "N02",
+        "N04",
+        "N06"
+      ],
+      "astar_path": [
+        "N01",
+        "N02",
+        "N04",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD02",
+      "start": "N03",
+      "goal": "N06",
+      "scenario": "HEAVY_RAIN_SAFE",
+      "rho_s": 0.298932016,
+      "ucs_cost": 1.6375,
+      "astar_cost": 1.6375,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.2022,
+      "astar_processing_time_ms": 0.3964,
+      "ucs_path": [
+        "N03",
+        "N04",
+        "N06"
+      ],
+      "astar_path": [
+        "N03",
+        "N04",
+        "N06"
+      ]
+    },
+    {
+      "case_id": "OD03",
+      "start": "N01",
+      "goal": "N05",
+      "scenario": "HEAVY_RAIN_SAFE",
+      "rho_s": 0.298932016,
+      "ucs_cost": 2.2075,
+      "astar_cost": 2.2075,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 5,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.2214,
+      "astar_processing_time_ms": 0.3524,
+      "ucs_path": [
+        "N01",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N01",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD04",
+      "start": "N02",
+      "goal": "N05",
+      "scenario": "HEAVY_RAIN_SAFE",
+      "rho_s": 0.298932016,
+      "ucs_cost": 2.697625,
+      "astar_cost": 2.697625,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 6,
+      "ucs_processing_time_ms": 0.1846,
+      "astar_processing_time_ms": 0.3621,
+      "ucs_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N02",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "case_id": "OD05",
+      "start": "N06",
+      "goal": "N05",
+      "scenario": "HEAVY_RAIN_SAFE",
+      "rho_s": 0.298932016,
+      "ucs_cost": 2.8225,
+      "astar_cost": 2.8225,
+      "cost_delta": 0.0,
+      "cost_match": true,
+      "ucs_explored_nodes": 6,
+      "astar_explored_nodes": 4,
+      "ucs_processing_time_ms": 0.1817,
+      "astar_processing_time_ms": 0.2952,
+      "ucs_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ],
+      "astar_path": [
+        "N06",
+        "N04",
+        "N03",
+        "N05"
+      ]
+    }
+  ],
+  "summary": {
+    "cases": 15,
+    "cost_mismatches": 0,
+    "astar_explored_leq_ucs": 15
+  }
+}

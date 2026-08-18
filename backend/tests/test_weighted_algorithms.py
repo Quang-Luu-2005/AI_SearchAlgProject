@@ -6,10 +6,13 @@ import pytest
 
 from backend.app.algorithms.weighted import (
     a_star_search,
+    compute_lower_bound_heuristic,
     compute_geographic_heuristic,
+    compute_scenario_rho,
     haversine_distance_km,
     uniform_cost_search,
 )
+from backend.app.core.contracts import Edge, Graph, Node, Scenario
 from backend.app.core.cost import ScenarioCostEngine
 from backend.app.core.graph import GraphLoader
 
@@ -24,6 +27,94 @@ def test_haversine_distance_accuracy() -> None:
     # Distance between Chợ Thủ Đức (10.8495, 106.7535) and Suối Tiên (10.8619, 106.8038)
     dist_km = haversine_distance_km(10.8495, 106.7535, 10.8619, 106.8038)
     assert 5.0 <= dist_km <= 6.0
+
+
+def test_lower_bound_rho_excludes_closed_and_near_zero_edges() -> None:
+    """rho_s must use only usable edges and must not divide by near-zero geo distance."""
+    graph = Graph(
+        nodes=(
+            Node("A", 10.0, 106.0),
+            Node("B", 10.0, 106.0001),
+            Node("C", 10.0, 106.01),
+            Node("D", 10.0, 106.01),
+        ),
+        edges=(
+            Edge("E_OPEN", "A", "B", 1000.0, 1.0),
+            Edge("E_CLOSED", "B", "C", 1.0, 1.0),
+            Edge("E_NEAR_ZERO", "C", "D", 1.0, 1.0),
+        ),
+        scenarios=(
+            Scenario("OPEN", attributes={"cost_preset": "BALANCED"}),
+            Scenario(
+                "CLOSED",
+                closed_edge_ids=("E_CLOSED",),
+                attributes={"cost_preset": "BALANCED"},
+            ),
+            Scenario(
+                "OVERRIDE_CLOSED",
+                attributes={
+                    "cost_preset": "BALANCED",
+                    "edge_overrides": {"E_CLOSED": {"is_closed": True}},
+                },
+            ),
+        ),
+    )
+    cost_engine = ScenarioCostEngine(graph)
+
+    rho_open = compute_scenario_rho(graph, cost_engine, "OPEN")
+    rho_closed = compute_scenario_rho(graph, cost_engine, "CLOSED")
+    rho_override_closed = compute_scenario_rho(graph, cost_engine, "OVERRIDE_CLOSED")
+    expected_open_ratio = cost_engine.cost_for_edge("E_OPEN", "CLOSED").total_cost / (
+        haversine_distance_km(10.0, 106.0, 10.0, 106.0001)
+    )
+
+    assert rho_open > 0.0
+    assert rho_closed == pytest.approx(expected_open_ratio)
+    assert rho_override_closed == pytest.approx(expected_open_ratio)
+    assert rho_closed > rho_open
+
+
+def test_lower_bound_heuristic_is_scaled_by_scenario_rho() -> None:
+    graph = GraphLoader.from_directory(TOY_GRAPH_DIR)
+    cost_engine = ScenarioCostEngine(graph)
+    rho_s = compute_scenario_rho(graph, cost_engine, "OFFPEAK_BALANCED")
+
+    heuristic = compute_lower_bound_heuristic(
+        graph,
+        cost_engine,
+        "N01",
+        "N06",
+        "OFFPEAK_BALANCED",
+        rho_s=rho_s,
+    )
+    expected = rho_s * haversine_distance_km(
+        graph.get_node("N01").latitude,
+        graph.get_node("N01").longitude,
+        graph.get_node("N06").latitude,
+        graph.get_node("N06").longitude,
+    )
+
+    assert heuristic == pytest.approx(expected)
+    assert compute_geographic_heuristic(
+        graph, cost_engine, "N01", "N06", "OFFPEAK_BALANCED"
+    ) == pytest.approx(heuristic)
+
+
+def test_lower_bound_a_star_matches_ucs_on_fixture_scenarios() -> None:
+    """The new heuristic must preserve UCS's optimal cost on baseline/peak/rain."""
+    graph = GraphLoader.from_directory(TOY_GRAPH_DIR)
+    cost_engine = ScenarioCostEngine(graph)
+    pairs = (("N01", "N06"), ("N03", "N06"), ("N01", "N05"), ("N02", "N05"), ("N06", "N05"))
+
+    for scenario_id in ("OFFPEAK_BALANCED", "PEAK_TRAFFIC", "HEAVY_RAIN_SAFE"):
+        for start, goal in pairs:
+            ucs = uniform_cost_search(graph, cost_engine, start, goal, scenario_id)
+            astar = a_star_search(graph, cost_engine, start, goal, scenario_id)
+            ucs_cost = cost_engine.route_cost(ucs.edge_ids, scenario_id).total_cost
+            astar_cost = cost_engine.route_cost(astar.edge_ids, scenario_id).total_cost
+
+            assert astar_cost == pytest.approx(ucs_cost)
+            assert astar.explored_nodes <= len(graph.nodes)
 
 
 @pytest.mark.skipif(not OSM_THU_DUC_DIR.exists(), reason="osm_thu_duc_v1.0.0 dataset not available")

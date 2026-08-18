@@ -50,8 +50,9 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 
 `graph_id` is optional and defaults to `toy_graph_v0.1`. Supported two-point
 algorithm names are `UCS`, `A_STAR`, `BFS`, `DFS`, `GREEDY` and `BIDIRECTIONAL`; A* and Greedy use the scenario-weighted
-geographic Haversine heuristic from ADR-0012, with `h=0` fallback when coordinates
-are unavailable.
+scenario-aware lower-bound Haversine heuristic from ADR-0015, with `h=0` fallback
+when coordinates are unavailable. A* computes `rho_s` once per frozen scenario;
+closed edges and near-zero geographic edges are excluded from its minimum ratio.
 
 The response includes `path`, `edge_ids`, `metrics`, `trace`, `guarantee`,
 `explanation`, `edge_breakdown`, `data_status` and `limitations`. Fixture results

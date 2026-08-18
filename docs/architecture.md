@@ -123,9 +123,11 @@ Engine nhận graph contract, không import FastAPI và không mutate graph.
 API search dùng Pydantic schema trong `backend/app/api/models.py`, gọi
 `SearchService` thay vì chứa logic thuật toán. Registry hiện hỗ trợ `UCS`, `A_STAR`,
 `BFS`, `DFS`, `GREEDY` và `BIDIRECTIONAL`; BFS/DFS dùng neighbor ordering
-deterministic trên graph directed và không mutate graph. A* dùng heuristic khoảng cách Haversine nhân trọng số distance của scenario,
-fallback về `h=0` khi node thiếu tọa độ. Heuristic giữ admissible/consistent cho cost đa
-thành phần theo ADR-0012. Chi tiết request, response và error status xem [api.md](api.md).
+deterministic trên graph directed và không mutate graph. A* dùng
+scenario-aware lower-bound heuristic theo ADR-0015, tính `rho_s` một lần trên
+scenario freeze và fallback về `h=0` khi node thiếu tọa độ. Closed/near-zero
+geographic edges không tham gia tính rho. Chi tiết request, response và error
+status xem [api.md](api.md).
 
 Tour optimizer nhận depot và 5–10 stop duy nhất, không cho depot lặp trong stops. Ma trận
 chi phí có hướng được tạo qua cùng `SearchService` và scenario cost, sau đó Held-Karp tìm
@@ -133,6 +135,16 @@ nghiệm chính xác còn Nearest Neighbor cung cấp nghiệm heuristic để s
 tour ngoài `HELD_KARP` và `NEAREST_NEIGHBOR` bị từ chối thay vì fallback ngầm.
 Response comparison còn đánh giá thứ tự stop đầu vào trên cùng pairwise matrix để báo
 baseline và savings có thể kiểm chứng.
+
+## Scenario-aware lower-bound heuristic
+
+ADR-0015 updates the weighted-search contract: A* freezes the active scenario,
+computes `rho_s = min(Cost_s(e) / Haversine(e))` over open usable edges, and
+uses `h_s(n) = rho_s * Haversine(n, goal)`. Closed edges and geographic edges
+with distance `<= 1e-6 km` do not contribute to `rho_s`; an empty usable set
+falls back to `rho_s = 0`. This keeps traffic/flood cost in the same
+`ScenarioCostEngine` used by `g(n)` while preserving the framework-independent,
+immutable graph and deterministic tie-break boundaries.
 
 ## Graph Loader contract
 

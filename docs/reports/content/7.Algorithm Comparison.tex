@@ -44,6 +44,26 @@ Dữ liệu được trích xuất trực tiếp từ artifact thực nghiệm c
 \label{tab:benchmark_summary}
 \end{table}
 
+\subsection{Kiểm chứng A* Lower-Bound với UCS trên Fixture}
+Benchmark Task 1 dùng 5 cặp O-D $\times$ 3 scenario trên fixture ``SIMULATED``.
+Chi tiết từng cặp nằm trong \texttt{experiments/results/astar\_ucs\_lower\_bound\_v1.md}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Scenario} & $\rho_s$ & \textbf{Cost match} & \textbf{UCS explored (avg)} & \textbf{A* explored (avg)} & \textbf{A* $\le$ UCS} \\
+\midrule
+\texttt{OFFPEAK\_BALANCED} & 0.368004796 & 5/5 & 5.8 & 4.8 & 5/5 \\
+\texttt{PEAK\_TRAFFIC} & 0.467035595 & 5/5 & 5.8 & 4.6 & 5/5 \\
+\texttt{HEAVY\_RAIN\_SAFE} & 0.298932016 & 5/5 & 5.8 & 4.6 & 5/5 \\
+\bottomrule
+\end{tabular}
+\caption{Kiểm chứng tính đúng đắn của A* lower-bound so với UCS (15 case).}
+\label{tab:lower_bound_ucs_check}
+\end{table}
+
 \subsection{Phân tích Tuyến đường Thay đổi theo Kịch bản (Case Study OD03)}
 Xét cặp điểm O-D số \textbf{\texttt{OD03}} kết nối xuyên qua khu vực Chợ Thủ Đức:
 \begin{itemize}[leftmargin=1.5cm]

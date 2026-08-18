@@ -1,3 +1,9 @@
+# Lower-bound heuristic artifact
+
+`astar_ucs_lower_bound_v1.json` and `astar_ucs_lower_bound_v1.md` are generated
+by `npm run benchmark:lower-bound`. They are labelled `DERIVED_BENCHMARK` over
+the `SIMULATED` fixture and record the A* vs UCS cost and explored-node check.
+
 # Generated results
 
 Kết quả batch test được sinh vào đây dưới dạng CSV/JSON. Mỗi file phải chứa dataset

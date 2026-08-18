@@ -5,6 +5,11 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Thay heuristic A* bằng scenario-aware lower bound `h_s(n) = rho_s × Haversine(n, goal)`;
+  loại closed/near-zero edges khỏi rho, thêm unit test và benchmark 15 case baseline/peak/rain
+  với 0 cost mismatch so với UCS (`experiments/results/astar_ucs_lower_bound_v1.md`).
+- Thêm ADR-0015 và lệnh `npm run benchmark:lower-bound` cho bằng chứng tái lập.
+
 - Hoàn thành toàn diện Báo cáo Kỹ thuật Mục 4.9 (`docs/reports/FloodRoute_HCMC_Technical_Report.md`)
   gồm 10 chương mục chuẩn (a–j), đồng bộ phân công trách nhiệm thành viên từ Trello Board `AI_Project_1`,
   tích hợp bảng so sánh lý thuyết, số liệu thực nghiệm từ 3.600 lượt chạy benchmark và kết quả tối ưu hóa TSP.

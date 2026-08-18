@@ -23,7 +23,7 @@
 | **Lưu Huy Minh Quang** | `lhmquang232`<br>**23127016** | `Card BE-01`<br>`Card BE-02`<br>`Card BE-03` | • **`BE-01`**: Thiết kế mô hình dữ liệu bất biến `Graph`, `Node`, `Edge`, `GraphView`; kiểm soát đồ thị có hướng, deterministic neighbor sorting, phát hiện chu trình.<br>• **`BE-02`**: Xây dựng `ScenarioCostEngine`, 3 kịch bản `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE`, mô hình chi phí 4 thành phần, breakdown chi tiết từng cạnh và xử lý đóng cạnh.<br>• **`BE-03`**: Xây dựng FastAPI Router (`/locations`, `/scenarios`, `/search`, `/compare`), validate schema Pydantic, xử lý lỗi chuẩn và sinh dữ liệu giải thích đường đi. | 25% |
 | **Vũ Lê Trọng Văn** | `vuletrngvan`<br>**20127095** | `Card FE-01`<br>`Card FE-02`<br>`Card OPT` | • **`FE-01`**: Xây dựng API client TypeScript, hệ thống controls chọn Start/Goal/Algorithm/Scenario, tích hợp loading/error state và phím tắt.<br>• **`FE-02`**: Tích hợp MapLibre GL JS, hiển thị đồ thị qua GPU layers, phát triển Trace Player (Play/Pause/Step/Speed) và Dashboard hiển thị metrics, explanation.<br>• **`OPT`**: Giải bài toán giao hàng đa điểm (TSP): xây dựng `PairwiseMatrix`, giải thuật chính xác **Held-Karp DP** ($O(N^2 \cdot 2^N)$), giải thuật xấp xỉ **Nearest Neighbor**, đo % Approximation Gap và % Baseline Savings. | 25% |
 | **Nguyễn Duy Khang** | `11nguynduykhang`<br>**23127202** | `Card ALG-01`<br>`Card ALG-03`<br>`Card QA-01` | • **`ALG-01`**: Cài đặt thuật toán BFS (Queue) và DFS (Stack) với cơ chế deterministic tie-breaking, ghi nhận trace, và xây dựng các phản ví dụ chứng minh giới hạn của BFS/DFS.<br>• **`ALG-03`**: Cài đặt Greedy Best-First Search và Bidirectional Search, xác định điểm giao nhau và chốt điều kiện dừng, viết ADR Bidirectional Search.<br>• **`QA-01`**: Xây dựng bộ kiểm thử so sánh thuật toán, golden regression test suite, kịch bản demo và kiểm thử tính hợp lệ của hệ thống. | 25% |
-| **Ngô Quang Thắng** | `tartzuser`<br>**23127473** | `Card ALG-02`<br>`Card DATA-01`<br>`Card DATA-02` | • **`ALG-02`**: Cài đặt thuật toán UCS và A* Search, phát triển hàm Heuristic Haversine có trọng số, chứng minh toán học tính Admissible và Consistent của heuristic.<br>• **`DATA-01`**: Xây dựng pipeline dữ liệu OSM 4 lớp (`raw` $\rightarrow$ `interim` $\rightarrow$ `processed` $\rightarrow$ `fixtures`), quản lý metadata manifest và SHA-256 checksums.<br>• **`DATA-02`**: Map-match danh mục 24 điểm ngập lụt TP. Thủ Đức vào đồ thị, thiết lập kịch bản triều cường/mưa lớn, kiểm định chất lượng dữ liệu (QC) và gán nhãn provenance. | 25% |
+| **Ngô Quang Thắng** | `tartzuser`<br>**23127473** | `Card ALG-02`<br>`Card DATA-01`<br>`Card DATA-02` | • **`ALG-02`**: Cài đặt thuật toán UCS và A* Search, phát triển Scenario-aware Cost Lower-Bound Heuristic $h_s(n)=\rho_s D_{\text{Haversine}}(n,Goal)$, chứng minh tính Admissible/Consistent và kiểm tra với UCS.<br>• **`DATA-01`**: Xây dựng pipeline dữ liệu OSM 4 lớp (`raw` $\rightarrow$ `interim` $\rightarrow$ `processed` $\rightarrow$ `fixtures`), quản lý metadata manifest và SHA-256 checksums.<br>• **`DATA-02`**: Map-match danh mục 24 điểm ngập lụt TP. Thủ Đức vào đồ thị, thiết lập kịch bản triều cường/mưa lớn, kiểm định chất lượng dữ liệu (QC) và gán nhãn provenance. | 25% |
 
 ### 1.3. Bảng Tự Đánh giá Mức độ Hoàn thành Mục tiêu Đề cương (Rubric Matrix)
 
@@ -130,28 +130,44 @@ Trong đó:
 
 ### 5.2. Thuật toán Tìm kiếm Có Trọng số (Weighted Search)
 - **Uniform Cost Search (UCS / Dijkstra)**: Cấu trúc Min-Heap (`heapq`), khóa sắp xếp là hàm $g(n)$ (chi phí tích lũy từ Start đến $n$). Đảm bảo tìm được đường đi có **tổng chi phí $C^*$ nhỏ nhất** khi mọi chi phí bước $c(e) \ge 0$.
-- **A\* Search**: Cấu trúc Min-Heap với hàm đánh giá $f(n) = g(n) + h(n)$ và hàm Heuristic Haversine có trọng số:
-  $$h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}(n, \text{Goal})$$
+- **A\* Search**: Cấu trúc Min-Heap với hàm đánh giá $f(n) = g(n) + h_s(n)$ và
+  Scenario-aware Cost Lower-Bound Heuristic:
+  $$\rho_s = \min_{e\ \text{open}} \frac{Cost_s(e)}{D_{\text{Haversine}}(e)},\qquad
+  h_s(n) = \rho_s \cdot D_{\text{Haversine}}(n, \text{Goal})$$
+  Trong đó cạnh đóng và cạnh có khoảng cách Haversine gần 0 không tham gia tính
+  $\rho_s$; scenario được freeze trong một lần search.
 
 ### 5.3. Chứng minh Toán học về Tính Đúng đắn của Heuristic
 
 > **Định lý 1 (Tính Chấp nhận được -- Admissibility)**:  
-> Hàm heuristic $h(n) = w_{\text{dist}} \cdot D_{\text{Haversine}}(n, \text{Goal})$ luôn thỏa mãn $0 \le h(n) \le h^*(n)$ với mọi nút $n$, trong đó $h^*(n)$ là chi phí thực tế tối ưu từ $n$ đến $\text{Goal}$.
+> Với mọi cạnh mở, $Cost_s(e) \ge \rho_s D_{\text{Haversine}}(e)$ theo định nghĩa của
+> $\rho_s$. Vì vậy $h_s(n) = \rho_s D_{\text{Haversine}}(n, \text{Goal})$ là lower bound
+> và thỏa mãn $0 \le h_s(n) \le h^*(n)$ khi cost không âm và scenario tĩnh.
 > 
 > *Chứng minh*:
 > 1. Khoảng cách đường cong trắc địa $D_{\text{Haversine}}(n, \text{Goal})$ là khoảng cách vật lý ngắn nhất giữa hai điểm trên bề mặt Trái Đất. Do đó, $D^*(n, \text{Goal}) \ge D_{\text{Haversine}}(n, \text{Goal})$.
 > 2. Mọi thành phần chi phí trong hàm mục tiêu ($T_{\text{ff}}, P_{\text{traffic}}, R_{\text{flood}}$) và các trọng số $w_i \ge 0$.
-> 3. Do đó, $c(e) \ge w_{\text{dist}} \cdot D(e) \implies h^*(n) \ge w_{\text{dist}} \cdot D^*(n, \text{Goal}) \ge w_{\text{dist}} \cdot D_{\text{Haversine}}(n, \text{Goal}) = h(n)$.
-> 4. $\implies h(n)$ là một lower bound hợp lệ $\implies h(n)$ **Admissible** (A* luôn bảo đảm tìm được nghiệm tối ưu toàn cục). ■
+> 3. Trên một đường đi, tổng Haversine của các cạnh không nhỏ hơn Haversine từ $n$ đến Goal theo bất đẳng thức tam giác.
+> 4. Do đó tổng cost của đường đi không nhỏ hơn $\rho_s D_{\text{Haversine}}(n, \text{Goal}) = h_s(n)$.
+> 5. $\implies h_s(n)$ **Admissible** (A* vẫn bảo đảm nghiệm tối ưu toàn cục). ■
 
 > **Định lý 2 (Tính Nhất quán / Đơn điệu -- Consistency / Monotonicity)**:  
-> Với mọi cạnh chuyển trạng thái $e = (n, n')$, hàm heuristic thỏa mãn $h(n) \le c(n, n') + h(n')$.
+> Với mọi cạnh mở $e = (n, n')$, hàm heuristic thỏa mãn $h_s(n) \le c_s(n, n') + h_s(n')$.
 > 
 > *Chứng minh*:
 > 1. Theo bất đẳng thức tam giác cầu: $D_{\text{Haversine}}(n, \text{Goal}) \le D_{\text{Haversine}}(n, n') + D_{\text{Haversine}}(n', \text{Goal})$.
-> 2. Nhân hai vế với $w_{\text{dist}} \ge 0$: $h(n) \le w_{\text{dist}} \cdot D_{\text{Haversine}}(n, n') + h(n')$.
-> 3. Vì $D(n, n') \ge D_{\text{Haversine}}(n, n')$ và $c(n, n') \ge w_{\text{dist}} \cdot D(n, n') \implies w_{\text{dist}} \cdot D_{\text{Haversine}}(n, n') \le c(n, n')$.
-> 4. $\implies h(n) \le c(n, n') + h(n') \quad \forall (n, n') \in E \implies h(n)$ **Consistent**. ■
+> 2. Nhân hai vế với $\rho_s \ge 0$: $h_s(n) \le \rho_s D_{\text{Haversine}}(n, n') + h_s(n')$.
+> 3. Theo định nghĩa $\rho_s$, $\rho_s D_{\text{Haversine}}(n, n') \le c_s(n, n')$ trên mọi cạnh mở.
+> 4. $\implies h_s(n) \le c_s(n, n') + h_s(n') \quad \forall (n, n') \in E$, nên $h_s(n)$ **Consistent**. ■
+
+### 5.3.1. Kiểm chứng trên fixture
+
+Benchmark tái lập `npm run benchmark:lower-bound` chạy 5 cặp Start--Goal trên
+ba scenario `OFFPEAK_BALANCED`, `PEAK_TRAFFIC` và `HEAVY_RAIN_SAFE` (15 case).
+Kết quả chi phí A* trùng UCS ở cả 15/15 case; A* khám phá không quá UCS ở
+15/15 case. Bảng chi tiết nằm tại
+`experiments/results/astar_ucs_lower_bound_v1.md` và được gắn nhãn
+`DERIVED_BENCHMARK` trên fixture `SIMULATED`.
 
 ### 5.4. Thuật toán Tìm kiếm Mở rộng
 - **Greedy Best-First Search**: Min-Heap với hàm đánh giá $f(n) = h(n)$. Tốc độ cực nhanh nhưng không đảm bảo tính tối ưu.

@@ -106,7 +106,12 @@ mặc định và pilot 90 node là lựa chọn demo scenario. Chạy benchmark
 ```powershell
 npm run benchmark:capacity
 npm run benchmark:search
+npm run benchmark:lower-bound
 ```
+
+Benchmark lower-bound A* vs UCS: `experiments/results/astar_ucs_lower_bound_v1.md`.
+The heuristic uses `h_s(n) = rho_s × Haversine(n, goal)` from ADR-0015; results
+are derived from the `SIMULATED` fixture and must not be read as live traffic.
 
 Basemap mặc định có thể đổi trong `frontend/.env`:
 
@@ -150,7 +155,7 @@ npm test
 | Fixture/golden cases | Hoàn tất |
 | Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
-| UCS và A* (heuristic Haversine có trọng số) | Hoàn tất |
+| UCS và A* (scenario-aware cost lower bound) | Hoàn tất |
 | BFS/DFS/Greedy/Bidirectional | Hoàn tất API/GUI/compare |
 | Held-Karp/Nearest Neighbor (tour 5–10 điểm) | Hoàn tất |
 
