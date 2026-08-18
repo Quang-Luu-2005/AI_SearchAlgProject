@@ -178,8 +178,25 @@ def test_scenarios_returns_three_cost_presets() -> None:
         "PEAK_TRAFFIC",
         "HEAVY_RAIN_SAFE",
     }
+    assert scenario_by_id["OFFPEAK_BALANCED"]["weights"] == {
+        "distance": 0.25,
+        "freeflow_time": 0.30,
+        "congestion": 0.20,
+        "flood_risk": 0.25,
+    }
     assert scenario_by_id["PEAK_TRAFFIC"]["cost_preset"] == "PEAK_TRAFFIC"
-    assert sum(scenario_by_id["HEAVY_RAIN_SAFE"]["weights"].values()) == 1
+    assert scenario_by_id["PEAK_TRAFFIC"]["weights"] == {
+        "distance": 0.15,
+        "freeflow_time": 0.25,
+        "congestion": 0.45,
+        "flood_risk": 0.15,
+    }
+    assert scenario_by_id["HEAVY_RAIN_SAFE"]["weights"] == {
+        "distance": 0.10,
+        "freeflow_time": 0.25,
+        "congestion": 0.15,
+        "flood_risk": 0.50,
+    }
     assert scenario_by_id["HEAVY_RAIN_SAFE"]["closed_edge_ids"] == ["E03", "E04"]
 
 

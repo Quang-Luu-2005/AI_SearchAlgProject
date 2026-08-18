@@ -1,0 +1,203 @@
+{
+  "benchmark_id": "COST_PROFILES_V1",
+  "generated_at_utc": "2026-08-18T18:49:40.611875+00:00",
+  "result_status": "DERIVED_PROFILE_REVIEW",
+  "profiles_data_status": "ASSUMPTION",
+  "formula": "cost(e) = distance*w_distance + freeflow_time*w_freeflow_time + traffic_penalty*w_congestion + flood_risk*w_flood_risk",
+  "weight_interpretation": "Priority coefficients for a simulated/empirical prototype, not percentage contributions; components have different units and scales.",
+  "closure_rule": "Road closure is a hard constraint: closed edges have total_cost=null and cannot belong to a route, regardless of weights.",
+  "custom_weights_api": "Not exposed in the public API for this deadline; the three named scenario profiles are the stable contract.",
+  "profiles": [
+    {
+      "preset_id": "BALANCED",
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "sum": 1.0,
+      "story": "Default trade-off across distance, free-flow time, congestion and flood risk."
+    },
+    {
+      "preset_id": "PEAK_TRAFFIC",
+      "weights": {
+        "distance": 0.15,
+        "freeflow_time": 0.25,
+        "congestion": 0.45,
+        "flood_risk": 0.15
+      },
+      "sum": 1.0,
+      "story": "Raises congestion priority to avoid delay during peak traffic; distance/flood remain secondary signals."
+    },
+    {
+      "preset_id": "RAIN_SAFE",
+      "weights": {
+        "distance": 0.1,
+        "freeflow_time": 0.25,
+        "congestion": 0.15,
+        "flood_risk": 0.5
+      },
+      "sum": 1.0,
+      "story": "Raises flood-risk priority so a longer/different route can be preferred when flooding is exposed."
+    }
+  ],
+  "route_examples": [
+    {
+      "example_id": "EX01_TOY_PROFILE_AND_RAIN",
+      "data_status": "SIMULATED",
+      "graph_id": "toy_graph_v0.1",
+      "start": "N01",
+      "goal": "N06",
+      "routes": [
+        {
+          "scenario": "OFFPEAK_BALANCED",
+          "path": [
+            "N01",
+            "N02",
+            "N06"
+          ],
+          "edge_ids": [
+            "E01",
+            "E03"
+          ],
+          "path_edge_count": 2,
+          "total_cost": 2.343,
+          "distance_km": 2.5,
+          "estimated_time_min": 5.56
+        },
+        {
+          "scenario": "PEAK_TRAFFIC",
+          "path": [
+            "N01",
+            "N02",
+            "N06"
+          ],
+          "edge_ids": [
+            "E01",
+            "E03"
+          ],
+          "path_edge_count": 2,
+          "total_cost": 2.9209,
+          "distance_km": 2.5,
+          "estimated_time_min": 8.062
+        },
+        {
+          "scenario": "HEAVY_RAIN_SAFE",
+          "path": [
+            "N01",
+            "N02",
+            "N04",
+            "N06"
+          ],
+          "edge_ids": [
+            "E01",
+            "E11",
+            "E09"
+          ],
+          "path_edge_count": 3,
+          "total_cost": 2.562625,
+          "distance_km": 3.0,
+          "estimated_time_min": 9.8375
+        }
+      ],
+      "interpretation": "Peak raises cost on the same available route; heavy rain closes E03/E04, so the route must detour through E11/E09."
+    },
+    {
+      "example_id": "EX02_MARKET_GOLDEN_FLOOD_DETOUR",
+      "data_status": "MIXED",
+      "graph_id": "processed/thu_duc_market_v1.0.0",
+      "start": "UTR_NODE_2947068442",
+      "goal": "UTR_NODE_366385739",
+      "routes": [
+        {
+          "scenario": "HISTORICAL_OFFPEAK",
+          "path": [
+            "UTR_NODE_2947068442",
+            "UTR_NODE_5758041297",
+            "UTR_NODE_2947068443",
+            "UTR_NODE_366410061",
+            "UTR_NODE_366385739"
+          ],
+          "edge_ids": [
+            "UTR_EDGE_79312",
+            "UTR_EDGE_79308",
+            "UTR_EDGE_79310",
+            "UTR_EDGE_49758"
+          ],
+          "path_edge_count": 4,
+          "total_cost": 0.34877481,
+          "distance_km": 0.143,
+          "estimated_time_min": 0.22523
+        },
+        {
+          "scenario": "RAIN_FLOOD_AWARE_2025_2026",
+          "path": [
+            "UTR_NODE_2947068442",
+            "UTR_NODE_5758041297",
+            "UTR_NODE_2947068443",
+            "UTR_NODE_366410061",
+            "UTR_NODE_3431471053",
+            "UTR_NODE_2984717728",
+            "UTR_NODE_366463208",
+            "UTR_NODE_2326571648",
+            "UTR_NODE_2332788971",
+            "UTR_NODE_2332788958",
+            "UTR_NODE_2332788969",
+            "UTR_NODE_2332788963",
+            "UTR_NODE_2332788956",
+            "UTR_NODE_2332788978",
+            "UTR_NODE_2332788977",
+            "UTR_NODE_2332788973",
+            "UTR_NODE_2332788967",
+            "UTR_NODE_5762874769",
+            "UTR_NODE_5762874770",
+            "UTR_NODE_2332788955",
+            "UTR_NODE_2332788975",
+            "UTR_NODE_2332788953",
+            "UTR_NODE_2332788961",
+            "UTR_NODE_2332788972",
+            "UTR_NODE_4907039415",
+            "UTR_NODE_366457374",
+            "UTR_NODE_366442171",
+            "UTR_NODE_366385739"
+          ],
+          "edge_ids": [
+            "UTR_EDGE_79312",
+            "UTR_EDGE_79308",
+            "UTR_EDGE_79310",
+            "UTR_EDGE_37493",
+            "UTR_EDGE_37494",
+            "UTR_EDGE_37495",
+            "UTR_EDGE_37496",
+            "UTR_EDGE_37497",
+            "UTR_EDGE_37505",
+            "UTR_EDGE_37506",
+            "UTR_EDGE_37507",
+            "UTR_EDGE_37508",
+            "UTR_EDGE_37509",
+            "UTR_EDGE_37510",
+            "UTR_EDGE_37511",
+            "UTR_EDGE_37512",
+            "UTR_EDGE_37513",
+            "UTR_EDGE_37514",
+            "UTR_EDGE_37515",
+            "UTR_EDGE_37516",
+            "UTR_EDGE_37498",
+            "UTR_EDGE_37499",
+            "UTR_EDGE_37384",
+            "UTR_EDGE_37385",
+            "UTR_EDGE_37386",
+            "UTR_EDGE_37387",
+            "UTR_EDGE_37388"
+          ],
+          "path_edge_count": 27,
+          "total_cost": 0.4359701,
+          "distance_km": 0.612,
+          "estimated_time_min": 1.763624
+        }
+      ],
+      "interpretation": "The frozen market golden case changes from the off-peak route to a longer flood-aware detour when the rain/flood profile is active."
+    }
+  ]
+}

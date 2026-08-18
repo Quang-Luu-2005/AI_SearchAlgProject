@@ -107,11 +107,13 @@ mặc định và pilot 90 node là lựa chọn demo scenario. Chạy benchmark
 npm run benchmark:capacity
 npm run benchmark:search
 npm run benchmark:lower-bound
+npm run benchmark:cost-profiles
 ```
 
 Benchmark lower-bound A* vs UCS: `experiments/results/astar_ucs_lower_bound_v1.md`.
 The heuristic uses `h_s(n) = rho_s × Haversine(n, goal)` from ADR-0015; results
 are derived from the `SIMULATED` fixture and must not be read as live traffic.
+Cost profile table and route-change evidence: `experiments/results/cost_profiles_v1.md`.
 
 Basemap mặc định có thể đổi trong `frontend/.env`:
 

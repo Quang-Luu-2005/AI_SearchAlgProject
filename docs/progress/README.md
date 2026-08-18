@@ -2,6 +2,8 @@
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-19 | [Chốt cost profiles và trọng số](2026-08-19-cost-profiles.md) | Hoàn tất |
+| 2026-08-19 | [A* scenario-aware lower-bound heuristic](2026-08-19-astar-lower-bound-heuristic.md) | Hoàn tất |
 | 2026-08-16 | [Hoàn thiện khoảng trống technical Lab 1](2026-08-16-technical-rubric-completion.md) | Hoàn tất |
 | 2026-08-16 | [Tích hợp BFS/DFS vào API và GUI](2026-08-16-bfs-dfs-api-gui.md) | Hoàn tất |
 | 2026-08-13 | [Sửa START/GOAL picker cho tour đa điểm](2026-08-13-tour-map-start-goal-picking.md) | Hoàn tất |

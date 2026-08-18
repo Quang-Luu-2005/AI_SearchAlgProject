@@ -5,6 +5,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Chốt ba cost profile `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE` với vector trọng số
+  hiện có; ghi rõ đây là hệ số ưu tiên empirical/simulated, giữ road closure là hard
+  constraint và bổ sung artifact `cost_profiles_v1` với hai ví dụ đổi tuyến.
+- Thêm acceptance tests cho exact weights, profile sums, hard closure và route-change
+  golden cases; custom weights không mở trong public API deadline.
+
 - Thay heuristic A* bằng scenario-aware lower bound `h_s(n) = rho_s × Haversine(n, goal)`;
   loại closed/near-zero edges khỏi rho, thêm unit test và benchmark 15 case baseline/peak/rain
   với 0 cost mismatch so với UCS (`experiments/results/astar_ucs_lower_bound_v1.md`).

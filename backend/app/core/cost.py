@@ -2,6 +2,10 @@
 
 The engine is framework-independent and reads immutable graph/scenario contracts.
 It never mutates an edge or graph view while applying scenario overrides.
+
+The three default preset weights are empirical priority coefficients for the
+simulated prototype. They are not percentage contributions because distance,
+time, traffic penalty and flood risk use different units and scales.
 """
 
 from __future__ import annotations

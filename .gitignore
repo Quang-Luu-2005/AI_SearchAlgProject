@@ -32,6 +32,8 @@ experiments/results/*
 !experiments/results/search_benchmark_v1.json
 !experiments/results/astar_ucs_lower_bound_v1.json
 !experiments/results/astar_ucs_lower_bound_v1.md
+!experiments/results/cost_profiles_v1.json
+!experiments/results/cost_profiles_v1.md
 
 # Office temporary files
 ~$*

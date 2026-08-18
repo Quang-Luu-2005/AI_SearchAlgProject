@@ -63,3 +63,9 @@ Trong đó:
 \caption{Các bộ trọng số kịch bản chuẩn được tích hợp sẵn trong hệ thống.}
 \label{tab:cost_presets}
 \end{table}
+
+Các trọng số trên là hệ số ưu tiên mô phỏng/empirical, không phải phần trăm
+đóng góp thực tế, vì bốn thành phần có đơn vị và scale khác nhau. Đóng đường
+không được mô hình hóa bằng một weight nhỏ: road closure là hard constraint,
+cạnh đóng bị loại khỏi tập hành động và không thể xuất hiện trong route. Public
+API chốt ba preset ổn định; custom weights không nằm trong phạm vi deadline.

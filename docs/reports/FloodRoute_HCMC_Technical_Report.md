@@ -96,6 +96,27 @@ Trong đó:
 | **PEAK_TRAFFIC** | 0.15 | 0.25 | 0.45 | 0.15 | Ưu tiên cao nhất cho việc tránh các điểm nóng kẹt xe trong giờ cao điểm. |
 | **RAIN_SAFE** | 0.10 | 0.25 | 0.15 | 0.50 | Ưu tiên tối đa việc đi vòng qua các tuyến đường ngập sâu khi trời mưa to / triều cường. |
 
+Các giá trị trên là **hệ số ưu tiên mô phỏng/empirical**, không phải phần trăm
+đóng góp thực tế của từng thành phần: distance (km), free-flow time (phút),
+traffic penalty (phút) và flood risk ([0, 1]) có đơn vị và scale khác nhau.
+Road closure không được biểu diễn bằng một weight nhỏ; đây là **hard
+constraint**. Cạnh đóng có `total_cost = null` và không thể xuất hiện trong
+route, bất kể profile đang chọn. Public API hiện chốt ba profile trên; custom
+weights chưa mở trong phạm vi deadline để giữ contract ổn định.
+
+### 3.4. Hai ví dụ route thay đổi để trình bày
+
+| Ví dụ | Điều kiện | Tuyến trước | Tuyến sau | Diễn giải |
+|---|---|---|---|---|
+| `EX01_TOY_PROFILE_AND_RAIN` (`SIMULATED`) | `N01 → N06`, `OFFPEAK_BALANCED` → `HEAVY_RAIN_SAFE` | `N01 → N02 → N06`, cost `2.343000` | `N01 → N02 → N04 → N06`, cost `2.562625` | `E03/E04` bị đóng như hard constraint; route buộc đi vòng qua `E11/E09`. |
+| `EX02_MARKET_GOLDEN_FLOOD_DETOUR` (`MIXED`) | `UTR_NODE_2947068442 → UTR_NODE_366385739`, off-peak → rain/flood | 4 cạnh, cost `0.348775` | 27 cạnh, cost `0.435970` | Tuyến golden đổi sang detour flood-aware; chi tiết path/edge nằm trong artifact benchmark. |
+
+Ở fixture toy, `PEAK_TRAFFIC` giữ nguyên tuyến vì topology nhỏ và tuyến đó vẫn
+đủ rẻ, nhưng cost tăng từ `2.343000` lên `2.920900` và ETA tăng từ `5.560` lên
+`8.062` phút. Đây là cách giải thích đúng: tăng congestion weight làm phạt
+delay mạnh hơn; nó có thể đổi route khi có alternative đủ cạnh tranh, nhưng
+không được hứa rằng route luôn đổi.
+
 ---
 
 ## 4. Tập Dữ liệu & Quy trình Quản lý

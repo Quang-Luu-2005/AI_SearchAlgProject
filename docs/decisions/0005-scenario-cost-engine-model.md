@@ -35,7 +35,9 @@ The initial presets are:
 - `RAIN_SAFE`: distance 0.10, free-flow time 0.25, congestion 0.15, flood risk 0.50.
 
 Scenario edge overrides take precedence over edge attributes, then scenario
-defaults. A closed edge still returns its metric breakdown, but has
+defaults. The three preset vectors are empirical priority coefficients for the
+simulated prototype, not percentage contributions, because their components
+have different units/scales. A closed edge still returns its metric breakdown, but has
 `is_closed=true` and `total_cost=null`; route aggregation marks the route
 unavailable. Negative weights, metrics, penalties, risk and invalid preset
 references are rejected.

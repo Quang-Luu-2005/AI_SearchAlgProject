@@ -49,7 +49,7 @@ nhất trong 200 m rồi mới dùng `node_id` hợp lệ trong request.
 ```
 
 `graph_id` is optional and defaults to `toy_graph_v0.1`. Supported two-point
-algorithm names are `UCS`, `A_STAR`, `BFS`, `DFS`, `GREEDY` and `BIDIRECTIONAL`; A* and Greedy use the scenario-weighted
+algorithm names are `UCS`, `A_STAR`, `BFS`, `DFS`, `GREEDY` and `BIDIRECTIONAL`; A* and Greedy use the
 scenario-aware lower-bound Haversine heuristic from ADR-0015, with `h=0` fallback
 when coordinates are unavailable. A* computes `rho_s` once per frozen scenario;
 closed edges and near-zero geographic edges are excluded from its minimum ratio.
@@ -57,6 +57,13 @@ closed edges and near-zero geographic edges are excluded from its minimum ratio.
 The response includes `path`, `edge_ids`, `metrics`, `trace`, `guarantee`,
 `explanation`, `edge_breakdown`, `data_status` and `limitations`. Fixture results
 are always marked `SIMULATED`.
+
+`GET /api/v1/scenarios` is the public cost-profile catalog. It exposes the
+three stable preset names `BALANCED`, `PEAK_TRAFFIC` and `RAIN_SAFE` together
+with their weights and closed edges. Custom weights are intentionally not
+accepted by the public search contract in this deadline; the prototype keeps
+the profile set deterministic. Closed edges remain hard constraints and are
+not made traversable by any weight combination.
 
 ## Compare
 
