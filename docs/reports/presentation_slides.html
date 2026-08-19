@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloodRoute HCMC — Báo Cáo Kỹ Thuật & Thuyết Trình Bảo Vệ Đồ Án</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- MathJax for LaTeX formulas -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg-primary: #070B14;
+      --bg-surface: #0E172A;
+      --bg-card: rgba(30, 41, 59, 0.75);
+      --bg-card-border: rgba(56, 189, 248, 0.22);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --accent-cyan: #38BDF8;
+      --accent-blue: #3B82F6;
+      --accent-indigo: #6366F1;
+      --accent-amber: #F59E0B;
+      --accent-emerald: #10B981;
+      --accent-rose: #F43F5E;
+      --gradient-brand: linear-gradient(135deg, #38BDF8 0%, #3B82F6 50%, #6366F1 100%);
+      --gradient-accent: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.15);
+      --font-main: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: -20%;
+      left: -10%;
+      width: 60vw;
+      height: 60vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      height: 52px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 11, 20, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+    }
+    .brand-logo {
+      width: 26px;
+      height: 26px;
+      background: var(--gradient-brand);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 0.85rem;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .brand-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-nav:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .progress-container {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      width: 100%;
+      position: relative;
+      z-index: 50;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--gradient-brand);
+      width: 0%;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    }
+
+    main#slide-stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 28px 48px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateX(30px) scale(0.98);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow-y: auto;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+    .slide.prev {
+      transform: translateX(-30px) scale(0.98);
+    }
+
+    .slide-header {
+      margin-bottom: 18px;
+    }
+    .slide-tag {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-title {
+      font-size: 1.95rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .slide-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      flex: 1;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      flex: 1;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 10px;
+      padding: 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-box {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+    .stat-val.gold { color: var(--accent-amber); }
+    .stat-val.emerald { color: var(--accent-emerald); }
+    .stat-val.rose { color: var(--accent-rose); }
+    .stat-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .table-container {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+    th {
+      background: #1E293B;
+      color: var(--accent-cyan);
+      padding: 9px 12px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    td {
+      background: rgba(15, 23, 42, 0.7);
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+    tr:hover td {
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .formula-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-left: 4px solid var(--accent-cyan);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 6px 0;
+      font-size: 0.96rem;
+    }
+
+    .code-box {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #E2E8F0;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+
+    .qa-box {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .qa-question {
+      font-weight: 700;
+      color: var(--accent-amber);
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+    }
+    .qa-answer {
+      font-size: 0.85rem;
+      color: #CBD5E1;
+      line-height: 1.5;
+    }
+
+    .hero-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .hero-badge-container {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      max-width: 900px;
+    }
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      line-height: 1.55;
+      margin-bottom: 30px;
+    }
+    .hero-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    footer {
+      height: 48px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 11, 20, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .slide-counter span {
+      color: var(--accent-cyan);
+    }
+
+    .controls-center {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-ctrl {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .btn-ctrl:hover {
+      background: var(--accent-cyan);
+      color: #070B14;
+      border-color: var(--accent-cyan);
+    }
+
+    .overview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(7, 11, 20, 0.96);
+      backdrop-filter: blur(20px);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      padding: 24px 36px;
+      overflow-y: auto;
+    }
+    .overview-modal.open {
+      display: flex;
+    }
+    .overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .overview-item {
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .overview-item:hover, .overview-item.current {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      transform: translateY(-2px);
+    }
+    .overview-item-num {
+      font-size: 0.7rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-bottom: 2px;
+    }
+    .overview-item-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.25;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-cyan { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); border: 1px solid rgba(56, 189, 248, 0.4); }
+    .badge-amber { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-emerald { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-rose { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.4); }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+  <div class="ambient-glow-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">
+      <div class="brand-logo">FR</div>
+      <span>FloodRoute HCMC</span>
+      <span class="brand-badge">Lab 1 · Searching</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-nav" id="btn-overview"><span>📑</span> Danh Mục (O)</button>
+      <button class="btn-nav" id="btn-fullscreen"><span>⛶</span> Toàn Màn Hình (F)</button>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <!-- Slide Stage -->
+  <main id="slide-stage">
+
+    <!-- SLIDE 1: Hero Cover -->
+    <div class="slide hero-slide active" data-title="1. Trang Bìa">
+      <div class="hero-badge-container">
+        <span class="badge badge-cyan">ĐH Khoa học Tự nhiên · ĐHQG-HCM</span>
+        <span class="badge badge-amber">Khoa CNTT</span>
+        <span class="badge badge-emerald">Nhập Môn Trí Tuệ Nhân Tạo</span>
+      </div>
+      <h1 class="hero-title">FLOODROUTE HCMC</h1>
+      <div style="font-size: 1.05rem; color: #CBD5E1; margin: 12px 0 28px 0;">
+        <strong>Giảng viên hướng dẫn:</strong> Bùi Tiến Lên – Võ Nhật Tân – Bùi Duy Đăng
+      </div>
+      <div class="hero-meta-grid">
+        <div class="stat-box">
+          <div class="stat-val">6</div>
+          <div class="stat-label">Thuật toán Tìm kiếm 2 Điểm</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val gold">TSP</div>
+          <div class="stat-label">Held-Karp DP & Nearest Neighbor</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val emerald">3.600</div>
+          <div class="stat-label">Lượt Benchmark Thực nghiệm</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val rose">100/100</div>
+          <div class="stat-label">Tự Đánh Giá Rubric Chuẩn</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Team Introduction & Contributions -->
+    <div class="slide" data-title="2. Nhóm & Phân Công">
+      <div class="slide-header">
+        <div class="slide-tag"><span>👥</span> Báo cáo Thành viên</div>
+        <h2 class="slide-title">Thành viên Nhóm & Ma trận Đóng góp Kỹ thuật</h2>
+        <p class="slide-subtitle">Phân chia trách nhiệm minh bạch, độc lập và đồng đều 25% mỗi thành viên qua Trello Kanban</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><span class="card-icon">💻</span> Lưu Huy Minh Quang (23127016) · 25%</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><code>Card BE-01</code>: Thiết kế cấu trúc đồ thị có hướng bất biến <code>Graph</code>, <code>Node</code>, <code>Edge</code>, <code>GraphView</code>, kiểm tra liên thông và phát hiện chu trình.</li>
+            <li><code>Card BE-02</code>: Xây dựng <code>ScenarioCostEngine</code> 4 thành phần ($D, T_{\text{ff}}, P_{\text{traffic}}, R_{\text{flood}}$) & 3 presets kịch bản.</li>
+            <li><code>Card BE-03</code>: FastAPI Router, Pydantic validation và Explainable AI logic.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-icon">🎨</span> Vũ Lê Trọng Văn (20127095) · 25%</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><code>Card FE-01</code> & <code>FE-02</code>: React Web App, MapLibre GL JS GPU layers, Trace Player 3 trạng thái.</li>
+            <li><code>Card OPT</code>: Xây dựng <code>PairwiseMatrix</code> $N \times N$, giải thuật quy hoạch động chính xác <strong>Held-Karp DP</strong> ($O(N^2 2^N)$) và <strong>Nearest Neighbor</strong>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-icon">⚡</span> Nguyễn Duy Khang (23127202) · 25%</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><code>Card ALG-01</code>: Cài đặt BFS & DFS chuẩn xác với deterministic tie-break.</li>
+            <li><code>Card ALG-03</code>: Cài đặt Greedy Best-First & Bidirectional BFS trên đồ thị chuyển vị <code>rev_adj</code>.</li>
+            <li><code>Card QA-01</code>: Xây dựng phản ví dụ, golden test cases và regression suite.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-icon">📊</span> Ngô Quang Thắng (23127473) · 25%</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><code>Card ALG-02</code>: Cài đặt UCS & A*, thiết lập Heuristic $\rho_s$, chứng minh toán học Admissible & Consistent.</li>
+            <li><code>Card DATA-01</code> & <code>DATA-02</code>: Pipeline dữ liệu 4 tầng OSM/UTraffic, map-matching 24 điểm ngập lụt TP. Thủ Đức.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Problem Context -->
+    <div class="slide" data-title="3. Bối Cảnh Thực Tế">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🛵</span> Thực trạng Giao thông</div>
+        <h2 class="slide-title">Bối cảnh Giao thông Đô thị tại TP.HCM & TP. Thủ Đức</h2>
+        <p class="slide-subtitle">Thách thức kép: Ùn tắc giờ cao điểm kết hợp rốn ngập triều cường/mưa lớn</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title"><span class="card-icon">🚦</span> Ùn tắc Giờ Cao điểm</div>
+          <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.5;">
+            Mật độ xe máy cực cao trên các trục huyết mạch (<em>Võ Văn Ngân, Kha Vạn Cân, Tô Ngọc Vân, Đặng Văn Bi</em>). Vận tốc giảm xuống còn 8–12 km/h, thời gian di chuyển tăng gấp <strong>2× đến 4×</strong>.
+          </p>
+          <div class="stat-box" style="margin-top: auto;">
+            <div class="stat-val rose">+300%</div>
+            <div class="stat-label">Thời gian trễ giờ cao điểm</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-icon">🌊</span> "Rốn Ngập" Chợ Thủ Đức</div>
+          <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.5;">
+            Địa hình trũng thấp quanh Chợ Thủ Đức (<em>Dương Văn Cam, Đặng Thị Rành, Hồ Văn Tư</em>) ngập sâu từ <strong>0.3m đến 0.6m</strong> khi mưa lớn/triều cường. Tuyến ngắn nhất hình học có thể gây chết máy xe.
+          </p>
+          <div class="stat-box" style="margin-top: auto;">
+            <div class="stat-val gold">0.3 - 0.6m</div>
+            <div class="stat-label">Mực nước ngập rủi ro cao</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-icon">📦</span> Bài toán Giao hàng Đa điểm</div>
+          <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.5;">
+            Shipper xuất phát từ 1 Kho (*Depot*) nhận $5 - 10$ đơn giao hàng. Thứ tự giao hàng tự phát gây lãng phí nhiên liệu và kéo dài thời gian. Cần thuật toán tối ưu hóa lộ trình tổng thể (TSP).
+          </p>
+          <div class="stat-box" style="margin-top: auto;">
+            <div class="stat-val emerald">-30.6%</div>
+            <div class="stat-label">Chi phí tiết kiệm khi tối ưu</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Problem Formulation -->
+    <div class="slide" data-title="4. Không Gian Trạng Thái">
+      <div class="slide-header">
+        <div class="slide-tag"><span>📐</span> Hình thức hóa Toán học</div>
+        <h2 class="slide-title">Mô hình Không gian Trạng thái (State-Space Formulation)</h2>
+        <p class="slide-subtitle">Định nghĩa toán học chính thức bài toán tìm kiếm định tuyến đô thị</p>
+      </div>
+      <div class="formula-card">
+        $$\mathcal{P} = \langle S,\, s_0,\, A(s),\, \text{Result}(s, a),\, \text{GoalTest}(s),\, c(s, a, s') \rangle$$
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><strong>Tập trạng thái ($S$)</strong>: Tập tất cả các nút giao và địa điểm trên bản đồ ($S = V$).</li>
+            <li><strong>Trạng thái bắt đầu ($s_0$)</strong>: Vị trí xuất phát của shipper ($s_0 = \text{Start} \in V$).</li>
+            <li><strong>Tập hành động ($A(s)$)</strong>: Tập các cạnh có hướng mở xuất phát từ $s$:
+              $$A(s) = \{ (s, v) \in E \mid (s, v) \notin \text{ClosedEdges}(\text{Scenario}) \}$$
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><strong>Mô hình chuyển trạng thái ($\text{Result}(s, a)$)</strong>: Trạng thái mới đạt được là đỉnh đích $v$ khi thực hiện cạnh $a = (s, v)$.</li>
+            <li><strong>Kiểm tra trạng thái đích ($\text{GoalTest}(s)$)</strong>: Kiểm tra $s = \text{Goal}$.</li>
+            <li><strong>Chi phí bước ($c(s, a, s')$)</strong>: Chi phí tổng hợp của cạnh $a = (s, s')$ tính bởi <code>ScenarioCostEngine</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Composite Cost Model -->
+    <div class="slide" data-title="5. Mô Hình Chi Phí">
+      <div class="slide-header">
+        <div class="slide-tag"><span>⚖️</span> Hàm Mục Tiêu</div>
+        <h2 class="slide-title">Mô hình Chi phí Tổng hợp 4 Thành phần</h2>
+        <p class="slide-subtitle">Tích hợp khoảng cách, thời gian lưu thông, độ trễ kẹt xe và rủi ro ngập nước</p>
+      </div>
+      <div class="formula-card">
+        $$C_s(e) = w_{\text{dist}} \cdot D(e) + w_{\text{time}} \cdot T_{\text{ff}}(e) + w_{\text{cong}} \cdot P_{\text{traffic}}(e) + w_{\text{flood}} \cdot R_{\text{flood}}(e)$$
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">4 Đại lượng Thành phần:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>$D(e)$ - Khoảng cách</strong>: Độ dài vật lý: $D(e) = \text{distance\_m}(e) / 1000\text{ (km)}$.</li>
+            <li><strong>$T_{\text{ff}}(e)$ - Free-Flow Time</strong>: Thời gian lưu thông tự do ở điều kiện lý tưởng (phút).</li>
+            <li><strong>$P_{\text{traffic}}(e)$ - Độ trễ Kẹt xe</strong>: $P_{\text{traffic}}(e) = \max(0, T_{\text{travel}} - T_{\text{ff}})\text{ (phút)}$.</li>
+            <li><strong>$R_{\text{flood}}(e)$ - Rủi ro Ngập</strong>: Chỉ số chuẩn hóa $R_{\text{flood}} \in [0.0, 1.0]$.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Lưu ý Thiết kế Cốt lõi:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Tách riêng $P_{\text{traffic}}$ khỏi $T_{\text{ff}}$</strong>: Giúp hàm chi phí không bị tính trùng lặp thời gian di chuyển cơ sở hai lần khi áp dụng trọng số.</li>
+            <li><strong>Chuẩn hóa Trọng số</strong>: $w_i \ge 0$ và $\sum w_i = 1.0$.</li>
+            <li><strong>Hard Constraint</strong>: Cạnh ngập đóng $\implies \text{Cost} = \text{null}$, loại khỏi đồ thị.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Cost Presets -->
+    <div class="slide" data-title="6. Kịch Bản Chi Phí">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🎛️</span> Thiết lập Kịch bản</div>
+        <h2 class="slide-title">Các Thiết lập Kịch bản Chi phí Chuẩn (Cost Presets)</h2>
+        <p class="slide-subtitle">Ba chế độ định tuyến tối ưu hóa cho các điều kiện thời tiết và giao thông khác nhau</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Kịch bản (Preset ID)</th>
+              <th>$w_{\text{dist}}$</th>
+              <th>$w_{\text{time}}$</th>
+              <th>$w_{\text{cong}}$</th>
+              <th>$w_{\text{flood}}$</th>
+              <th>Mục tiêu Tối ưu hóa & Ứng dụng Thực tế</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>BALANCED</strong></td>
+              <td>0.25</td>
+              <td>0.30</td>
+              <td>0.20</td>
+              <td>0.25</td>
+              <td><strong>Cân bằng đa mục tiêu</strong>: Hài hòa giữa cự ly, thời gian, kẹt xe và ngập nước (Mặc định).</td>
+            </tr>
+            <tr>
+              <td><strong>PEAK_TRAFFIC</strong></td>
+              <td>0.15</td>
+              <td>0.25</td>
+              <td>0.45</td>
+              <td>0.15</td>
+              <td><strong>Ưu tiên giờ cao điểm</strong>: Phạt nặng các cung đường ùn tắc, chấp nhận đi xa hơn để tiết kiệm thời gian.</td>
+            </tr>
+            <tr>
+              <td><strong>RAIN_SAFE</strong></td>
+              <td>0.10</td>
+              <td>0.25</td>
+              <td>0.15</td>
+              <td>0.50</td>
+              <td><strong>Ưu tiên mưa bão/triều cường</strong>: Phạt tối đa rủi ro ngập nước, ưu tiên tuyệt đối tuyến vành đai cao.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="formula-card" style="margin-top: 10px; font-size: 0.82rem;">
+        <strong>Minh chứng Đổi Tuyến Thực tế:</strong> Trên cặp $N01 \to N06$, khi chuyển từ <code>OFFPEAK_BALANCED</code> sang <code>HEAVY_RAIN_SAFE</code>, cạnh $E03$ qua rốn ngập bị đóng $\implies$ Thuật toán tự động đổi sang tuyến vòng an toàn $N01 \to N02 \to N04 \to N06$.
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Data Pipeline -->
+    <div class="slide" data-title="7. Pipeline Dữ Liệu">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🗺️</span> Kỹ thuật Dữ liệu</div>
+        <h2 class="slide-title">Pipeline Dữ liệu 4 Tầng & Nguồn gốc (Provenance)</h2>
+        <p class="slide-subtitle">Quy trình xử lý dữ liệu chuẩn khoa học bảo đảm tính toàn vẹn và tái lập</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Quy trình 4 Tầng Dữ liệu:</div>
+          <div class="code-box">
+1. data/raw/ (Bất biến)
+   ├── OSM relation 19407794 (Ranh TP. Thủ Đức cũ)
+   ├── UTraffic snapshot (8.952 nodes, 14.043 edges)
+   └── Khóa toàn vẹn bằng SHA-256 Checksum Manifest
+2. data/interim/ (Xử lý Trung gian)
+   └── Trích xuất BBox, Map-matching, Topology cleaning
+3. data/processed/ (Bản phát hành Chính thức)
+   ├── thu_duc_landmarks_v1.0.0 (65 POI, 178 edges)
+   └── thu_duc_core_capacity_v0.1.0 (3.229 nodes, 5.057 edges)
+4. data/fixtures/ (Môi trường Kiểm thử)
+   └── toy_graph_v0.1 & Graph Examples
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Hệ thống Nhãn Dữ liệu Minh bạch:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.55;">
+            <li><strong>`SOURCE_BACKED`</strong>: Dữ liệu trích xuất xác thực từ OpenStreetMap hoặc Kaggle UTraffic.</li>
+            <li><strong>`DERIVED`</strong>: Dữ liệu tính toán xác định (cự ly Haversine, Free-flow time qua vận tốc thiết kế).</li>
+            <li><strong>`SIMULATED / ASSUMPTION`</strong>: Dữ liệu giả lập tham số kẹt xe/ngập lụt (hiển thị rõ trên GUI).</li>
+            <li><strong>`REVIEW_REQUIRED`</strong>: Dữ liệu map-matching ngập nước đang chờ thẩm định bổ sung.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: Landmark 65 vs Capacity 3229 -->
+    <div class="slide" data-title="8. Bản Phát Hành Đồ Thị">
+      <div class="slide-header">
+        <div class="slide-tag"><span>📍</span> Đồ thị Thực tế</div>
+        <h2 class="slide-title">Bản Phát hành Đồ thị: Landmark 65 vs Capacity 3229</h2>
+        <p class="slide-subtitle">Phân định rõ ràng mục đích sử dụng giữa giao diện trực quan và stress-test hiệu năng</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Tiêu chí So sánh</th>
+              <th>`thu_duc_landmarks_v1.0.0` (Release Demo Chính)</th>
+              <th>`thu_duc_core_capacity_v0.1.0` (Benchmark Stress-Test)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Số lượng Đỉnh ($V$)</strong></td>
+              <td><strong>65 Địa điểm lớn</strong> (Named Major POIs từ OSM)</td>
+              <td><strong>3.229 Nút giao thông</strong> (Mạng lưới đường bộ lõi Thủ Đức)</td>
+            </tr>
+            <tr>
+              <td><strong>Số lượng Cạnh ($E$)</strong></td>
+              <td><strong>178 Cạnh có hướng</strong> (Directed road-path edges)</td>
+              <td><strong>5.057 Cạnh có hướng</strong> (Directed street segments)</td>
+            </tr>
+            <tr>
+              <td><strong>Bản chất Cạnh</strong></td>
+              <td><strong>Đường ngắn nhất nén (Polyline UTraffic)</strong></td>
+              <td>Từng đoạn đường vật lý chi tiết giữa các giao lộ</td>
+            </tr>
+            <tr>
+              <td><strong>Loại địa điểm</strong></td>
+              <td>Trường ĐH, Bệnh viện, Chợ, Ga tàu, TTTM, Bến xe</td>
+              <td>Toàn bộ giao lộ chi tiết trong khu vực nghiên cứu</td>
+            </tr>
+            <tr>
+              <td><strong>Mục đích sử dụng</strong></td>
+              <td><strong>Trực quan hóa Web UI</strong>: Tránh rối mắt hàng nghìn node kỹ thuật, giao diện trực quan.</td>
+              <td><strong>Benchmark & Stress-test</strong>: Đo đạc năng lực chịu tải và độ phức tạp thuật toán.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: System Architecture & Boundaries -->
+    <div class="slide" data-title="9. Kiến Trúc Phân Tầng">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🏛️</span> Clean Architecture</div>
+        <h2 class="slide-title">Kiến trúc Hệ thống & Phân định Ranh giới Module</h2>
+        <p class="slide-subtitle">Mô hình phân tầng phi ghép nối bảo đảm tính mở rộng và độc lập công nghệ</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Tầng / Module</th>
+              <th>Thành phần Cốt lõi</th>
+              <th>Trách nhiệm chính</th>
+              <th>Quy tắc Bất biến (Constraints)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>backend/app/core</code></td>
+              <td>Graph, Node, Edge, CostEngine</td>
+              <td>Mô hình dữ liệu bất biến, tính toán chi phí</td>
+              <td><strong>Không import FastAPI</strong>, không mutate graph</td>
+            </tr>
+            <tr>
+              <td><code>backend/app/algorithms</code></td>
+              <td>BFS, DFS, UCS, A*, Greedy, Bi</td>
+              <td>6 thuật toán tìm kiếm thuần túy</td>
+              <td>Pure Python, Tie-break deterministic</td>
+            </tr>
+            <tr>
+              <td><code>backend/app/optimization</code></td>
+              <td>PairwiseMatrix, Held-Karp, NN</td>
+              <td>Giải bài toán TSP đa điểm</td>
+              <td>Chỉ đọc chi phí qua SearchService</td>
+            </tr>
+            <tr>
+              <td><code>backend/app/services</code></td>
+              <td>SearchService, RandomScenario</td>
+              <td>Điều phối tìm kiếm, sinh kịch bản ngẫu nhiên</td>
+              <td>Không phụ thuộc giao diện Web</td>
+            </tr>
+            <tr>
+              <td><code>backend/app/api</code></td>
+              <td>FastAPI Router, Pydantic models</td>
+              <td>Validate request, serialize JSON response</td>
+              <td>Không chứa logic tìm kiếm trong route</td>
+            </tr>
+            <tr>
+              <td><code>frontend/src</code></td>
+              <td>React, MapLibre GL JS, TracePlayer</td>
+              <td>Trực quan hóa GPU, phát lại diễn tiến duyệt</td>
+              <td>Không tự tính lại thuật toán ở client</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Scenario-Aware Heuristic (ADR-0015) -->
+    <div class="slide" data-title="10. Heuristic ADR-0015">
+      <div class="slide-header">
+        <div class="slide-tag"><span>⭐</span> Đột phá Toán học</div>
+        <h2 class="slide-title">Scenario-Aware Lower-Bound Heuristic cho A*</h2>
+        <p class="slide-subtitle">Giải pháp bảo đảm tính Admissible & Consistent khi hàm chi phí kết hợp nhiều đại lượng</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">❓ Vấn đề Cần Giải Quyết:</div>
+          <p style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            Chi phí cạnh $C(e)$ kết hợp khoảng cách (km), thời gian (phút), độ trễ và rủi ro ngập. Khoảng cách Haversine thuần túy $D_{\text{Haversine}}$ có đơn vị km, không thể trực tiếp làm hàm $h(n)$ nếu không có hệ số co giãn thích hợp.
+          </p>
+          <div class="formula-card">
+            $$\rho_s = \min_{e \in E_{\text{open}},\, D_{\text{Haversine}}(e) > 10^{-6}} \frac{\text{Cost}_s(e)}{D_{\text{Haversine}}(e)}$$
+          </div>
+          <p style="font-size: 0.78rem; color: #94A3B8;">
+            $\rho_s$ là <strong>chi phí tối thiểu trên mỗi km</strong> trên mọi cạnh mở trong kịch bản $s$.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">🎯 Hàm Heuristic Đề Xuất:</div>
+          <div class="formula-card" style="border-left-color: var(--accent-emerald);">
+            $$h_s(n) = \rho_s \times D_{\text{Haversine}}(n, \text{Goal})$$
+            $$f(n) = g(n) + h_s(n)$$
+          </div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Tính Thích nghi Cao</strong>: Tự động co giãn theo bộ trọng số kịch bản đang chọn.</li>
+            <li><strong>An toàn Tuyệt đối</strong>: Khi thiếu tọa độ, $\rho_s = 0 \implies h(n) = 0$ (A* tự động chuyển thành UCS an toàn).</li>
+            <li>Cạnh đóng hoặc $D \le 10^{-6}\text{km}$ bị loại khỏi phép tính $\rho_s$.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Mathematical Proof -->
+    <div class="slide" data-title="11. Chứng Minh Toán Học">
+      <div class="slide-header">
+        <div class="slide-tag"><span>📜</span> Cơ sở Toán học</div>
+        <h2 class="slide-title">Chứng minh Toán học: Admissibility & Consistency</h2>
+        <p class="slide-subtitle">Bảo đảm A* luôn tìm ra nghiệm tối ưu toàn cục tuyệt đối trùng khớp với UCS</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Định lý 1: Tính Chấp nhận được (Admissibility)</div>
+          <div class="formula-card">$$0 \le h_s(n) \le h^*(n) \quad \forall n \in V$$</div>
+          <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
+            1. Đường trắc địa $D_{\text{Haversine}}(n, \text{Goal})$ là đường chim bay ngắn nhất trên mặt cầu $\implies D^*(n, \text{Goal}) \ge D_{\text{Haversine}}(n, \text{Goal})$.<br>
+            2. Theo định nghĩa $\rho_s$, trên mỗi cạnh $e$: $\text{Cost}_s(e) \ge \rho_s \cdot D_{\text{Haversine}}(e)$.<br>
+            3. Theo bất đẳng thức tam giác: $\sum D_{\text{Haversine}}(e) \ge D_{\text{Haversine}}(n, \text{Goal})$.<br>
+            4. $\implies h^*(n) \ge \rho_s D_{\text{Haversine}}(n, \text{Goal}) = h_s(n)$. $\blacksquare$
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">Định lý 2: Tính Nhất quán (Consistency)</div>
+          <div class="formula-card" style="border-left-color: var(--accent-indigo);">$$h_s(n) \le c_s(n, n') + h_s(n') \quad \forall (n, n') \in E$$</div>
+          <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.5;">
+            1. Theo bất đẳng thức tam giác cầu giữa $n, n'$ và $\text{Goal}$:<br>
+            $$D_{\text{Haversine}}(n, \text{Goal}) \le D_{\text{Haversine}}(n, n') + D_{\text{Haversine}}(n', \text{Goal})$$
+            2. Nhân cả hai vế với $\rho_s \ge 0$: $\rho_s D(n, G) \le \rho_s D(n, n') + \rho_s D(n', G)$.<br>
+            3. Do $\rho_s D(n, n') \le c_s(n, n') \implies h_s(n) \le c_s(n, n') + h_s(n')$. $\blacksquare$
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Unweighted Search (BFS & DFS) -->
+    <div class="slide" data-title="12. BFS & DFS">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🔍</span> Unweighted Search</div>
+        <h2 class="slide-title">Thuật toán Tìm kiếm Không Trọng số: BFS & DFS</h2>
+        <p class="slide-subtitle">So sánh nguyên lý, cấu trúc dữ liệu và đặc tính tối ưu</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🟦 Breadth-First Search (BFS)</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Cấu trúc dữ liệu</strong>: Hàng đợi FIFO (`collections.deque`).</li>
+            <li><strong>Nguyên lý</strong>: Mở rộng đồng mức theo bán kính lân cận.</li>
+            <li><strong>Độ phức tạp</strong>: Thời gian $O(b^d)$, Bộ nhớ $O(b^d)$.</li>
+            <li><strong>Tính Tối ưu</strong>: Đảm bảo tối ưu **số bước nhảy (*minimum hop count*)**, không tối ưu chi phí trọng số.</li>
+            <li><strong>Ứng dụng</strong>: Dùng trong <code>RandomScenarioService</code> để kiểm tra nhanh tính liên thông (*Reachability*).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🟨 Depth-First Search (DFS)</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Cấu trúc dữ liệu</strong>: Ngăn xếp LIFO (`list.pop()`).</li>
+            <li><strong>Nguyên lý</strong>: Đi sâu dọc theo từng nhánh trước khi quay lui (*backtracking*).</li>
+            <li><strong>Độ phức tạp</strong>: Thời gian $O(b^m)$, Bộ nhớ tối ưu $O(b \cdot m)$.</li>
+            <li><strong>Tính Tối ưu</strong>: **Hoàn toàn không tối ưu**, dễ đi đường vòng cực dài. Duy trì tập <code>expanded</code> chống lặp chu trình.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: Weighted Search (UCS & A*) -->
+    <div class="slide" data-title="13. UCS & A*">
+      <div class="slide-header">
+        <div class="slide-tag"><span>⭐</span> Weighted Search</div>
+        <h2 class="slide-title">Thuật toán Tìm kiếm Có Trọng số: UCS & A*</h2>
+        <p class="slide-subtitle">Nền tảng tìm đường tối ưu chi phí trong không gian đồ thị giao thông</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🟩 Uniform Cost Search (UCS / Dijkstra)</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Cấu trúc dữ liệu</strong>: Min-Priority Queue (`heapq`).</li>
+            <li><strong>Hàm đánh giá</strong>: $f(n) = g(n)$ (chi phí tích lũy từ Start).</li>
+            <li><strong>Tính Tối ưu</strong>: **Bảo đảm nghiệm tối ưu toàn cục ($C^*$)** trên mọi đồ thị có trọng số không âm.</li>
+            <li><strong>Hạn chế</strong>: Mở rộng đều theo mọi hướng (*blind search*), duyệt nhiều nút không hướng đích.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🟪 A* Search (Informed Search)</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Cấu trúc dữ liệu</strong>: Min-Priority Queue (`heapq`).</li>
+            <li><strong>Hàm đánh giá</strong>: $f(n) = g(n) + h_s(n)$.</li>
+            <li><strong>Tính Tối ưu</strong>: **Bảo đảm nghiệm tối ưu toàn cục ($C^*$)** nhờ Heuristic $\rho_s \cdot D_{\text{Haversine}}$ Admissible & Consistent.</li>
+            <li><strong>Ưu thế</strong>: Cắt tỉa không gian tìm kiếm vượt trội, duyệt ít nút hơn UCS.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: Greedy & Bidirectional Search -->
+    <div class="slide" data-title="14. Greedy & Bidirectional">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🚀</span> Thuật toán Mở rộng</div>
+        <h2 class="slide-title">Greedy Best-First Search & Bidirectional BFS</h2>
+        <p class="slide-subtitle">Mở rộng giải thuật với tìm kiếm tham lam và tìm kiếm hai đầu song song</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🟧 Greedy Best-First Search</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Hàm đánh giá</strong>: $f(n) = h_s(n) = \rho_s \cdot D_{\text{Haversine}}(n, \text{Goal})$.</li>
+            <li><strong>Nguyên lý</strong>: Luôn chọn nút có khoảng cách ước lượng gần Goal nhất.</li>
+            <li><strong>Ưu / Nhược điểm</strong>: Tốc độ cực nhanh, duyệt ít nút nhưng **không đảm bảo tối ưu**, dễ bị bẫy bởi đường vòng.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🌐 Bidirectional Breadth-First Search</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Cấu trúc dữ liệu</strong>: 2 Hàng đợi FIFO song song (`q_fwd`, `q_bwd`).</li>
+            <li><strong>Đồ thị chuyển vị</strong>: Luồng Backward duyệt trên <code>rev_adj</code> chứa các cạnh đảo chiều $(v \to u)$ để tuân thủ đường 1 chiều.</li>
+            <li><strong>Độ phức tạp</strong>: Giảm từ $O(b^d) \to O(2 \cdot b^{d/2})$. Tốc độ nhanh gấp **15 lần A\***.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: Trace Events & Simulation -->
+    <div class="slide" data-title="15. Trace & Mô Phỏng">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🎬</span> Cơ chế Trực quan hóa</div>
+        <h2 class="slide-title">Diễn tiến Duyệt nút & Ghi nhận Trace Sự kiện</h2>
+        <p class="slide-subtitle">Mô phỏng từng bước so sánh UCS vs A* trên đồ thị mẫu 4 nút</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Bước</th>
+              <th>Thuật toán</th>
+              <th>Nút EXPAND</th>
+              <th>Trạng thái Frontier Hàng Đợi $[(\text{Node}, g, h, f)]$</th>
+              <th>Tập Đóng (CLOSE)</th>
+              <th>Diễn giải Chi tiết</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>UCS</strong></td>
+              <td><strong>A</strong> ($g=0$)</td>
+              <td>$[(B, g=2), (C, g=5)]$</td>
+              <td>$\{A\}$</td>
+              <td>Khởi tạo từ $A$, phát hiện 2 nhánh đi $B$ và $C$.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>UCS</strong></td>
+              <td><strong>B</strong> ($g=2$)</td>
+              <td>$[(C, g=5), (D, g=6)_{\text{qua } B}]$</td>
+              <td>$\{A, B\}$</td>
+              <td>$B$ có $g=2$ nhỏ nhất $\implies$ mở rộng $B$, thêm $D$.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>UCS</strong></td>
+              <td><strong>C</strong> ($g=5$)</td>
+              <td>$[(D, g=6)_{\text{qua } C}, (D, g=6)_{\text{qua } B}]$</td>
+              <td>$\{A, B, C\}$</td>
+              <td>$C$ có $g=5 < g(D)=6 \implies$ duyệt $C$ (lệch hướng).</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>UCS</strong></td>
+              <td><strong>D</strong> ($g=6$)</td>
+              <td>Đích đạt được!</td>
+              <td>$\{A, B, C, D\}$</td>
+              <td>Nghiệm tối ưu: $A \to B \to D$ ($C^* = 6.0$), duyệt 4 nút.</td>
+            </tr>
+            <tr style="border-top: 2px solid var(--accent-cyan);">
+              <td>1</td>
+              <td><strong>A\*</strong></td>
+              <td><strong>A</strong> ($f=5$)</td>
+              <td>$[(B, g=2, h=5, f=7), (C, g=5, h=3, f=8)]$</td>
+              <td>$\{A\}$</td>
+              <td>Khởi tạo từ $A$ với $f(A) = 0 + 5 = 5$.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>A\*</strong></td>
+              <td><strong>B</strong> ($f=7$)</td>
+              <td>$[(D, g=6, h=0, f=6), (C, g=5, h=3, f=8)]$</td>
+              <td>$\{A, B\}$</td>
+              <td>$B$ có $f=7 < f(C)=8 \implies$ chọn $B$, thêm $D$ ($f=6$).</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>A\*</strong></td>
+              <td><strong>D</strong> ($f=6$)</td>
+              <td>Đích đạt được!</td>
+              <td>$\{A, B, D\}$</td>
+              <td><strong>A\* dừng ngay tại bước 3, KHÔNG CẦN DUYỆT C!</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 16: Counterexamples & Edge Cases -->
+    <div class="slide" data-title="16. Phản Ví Dụ & Edge Cases">
+      <div class="slide-header">
+        <div class="slide-tag"><span>⚠️</span> Phân tích Giới hạn</div>
+        <h2 class="slide-title">Phản ví dụ Thực tế & Xử lý Ca Đặc biệt (Edge Cases)</h2>
+        <p class="slide-subtitle">Chứng minh giới hạn của các thuật toán tham lam và kiểm thử trường hợp biên</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">⚡ Phản ví dụ Greedy</div>
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            Trên đồ thị `thu_duc_landmarks_v1.0.0`, Greedy bị "đánh lừa" bởi đường chim bay hướng thẳng Goal $\implies$ Chọn đường có chi phí tổng cao hơn <strong>1.9% đến 15%</strong> so với UCS/A*.
+          </p>
+          <div class="stat-box" style="margin-top: auto;"><div class="stat-val rose">Suboptimal</div><div class="stat-label">Greedy bị bẫy khoảng cách</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🔀 Đồ thị 1 Chiều Bidirectional</div>
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            Luồng Backward bắt buộc duyệt trên **đồ thị chuyển vị (`rev_adj`)** chứa các cạnh đảo chiều $(v \to u)$ để bảo đảm đường đi ghép nối hợp lệ theo chiều giao thông thực tế.
+          </p>
+          <div class="stat-box" style="margin-top: auto;"><div class="stat-val emerald">rev_adj</div><div class="stat-label">Duyệt đúng luật 1 chiều</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ Trường hợp Biên</div>
+          <ul style="padding-left: 16px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.45;">
+            <li><strong>Start = Goal</strong>: Trả kết quả tức thì với 0 chi phí, 0 nút duyệt.</li>
+            <li><strong>Unreachable</strong>: Báo lỗi chuẩn <code>RouteNotFoundError (404)</code>.</li>
+            <li><strong>Chu trình</strong>: Tập <code>expanded</code> ngăn lặp vô tận.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 17: Empirical Benchmark Results -->
+    <div class="slide" data-title="17. Thực Nghiệm 3600 Lượt">
+      <div class="slide-header">
+        <div class="slide-tag"><span>📈</span> Kết quả Đo lường</div>
+        <h2 class="slide-title">Kết quả Thực nghiệm Khoa học (3.600 Lượt Benchmark)</h2>
+        <p class="slide-subtitle">Dữ liệu từ 10 cặp O-D $\times$ 3 kịch bản $\times$ 6 thuật toán $\times$ 20 lần chạy độc lập</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Thuật toán</th>
+              <th>Số Node Duyệt (TB)</th>
+              <th>Số Node Duyệt (Median)</th>
+              <th>Thời gian Median</th>
+              <th>Thời gian P95</th>
+              <th>Chi phí Tuyến ($C^*$)</th>
+              <th>Cự ly TB (km)</th>
+              <th>ETA TB (phút)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(56, 189, 248, 0.1);">
+              <td><strong>A_STAR</strong></td>
+              <td><strong>46.5</strong></td>
+              <td><strong>42.5</strong></td>
+              <td>1.508 ms</td>
+              <td>1.968 ms</td>
+              <td><strong>0.5715</strong> <span class="badge badge-emerald">Optimal</span></td>
+              <td><strong>0.322 km</strong></td>
+              <td><strong>0.89 phút</strong></td>
+            </tr>
+            <tr style="background: rgba(56, 189, 248, 0.05);">
+              <td><strong>UCS</strong></td>
+              <td>49.7</td>
+              <td>47.0</td>
+              <td>1.271 ms</td>
+              <td>1.631 ms</td>
+              <td><strong>0.5715</strong> <span class="badge badge-emerald">Optimal</span></td>
+              <td><strong>0.322 km</strong></td>
+              <td><strong>0.89 phút</strong></td>
+            </tr>
+            <tr>
+              <td><strong>GREEDY</strong></td>
+              <td><strong>17.3</strong></td>
+              <td><strong>17.0</strong></td>
+              <td>0.382 ms</td>
+              <td>0.599 ms</td>
+              <td>0.5825 <em>(+1.9%)</em></td>
+              <td>0.321 km</td>
+              <td>0.85 phút</td>
+            </tr>
+            <tr>
+              <td><strong>BIDIRECTIONAL</strong></td>
+              <td>27.0</td>
+              <td>22.5</td>
+              <td><strong>0.099 ms</strong> <span class="badge badge-cyan">Fastest</span></td>
+              <td><strong>0.142 ms</strong></td>
+              <td>0.6469 <em>(+13.2%)</em></td>
+              <td>0.356 km</td>
+              <td>0.96 phút</td>
+            </tr>
+            <tr>
+              <td><strong>BFS</strong></td>
+              <td>43.8</td>
+              <td>39.0</td>
+              <td>0.205 ms</td>
+              <td>0.305 ms</td>
+              <td>0.6469 <em>(+13.2%)</em></td>
+              <td>0.356 km</td>
+              <td>0.96 phút</td>
+            </tr>
+            <tr>
+              <td><strong>DFS</strong></td>
+              <td>59.7</td>
+              <td>70.0</td>
+              <td>0.272 ms</td>
+              <td>0.376 ms</td>
+              <td>0.5963 <em>(+4.3%)</em></td>
+              <td>0.332 km</td>
+              <td>0.90 phút</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3" style="margin-top: 10px; flex: none;">
+        <div class="stat-box"><div class="stat-val emerald">100.0%</div><div class="stat-label">A* Khớp Chi Phí Với UCS</div></div>
+        <div class="stat-box"><div class="stat-val gold">-28.4%</div><div class="stat-label">A* Tiết Kiệm Nút Duyệt (Cặp Xa)</div></div>
+        <div class="stat-box"><div class="stat-val cyan">15× Nhanh Hơn</div><div class="stat-label">Tốc Độ Đột Phá Của Bidirectional</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 18: Route Change Case Study -->
+    <div class="slide" data-title="18. Tuyến Thích Ứng">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🔄</span> Nghiên cứu Điển hình</div>
+        <h2 class="slide-title">Nghiên Cứu Điển Hình: Tuyến Đường Thích Ứng Theo Kịch Bản</h2>
+        <p class="slide-subtitle">Minh chứng hành vi thích ứng động trên cặp điểm OD03 (Khu vực Chợ Thủ Đức)</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Kịch bản Giao thông</th>
+              <th>Lộ trình Được Chọn</th>
+              <th>Chi phí Tổng ($C$)</th>
+              <th>Cự ly</th>
+              <th>ETA Dự kiến</th>
+              <th>Diễn giải Hành vi của Thuật toán</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>`HISTORICAL_OFFPEAK`</strong></td>
+              <td>Đi thẳng xuyên tâm Chợ Thủ Đức</td>
+              <td><strong>0.1045</strong></td>
+              <td>0.163 km</td>
+              <td>0.22 phút</td>
+              <td>Đường phố thông thoáng, thuật toán chọn tuyến cự ly ngắn nhất.</td>
+            </tr>
+            <tr>
+              <td><strong>`HISTORICAL_PM_PEAK`</strong></td>
+              <td>Đi thẳng qua Chợ Thủ Đức</td>
+              <td><strong>0.1250</strong> <em>(+19.6%)</em></td>
+              <td>0.163 km</td>
+              <td>0.31 phút</td>
+              <td>Kẹt xe làm tăng $P_{\text{traffic}}$, chi phí tăng nhưng chưa có đường vòng nào rẻ hơn.</td>
+            </tr>
+            <tr>
+              <td><strong>`RAIN_FLOOD_AWARE`</strong></td>
+              <td><strong>Tự động đi vòng qua đường vành đai cao</strong></td>
+              <td><strong>0.1480</strong></td>
+              <td>0.245 km</td>
+              <td>0.38 phút</td>
+              <td>Các cạnh qua Chợ Thủ Đức có rủi ro ngập $R_{\text{flood}} = 1.0$. <strong>Thuật toán tự động đổi tuyến đi vòng để tránh chết máy!</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SLIDE 19: Asymmetric TSP Formulation -->
+    <div class="slide" data-title="19. Bài Toán TSP Đa Điểm">
+      <div class="slide-header">
+        <div class="slide-tag"><span>📦</span> Tối ưu Giao hàng</div>
+        <h2 class="slide-title">Bài Toán Tối Ưu Giao Hàng Đa Điểm (Asymmetric TSP)</h2>
+        <p class="slide-subtitle">Xác định chu trình ghé thăm $5 - 10$ điểm dừng có tổng chi phí nhỏ nhất trên đồ thị có hướng</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Đặc tả Bài toán:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Đầu vào</strong>: 1 Kho (*Depot*) + $K$ điểm giao hàng ($5 \le K \le 10$).</li>
+            <li><strong>Mục tiêu</strong>: Ghé thăm mỗi điểm đúng 1 lần rồi quay về kho với chi phí nhỏ nhất.</li>
+            <li><strong>Đặc thù Đô thị</strong>: Đường 1 chiều $\implies$ <strong>Ma trận Bất đối xứng</strong>: $c(u, v) \ne c(v, u)$.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Quy trình Xử lý 3 Bước:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            <li><strong>Bước 1: Lập `PairwiseMatrix` ($M \times M$)</strong>: Chạy A* tìm đường ngắn nhất giữa mọi cặp điểm.</li>
+            <li><strong>Bước 2: Giải thuật Tối ưu</strong>: Held-Karp DP (Exact) vs Nearest Neighbor (Heuristic).</li>
+            <li><strong>Bước 3: Subpath Stitching</strong>: Khử trùng lặp nút biên, tạo polyline liền mạch.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 20: Held-Karp vs Nearest Neighbor -->
+    <div class="slide" data-title="20. Held-Karp vs NN">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🧮</span> Thuật toán TSP</div>
+        <h2 class="slide-title">Held-Karp DP vs Nearest Neighbor Heuristic</h2>
+        <p class="slide-subtitle">So sánh thuật toán quy hoạch động chính xác tuyệt đối và thuật toán tham lam xấp xỉ</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🏆 1. Held-Karp DP (Exact DP Solver)</div>
+          <div class="formula-card">
+            $$dp(\text{mask}, u) = \min_{v \in \text{mask} \setminus \{u\}} \Big[ dp(\text{mask} \setminus \{u\}, v) + c(v, u) \Big]$$
+          </div>
+          <ul style="padding-left: 18px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.45;">
+            <li><strong>Bitmask Memoization</strong>: Dùng bitmask biểu diễn tập đỉnh đã ghé thăm.</li>
+            <li><strong>Độ phức tạp</strong>: Thời gian $O(N^2 \cdot 2^N)$, Bộ nhớ $O(N \cdot 2^N)$. Với $N \le 10$, giải trong <strong>$< 5\text{ ms}$</strong>.</li>
+            <li><strong>Bảo đảm tối ưu tuyệt đối 100%</strong>. Kiểm chứng chéo với Brute Force ($N \le 7$).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">⚡ 2. Nearest Neighbor (Heuristic)</div>
+          <div class="formula-card" style="border-left-color: var(--accent-amber);">
+            $$\text{next} = \arg\min_{v \in \text{Unvisited}} c(\text{current}, v)$$
+          </div>
+          <ul style="padding-left: 18px; font-size: 0.78rem; color: #CBD5E1; line-height: 1.45;">
+            <li><strong>Tham lam từng bước</strong>: Luôn chọn điểm gần nhất chưa ghé thăm từ vị trí hiện tại.</li>
+            <li><strong>Độ phức tạp</strong>: Thời gian $O(N^2)$, Bộ nhớ $O(N)$.</li>
+            <li><strong>Nhược điểm</strong>: Dễ bị "bẫy" ở chặng cuối quay về Depot $\implies$ Lệch xấp xỉ so với tối ưu.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 21: TSP Evaluation & Savings -->
+    <div class="slide" data-title="21. Đánh Giá Thực Nghiệm TSP">
+      <div class="slide-header">
+        <div class="slide-tag"><span>💰</span> Hiệu quả Thực tiễn</div>
+        <h2 class="slide-title">Đánh Giá Thực Nghiệm TSP & Hiệu Quả Tiết Kiệm Chi Phí</h2>
+        <p class="slide-subtitle">Thực nghiệm trên bài toán giao hàng 6 điểm dừng quanh khu vực TP. Thủ Đức</p>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Phương pháp Định tuyến</th>
+              <th>Lộ trình Ghé thăm (Visit Order)</th>
+              <th>Tổng Chi phí ($C$)</th>
+              <th>Tổng Cự ly</th>
+              <th>% Lệch Xấp xỉ (Gap)</th>
+              <th>% Tiết kiệm so với Gốc</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Thứ tự Gốc (User Input)</strong></td>
+              <td>$\text{Depot} \to S_1 \to S_2 \to S_3 \to S_4 \to S_5 \to \text{Depot}$</td>
+              <td>14.850</td>
+              <td>4.250 km</td>
+              <td>—</td>
+              <td><strong>0.0%</strong> <em>(Baseline)</em></td>
+            </tr>
+            <tr>
+              <td><strong>Nearest Neighbor</strong></td>
+              <td>$\text{Depot} \to S_2 \to S_1 \to S_3 \to S_5 \to S_4 \to \text{Depot}$</td>
+              <td>11.230</td>
+              <td>3.120 km</td>
+              <td><span class="badge badge-amber">+8.9% Gap</span></td>
+              <td><span class="badge badge-cyan">Tiết kiệm 24.4%</span></td>
+            </tr>
+            <tr style="background: rgba(16, 185, 129, 0.1);">
+              <td><strong>Held-Karp DP (Optimal)</strong></td>
+              <td>$\text{Depot} \to S_2 \to S_3 \to S_5 \to S_4 \to S_1 \to \text{Depot}$</td>
+              <td><strong>10.310</strong></td>
+              <td><strong>2.890 km</strong></td>
+              <td><span class="badge badge-emerald">0.0% (Exact)</span></td>
+              <td><span class="badge badge-emerald">Tiết kiệm 30.6%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3" style="margin-top: 14px; flex: none;">
+        <div class="stat-box"><div class="stat-val emerald">-30.6%</div><div class="stat-label">Chi phí Tiết kiệm Nhờ Held-Karp</div></div>
+        <div class="stat-box"><div class="stat-val emerald">-1.36 km</div><div class="stat-label">Cự ly Rút ngắn trên mỗi chuyến giao</div></div>
+        <div class="stat-box"><div class="stat-val gold">+8.9%</div><div class="stat-label">Độ lệch Xấp xỉ của Nearest Neighbor</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 22: Controlled Random Scenario Generator -->
+    <div class="slide" data-title="22. Sinh Kịch Bản Ngẫu Nhiên">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🎲</span> Tính năng Nâng cao</div>
+        <h2 class="slide-title">Dịch Vụ Sinh Kịch Bản Ngẫu Nhiên Có Kiểm Soát</h2>
+        <p class="slide-subtitle">Sinh sự cố giao thông ngẫu nhiên với tham số Seed tái lập và kiểm tra tính liên thông</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🎲 Cơ chế Sinh Kịch bản Kiểm soát:</div>
+          <ul style="padding-left: 18px; font-size: 0.8rem; color: #CBD5E1; line-height: 1.55;">
+            <li><strong>Seed-based Reproducibility</strong>: Tham số <code>seed="DEFENSE_2026"</code> bảo đảm cùng 1 seed luôn sinh ra đúng tập cạnh sự cố y hệt nhau khi vấn đáp.</li>
+            <li><strong>Phân bổ Cân đối</strong>: Tối đa 1 cạnh <code>CLOSED</code>, còn lại chia đều cho <code>CONGESTED</code> (+5p delay) và <code>FLOODED</code> ($R_{\text{flood}} = 1.0$).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ Reachability Check bằng Fast BFS:</div>
+          <div class="code-box">
+Request (Start, Goal, Seed)
+   │
+   ▼
+Chọn ngẫu nhiên tập cạnh bị ảnh hưởng
+   │
+   ▼
+Tạo Scenario tạm ──> Chạy BFS kiểm tra đường đi
+   │
+   ├──> [CÒN ĐƯỜNG] ──> Trả về Response 200 OK
+   │
+   └──> [BỊ ĐỨT ĐƯỜNG] ──> Tự động Retry seed mới (max 5)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 23: Explainable AI -->
+    <div class="slide" data-title="23. Explainable AI">
+      <div class="slide-header">
+        <div class="slide-tag"><span>💡</span> Trí tuệ Nhân tạo Giải thích</div>
+        <h2 class="slide-title">Trí Tuệ Nhân Tạo Giải Thích Được (Explainable AI - XAI)</h2>
+        <p class="slide-subtitle">Tạo niềm tin cho người dùng qua phân tích đóng góp chi phí và cảnh báo rủi ro</p>
+      </div>
+      <div class="formula-card" style="font-size: 0.82rem; line-height: 1.5; border-left-color: var(--accent-cyan);">
+        "<strong>A_STAR</strong> đã chọn lộ trình <code>LM_001 -> LM_012 -> LM_045 -> LM_065</code> dưới kịch bản <code>PEAK_TRAFFIC</code>. Tổng chi phí là <strong>0.571500</strong>; cự ly <strong>0.322 km</strong> và thời gian dự kiến <strong>0.89 phút</strong>. Thành phần chiếm tỷ trọng lớn nhất là <strong>freeflow_time (0.285)</strong>. Đoạn đường chịu phạt nặng nhất là <code>E_024</code>: độ trễ kẹt xe <strong>1.45 phút</strong> và rủi ro ngập <strong>0.00</strong>."
+      </div>
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="card" style="text-align: center;"><strong>1. Tỷ trọng Chi phí</strong><br><small style="color: #94A3B8;">Xác định yếu tố chi phối</small></div>
+        <div class="card" style="text-align: center;"><strong>2. Cảnh báo Điểm Nóng</strong><br><small style="color: #94A3B8;">Chỉ đích danh đoạn kẹt/ngập</small></div>
+        <div class="card" style="text-align: center;"><strong>3. So sánh Đa tiêu chí</strong><br><small style="color: #94A3B8;">Shortest vs Fastest vs Best</small></div>
+        <div class="card" style="text-align: center;"><strong>4. Cam kết Toán học</strong><br><small style="color: #94A3B8;">Optimal / Near-optimal badge</small></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 24: GUI & User Experience -->
+    <div class="slide" data-title="24. Giao Diện Người Dùng">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🖥️</span> Trải nghiệm Trực quan</div>
+        <h2 class="slide-title">Giao Diện Người Dùng & Trải Nghiệm Trực Quan (GUI & UX)</h2>
+        <p class="slide-subtitle">Thiết kế hiện đại, mượt mà với MapLibre GL JS GPU Layers và Trace Replay Player</p>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">🗺️ Bản đồ Vector GPU</div>
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            MapLibre GL JS 60 FPS. <strong>Snapping 200m thông minh</strong> tự hút vào nút giao gần nhất. Marker Start (cam) / Goal (hồng) cố định, đường ranh đỏ Thủ Đức.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">▶️ Trace Replay Player</div>
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            Trực quan hóa 3 tập hợp: 🟡 <strong>Frontier</strong> (đang chờ), 🟢 <strong>Current</strong> (đang xét), ⚪ <strong>Closed</strong> (đã đóng). Tốc độ phát linh hoạt ($0.5\times - 10\times$).
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-title">🌐 Song ngữ & Phím tắt</div>
+          <p style="font-size: 0.8rem; color: #CBD5E1; line-height: 1.5;">
+            Chuyển đổi tức thì <strong>Tiếng Việt / English (i18n)</strong>, bảng phím tắt (<code>Space</code>, <code>[</code>, <code>]</code>, <code>?</code>), Responsive trên mọi thiết bị.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 25: QA Testing Strategy -->
+    <div class="slide" data-title="25. Kiểm Thử QA Suite">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🧪</span> Đảm bảo Chất lượng</div>
+        <h2 class="slide-title">Chiến Lược Kiểm Thử & Đảm Bảo Chất Lượng (QA Suite)</h2>
+        <p class="slide-subtitle">Bảo vệ độ tin cậy của toàn bộ hệ thống bằng 11 bộ test tự động toàn diện</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">11 Bộ Test Backend Chuyên Sâu:</div>
+          <ul style="padding-left: 18px; font-size: 0.76rem; color: #CBD5E1; line-height: 1.45;">
+            <li><code>test_graph.py</code>: Bất biến Graph, Loaders, Scenario View.</li>
+            <li><code>test_cost.py</code> & <code>test_cost_profiles.py</code>: Chi phí 4 thành phần & 3 presets.</li>
+            <li><code>test_weighted_algorithms.py</code>: Tối ưu UCS, Admissible/Consistent A*.</li>
+            <li><code>test_unweighted_algorithms.py</code>: BFS, DFS, chu trình, Start = Goal.</li>
+            <li><code>test_advance_algorithms.py</code>: Phản ví dụ Greedy, Bidirectional directed.</li>
+            <li><code>test_tc04_multi_stop.py</code>: Pairwise matrix, Held-Karp vs Brute Force.</li>
+            <li><code>test_random_scenario.py</code>: Tính tái lập của seed và xử lý ngắt kết nối.</li>
+            <li><code>test_api.py</code>: Toàn bộ REST API endpoints, Pydantic schemas, HTTP errors.</li>
+          </ul>
+        </div>
+        <div class="card" style="justify-content: center; align-items: center; text-align: center;">
+          <div class="stat-box" style="width: 100%; margin-bottom: 10px;">
+            <div class="stat-val emerald">100% PASS</div>
+            <div class="stat-label">Toàn bộ Test Suites Backend (Pytest) & Frontend (Vitest)</div>
+          </div>
+          <div class="stat-box" style="width: 100%;">
+            <div class="stat-val cyan">CI / CD Ready</div>
+            <div class="stat-label">Automated Dataset Checksum & Schema Validation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 26: Defense Q&A 1 -->
+    <div class="slide" data-title="26. Vấn Đáp: Q&A 1">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🎓</span> Chuẩn bị Vấn đáp</div>
+        <h2 class="slide-title">Bộ Câu hỏi Vấn đáp Trọng tâm (Phần 1)</h2>
+        <p class="slide-subtitle">Giải trình sâu sắc các quyết định thiết kế mô hình toán học và Heuristic</p>
+      </div>
+      <div class="qa-box">
+        <div class="qa-question">Q1: Tại sao nhóm dùng khoảng cách Haversine mà không dùng Euclidean trong Heuristic A*?</div>
+        <div class="qa-answer">
+          Trái Đất có bề mặt cong hình cầu. Công thức Euclidean $\sqrt{\Delta x^2 + \Delta y^2}$ trên tọa độ kinh vĩ độ bị biến dạng cự ly nghiêm trọng khi quy đổi ra mét tại vĩ độ Việt Nam ($~10.8^\circ\text{N}$). Hàm <strong>Haversine</strong> tính chính xác khoảng cách cung đại vòng tròn trên mặt cầu trắc địa chuẩn WGS84, bảo đảm bất đẳng thức tam giác cầu luôn đúng.
+        </div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-question">Q2: Tại sao phải tách riêng Traffic Penalty ($P_{\text{traffic}}$) khỏi Free-Flow Time ($T_{\text{ff}}$) trong hàm chi phí?</div>
+        <div class="qa-answer">
+          Nếu đưa trực tiếp $T_{\text{travel}} = T_{\text{ff}} \times \text{Multiplier}$ vào hàm chi phí cùng với $T_{\text{ff}}$, thời gian di chuyển cơ sở sẽ bị cộng dồn hai lần. Việc tách riêng $P_{\text{traffic}} = \max(0, T_{\text{travel}} - T_{\text{ff}})$ giúp đo lường chính xác phần thời gian trễ phát sinh do kẹt xe và gán trọng số $w_{\text{cong}}$ độc lập.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 27: Defense Q&A 2 -->
+    <div class="slide" data-title="27. Vấn Đáp: Q&A 2">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🎓</span> Chuẩn bị Vấn đáp</div>
+        <h2 class="slide-title">Bộ Câu hỏi Vấn đáp Trọng tâm (Phần 2)</h2>
+        <p class="slide-subtitle">Giải trình khả năng mở rộng thuật toán TSP và xử lý kịch bản động</p>
+      </div>
+      <div class="qa-box">
+        <div class="qa-question">Q3: Khi số điểm giao hàng tăng lên 20 - 50 điểm, thuật toán Held-Karp có áp dụng được không?</div>
+        <div class="qa-answer">
+          Không, vì bài toán TSP là NP-hard. Held-Karp có độ phức tạp $O(N^2 2^N)$ sẽ bùng nổ tổ hợp khi $N \ge 20$. Với quy mô lớn, cần chuyển sang các giải thuật Heuristic/Metaheuristic như <strong>Genetic Algorithm (GA), Ant Colony Optimization (ACO), Simulated Annealing</strong> hoặc thư viện tối ưu chuyên dụng Google OR-Tools.
+        </div>
+      </div>
+      <div class="qa-box">
+        <div class="qa-question">Q4: Làm thế nào bảo đảm A* luôn tìm được đường tối ưu khi kịch bản thay đổi trọng số liên tục?</div>
+        <div class="qa-answer">
+          Nhờ cơ chế tính động hệ số $\rho_s = \min(\text{Cost}_s(e) / D_{\text{Haversine}}(e))$ ngay khi đóng băng kịch bản trước khi chạy A*. Hệ số $\rho_s$ bảo đảm hàm Heuristic luôn là lower-bound (Admissible & Consistent) của mọi đường đi khả thi trong kịch bản đó.
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 28: Conclusion & Future Work -->
+    <div class="slide" data-title="28. Tổng Kết & Tương Lai">
+      <div class="slide-header">
+        <div class="slide-tag"><span>🏆</span> Kết luận</div>
+        <h2 class="slide-title">Tổng Kết Dự Án & Định Hướng Phát Triển Tương Lai</h2>
+        <p class="slide-subtitle">Thành tựu nổi bật đạt được trong đề tài FloodRoute HCMC</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🌟 4 Thành tựu Kỹ thuật Nổi bật:</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li><strong>1. Hoàn thành toàn diện 100% yêu cầu</strong>: Đủ 6 thuật toán tìm kiếm 2 điểm, 2 giải thuật TSP và hệ thống AI giải thích.</li>
+            <li><strong>2. Cơ sở Toán học vững chắc</strong>: Heuristic $\rho_s \cdot \text{Haversine}$ được chứng minh chặt chẽ, kiểm chứng qua 3.600 lượt chạy thực nghiệm.</li>
+            <li><strong>3. Bám sát thực tế giao thông TP.HCM</strong>: Dữ liệu thật từ OSM/UTraffic, giải quyết bài toán kẹt xe và rốn ngập Chợ Thủ Đức.</li>
+            <li><strong>4. Ứng dụng Web hoàn thiện cao cấp</strong>: Bản đồ GPU vector mượt mà, Trace Player trực quan, Đa ngôn ngữ.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🚀 Hướng Phát triển Tương lai:</div>
+          <ul style="padding-left: 18px; font-size: 0.82rem; color: #CBD5E1; line-height: 1.55;">
+            <li>Tích hợp cảm biến IoT mực nước triều cường và camera giao thông thời gian thực.</li>
+            <li>Mở rộng sang bài toán Đội xe Giao hàng (CVRPTW) có ràng buộc tải trọng và khung giờ nhận hàng.</li>
+            <li>Ứng dụng mô hình Deep Reinforcement Learning để dự báo kẹt xe trước khi di chuyển.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer Controls -->
+  <footer>
+    <div class="slide-counter">
+      Slide <span id="current-slide-num">1</span> / <span id="total-slides-num">28</span>
+    </div>
+    <div class="controls-center">
+      <button class="btn-ctrl" id="btn-first" title="Slide đầu (Home)">⏮</button>
+      <button class="btn-ctrl" id="btn-prev" title="Slide trước (← / PageUp)">◀</button>
+      <button class="btn-ctrl" id="btn-next" title="Slide sau (→ / Space / PageDown)">▶</button>
+      <button class="btn-ctrl" id="btn-last" title="Slide cuối (End)">⏭</button>
+    </div>
+    <div style="font-size: 0.78rem; color: var(--text-muted);">
+      Phím tắt: <kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd> <kbd>F</kbd> <kbd>O</kbd>
+    </div>
+  </footer>
+
+  <!-- Overview Grid Modal -->
+  <div class="overview-modal" id="overview-modal">
+    <div class="overview-header">
+      <h2 style="font-size: 1.4rem; color: #FFFFFF;">📑 Danh Mục Toàn Bộ 28 Slides</h2>
+      <button class="btn-nav" id="btn-close-overview"><span>✖</span> Đóng (Esc / O)</button>
+    </div>
+    <div class="overview-grid" id="overview-grid"></div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    const currentSlideNumEl = document.getElementById('current-slide-num');
+    const totalSlidesNumEl = document.getElementById('total-slides-num');
+    const progressBar = document.getElementById('progress-bar');
+    const overviewModal = document.getElementById('overview-modal');
+    const overviewGrid = document.getElementById('overview-grid');
+
+    totalSlidesNumEl.textContent = totalSlides;
+
+    slides.forEach((slide, index) => {
+      const item = document.createElement('div');
+      item.className = `overview-item ${index === 0 ? 'current' : ''}`;
+      const title = slide.getAttribute('data-title') || `Slide ${index + 1}`;
+      item.innerHTML = `
+        <div class="overview-item-num">SLIDE ${String(index + 1).padStart(2, '0')}</div>
+        <div class="overview-item-title">${title}</div>
+      `;
+      item.addEventListener('click', () => {
+        goToSlide(index);
+        closeOverview();
+      });
+      overviewGrid.appendChild(item);
+    });
+
+    function updateSlide() {
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active', 'prev');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else if (index < currentSlide) {
+          slide.classList.add('prev');
+        }
+      });
+
+      currentSlideNumEl.textContent = currentSlide + 1;
+      const progressPercent = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      const overviewItems = overviewGrid.querySelectorAll('.overview-item');
+      overviewItems.forEach((item, index) => {
+        item.classList.toggle('current', index === currentSlide);
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise();
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides) {
+        currentSlide = index;
+        updateSlide();
+      }
+    }
+
+    function toggleOverview() {
+      overviewModal.classList.toggle('open');
+    }
+    function closeOverview() {
+      overviewModal.classList.remove('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.getElementById('btn-next').addEventListener('click', nextSlide);
+    document.getElementById('btn-prev').addEventListener('click', prevSlide);
+    document.getElementById('btn-first').addEventListener('click', () => goToSlide(0));
+    document.getElementById('btn-last').addEventListener('click', () => goToSlide(totalSlides - 1));
+    document.getElementById('btn-overview').addEventListener('click', toggleOverview);
+    document.getElementById('btn-close-overview').addEventListener('click', closeOverview);
+    document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+
+    window.addEventListener('keydown', (e) => {
+      if (overviewModal.classList.contains('open')) {
+        if (e.key === 'Escape' || e.key === 'o' || e.key === 'O') {
+          closeOverview();
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case 'PageDown':
+        case ' ':
+        case 'Enter':
+          e.preventDefault();
+          nextSlide();
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'PageUp':
+        case 'Backspace':
+          e.preventDefault();
+          prevSlide();
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToSlide(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToSlide(totalSlides - 1);
+          break;
+        case 'f':
+        case 'F':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case 'o':
+          e.preventDefault();
+          toggleOverview();
+          break;
+      }
+    });
+
+    let touchStartX = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    updateSlide();
+  </script>
+</body>
+</html>
