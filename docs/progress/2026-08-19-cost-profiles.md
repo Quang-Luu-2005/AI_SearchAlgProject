@@ -22,8 +22,9 @@ preset, giải thích đúng ý nghĩa trọng số và ghi nhận bằng chứn
 
 ## Bằng chứng kiểm tra
 
-- `npm run benchmark:cost-profiles` — profile sums đều bằng `1.0`; ghi nhận toy
-  `N01 → N06` đổi tuyến khi rain và market golden case đổi từ 4 lên 27 cạnh.
+- `npm run benchmark:cost-profiles` — profile sums đều bằng `1.0`; ghi nhận hai
+  ví dụ `SIMULATED` đổi tuyến trong toy fixture: `N01 → N06` đổi tuyến khi rain
+  và `N05 → N01` đổi tuyến qua `E10/E12` khi `E04` bị đóng.
 - `npm run test:backend` — 89 passed.
 - `npm run test:data` — PASS; không chỉnh sửa `data/raw/`.
 
