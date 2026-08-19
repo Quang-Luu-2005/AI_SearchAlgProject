@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 20:05
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 20:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1194,12 +1194,15 @@ LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 (Font)              scaled to size 4.81819pt on input line 9.
  [2]) (content/5.Algorithm Principles.tex
+LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
+(Font)              scaled to size 8.67274pt on input line 4.
+
 Underfull \hbox (badness 10000) in paragraph at lines 16--18
 
  []
 
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
-(Font)              scaled to size 9.44046pt on input line 54.
+(Font)              scaled to size 9.44046pt on input line 50.
 ) (content/6.Program Flow.tex [3]) (content/7.Algorithm Comparison.tex [4])
 (content/8.Multi-location Optimization.tex [5] [6]
 File: figures/gui-astar-route.png Graphic file (type bmp)
@@ -1222,12 +1225,12 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: A3083304EB3A9A51380C27C355F37897;1972.
  ) 
 Here is how much of TeX's memory you used:
- 30716 strings out of 402987
- 634954 string characters out of 5448524
- 1141296 words of memory out of 5000000
- 58941 multiletter control sequences out of 15000+600000
- 634676 words of font info for 98 fonts, out of 8000000 for 9000
+ 30728 strings out of 402987
+ 635137 string characters out of 5448524
+ 1140296 words of memory out of 5000000
+ 58948 multiletter control sequences out of 15000+600000
+ 636229 words of font info for 105 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 99i,12n,130p,665b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,12n,130p,705b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on main.pdf (14 pages).
