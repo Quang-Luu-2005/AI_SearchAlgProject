@@ -30,9 +30,11 @@ from .models import (
     ScenariosResponse,
     SearchRequest,
     SearchResponse,
+    RandomScenarioRequest,
+    RandomScenarioResponse,
 )
 
-
+from ..services.random_scenario import RandomScenarioService
 
 router = APIRouter()
 
@@ -445,3 +447,28 @@ def graph_detail(
         "edges": edges,
         "active_edge_count": sum(not edge["is_closed"] for edge in edges),
     }
+
+@router.post(
+    "/scenarios/random",
+    tags=["search"],
+    response_model=RandomScenarioResponse,
+    responses={422: {"model": ErrorResponse}},
+)
+def generate_random_scenario(payload: RandomScenarioRequest) -> dict[str, object]:
+    """Sinh kịch bản giao thông ngẫu nhiên, đảm bảo vẫn còn đường đi tới đích."""
+    _, graph, _ = _load_graph(payload.graph_id)
+    
+    try:
+        service = RandomScenarioService(base_graph=graph)
+        response = service.generate(
+            start=payload.start_node_id,
+            goal=payload.goal_node_id,
+            num_edges=payload.num_edges,
+            seed=payload.seed
+        )
+        return response.model_dump()
+        
+    except RouteNotFoundError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error)) from error

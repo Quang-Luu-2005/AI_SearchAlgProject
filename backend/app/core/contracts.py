@@ -3,6 +3,8 @@ from dataclasses import dataclass, field
 from enum import StrEnum
 from types import MappingProxyType
 from typing import Any, Iterable, Mapping, TypeVar
+from enum import Enum
+from pydantic import BaseModel, Field
 
 
 _T = TypeVar("_T")
@@ -711,3 +713,30 @@ class SearchExecution:
     edge_costs: tuple[EdgeCostBreakdown, ...]
     result: SearchResult
     data_status: str
+
+class AffectedEdgeStatus(str, Enum):
+    CONGESTED = "CONGESTED"
+    FLOODED = "FLOODED"
+    CLOSED = "CLOSED"
+
+class AffectedEdge(BaseModel):
+    edge_id: str
+    status: AffectedEdgeStatus
+
+class RandomScenarioRequest(BaseModel):
+    start_node_id: str
+    goal_node_id: str
+    seed: str | None = Field(
+        default=None, 
+        description="Seed used for reproducible pseudo-random generation."
+    )
+    num_edges: int = Field(
+        default=5, 
+        ge=1, 
+        le=15, 
+        description="Number of edges to randomly affect."
+    )
+
+class RandomScenarioResponse(BaseModel):
+    scenario_id: str
+    affected_edges: list[AffectedEdge]

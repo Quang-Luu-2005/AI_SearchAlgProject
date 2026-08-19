@@ -6,6 +6,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from enum import Enum
 
 class SearchRequest(BaseModel):
     start: str = Field(min_length=1, examples=["N01"])
@@ -187,6 +188,25 @@ class OptimizeTourResponse(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str
 
+class AffectedEdgeStatus(str, Enum):
+    CONGESTED = "CONGESTED"
+    FLOODED = "FLOODED"
+    CLOSED = "CLOSED"
+
+class AffectedEdge(BaseModel):
+    edge_id: str
+    status: AffectedEdgeStatus
+
+class RandomScenarioRequest(BaseModel):
+    start_node_id: str = Field(min_length=1, examples=["N01"])
+    goal_node_id: str = Field(min_length=1, examples=["N06"])
+    seed: str | None = Field(default=None)
+    num_edges: int = Field(default=5, ge=1, le=15)
+    graph_id: str = Field(default="toy_graph_v0.1", min_length=1)
+
+class RandomScenarioResponse(BaseModel):
+    scenario_id: str
+    affected_edges: list[AffectedEdge]
 
 __all__ = [
     "CompareRequest",
