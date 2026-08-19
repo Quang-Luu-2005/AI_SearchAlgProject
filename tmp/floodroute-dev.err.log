@@ -1,0 +1,33 @@
+INFO:     Will watch for changes in these directories: ['D:\\AI\\Lab\\Lab_1\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [27860] using WatchFiles
+INFO:     Started server process [33616]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[2m7:07:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:07:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:07:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:14:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:14:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:14:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:58 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:58 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:15:58 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:18 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:18 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:18 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:16:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:12 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:12 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:12 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-non-us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[highway-shield-us-interstate].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.
+[2m7:17:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mlayers[road_shield_us].filter[1]: Expected value to be of type number, but found null instead. Falling back to false.

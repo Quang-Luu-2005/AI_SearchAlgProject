@@ -1,45 +1,168 @@
-\section{Tối ưu hóa Tuyến đường Giao hàng Đa điểm (TSP)}
-\label{sec:multi_location_opt}
+\section{Thực nghiệm và so sánh}
+\subsection{Benchmark tìm kiếm trên bản đồ 65 node}
+Nhóm em chạy benchmark trên bản đồ \texttt{thu\_duc\_landmarks\_v1.0.0} với 10 cặp OD, một baseline scenario, 6 thuật toán và 20 lần lặp cho mỗi trường hợp. Tổng cộng có 1,200 lượt chạy được đo. Các bảng và số liệu trong phần này được lấy từ file kết quả JSON sau khi chạy benchmark.
 
-\subsection{Đặc tả Bài toán Giao hàng Đa điểm (TSP)}
-Khi shipper cần giao hàng cho $N$ địa điểm ($5 \le N \le 10$) xuất phát từ 1 kho hàng (\textit{Depot}):
-\begin{itemize}[leftmargin=1.5cm]
-    \item Cần xác định một chu trình ghé thăm mỗi điểm giao hàng đúng một lần rồi quay về kho sao cho tổng chi phí là nhỏ nhất.
-    \item Do mạng lưới đô thị có nhiều tuyến đường một chiều, ma trận chi phí giữa các điểm là \textbf{Ma trận Bất đối xứng (\textit{Asymmetric Pairwise Matrix})}: $c(u, v) \ne c(v, u)$.
-\end{itemize}
-
-\subsection{Hai Giải thuật Cài đặt}
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{Held-Karp Dynamic Programming (Giải thuật Chính xác)}:
-    Sử dụng mặt nạ bit (\textit{bitmask}) biểu diễn tập các đỉnh đã thăm:
-    \begin{equation}
-        dp(\text{mask}, u) = \min_{v \in \text{mask} \setminus \{u\}} \Big[ dp(\text{mask} \setminus \{u\}, v) + c(v, u) \Big]
-    \end{equation}
-    Chi phí chu trình tối ưu:
-    \begin{equation}
-        \text{Cost}_{\text{optimal}} = \min_{u \in \{1, \dots, N-1\}} \Big[ dp((1 \ll N) - 1, u) + c(u, 0) \Big]
-    \end{equation}
-    Độ phức tạp: Thời gian $O(N^2 \cdot 2^N)$, Bộ nhớ $O(N \cdot 2^N)$. Với $N \le 10$, thời gian thực thi $< 5$ ms, đảm bảo nghiệm tối ưu tuyệt đối.
-    \item \textbf{Nearest Neighbor Heuristic (Giải thuật Xấp xỉ Nhanh)}:
-    Tham lam chọn chặng tiếp theo có chi phí nhỏ nhất. Độ phức tạp: Thời gian $O(N^2)$, Bộ nhớ $O(N)$.
-\end{enumerate}
-
-\subsection{Đánh giá Thực nghiệm: So sánh Held-Karp vs Nearest Neighbor vs Thứ tự Gốc}
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabularx}{\textwidth}{l p{5.5cm} c c c c}
+\begin{center}
+{\small
+\begin{tabular}{l r r l}
 \toprule
-\textbf{Phương pháp} & \textbf{Lộ trình Ghé thăm (Visit Order)} & \textbf{Chi phí ($C$)} & \textbf{Cự ly ($D$)} & \textbf{\% Gap} & \textbf{\% Savings} \\
+Thuật toán & Cost trên case minh họa & Node khám phá & Nhận xét\\
 \midrule
-\textbf{Thứ tự Gốc (User Input)} & $\text{Depot} \to S_1 \to S_2 \to S_3 \to S_4 \to S_5 \to \text{Depot}$ & 14.850 & 4.250 km & --- & \textbf{0.0\%} \textit{(Baseline)} \\
-\textbf{Nearest Neighbor} & $\text{Depot} \to S_2 \to S_1 \to S_3 \to S_5 \to S_4 \to \text{Depot}$ & 11.230 & 3.120 km & \textbf{+8.9\%} & \textbf{24.4\%} \\
-\textbf{Held-Karp (Optimal)} & $\text{Depot} \to S_2 \to S_3 \to S_5 \to S_4 \to S_1 \to \text{Depot}$ & \textbf{10.310} & \textbf{2.890 km} & \textbf{0.0\%} & \textbf{30.6\%} \\
+UCS & 2.606 & 4 & Nghiệm tối ưu tham chiếu\\
+A* & 2.606 & 4 & Nghiệm tối ưu với lower bound\\
+BFS & 2.606 & 4 & Tối ưu chỉ khi edge cùng cost\\
+DFS & 2.606 & 6 & Không bảo đảm tối ưu\\
+Greedy & 2.606 & 4 & Heuristic, không bảo đảm\\
+Bidirectional & 2.606 & 4 & Tìm kiếm từ hai đầu\\
 \bottomrule
-\end{tabularx}
-\caption{Bảng so sánh hiệu quả tối ưu hóa lộ trình giao hàng đa điểm ($N=6$).}
-\label{tab:tsp_comparison}
-\end{table}
+\end{tabular}
+}
+\end{center}
+Trên giao diện, thời gian xử lý thay đổi theo máy và trạng thái server nên nhóm em không dùng thời gian của một lần chụp làm kết luận chính. Cost và số node là các chỉ số ổn định hơn để so sánh thuật toán.
 
-\textbf{Kết luận}: Thuật toán chính xác \textbf{Held-Karp DP} giúp shipper tiết kiệm đến \textbf{30.6\% chi phí và quãng đường} so với thứ tự nhập ban đầu; \textbf{Nearest Neighbor} đạt mức tiết kiệm 24.4\% với độ lệch xấp xỉ so với tối ưu chỉ 8.9\%.
+\subsection{Kiểm tra heuristic A* với UCS}
+Để kiểm tra lower-bound heuristic trong nhiều điều kiện, nhóm em dùng fixture \texttt{toy\_graph\_v0.1} với 5 cặp OD và ba scenario: \texttt{OFFPEAK\_BALANCED}, \texttt{PEAK\_TRAFFIC}, \texttt{HEAVY\_RAIN\_SAFE}. Tổng cộng có 15 trường hợp.
+\begin{center}
+\begin{tabular}{l r}
+\toprule
+Chỉ số & Kết quả\\
+\midrule
+Cost mismatch A* so với UCS & 0/15\\
+Số case A* khám phá không quá UCS & 15/15\\
+Số scenario & 3\\
+Số cặp OD mỗi scenario & 5\\
+\bottomrule
+\end{tabular}
+\end{center}
+Kết quả cho thấy A* trả về cùng cost tối ưu với UCS trong cả 15 trường hợp. Số node A* khám phá cũng không lớn hơn UCS ở tất cả các case. Đây là kết quả kiểm thử cho phần cài đặt hiện tại, còn lý do về mặt lý thuyết đã được trình bày ở Chương 6.
+
+\subsection{Ảnh hưởng của cost profile}
+Ba profile \texttt{BALANCED}, \texttt{PEAK\_TRAFFIC} và \texttt{RAIN\_SAFE} sử dụng các hệ số được nêu ở Chương 3. Hai ví dụ trong kết quả chạy là:
+\begin{itemize}
+\item N01 \(\rightarrow\) N06: baseline cost 2.343; peak cost 2.9209; rain cost 2.562625 và tuyến có thể phải đi đường vòng.
+\item N05 \(\rightarrow\) N01: baseline cost 3.733 với path E14,E04,E02; rain cost 3.71325 với path E14,E10,E12,E02.
+\end{itemize}
+Các ví dụ này cho thấy khi thay đổi mức ưu tiên của traffic hoặc flood thì tuyến được chọn có thể thay đổi. Trong mọi profile, road closure vẫn được xử lý như một ràng buộc cứng.
+
+\subsection{Giải thích route và so sánh phương án thay thế}
+Để giải thích route rõ hơn, nhóm em không chỉ báo cáo path cuối cùng mà còn tách tổng cost theo từng cạnh. Hai ví dụ dưới đây dùng fixture \texttt{toy\_graph\_v0.1}; toàn bộ traffic và flood trong fixture đều mang nhãn \texttt{SIMULATED}. Số liệu được sinh bởi benchmark \texttt{ROUTE\_EXPLANATIONS\_V1}, sau đó đối chiếu lại với cost engine.
+
+\subsubsection{Case A -- Peak traffic, so sánh cost thành phần}
+Với N01 \(\rightarrow\) N06 trong scenario \texttt{PEAK\_TRAFFIC}, UCS và A* cùng chọn N01--N02--N06, qua E01 và E03. Đây là route có composite cost thấp nhất trong các cạnh mở. Phương án thay thế đi qua E11 và E09 dài hơn nhưng quan trọng hơn là vẫn chịu cùng mức peak trong fixture. Vì fixture này đặt congestion level 4 và multiplier 1.45 cho các cạnh mở, nhóm em không kết luận rằng route đã ``né kẹt xe''; kết luận đúng là profile peak làm thành phần congestion tăng và route ngắn vẫn có cost thấp hơn.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l l r r r r r}
+\toprule
+Phương án & Edge & Distance (km) & ETA (min) & Traffic & Flood & Total cost\\
+\midrule
+Được chọn & E01,E03 & 2.500 & 8.062 & 1.125900 & 0.030000 & 2.920900\\
+Thay thế & E01,E11,E09 & 3.000 & 11.412 & 1.593675 & 0.000000 & 4.011175\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Các giá trị traffic và flood trong bảng cạnh dưới đây là thành phần đã nhân weight, không phải giá trị thô.
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Edge & Distance & Time & Traffic & Flood & Cost\\
+\midrule
+E01 & 1.100 & 2.200 & 0.445500 & 0.000000 & 1.160500\\
+E03 & 1.400 & 3.360 & 0.680400 & 0.030000 & 1.760400\\
+\midrule
+E11 (alt.) & 0.800 & 2.670 & 0.540675 & 0.000000 & 1.328175\\
+E09 (alt.) & 1.100 & 3.000 & 0.607500 & 0.000000 & 1.522500\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Như vậy E03 là cạnh đóng góp lớn nhất vào cost của route được chọn, chủ yếu do thời gian và congestion. Hai cạnh E11 và E09 làm phương án thay thế tăng lên 4.011175. Vì vậy route được chọn là ngắn nhất trong ví dụ này, có ETA nhỏ hơn và cũng là route có composite cost tốt nhất.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Route & Distance & Free-flow time & Traffic & Flood & Total\\
+\midrule
+N01--N02--N06 & 0.375000 & 1.390000 & 1.125900 & 0.030000 & 2.920900\\
+N01--N02--N04--N06 & 0.450000 & 1.967500 & 1.593675 & 0.000000 & 4.011175\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+\subsubsection{Case B -- Heavy rain, route đổi vì road closure}
+Với N05 \(\rightarrow\) N01 trong scenario \texttt{HEAVY\_RAIN\_SAFE}, route baseline E14,E04,E02 có khoảng cách 3.8 km nhưng E04 bị đóng. Do đó route này không có total cost hợp lệ. UCS và A* đều chọn route thay thế E14,E10,E12,E02, tương ứng N05--N06--N04--N02--N01.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l l r r r r r}
+\toprule
+Phương án & Edge & Distance (km) & ETA (min) & Traffic & Flood & Total cost\\
+\midrule
+Được chọn & E14,E10,E12,E02 & 4.300 & 14.275 & 0.428250 & 0.000000 & 3.713250\\
+Route cũ & E14,E04,E02 & 3.800 & 11.388 & N/A & N/A & Không hợp lệ\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Các cạnh của route được chọn lần lượt đóng góp: E14 = 1.150625, E10 = 0.972500, E12 = 0.847625 và E02 = 0.742500. Bảng chi tiết là:
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Edge & Distance & Time & Traffic & Flood & Cost\\
+\midrule
+E14 & 1.300 & 3.550 & 0.133125 & 0.000000 & 1.150625\\
+E10 & 1.100 & 3.000 & 0.112500 & 0.000000 & 0.972500\\
+E12 & 0.800 & 2.670 & 0.100125 & 0.000000 & 0.847625\\
+E02 & 1.100 & 2.200 & 0.082500 & 0.000000 & 0.742500\\
+E04 (route cũ) & 1.400 & 3.360 & 0.126000 & 0.500000 & closed\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Tổng theo component là distance 0.430000, free-flow time 2.855000, congestion 0.428250, flood 0 và tổng cost 3.713250. Route cũ bị loại không phải vì tổng cost lớn hơn mà vì E04 có flood risk 1.0 và trạng thái closed; cost engine đặt total cost của cạnh này thành null. Đây là ví dụ rõ về việc closure là ràng buộc cứng, không thể dùng weight để ``bù'' cho một đoạn đường đã đóng.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Route & Distance & Free-flow time & Traffic & Flood & Total\\
+\midrule
+N05--N06--N04--N02--N01 & 0.430000 & 2.855000 & 0.428250 & 0.000000 & 3.713250\\
+N05--N06--N02--N01 & 0.380000 & N/A & N/A & N/A & Không hợp lệ\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Trong cả hai case, UCS được dùng làm chuẩn vì tối ưu trên cost không âm. A* dùng cùng graph/scenario đã freeze, tính \(\rho_s\) một lần và dùng heuristic admissible, consistent; vì vậy A* cũng có bảo đảm tối ưu. Kết quả benchmark ghi nhận cost A* và UCS lệch 0.000000 ở cả hai case, đồng thời A* khám phá lần lượt 4 so với 5 node ở Case A và 5 so với 6 node ở Case B.
+
+\subsection{Hình minh họa kết quả chạy thuật toán}
+Các hình dưới đây được nhóm em chụp khi chạy ứng dụng trên máy với bản đồ 65 node. Nhóm em chỉ giữ lại một ảnh A*, một ảnh Compare và một ảnh tối ưu tour vì ba hình này đã thể hiện đủ route, trace, metrics và các chức năng chính.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-astar-route.png}
+\caption{Kết quả chạy A* trên cặp LM\_001 \(\rightarrow\) LM\_065. Người đọc có thể kiểm tra route, total cost khoảng 2.606, số node khám phá và guarantee tối ưu trên giao diện.}
+\label{fig:gui-astar-route}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-compare-algorithms.png}
+\caption{Chế độ Compare hiển thị cost và số node đã khám phá của 6 thuật toán, giúp thấy rõ thuật toán nào có guarantee tối ưu và thuật toán nào chỉ là heuristic.}
+\label{fig:gui-compare}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-tour-optimization.png}
+\caption{Kết quả tối ưu tour với 5 điểm giao hàng, gồm Held-Karp, Nearest Neighbor và chi tiết từng leg.}
+\label{fig:gui-tour}
+\end{figure}

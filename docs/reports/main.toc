@@ -1,0 +1,41 @@
+\contentsline {section}{\numberline {1}Giới thiệu bài toán}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Bối cảnh giao thông tại TP. Hồ Chí Minh}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Bài toán đặt ra}{1}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Kịch bản shipper}{1}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Tiêu chí tối ưu}{1}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Giới thiệu đồ án}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Mục tiêu của FloodRoute HCMC}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Thành viên và phân công}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Phạm vi đồ án}{1}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Mô hình hóa bài toán}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Graph có hướng}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Thuộc tính edge}{2}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Composite cost}{2}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Ba cost profiles}{2}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Dataset}{2}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Nguồn và quy mô dữ liệu}{2}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Các thuộc tính và giả định}{2}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Nguyên lý các thuật toán}{3}{section.5}%
+\contentsline {section}{\numberline {6}Heuristic A*}{4}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Định nghĩa heuristic}{4}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Admissibility và consistency}{4}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Ảnh hưởng của scenario}{4}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Kiến trúc hệ thống và luồng thực thi}{4}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Kiến trúc}{4}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Các luồng chính}{5}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Thực nghiệm và so sánh}{5}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Benchmark tìm kiếm trên bản đồ 65 node}{5}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Kiểm tra heuristic A* với UCS}{5}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Ảnh hưởng của cost profile}{6}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Giải thích route và so sánh phương án thay thế}{6}{subsection.8.4}%
+\contentsline {subsubsection}{\numberline {8.4.1}Case A -- Peak traffic, so sánh cost thành phần}{6}{subsubsection.8.4.1}%
+\contentsline {subsubsection}{\numberline {8.4.2}Case B -- Heavy rain, route đổi vì road closure}{7}{subsubsection.8.4.2}%
+\contentsline {subsection}{\numberline {8.5}Hình minh họa kết quả chạy thuật toán}{7}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Tối ưu tuyến giao hàng nhiều điểm}{7}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Cách áp dụng vào đồ án}{7}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}So sánh kết quả tour}{11}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Cài đặt, giới hạn và hướng phát triển}{11}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cách chạy}{11}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Giới hạn của đồ án}{11}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Hướng phát triển}{11}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Kết luận}{11}{subsection.10.4}%

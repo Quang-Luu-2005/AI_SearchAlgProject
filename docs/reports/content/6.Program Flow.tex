@@ -1,35 +1,28 @@
-\section{Kiến trúc Hệ thống \& Luồng Thực thi}
-\label{sec:program_flow}
+\section{Heuristic A*}
+\subsection{Định nghĩa heuristic}
+Với mỗi scenario \(s\), nhóm em tính \(\rho_s\) một lần trước khi bắt đầu tìm kiếm:
+\[
+\rho_s=\min_{\substack{e\in E,\ e\text{ không đóng}\\
+\operatorname{Haversine}(e)>10^{-6}\ {\rm km}}}
+\frac{\operatorname{Cost}_s(e)}{\operatorname{Haversine}(e)}.
+\]
+Sau đó:
+\[
+h_s(n)=\rho_s\cdot\operatorname{Haversine}(n,\mathrm{goal}),
+\qquad f(n)=g(n)+h_s(n).
+\]
+Edge đã đóng không được đưa vào phép tính \(\rho_s\). Edge có khoảng cách Haversine gần 0 cũng được bỏ qua để tránh chia cho số quá nhỏ. Nếu không còn edge hợp lệ thì \(\rho_s=0\); node thiếu tọa độ có \(h(n)=0\).
 
-\subsection{Sơ đồ Kiến trúc Phân lớp (Clean Architecture)}
-Hệ thống được thiết kế theo mô hình phân lớp rõ ràng, đảm bảo tính độc lập giữa giao diện người dùng, API và động cơ thuật toán:
+\subsection{Admissibility và consistency}
+Vì \(\rho_s\) không lớn hơn tỉ số giữa cost và khoảng cách của mọi edge hợp lệ, đồng thời Haversine thỏa bất đẳng thức tam giác, ta có:
+\[
+h_s(n)\leq \operatorname{cost}(\text{một đường đi từ }n\text{ đến goal}).
+\]
+Do đó \(h_s(n)\geq0\) và heuristic là admissible. Với một edge \(e=(u,v)\), ta cũng có:
+\[
+h_s(u)\leq \operatorname{Cost}_s(e)+h_s(v),
+\]
+nên heuristic là consistent. Khi edge cost không âm, A* trả về route có composite cost tối ưu, giống như UCS.
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-    layer/.style={rectangle, draw=blue!70!black, fill=blue!5, rounded corners=3pt, text width=12cm, minimum height=1.3cm, align=center, font=\small},
-    arrow/.style={thick, <->, >=stealth, color=blue!80!black}
-]
-    \node[layer] (fe) {\textbf{Frontend Layer (React + MapLibre GL JS)}\\ \footnotesize Map GPU Layers (Boundary, Edges, Nodes, Route), Trace Player, Dashboard};
-    \node[layer, below=0.8cm of fe] (api) {\textbf{API Layer (FastAPI)}\\ \footnotesize Endpoints: \texttt{/search}, \texttt{/compare}, \texttt{/optimize-tour}, \texttt{/locations}, \texttt{/scenarios}};
-    \node[layer, below=0.8cm of api] (service) {\textbf{Core Services \& Search Engine}\\ \footnotesize \texttt{SearchService}, \texttt{TourOptimizerService}, \texttt{ScenarioCostEngine}, \texttt{ExplanationEngine}};
-    \node[layer, below=0.8cm of service] (algo) {\textbf{Algorithms \& Data Layer (Pure Python)}\\ \footnotesize BFS, DFS, UCS, A*, Greedy, Bidirectional, Held-Karp DP, Immutable Graph Contracts};
-
-    \draw[arrow] (fe) -- node[right, font=\footnotesize] {HTTP / JSON} (api);
-    \draw[arrow] (api) -- node[right, font=\footnotesize] {Pydantic Schemas} (service);
-    \draw[arrow] (service) -- node[right, font=\footnotesize] {Contracts} (algo);
-\end{tikzpicture}
-\caption{Kiến trúc phân tầng Clean Architecture của FloodRoute HCMC.}
-\label{fig:system_architecture}
-\end{figure}
-
-\subsection{Luồng Xử lý Tìm kiếm 2 Điểm (Two-Point Search Workflow)}
-Khi người dùng thực hiện tìm đường trên giao diện:
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{Khởi tạo Yêu cầu}: Người dùng chọn điểm Start, Goal (qua click map hoặc tìm kiếm), chọn Kịch bản (vd: Mưa lớn) và Thuật toán (vd: A*).
-    \item \textbf{Gửi API Request}: React gửi request \texttt{POST /api/v1/search} đến FastAPI Backend.
-    \item \textbf{Xác thực \& Điều phối}: \texttt{SearchService} nạp graph từ catalog, áp dụng kịch bản qua \texttt{GraphView} và gọi hàm thuật toán tương ứng.
-    \item \textbf{Tính toán \& Ghi nhận Trace}: Thuật toán duyệt đồ thị, tính chi phí cạnh qua \texttt{ScenarioCostEngine} và sinh danh sách \texttt{TraceEvent} (\texttt{OPEN}, \texttt{EXPAND}, \texttt{RELAX}, \texttt{CLOSE}, \texttt{GOAL}).
-    \item \textbf{Giải thích Tuyến đường}: \texttt{ExplanationEngine} phân tích thành phần chi phí chiếm ưu thế và xác định đoạn đường có penalty kẹt xe/ngập lớn nhất.
-    \item \textbf{Hiển thị Trực quan}: React vẽ đường đi tối ưu lên bản đồ vector và kích hoạt \textbf{Trace Player} cho phép người dùng xem lại toàn bộ quá trình mở rộng nút.
-\end{enumerate}
+\subsection{Ảnh hưởng của scenario}
+Scenario được giữ cố định trong một lần tìm kiếm nên cost edge và \(\rho_s\) không thay đổi giữa các bước mở rộng node. Khi traffic, flood hoặc weight thay đổi, cần tính lại \(\rho_s\). Heuristic này được thiết kế cho composite cost đang chọn, không phải để tối ưu riêng khoảng cách hoặc thời gian.

@@ -14,6 +14,7 @@
     "benchmark:search": "node scripts/python.mjs scripts/benchmark_search.py --output experiments/results/search_benchmark_v1.json",
     "benchmark:lower-bound": "node scripts/python.mjs scripts/benchmark_lower_bound.py --output-json experiments/results/astar_ucs_lower_bound_v1.json --output-markdown experiments/results/astar_ucs_lower_bound_v1.md",
     "benchmark:cost-profiles": "node scripts/python.mjs scripts/benchmark_cost_profiles.py --output-json experiments/results/cost_profiles_v1.json --output-markdown experiments/results/cost_profiles_v1.md",
+    "benchmark:route-explanations": "node scripts/python.mjs scripts/benchmark_route_explanations.py --output-json experiments/results/route_explanations_v1.json --output-markdown experiments/results/route_explanations_v1.md",
     "test": "npm run test:data && npm run test:backend && npm run test:frontend"
   }
 }
