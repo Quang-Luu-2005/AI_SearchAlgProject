@@ -39,6 +39,12 @@ export const translations = {
     group_multi_stop: '📦 Multi-Stop Tour (TSP)',
     group_comparison: '📊 Algorithm Comparison',
     scenario_label: 'Cost Scenario',
+    scenario_info_title: 'Traffic Scenario Details & Impact',
+    scenario_context_label: 'Context',
+    scenario_weights_label: 'Cost Weights',
+    scenario_impacted_label: 'Impacted Corridors',
+    scenario_quick_demo_btn: '⚡ Quick Demo Pair',
+    scenario_quick_demo_desc: 'Auto-fills recommended Start & Goal to verify route detour',
     preset: 'preset',
     dataset_summary_title: 'Dataset sources & limitations',
     api_connected: 'Backend API connected',
@@ -210,6 +216,12 @@ export const translations = {
     group_multi_stop: '📦 Giao hàng đa điểm (TSP)',
     group_comparison: '📊 So sánh thuật toán',
     scenario_label: 'Kịch bản chi phí',
+    scenario_info_title: 'Thông tin & Tác động Kịch bản Giao thông',
+    scenario_context_label: 'Ngữ cảnh',
+    scenario_weights_label: 'Trọng số Chi phí',
+    scenario_impacted_label: 'Đoạn đường bị ảnh hưởng',
+    scenario_quick_demo_btn: '⚡ Chọn nhanh cặp Demo',
+    scenario_quick_demo_desc: 'Tự động điền điểm Đầu & Đích khuyến nghị để thấy rõ đường vòng',
     preset: 'preset',
     dataset_summary_title: 'Nguồn và giới hạn dataset',
     api_connected: 'Backend API đã kết nối',
@@ -373,3 +385,115 @@ export function translateGraphLabel(label: string, lang: Language = 'en'): strin
   }
   return label
 }
+
+export interface ScenarioMetaInfo {
+  scenarioId: string
+  title: string
+  icon: string
+  context: string
+  presetName: string
+  weightsSummary: string
+  weights: { dist: number; time: number; cong: number; flood: number }
+  impactedRoads: string
+  impactType: 'normal' | 'congestion' | 'flood'
+  quickDemo?: {
+    buttonLabel: string
+    startId: string
+    goalId: string
+    startName: string
+    goalName: string
+    routeNote: string
+  }
+}
+
+export function getScenarioMeta(scenarioId: string, lang: Language = 'en'): ScenarioMetaInfo {
+  if (scenarioId === 'LANDMARK_PM_PEAK' || scenarioId === 'PEAK_TRAFFIC') {
+    return {
+      scenarioId,
+      title: lang === 'vi' ? 'Giờ cao điểm chiều (PM Peak - Kẹt xe)' : 'Evening Rush Hour (PM Peak - Congestion)',
+      icon: '🚗',
+      context: lang === 'vi'
+        ? 'Khung giờ tan tầm (17:00 - 19:00). Trọng số kẹt xe tăng lên 45% giúp thuật toán A* ưu tiên né tránh các trục đường chính bị tê liệt.'
+        : 'Evening rush hour (17:00 - 19:00). Congestion weight raised to 45% prioritizes detouring around heavily congested corridors.',
+      presetName: 'PEAK_TRAFFIC',
+      weightsSummary: 'Congestion: 45% · Time: 25% · Distance: 15% · Flood: 15%',
+      weights: { dist: 15, time: 25, cong: 45, flood: 15 },
+      impactedRoads: lang === 'vi'
+        ? 'Đường Lê Văn Việt (Mức 5, trễ +18p) · Võ Văn Ngân (Mức 5, trễ +20p)'
+        : 'Lê Văn Việt (Level 5, +18min delay) · Võ Văn Ngân (Level 5, +20min delay)',
+      impactType: 'congestion',
+      quickDemo: {
+        buttonLabel: lang === 'vi'
+          ? '⚡ Demo Giờ cao điểm (Vincom ➔ ĐH FPT)'
+          : '⚡ Demo PM Peak (Vincom ➔ FPT Univ)',
+        startId: 'LM_065', // Vincom Plaza Thủ Đức
+        goalId: 'LM_054',  // Trường Đại học FPT
+        startName: lang === 'vi' ? 'Vincom Plaza Thủ Đức' : 'Vincom Plaza Thu Duc',
+        goalName: lang === 'vi' ? 'Trường Đại học FPT' : 'FPT University',
+        routeNote: lang === 'vi'
+          ? 'Né đường Lê Văn Việt kẹt xe, A* rẽ sang đường vòng nội khu Tăng Nhơn Phú.'
+          : 'Avoids congested Le Van Viet; A* detours through Tang Nhon Phu corridor.',
+      },
+    }
+  }
+
+  if (scenarioId === 'LANDMARK_HEAVY_RAIN' || scenarioId === 'HEAVY_RAIN_SAFE') {
+    return {
+      scenarioId,
+      title: lang === 'vi' ? 'Mưa to & Triều cường (Ngập sâu trục đường Lê Văn Việt)' : 'Heavy Rain & Tidal Flood (Le Van Viet Corridor Closed)',
+      icon: '🌧️',
+      context: lang === 'vi'
+        ? 'Mưa dông lớn kết hợp triều cường dâng cao. Trục đường huyết mạch Lê Văn Việt bị ngập sâu đóng cứng (is_closed=true), buộc A* phải tìm đường vòng cao ráo nội khu Tăng Nhơn Phú.'
+        : 'Severe rainfall and tidal surge. Le Van Viet corridor is submerged and closed (is_closed=true), forcing A* to find elevated detours via Tang Nhon Phu.',
+      presetName: 'RAIN_SAFE',
+      weightsSummary: 'Flood Risk: 50% · Time: 25% · Congestion: 15% · Distance: 10%',
+      weights: { dist: 10, time: 25, cong: 15, flood: 50 },
+      impactedRoads: lang === 'vi'
+        ? 'Trục Lê Văn Việt (ĐÓNG ĐƯỜNG - Ngập sâu) · Trục Linh Xuân (ĐÓNG ĐƯỜNG)'
+        : 'Le Van Viet Corridor (CLOSED - Deep Flood) · Linh Xuan (CLOSED)',
+      impactType: 'flood',
+      quickDemo: {
+        buttonLabel: lang === 'vi'
+          ? '⚡ Demo Mưa ngập (Vincom Thủ Đức ➔ ĐH FPT)'
+          : '⚡ Demo Heavy Rain (Vincom Thu Duc ➔ FPT Univ)',
+        startId: 'LM_065', // Vincom Plaza Thủ Đức (Võ Văn Ngân)
+        goalId: 'LM_054',  // Trường Đại học FPT (Khu Công nghệ cao)
+        startName: lang === 'vi' ? 'Vincom Plaza Thủ Đức' : 'Vincom Plaza Thu Duc',
+        goalName: lang === 'vi' ? 'Trường Đại học FPT' : 'FPT University',
+        routeNote: lang === 'vi'
+          ? 'Trục Lê Văn Việt bị ngập sâu và đóng đường (⛔), A* tuyệt đối không mở rộng sang cạnh đóng mà rẽ hẳn sang đường tránh nội khu Tăng Nhơn Phú.'
+          : 'Le Van Viet is closed (⛔); A* strictly avoids closed edges and detours safely via Tang Nhon Phu.',
+      },
+    }
+  }
+
+  // Baseline / Default
+  return {
+    scenarioId,
+    title: lang === 'vi' ? 'Mặc định (Lưu thông tự do / Baseline)' : 'Historical Baseline (Free-Flow Traffic)',
+    icon: '🟢',
+    context: lang === 'vi'
+      ? 'Vận tốc thiết kế và lưu thông bình thường theo dữ liệu lịch sử UTraffic. Trọng số cân bằng 4 yếu tố.'
+      : 'Normal historical baseline free-flow traffic. Balanced trade-off across all 4 cost components.',
+    presetName: 'BALANCED',
+    weightsSummary: 'Distance: 25% · Time: 30% · Congestion: 20% · Flood: 25%',
+    weights: { dist: 25, time: 30, cong: 20, flood: 25 },
+    impactedRoads: lang === 'vi'
+      ? 'Toàn bộ các tuyến đường thông suốt, không có đoạn đường bị cấm hay phạt trễ.'
+      : 'All road corridors are fully open with zero penalty or closure.',
+    impactType: 'normal',
+    quickDemo: {
+      buttonLabel: lang === 'vi'
+        ? '⚡ Demo Tuyến cơ bản (Vincom ➔ ĐH FPT)'
+        : '⚡ Demo Baseline (Vincom ➔ FPT Univ)',
+      startId: 'LM_065',
+      goalId: 'LM_054',
+      startName: lang === 'vi' ? 'Vincom Plaza Thủ Đức' : 'Vincom Plaza Thu Duc',
+      goalName: lang === 'vi' ? 'Trường Đại học FPT' : 'FPT University',
+      routeNote: lang === 'vi'
+        ? 'Lộ trình ngắn nhất đi thẳng qua trục huyết mạch Lê Văn Việt.'
+        : 'Shortest direct path passing Le Van Viet arterial corridor.',
+    },
+  }
+}
+

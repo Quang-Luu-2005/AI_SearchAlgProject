@@ -394,9 +394,16 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
         errors.append(f"{dataset_name}: landmark graph must be strongly connected")
 
     scenario_rows = scenarios.get("scenarios", [])
-    if [row.get("scenario_id") for row in scenario_rows] != ["LANDMARK_HISTORICAL_BASELINE"]:
+    scenario_ids = [row.get("scenario_id") for row in scenario_rows]
+    if "LANDMARK_HISTORICAL_BASELINE" not in scenario_ids:
         errors.append(f"{dataset_name}: landmark baseline scenario is required")
-    properties = metadata.get("graph_properties", {})
+    for sc in scenario_rows:
+        weights = sc.get("weights", {})
+        if abs(sum(weights.values()) - 1.0) > 1e-9:
+            errors.append(f"{dataset_name}: scenario {sc.get('scenario_id')} weights must sum to 1")
+        unknown_closed = set(sc.get("closed_edge_ids", [])) - edge_ids
+        if unknown_closed:
+            errors.append(f"{dataset_name}: scenario {sc.get('scenario_id')} closes unknown edges: {sorted(unknown_closed)}")
     if properties.get("selectable_node_count") != len(nodes):
         errors.append(f"{dataset_name}: selectable count does not match nodes")
     if properties.get("hidden_source_road_node_count", 0) <= len(nodes):

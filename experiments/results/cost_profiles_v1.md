@@ -38,3 +38,26 @@ OD: `N05 → N01`
 | HEAVY_RAIN_SAFE | `N05 → N06 → N04 → N02 → N01` | 4 | 3.713250 | 4.300 | 14.275 |
 
 Interpretation: The simulated N05 to N01 route changes under heavy rain because the direct E04 segment is closed and the path detours through E10/E12.
+
+### EX03_LANDMARK_PM_PEAK_DETOUR — thu_duc_landmarks_v1.0.0 (ASSUMPTION)
+
+OD: `LM_065 (Vincom Plaza Thủ Đức) → LM_054 (Trường Đại học FPT)`
+
+| Scenario | Route | Edges | Cost | Distance (km) | ETA (min) |
+|---|---|---:|---:|---:|---:|
+| LANDMARK_HISTORICAL_BASELINE | `Vincom Thủ Đức → Ga Thủ Đức → SIU → Khu CNC → Sân FTown → ĐH FPT` | 5 | 8.381300 | 11.310 | 18.510 |
+| LANDMARK_PM_PEAK | `Vincom Thủ Đức → Ga Thủ Đức → BV Quân Dân y → HV Chính trị II → Chợ Tăng Nhơn Phú → KTX ĐH GTVT → ĐH FPT` | 6 | 11.184000 | 10.280 | 31.390 |
+
+Interpretation: Under PM Peak, the arterial Lê Văn Việt corridor (LM_EDGE_0127) suffers heavy traffic delay (+18 min). A* detours through the internal Tăng Nhơn Phú corridor, saving substantial travel time compared to staying on the congested main road.
+
+### EX04_LANDMARK_HEAVY_RAIN_DETOUR — thu_duc_landmarks_v1.0.0 (SIMULATED)
+
+OD: `LM_065 (Vincom Plaza Thủ Đức) → LM_054 (Trường Đại học FPT TP.HCM)`
+
+| Scenario | Route | Edges | Cost | Distance (km) | ETA (min) |
+|---|---|---:|---:|---:|---:|
+| LANDMARK_HISTORICAL_BASELINE | `Vincom Plaza → Ga Thủ Đức → SIU → Xa Lộ Hà Nội → KTX ĐHQG Khu B → ĐH FPT` | 5 | 8.381300 | 11.310 | 18.510 |
+| LANDMARK_HEAVY_RAIN | `Vincom Plaza → Ga Thủ Đức → BV Quân Dân Y → Trạm Y Tế → Chợ Tăng Nhơn Phú → Bưu Điện → ĐH FPT` | 6 | 7.940700 | 10.280 | 26.920 |
+
+Interpretation: Under Heavy Rain, the direct arterial Lê Văn Việt corridor (LM_EDGE_0127) is closed due to severe tidal flooding. A* strictly avoids the closed corridor (zero closed-edge expansions) and detours safely via the internal Tăng Nhơn Phú bypass corridor to reach FPT University. Neither Start nor Goal coincides with any road closure.
+

@@ -11,10 +11,13 @@ import recenterGraphIcon from '../../assets/recenter-graph.png'
 import type { GraphPayload, ThuDucBoundary } from '../../lib/graph'
 import { MAX_TOUR_STOPS } from '../../lib/tourSelection'
 import {
+  buildClosedEdgeMarkers,
   buildEdgeFeatureCollection,
   buildNodeFeatureCollection,
   buildRouteFeatureCollection,
   findNearestGraphNode,
+  type ClosedEdgeMarkerData,
+  type EdgeFeatureProperties,
   type NodeFeatureProperties,
 } from './mapData'
 
@@ -77,6 +80,7 @@ const SOURCE_NODES = 'floodroute-nodes'
 const SOURCE_BOUNDARY = 'floodroute-thu-duc-boundary'
 const LAYER_NODE_HITBOX = 'floodroute-node-hitbox'
 const LAYER_SELECTABLE_NODE = 'floodroute-selectable-node'
+const LAYER_CLOSED_EDGE_HITBOX = 'floodroute-edge-closed-hitbox'
 const DEFAULT_CENTER: [number, number] = [106.756, 10.849]
 const MIN_CITY_ZOOM = 10.5
 const MAX_BASEMAP_SNAP_DISTANCE_M = 200
@@ -130,8 +134,22 @@ function addGraphLayers(map: maplibregl.Map) {
       filter: ['==', ['get', 'is_closed'], false],
       paint: {
         'line-color': '#00714d',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 1.4, 17, 3.4],
-        'line-opacity': 0.58,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 1.2, 13, 1.8, 17, 3.8],
+        'line-opacity': 0.65,
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-edge-closed-halo')) {
+    map.addLayer({
+      id: 'floodroute-edge-closed-halo',
+      type: 'line',
+      source: SOURCE_EDGES,
+      filter: ['==', ['get', 'is_closed'], true],
+      paint: {
+        'line-color': '#ff4d4f',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 6, 14, 10, 17, 16],
+        'line-opacity': 0.48,
       },
       layout: { 'line-cap': 'round', 'line-join': 'round' },
     })
@@ -143,10 +161,23 @@ function addGraphLayers(map: maplibregl.Map) {
       source: SOURCE_EDGES,
       filter: ['==', ['get', 'is_closed'], true],
       paint: {
-        'line-color': '#ba1a1a',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 13, 2, 17, 4],
-        'line-opacity': 0.78,
-        'line-dasharray': [2, 2.5],
+        'line-color': '#dc2626',
+        'line-width': ['interpolate', ['linear'], ['zoom'], 10, 3, 14, 5.5, 17, 8],
+        'line-opacity': 1.0,
+        'line-dasharray': [2.5, 2],
+      },
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+    })
+  }
+  if (!map.getLayer('floodroute-edge-closed-hitbox')) {
+    map.addLayer({
+      id: 'floodroute-edge-closed-hitbox',
+      type: 'line',
+      source: SOURCE_EDGES,
+      filter: ['==', ['get', 'is_closed'], true],
+      paint: {
+        'line-width': 24,
+        'line-opacity': 0,
       },
       layout: { 'line-cap': 'round', 'line-join': 'round' },
     })
@@ -272,6 +303,83 @@ function popupContent(properties: NodeFeatureProperties, snapDistanceM?: number)
   const category = properties.place_category ? ` · ${properties.place_category}` : ''
   meta.textContent = `${properties.node_type}${category} · ${properties.label_status === 'DERIVED' ? 'DERIVED LABEL' : properties.data_status}${snapText}`
   root.append(title, id, meta)
+  return root
+}
+
+function edgeFeatureProps(feature: MapGeoJSONFeature | undefined): EdgeFeatureProperties | null {
+  const properties = feature?.properties
+  if (!properties || typeof properties.edge_id !== 'string') return null
+  return properties as EdgeFeatureProperties
+}
+
+function closedEdgePopupContent(properties: EdgeFeatureProperties, lang: Language): HTMLElement {
+  const root = document.createElement('div')
+  root.className = 'map-edge-popup is-closed'
+
+  const header = document.createElement('div')
+  header.className = 'map-edge-popup-header'
+
+  const badge = document.createElement('span')
+  badge.className = 'map-edge-popup-badge'
+  badge.textContent = lang === 'vi' ? '⛔ ĐÃ ĐÓNG ĐƯỜNG' : '⛔ ROAD CLOSED'
+
+  const title = document.createElement('strong')
+  title.className = 'map-edge-popup-title'
+  title.textContent = properties.road_name || properties.edge_id
+
+  header.append(badge, title)
+
+  const meta = document.createElement('div')
+  meta.className = 'map-edge-popup-meta'
+
+  const idRow = document.createElement('div')
+  idRow.className = 'map-edge-meta-row'
+  idRow.innerHTML = `<span>ID:</span> <code>${properties.edge_id}</code> (${properties.from_node_id} ➔ ${properties.to_node_id})`
+
+  const distKm = ((properties.distance_m || 0) / 1000).toFixed(2)
+  const timeMin = (properties.free_flow_time_min || 0).toFixed(1)
+  const statsRow = document.createElement('div')
+  statsRow.className = 'map-edge-meta-row'
+  statsRow.innerHTML = `<span>${lang === 'vi' ? 'Cự ly' : 'Distance'}:</span> <strong>${distKm} km</strong> (${timeMin} ${lang === 'vi' ? 'phút' : 'min'})`
+
+  const reasonRow = document.createElement('div')
+  reasonRow.className = 'map-edge-meta-row is-warning'
+  reasonRow.innerHTML = `<span>⚠️ ${lang === 'vi' ? 'Lý do' : 'Reason'}:</span> ${
+    lang === 'vi'
+      ? 'Ngập lụt sâu do mưa lớn / triều cường dâng cao'
+      : 'Severe flooding from heavy rainfall & tidal surge'
+  }`
+
+  const algRow = document.createElement('div')
+  algRow.className = 'map-edge-meta-row is-blocked'
+  algRow.innerHTML = `<span>🛡️ ${lang === 'vi' ? 'Thuật toán' : 'Algorithm'}:</span> ${
+    lang === 'vi'
+      ? 'Chi phí = ∞ (Bị loại bỏ 100%, bắt buộc tìm đường vòng)'
+      : 'Cost = ∞ (Excluded from search, forces detour)'
+  }`
+
+  meta.append(idRow, statsRow, reasonRow, algRow)
+  root.append(header, meta)
+  return root
+}
+
+function roadClosureMarkerElement(markerData: ClosedEdgeMarkerData, lang: Language, onClick: () => void): HTMLElement {
+  const root = document.createElement('div')
+  root.className = 'road-closure-marker'
+  root.title = `${lang === 'vi' ? 'Đoạn đường đóng' : 'Road closed'}: ${markerData.roadName}`
+
+  const pulse = document.createElement('div')
+  pulse.className = 'road-closure-pulse'
+
+  const badge = document.createElement('div')
+  badge.className = 'road-closure-badge'
+  badge.innerHTML = `<span class="closure-icon">⛔</span><span class="closure-text">${lang === 'vi' ? 'ĐÓNG ĐƯỜNG' : 'CLOSED'}</span>`
+
+  root.append(pulse, badge)
+  root.addEventListener('click', (e) => {
+    e.stopPropagation()
+    onClick()
+  })
   return root
 }
 
@@ -424,6 +532,7 @@ export function RouteMap({
   const onPickTargetChangeRef = useRef(onPickTargetChange)
   const graphRef = useRef(graph)
   const isTourModeRef = useRef(isTourMode)
+  const langRef = useRef<Language>(lang)
   const fallbackAppliedRef = useRef(false)
   const styleReadyRef = useRef(false)
   const [styleRevision, setStyleRevision] = useState(0)
@@ -436,6 +545,7 @@ export function RouteMap({
   onPickTargetChangeRef.current = onPickTargetChange
   graphRef.current = graph
   isTourModeRef.current = isTourMode
+  langRef.current = lang
 
   const edgeData = useMemo(() => buildEdgeFeatureCollection(graph), [graph])
   const nodeData = useMemo(() => buildNodeFeatureCollection(graph, {
@@ -554,11 +664,39 @@ export function RouteMap({
         .addTo(map)
     }
 
+    const onClosedEdgeMouseEnter = (event: MapLayerMouseEvent) => {
+      map.getCanvas().style.cursor = 'pointer'
+      const properties = edgeFeatureProps(event.features?.[0])
+      if (!properties) return
+      hoverPopupRef.current?.remove()
+      hoverPopupRef.current = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 14,
+      })
+        .setLngLat(event.lngLat)
+        .setDOMContent(closedEdgePopupContent(properties, langRef.current))
+        .addTo(map)
+    }
+
+    const onClosedEdgeClick = (event: MapLayerMouseEvent) => {
+      const properties = edgeFeatureProps(event.features?.[0])
+      if (!properties) return
+      clickPopupRef.current?.remove()
+      clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
+        .setLngLat(event.lngLat)
+        .setDOMContent(closedEdgePopupContent(properties, langRef.current))
+        .addTo(map)
+    }
+
     map.on('style.load', onStyleLoad)
     map.on('error', onError)
     map.on('mouseenter', LAYER_NODE_HITBOX, onMouseEnter)
     map.on('mouseleave', LAYER_NODE_HITBOX, onMouseLeave)
     map.on('click', LAYER_NODE_HITBOX, onNodeClick)
+    map.on('mouseenter', LAYER_CLOSED_EDGE_HITBOX, onClosedEdgeMouseEnter)
+    map.on('mouseleave', LAYER_CLOSED_EDGE_HITBOX, onMouseLeave)
+    map.on('click', LAYER_CLOSED_EDGE_HITBOX, onClosedEdgeClick)
     map.on('click', onMapClick)
 
     return () => {
@@ -723,6 +861,52 @@ export function RouteMap({
     }
   }, [tourStopMarkers])
 
+  // Render Road Closure Barrier Markers (⛔) on map
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    const closedMarkersData = buildClosedEdgeMarkers(graph)
+    if (!closedMarkersData.length) return
+
+    const markers = closedMarkersData.map((data) => {
+      const el = roadClosureMarkerElement(data, lang, () => {
+        clickPopupRef.current?.remove()
+        clickPopupRef.current = new maplibregl.Popup({ closeButton: true, offset: 14 })
+          .setLngLat(data.midpoint)
+          .setDOMContent(
+            closedEdgePopupContent(
+              {
+                edge_id: data.edgeId,
+                from_node_id: data.fromNodeId,
+                to_node_id: data.toNodeId,
+                road_name: data.roadName,
+                is_closed: true,
+                route_index: -1,
+                distance_m: data.distanceM,
+                free_flow_time_min: data.freeFlowTimeMin,
+              },
+              lang,
+            ),
+          )
+          .addTo(map)
+      })
+
+      const marker = new maplibregl.Marker({
+        element: el,
+        anchor: 'center',
+      })
+        .setLngLat(data.midpoint)
+        .addTo(map)
+
+      return marker
+    })
+
+    return () => {
+      markers.forEach((m) => m.remove())
+    }
+  }, [graph, lang])
+
 
 
 
@@ -858,7 +1042,7 @@ export function RouteMap({
           </div>
           <div className="popover-legend-items">
             <span className="legend-item legend-item--open"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
-            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />⛔ {t('legend_blocked_road', lang)}</span>
             <span className="legend-item legend-item--node"><i className="legend-node" />{t('legend_node', lang)}</span>
             <span className="legend-item"><i className="legend-node legend-node--frontier" />{t('legend_frontier', lang)}</span>
             <span className="legend-item"><i className="legend-node legend-node--current" />{t('legend_current', lang)}</span>

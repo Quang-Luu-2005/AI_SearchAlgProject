@@ -16,6 +16,90 @@
       },
       "closed_edge_ids": [],
       "edge_overrides": {}
+    },
+    {
+      "scenario_id": "LANDMARK_PM_PEAK",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "Giờ cao điểm chiều (17:00 - 19:00, ùn tắc trục Võ Văn Ngân & Lê Văn Việt)",
+      "cost_preset": "PEAK_TRAFFIC",
+      "default_congestion_level_1_5": 2.5,
+      "traffic_multiplier": 1.4,
+      "weights": {
+        "distance": 0.15,
+        "freeflow_time": 0.25,
+        "congestion": 0.45,
+        "flood_risk": 0.15
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {
+        "LM_EDGE_0127": {
+          "congestion_level_1_5": 5.0,
+          "traffic_multiplier": 4.0,
+          "traffic_penalty_min": 18.0,
+          "data_status": "ASSUMPTION"
+        },
+        "LM_EDGE_0114": {
+          "congestion_level_1_5": 5.0,
+          "traffic_multiplier": 4.0,
+          "traffic_penalty_min": 18.0,
+          "data_status": "ASSUMPTION"
+        },
+        "LM_EDGE_0093": {
+          "congestion_level_1_5": 5.0,
+          "traffic_multiplier": 4.5,
+          "traffic_penalty_min": 20.0,
+          "data_status": "ASSUMPTION"
+        },
+        "LM_EDGE_0129": {
+          "congestion_level_1_5": 5.0,
+          "traffic_multiplier": 4.5,
+          "traffic_penalty_min": 20.0,
+          "data_status": "ASSUMPTION"
+        }
+      }
+    },
+    {
+      "scenario_id": "LANDMARK_HEAVY_RAIN",
+      "data_status": "SIMULATED",
+      "traffic_scenario": "Mưa to & Triều cường (Ngập sâu trục đường Lê Văn Việt & Linh Xuân)",
+      "cost_preset": "RAIN_SAFE",
+      "default_congestion_level_1_5": 2.0,
+      "default_flood_risk_0_1": 0.1,
+      "traffic_multiplier": 1.2,
+      "weights": {
+        "distance": 0.1,
+        "freeflow_time": 0.25,
+        "congestion": 0.15,
+        "flood_risk": 0.5
+      },
+      "closed_edge_ids": [
+        "LM_EDGE_0127",
+        "LM_EDGE_0114",
+        "LM_EDGE_0168",
+        "LM_EDGE_0055"
+      ],
+      "edge_overrides": {
+        "LM_EDGE_0127": {
+          "flood_risk_0_1": 1.0,
+          "is_closed": true,
+          "data_status": "SIMULATED"
+        },
+        "LM_EDGE_0114": {
+          "flood_risk_0_1": 1.0,
+          "is_closed": true,
+          "data_status": "SIMULATED"
+        },
+        "LM_EDGE_0168": {
+          "flood_risk_0_1": 1.0,
+          "is_closed": true,
+          "data_status": "SIMULATED"
+        },
+        "LM_EDGE_0055": {
+          "flood_risk_0_1": 1.0,
+          "is_closed": true,
+          "data_status": "SIMULATED"
+        }
+      }
     }
   ]
 }

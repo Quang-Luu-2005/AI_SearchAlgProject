@@ -5,7 +5,7 @@ import { LanguageToggle } from './features/i18n/LanguageToggle'
 import { EventTimelineFeed } from './features/player/EventTimelineFeed'
 import { deriveTraceVisualState } from './features/player/traceState'
 import { KeyboardShortcutsModal } from './features/shortcuts/KeyboardShortcutsModal'
-import { getInitialLanguage, t, translateGraphLabel, type Language } from './lib/i18n'
+import { getInitialLanguage, getScenarioMeta, t, translateGraphLabel, type Language } from './lib/i18n'
 
 import {
   fetchThuDucBoundary,
@@ -198,6 +198,10 @@ export function App() {
     () => summarizeComparison(comparisonResults),
     [comparisonResults],
   )
+  const activeScenarioMeta = useMemo(
+    () => (scenarioId ? getScenarioMeta(scenarioId, lang) : null),
+    [scenarioId, lang],
+  )
   const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
   const canRun = Boolean(
     algorithm &&
@@ -354,33 +358,14 @@ export function App() {
         const nextScenarios = scenarioPayload.scenarios
         setLocations(nextLocations)
         setScenarios(nextScenarios)
-        const isTourAlg = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
-        setStartId((current) => (
-          isTourAlg
-            ? ''
-            : nextLocations.some((item) => item.node_id === current)
-              ? current
-              : nextLocations[0]?.node_id ?? ''
-        ))
-        setGoalId((current) => (
-          isTourAlg
-            ? ''
-            : nextLocations.some((item) => item.node_id === current)
-              ? current
-              : nextLocations.filter((item) => item.point_id).at(-1)?.node_id
-              ?? nextLocations.at(-1)?.node_id
-              ?? ''
-        ))
-        setTourStops((current) => (
-          isTourAlg
-            ? []
-            : current
-        ))
+        setStartId('')
+        setGoalId('')
+        setTourStops([])
+        setAlgorithm('')
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
-            : nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
-            ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
+            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_HISTORICAL_BASELINE')?.scenario_id
             ?? nextScenarios[0]?.scenario_id
             ?? ''
         ))
@@ -495,6 +480,24 @@ export function App() {
 
   function selectScenario(nextScenarioId: string) {
     setScenarioId(nextScenarioId)
+    setAlgorithm('') // Reset thuật toán về chưa chọn
+    setStartId('') // Reset điểm bắt đầu
+    setGoalId('') // Reset điểm kết thúc
+    setTourStops([]) // Reset danh sách điểm dừng tour
+    setPickTarget(null)
+    setError('')
+    clearRouteResult()
+  }
+
+  function applyQuickDemo(demoStartId: string, demoGoalId: string) {
+    setStartId(demoStartId)
+    setGoalId(demoGoalId)
+    if (!algorithm || isTourMode) {
+      setAlgorithm('A_STAR')
+    }
+    setTourStops([])
+    setPickTarget(null)
+    setError('')
     clearRouteResult()
   }
 
@@ -756,13 +759,48 @@ export function App() {
             <label>
               {t('scenario_label', lang)}
               <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
-                {scenarios.map((item) => (
-                  <option key={item.scenario_id} value={item.scenario_id}>
-                    {item.scenario_id}
-                  </option>
-                ))}
+                {scenarios.map((item) => {
+                  const meta = getScenarioMeta(item.scenario_id, lang)
+                  return (
+                    <option key={item.scenario_id} value={item.scenario_id}>
+                      {meta.icon} {meta.title}
+                    </option>
+                  )
+                })}
               </select>
             </label>
+
+            {scenarioId && activeScenarioMeta && (
+              <div className={`scenario-info-card is-${activeScenarioMeta.impactType}`}>
+                <div className="scenario-card-header">
+                  <div className="scenario-title-group">
+                    <span className="scenario-icon" aria-hidden="true">{activeScenarioMeta.icon}</span>
+                    <strong className="scenario-title-text">{activeScenarioMeta.title}</strong>
+                  </div>
+                  <span className="scenario-preset-badge">{activeScenarioMeta.presetName}</span>
+                </div>
+
+                <div className="scenario-meta-rows">
+                  <div className="scenario-meta-row">
+                    <span className="scenario-meta-label">⚠️ {t('scenario_impacted_label', lang)}:</span>
+                    <span className="scenario-meta-value scenario-roads-val">{activeScenarioMeta.impactedRoads}</span>
+                  </div>
+                </div>
+
+                {activeScenarioMeta.quickDemo && (
+                  <div className="scenario-quick-demo-wrapper">
+                    <button
+                      type="button"
+                      className="scenario-quick-demo-btn"
+                      onClick={() => applyQuickDemo(activeScenarioMeta.quickDemo!.startId, activeScenarioMeta.quickDemo!.goalId)}
+                      title={t('scenario_quick_demo_desc', lang)}
+                    >
+                      <span>{activeScenarioMeta.quickDemo.buttonLabel}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {!algorithm ? (
               <div className="algorithm-prompt-note">

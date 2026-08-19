@@ -150,6 +150,118 @@
         }
       ],
       "interpretation": "The simulated N05 to N01 route changes under heavy rain because the direct E04 segment is closed and the path detours through E10/E12."
+    },
+    {
+      "example_id": "EX03_LANDMARK_PM_PEAK_DETOUR",
+      "data_status": "ASSUMPTION",
+      "graph_id": "processed/thu_duc_landmarks_v1.0.0",
+      "start": "LM_065",
+      "goal": "LM_054",
+      "routes": [
+        {
+          "scenario": "LANDMARK_HISTORICAL_BASELINE",
+          "path": [
+            "LM_065",
+            "LM_047",
+            "LM_043",
+            "LM_033",
+            "LM_045",
+            "LM_054"
+          ],
+          "edge_ids": [
+            "LM_EDGE_0178",
+            "LM_EDGE_0127",
+            "LM_EDGE_0113",
+            "LM_EDGE_0083",
+            "LM_EDGE_0119"
+          ],
+          "path_edge_count": 5,
+          "total_cost": 8.3813,
+          "distance_km": 11.31,
+          "estimated_time_min": 18.51
+        },
+        {
+          "scenario": "LANDMARK_PM_PEAK",
+          "path": [
+            "LM_065",
+            "LM_047",
+            "LM_010",
+            "LM_032",
+            "LM_027",
+            "LM_035",
+            "LM_054"
+          ],
+          "edge_ids": [
+            "LM_EDGE_0178",
+            "LM_EDGE_0125",
+            "LM_EDGE_0020",
+            "LM_EDGE_0078",
+            "LM_EDGE_0066",
+            "LM_EDGE_0092"
+          ],
+          "path_edge_count": 6,
+          "total_cost": 11.184,
+          "distance_km": 10.28,
+          "estimated_time_min": 31.39
+        }
+      ],
+      "interpretation": "Under PM Peak, Lê Văn Việt (LM_EDGE_0127) is severely congested (+18 min delay), so A* detours through the Tăng Nhơn Phú corridor."
+    },
+    {
+      "example_id": "EX04_LANDMARK_HEAVY_RAIN_DETOUR",
+      "data_status": "SIMULATED",
+      "graph_id": "processed/thu_duc_landmarks_v1.0.0",
+      "start": "LM_065",
+      "goal": "LM_054",
+      "routes": [
+        {
+          "scenario": "LANDMARK_HISTORICAL_BASELINE",
+          "path": [
+            "LM_065",
+            "LM_047",
+            "LM_043",
+            "LM_033",
+            "LM_045",
+            "LM_054"
+          ],
+          "edge_ids": [
+            "LM_EDGE_0178",
+            "LM_EDGE_0127",
+            "LM_EDGE_0113",
+            "LM_EDGE_0083",
+            "LM_EDGE_0119"
+          ],
+          "path_edge_count": 5,
+          "total_cost": 8.3813,
+          "distance_km": 11.31,
+          "estimated_time_min": 18.51
+        },
+        {
+          "scenario": "LANDMARK_HEAVY_RAIN",
+          "path": [
+            "LM_065",
+            "LM_047",
+            "LM_010",
+            "LM_032",
+            "LM_027",
+            "LM_035",
+            "LM_054"
+          ],
+          "edge_ids": [
+            "LM_EDGE_0178",
+            "LM_EDGE_0125",
+            "LM_EDGE_0020",
+            "LM_EDGE_0078",
+            "LM_EDGE_0066",
+            "LM_EDGE_0092"
+          ],
+          "path_edge_count": 6,
+          "total_cost": 7.9407,
+          "distance_km": 10.28,
+          "estimated_time_min": 26.92
+        }
+      ],
+      "interpretation": "Under Heavy Rain, the direct arterial Lê Văn Việt corridor (LM_EDGE_0127) is closed due to severe tidal flooding. A* strictly avoids the closed corridor (zero closed-edge expansions) and detours safely via the internal Tăng Nhơn Phú bypass corridor to reach FPT University. Neither start nor goal coincides with road closures."
     }
   ]
 }

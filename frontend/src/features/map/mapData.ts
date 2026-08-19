@@ -22,6 +22,8 @@ export type EdgeFeatureProperties = {
   road_name: string
   is_closed: boolean
   route_index: number
+  distance_m: number
+  free_flow_time_min: number
 }
 
 type GraphState = {
@@ -234,6 +236,8 @@ function edgeFeature(
       road_name: String(edge.attributes.road_name ?? ''),
       is_closed: edge.is_closed,
       route_index: routeIndex,
+      distance_m: edge.distance_m,
+      free_flow_time_min: edge.free_flow_time_min,
     },
   }
 }
@@ -262,4 +266,48 @@ export function buildRouteFeatureCollection(
     return feature ? [feature] : []
   })
   return { type: 'FeatureCollection', features }
+}
+
+export type ClosedEdgeMarkerData = {
+  edgeId: string
+  roadName: string
+  fromNodeId: string
+  toNodeId: string
+  distanceM: number
+  freeFlowTimeMin: number
+  midpoint: [number, number]
+}
+
+export function buildClosedEdgeMarkers(graph: GraphPayload): ClosedEdgeMarkerData[] {
+  const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
+  const processedPairs = new Set<string>()
+  const markers: ClosedEdgeMarkerData[] = []
+
+  for (const edge of graph.edges) {
+    if (!edge.is_closed) continue
+
+    // Group pair of bidirectional edges so we only display 1 barrier marker on the street
+    const pairKey = [edge.from_node_id, edge.to_node_id].sort().join('--')
+    if (processedPairs.has(pairKey)) continue
+    processedPairs.add(pairKey)
+
+    const feature = edgeFeature(edge, nodeById, -1)
+    if (!feature) continue
+    const coords = feature.geometry.coordinates as [number, number][]
+    if (!coords.length) continue
+    const midIdx = Math.floor(coords.length / 2)
+    const midpoint = coords[midIdx] || coords[0]
+
+    markers.push({
+      edgeId: edge.edge_id,
+      roadName: String(edge.attributes.road_name || edge.edge_id),
+      fromNodeId: edge.from_node_id,
+      toNodeId: edge.to_node_id,
+      distanceM: edge.distance_m,
+      freeFlowTimeMin: edge.free_flow_time_min,
+      midpoint,
+    })
+  }
+
+  return markers
 }

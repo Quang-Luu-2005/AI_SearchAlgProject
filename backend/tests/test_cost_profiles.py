@@ -79,6 +79,9 @@ def test_toy_fixture_records_profile_and_scenario_route_change() -> None:
     assert rain.edge_ids != baseline.edge_ids
 
 
+LANDMARK_GRAPH_DIR = ROOT / "data" / "processed" / "thu_duc_landmarks_v1.0.0"
+
+
 def test_second_simulated_route_change_stays_within_the_toy_fixture() -> None:
     service = SearchService(GraphLoader.from_directory(TOY_GRAPH_DIR))
     baseline = service.search(
@@ -91,3 +94,53 @@ def test_second_simulated_route_change_stays_within_the_toy_fixture() -> None:
     assert baseline.edge_ids == ("E14", "E04", "E02")
     assert comparison.edge_ids == ("E14", "E10", "E12", "E02")
     assert baseline.edge_ids != comparison.edge_ids
+
+
+def test_landmark_pm_peak_route_detour_avoids_congested_arterial() -> None:
+    service = SearchService(GraphLoader.from_directory(LANDMARK_GRAPH_DIR))
+    baseline = service.search(
+        start="LM_065", goal="LM_054", algorithm="A_STAR", scenario_id="LANDMARK_HISTORICAL_BASELINE"
+    )
+    peak = service.search(
+        start="LM_065", goal="LM_054", algorithm="A_STAR", scenario_id="LANDMARK_PM_PEAK"
+    )
+
+    assert "LM_EDGE_0127" in baseline.edge_ids
+    assert "LM_EDGE_0127" not in peak.edge_ids
+    assert peak.edge_ids != baseline.edge_ids
+    assert peak.result.metrics.total_cost > baseline.result.metrics.total_cost
+    assert "LM_EDGE_0020" in peak.edge_ids
+    assert "LM_EDGE_0078" in peak.edge_ids
+
+
+def test_landmark_heavy_rain_road_closure_forces_safe_detour() -> None:
+    service = SearchService(GraphLoader.from_directory(LANDMARK_GRAPH_DIR))
+    baseline = service.search(
+        start="LM_065", goal="LM_054", algorithm="A_STAR", scenario_id="LANDMARK_HISTORICAL_BASELINE"
+    )
+    rain = service.search(
+        start="LM_065", goal="LM_054", algorithm="A_STAR", scenario_id="LANDMARK_HEAVY_RAIN"
+    )
+
+    closed_edges = {
+        "LM_EDGE_0127", "LM_EDGE_0114", "LM_EDGE_0168", "LM_EDGE_0055",
+    }
+    assert baseline.edge_ids == (
+        "LM_EDGE_0178", "LM_EDGE_0127", "LM_EDGE_0113", "LM_EDGE_0083", "LM_EDGE_0119"
+    )
+    assert "LM_EDGE_0127" in baseline.edge_ids
+    assert not (set(rain.edge_ids) & closed_edges)
+    assert rain.edge_ids != baseline.edge_ids
+    assert "LM_EDGE_0020" in rain.edge_ids
+
+    # Verify zero closed edges were ever relaxed or traversed in the search trace
+    closed_relaxes = [ev for ev in rain.result.trace if ev.details and ev.details.get("edge_id") in closed_edges]
+    assert len(closed_relaxes) == 0
+
+    # Also verify Dao Son Tay -> SPKT detours around closed Linh Xuan corridor
+    rain_spkt = service.search(
+        start="LM_007", goal="LM_052", algorithm="A_STAR", scenario_id="LANDMARK_HEAVY_RAIN"
+    )
+    assert not (set(rain_spkt.edge_ids) & closed_edges)
+    assert "LM_EDGE_0001" in rain_spkt.edge_ids
+

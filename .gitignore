@@ -41,3 +41,5 @@ experiments/results/*
 .vscode/
 .DS_Store
 Thumbs.db
+scratch/
+

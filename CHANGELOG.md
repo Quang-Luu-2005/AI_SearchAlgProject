@@ -5,6 +5,30 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Chuẩn hóa hành lang ngập lụt kịch bản `LANDMARK_HEAVY_RAIN` tập trung vào đoạn dốc trục
+  đường huyết mạch Võ Văn Ngân (`LM_EDGE_0093` / `LM_EDGE_0129`) và trục Lê Văn Việt (`LM_EDGE_0127` / `LM_EDGE_0114`),
+  thiết lập cặp Demo thực tế từ Nhà Truyền Thống Thủ Đức (`LM_036`) đến SIU (`LM_043`),
+  minh họa đường vòng (detour) qua ngã Vincom Plaza & Tăng Nhơn Phú hoàn toàn không bị trùng lặp Start/Goal.
+- Xử lý triệt để bài toán cạnh đóng 2 chiều (Bidirectional Road Closure) trong kịch bản
+  `LANDMARK_HEAVY_RAIN`: đóng toàn bộ cả chiều đi và chiều về của các hành lang ngập nước
+  (Võ Văn Ngân, Lê Văn Việt), đảm bảo các thuật toán A*, UCS, BFS, DFS, Greedy, Bidirectional
+  hoàn toàn không thể đi qua theo bất kỳ chiều nào.
+- Nâng cấp trực quan hóa cạnh đóng trên bản đồ Web: bổ sung lớp viền phát sáng đỏ (Halo Glow),
+  tăng độ dày nét đứt đỏ rực rỡ ở mọi mức zoom, gắn huy hiệu rào chắn động `⛔ ĐÓNG ĐƯỜNG` tại
+  trung điểm đoạn ngập, hỗ trợ popup tương tác chi tiết khi click/hover giải thích nguyên nhân và
+  tác động thuật toán (Chi phí = $\infty$).
+
+- Tích hợp 2 kịch bản cố định (`LANDMARK_PM_PEAK` và `LANDMARK_HEAVY_RAIN`) trên dataset
+  bản đồ demo chính `thu_duc_landmarks_v1.0.0`, chốt 2 cặp Start-Goal chứng minh rõ ràng
+  sự đổi tuyến đường của thuật toán A* khi xảy ra kẹt xe hoặc ngập lụt, bổ sung bộ kiểm
+  thử acceptance tests trong `test_cost_profiles.py` và cập nhật bằng chứng thực nghiệm
+  `cost_profiles_v1`.
+
+- Nâng cấp toàn diện khung chọn Kịch bản Giao thông (Scenario Selector) trên Giao diện Web:
+  hiển thị dropdown thân thiện kèm icon, thẻ thông tin giải thích ngữ cảnh (`.scenario-info-card`),
+  cơ cấu trọng số chi phí, danh sách đoạn đường bị phạt/ngập đóng, và nút 1-chạm *"⚡ Chọn
+  nhanh cặp Demo"* tự động điền điểm xuất phát và đích khuyến nghị kèm hệ thống đa ngôn ngữ EN/VI.
+
 - Nâng cấp toàn diện giao diện hiển thị kết quả thuật toán giao hàng đa điểm (Tour
   Held-Karp DP, Nearest Neighbor và So sánh Tour): hiển thị lộ trình dạng huy hiệu tên
   địa danh thực tế thay vì node ID thô, đối chiếu 2 cột Trước vs Sau tối ưu kèm mức tiết

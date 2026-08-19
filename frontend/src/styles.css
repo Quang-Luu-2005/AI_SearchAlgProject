@@ -381,6 +381,163 @@ select:focus {
   padding: 8px 10px;
 }
 
+/* Scenario Info Card Styles */
+.scenario-info-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--outline);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: all 0.25s ease;
+  margin-top: -3px;
+}
+
+.scenario-info-card.is-normal {
+  border-left: 4px solid #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, #ffffff 100%);
+}
+
+.scenario-info-card.is-congestion {
+  border-left: 4px solid #f59e0b;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, #ffffff 100%);
+}
+
+.scenario-info-card.is-flood {
+  border-left: 4px solid #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, #ffffff 100%);
+}
+
+.scenario-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.scenario-title-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.scenario-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.scenario-title-text {
+  font-size: 0.86rem;
+  font-weight: 750;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.scenario-preset-badge {
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(0, 88, 190, 0.08);
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.scenario-context-desc {
+  margin: 0;
+  font-size: 0.79rem;
+  line-height: 1.42;
+  color: var(--muted);
+}
+
+.scenario-meta-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.025);
+  font-size: 0.76rem;
+}
+
+.scenario-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scenario-meta-label {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 0.74rem;
+}
+
+.scenario-meta-value {
+  line-height: 1.35;
+}
+
+.scenario-weights-val {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.scenario-roads-val {
+  color: #b45309;
+  font-weight: 550;
+}
+
+.scenario-info-card.is-flood .scenario-roads-val {
+  color: #dc2626;
+}
+
+.scenario-quick-demo-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.scenario-quick-demo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 88, 190, 0.25);
+  background: linear-gradient(135deg, #0058be 0%, #004598 100%);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 88, 190, 0.18);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scenario-quick-demo-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 88, 190, 0.28);
+  background: linear-gradient(135deg, #0266dc 0%, #0050b0 100%);
+}
+
+.scenario-quick-demo-btn:active {
+  transform: translateY(0);
+}
+
+.scenario-quick-demo-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.35;
+  font-style: italic;
+}
+
 .route-fields {
   position: relative;
   display: grid;
@@ -3406,4 +3563,160 @@ select:focus {
     max-height: 88vh;
     padding: 16px;
   }
+}
+
+/* ==========================================================================
+   Road Closure Barrier Markers & Closed Edge Popups
+   ========================================================================== */
+
+.road-closure-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 12;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.road-closure-marker:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 20;
+}
+
+.road-closure-pulse {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.35);
+  animation: roadClosurePulse 2s infinite ease-out;
+  pointer-events: none;
+}
+
+@keyframes roadClosurePulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.road-closure-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(254, 202, 202, 0.5);
+  white-space: nowrap;
+}
+
+.road-closure-badge .closure-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.road-closure-badge .closure-text {
+  text-transform: uppercase;
+}
+
+/* Map Edge Popup */
+.map-edge-popup {
+  padding: 10px 12px;
+  font-family: inherit;
+  color: var(--ink);
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.map-edge-popup-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-glass, #e2e8f0);
+  padding-bottom: 6px;
+}
+
+.map-edge-popup-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  letter-spacing: 0.05em;
+}
+
+.map-edge-popup-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.map-edge-popup-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.map-edge-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #475569;
+}
+
+.map-edge-meta-row code {
+  background: #f1f5f9;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: #334155;
+}
+
+.map-edge-meta-row.is-warning {
+  color: #b45309;
+  background: #fef3c7;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border-left: 3px solid #d97706;
+  font-size: 0.73rem;
+  margin-top: 2px;
+}
+
+.map-edge-meta-row.is-blocked {
+  color: #991b1b;
+  background: #fef2f2;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border-left: 3px solid #dc2626;
+  font-size: 0.73rem;
+  font-weight: 600;
 }
