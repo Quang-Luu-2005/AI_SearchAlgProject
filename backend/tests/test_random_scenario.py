@@ -42,6 +42,16 @@ def test_random_scenario_allocates_correct_status_types(generator_service: Rando
     assert status_counts[AffectedEdgeStatus.FLOODED] == 2
     assert status_counts[AffectedEdgeStatus.CONGESTED] == 2
 
+
+def test_random_scenario_contains_both_flood_and_congestion(generator_service: RandomScenarioService) -> None:
+    result = generator_service.generate(start="N01", goal="N06", num_edges=7)
+
+    statuses = {edge.status for edge in result.affected_edges}
+    assert AffectedEdgeStatus.FLOODED in statuses
+    assert AffectedEdgeStatus.CONGESTED in statuses
+    assert sum(edge.status == AffectedEdgeStatus.FLOODED for edge in result.affected_edges) == 3
+    assert sum(edge.status == AffectedEdgeStatus.CONGESTED for edge in result.affected_edges) == 3
+
 def test_random_scenario_raises_error_if_unreachable() -> None:
     """Test 3: Văng lỗi đúng chuẩn nếu điểm Start và Goal bị cô lập hoàn toàn."""
     graph = GraphLoader.from_directory(SIMPLE_PATH_DIR)

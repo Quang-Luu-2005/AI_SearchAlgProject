@@ -21,6 +21,7 @@ LANDMARK_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.0"
 LANDMARK_V101_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.1"
 LANDMARK_V102_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.2"
 LANDMARK_V103_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.3"
+LANDMARK_V104_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.4"
 OSM_THU_DUC_PROCESSED_ROOT = DATA_ROOT / "processed" / "osm_thu_duc_v1.0.0"
 THU_DUC_BOUNDARY_PATH = (
     DATA_ROOT / "raw" / "thu_duc_boundary_v1.0.0" / "osm_relation_19407794.geojson"
@@ -348,6 +349,7 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
     expected_edge_count = 283 if dataset_root in {
         LANDMARK_V102_PROCESSED_ROOT,
         LANDMARK_V103_PROCESSED_ROOT,
+        LANDMARK_V104_PROCESSED_ROOT,
     } else 178
     if len(nodes) != 65 or len(edges) != expected_edge_count or len(landmarks) != 65:
         errors.append(f"{dataset_name}: expected 65 landmarks and {expected_edge_count} directed edges")
@@ -405,7 +407,7 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
     expected_scenario_ids = ["LANDMARK_HISTORICAL_BASELINE"]
     if dataset_root in {LANDMARK_V101_PROCESSED_ROOT, LANDMARK_V102_PROCESSED_ROOT}:
         expected_scenario_ids.append("LANDMARK_HARD_CLOSURE_DETOUR")
-    if dataset_root == LANDMARK_V103_PROCESSED_ROOT:
+    if dataset_root in {LANDMARK_V103_PROCESSED_ROOT, LANDMARK_V104_PROCESSED_ROOT}:
         expected_scenario_ids = [
             "LANDMARK_NORMAL",
             "LANDMARK_FLOOD",
@@ -418,6 +420,7 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
         LANDMARK_V101_PROCESSED_ROOT,
         LANDMARK_V102_PROCESSED_ROOT,
         LANDMARK_V103_PROCESSED_ROOT,
+        LANDMARK_V104_PROCESSED_ROOT,
     }:
         closure = next(
             (row for row in scenario_rows if row.get("scenario_id") == "LANDMARK_HARD_CLOSURE_DETOUR"),
@@ -427,15 +430,16 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
             errors.append(f"{dataset_name}: hard closure scenario must be labelled ASSUMPTION")
         elif closure.get("closed_edge_ids") != ["LM_EDGE_0001"]:
             errors.append(f"{dataset_name}: hard closure scenario must close LM_EDGE_0001")
-    if dataset_root == LANDMARK_V103_PROCESSED_ROOT:
+    if dataset_root in {LANDMARK_V103_PROCESSED_ROOT, LANDMARK_V104_PROCESSED_ROOT}:
+        expected_override_count = 57 if dataset_root == LANDMARK_V104_PROCESSED_ROOT else 3
         for scenario_id, field_name in (
             ("LANDMARK_FLOOD", "flood_risk"),
             ("LANDMARK_CONGESTION", "traffic_penalty_min"),
         ):
             scenario = next(row for row in scenario_rows if row.get("scenario_id") == scenario_id)
             overrides = scenario.get("edge_overrides", {})
-            if len(overrides) != 3 or any(field_name not in override for override in overrides.values()):
-                errors.append(f"{dataset_name}: {scenario_id} must define three {field_name} overrides")
+            if len(overrides) != expected_override_count or any(field_name not in override for override in overrides.values()):
+                errors.append(f"{dataset_name}: {scenario_id} must define {expected_override_count} {field_name} overrides")
     properties = metadata.get("graph_properties", {})
     if properties.get("selectable_node_count") != len(nodes):
         errors.append(f"{dataset_name}: selectable count does not match nodes")
@@ -596,6 +600,7 @@ def validate() -> list[str]:
             LANDMARK_V101_PROCESSED_ROOT,
             LANDMARK_V102_PROCESSED_ROOT,
             LANDMARK_V103_PROCESSED_ROOT,
+            LANDMARK_V104_PROCESSED_ROOT,
         }:
             errors.extend(validate_landmark_dataset(processed_root))
         elif processed_root == OSM_THU_DUC_PROCESSED_ROOT:

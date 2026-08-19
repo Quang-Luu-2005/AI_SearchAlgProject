@@ -1,0 +1,533 @@
+{
+    "dataset_id":  "thu_duc_landmarks_v1.0.4",
+    "data_status":  "MIXED",
+    "real_time":  false,
+    "scenarios":  [
+                      {
+                          "scenario_id":  "LANDMARK_NORMAL",
+                          "data_status":  "ASSUMPTION",
+                          "traffic_scenario":  "UTraffic source max-velocity historical baseline",
+                          "cost_preset":  "BALANCED",
+                          "weights":  {
+                                          "distance":  0.25,
+                                          "freeflow_time":  0.3,
+                                          "congestion":  0.2,
+                                          "flood_risk":  0.25
+                                      },
+                          "closed_edge_ids":  [
+
+                                              ],
+                          "edge_overrides":  {
+
+                                             }
+                      },
+                      {
+                          "scenario_id":  "LANDMARK_FLOOD",
+                          "data_status":  "ASSUMPTION",
+                          "traffic_scenario":  "20 percent of landmark edges flooded",
+                          "cost_preset":  "RAIN_SAFE",
+                          "weights":  {
+                                          "distance":  0.1,
+                                          "freeflow_time":  0.25,
+                                          "congestion":  0.15,
+                                          "flood_risk":  0.5
+                                      },
+                          "closed_edge_ids":  [
+
+                                              ],
+                          "edge_overrides":  {
+                                                 "LM_EDGE_0001":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0002":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0003":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0004":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0005":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0006":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0007":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0008":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0009":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0010":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0011":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0012":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0013":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0014":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0015":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0016":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0017":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0018":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0019":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0020":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0021":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0022":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0023":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0024":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0025":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0026":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0027":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0028":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0029":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0030":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0031":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0032":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0033":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0034":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0035":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0036":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0037":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0038":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0039":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0040":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0041":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0042":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0043":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0044":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0045":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0046":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0047":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0048":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0049":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0050":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0051":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0052":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0053":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0054":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0055":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0056":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0057":  {
+                                                                      "flood_risk":  1,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  }
+                                             }
+                      },
+                      {
+                          "scenario_id":  "LANDMARK_CONGESTION",
+                          "data_status":  "ASSUMPTION",
+                          "traffic_scenario":  "20 percent of landmark edges congested",
+                          "cost_preset":  "PEAK_TRAFFIC",
+                          "weights":  {
+                                          "distance":  0.15,
+                                          "freeflow_time":  0.25,
+                                          "congestion":  0.45,
+                                          "flood_risk":  0.15
+                                      },
+                          "closed_edge_ids":  [
+
+                                              ],
+                          "edge_overrides":  {
+                                                 "LM_EDGE_0227":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0228":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0229":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0230":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0231":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0232":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0233":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0234":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0235":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0236":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0237":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0238":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0239":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0240":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0241":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0242":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0243":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0244":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0245":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0246":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0247":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0248":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0249":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0250":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0251":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0252":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0253":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0254":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0255":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0256":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0257":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0258":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0259":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0260":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0261":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0262":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0263":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0264":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0265":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0266":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0267":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0268":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0269":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0270":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0271":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0272":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0273":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0274":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0275":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0276":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0277":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0278":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0279":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0280":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0281":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0282":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  },
+                                                 "LM_EDGE_0283":  {
+                                                                      "traffic_penalty_min":  5,
+                                                                      "data_status":  "ASSUMPTION"
+                                                                  }
+                                             }
+                      },
+                      {
+                          "scenario_id":  "LANDMARK_HARD_CLOSURE_DETOUR",
+                          "data_status":  "ASSUMPTION",
+                          "traffic_scenario":  "Fixed landmark edge hard-closure detour demonstration",
+                          "cost_preset":  "BALANCED",
+                          "weights":  {
+                                          "distance":  0.25,
+                                          "freeflow_time":  0.3,
+                                          "congestion":  0.2,
+                                          "flood_risk":  0.25
+                                      },
+                          "closed_edge_ids":  [
+                                                  "LM_EDGE_0001"
+                                              ],
+                          "edge_overrides":  {
+
+                                             }
+                      }
+                  ]
+}

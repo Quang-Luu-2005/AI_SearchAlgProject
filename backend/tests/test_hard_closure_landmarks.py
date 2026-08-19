@@ -11,7 +11,7 @@ DATASET_DIR = (
     Path(__file__).resolve().parents[2]
     / "data"
     / "processed"
-    / "thu_duc_landmarks_v1.0.3"
+    / "thu_duc_landmarks_v1.0.4"
 )
 ALGORITHMS = ("BFS", "DFS", "UCS", "A_STAR", "GREEDY", "BIDIRECTIONAL")
 

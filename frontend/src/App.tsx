@@ -538,7 +538,8 @@ export function App() {
         graph_id: graphId,
         start_node_id: startId,
         goal_node_id: goalId,
-        num_edges: 5,
+        // One closure plus three flooded and three congested edges.
+        num_edges: 7,
       })
       setRandomAffectedEdges(payload.affected_edges)
       setScenarioId(payload.scenario_id)
@@ -820,6 +821,16 @@ export function App() {
                 <option value="RANDOM">{t('scenario_random', lang)}</option>
               </select>
             </label>
+            {scenarioId.startsWith('SCENARIO_') && (
+              <button
+                className="generate-button"
+                type="button"
+                onClick={() => void createRandomScenario()}
+                disabled={!startId || !goalId || randomRunning}
+              >
+                {randomRunning ? t('random_generating', lang) : t('random_regenerate', lang)}
+              </button>
+            )}
             {randomAffectedEdges.length > 0 && (
               <div className="scenario-summary scenario-summary--random">
                 <span>RANDOM</span>

@@ -1,0 +1,34 @@
+{
+  "dataset_id": "thu_duc_market_v1.0.0",
+  "sources": [
+    {
+      "source_id": "UTRAFFIC-HCM-V6",
+      "title": "Traffic Flow data in Ho Chi Minh City, Viet Nam",
+      "provider": "UTraffic / HCMUT; distributed by Kaggle",
+      "url": "https://www.kaggle.com/datasets/thanhnguyen2612/traffic-flow-data-in-ho-chi-minh-city-viet-nam",
+      "license": "CC0 as declared on the Kaggle dataset page",
+      "temporal_coverage": "2020-07-03/2021-04-22"
+    },
+    {
+      "source_id": "OSM-POI-2026-08-07",
+      "title": "OpenStreetMap POI snapshot for Thu Duc Market pilot",
+      "provider": "OpenStreetMap contributors",
+      "url": "https://www.openstreetmap.org/copyright",
+      "license": "ODbL-1.0"
+    },
+    {
+      "source_id": "HMC-FLOOD-2025-24",
+      "title": "24 điểm mưa là ngập ở TP Thủ Đức",
+      "provider": "Trung tâm Báo chí Thành phố Hồ Chí Minh",
+      "url": "https://ttbc-hcm.gov.vn/24-diem-mua-la-ngap-o-tp-thu-duc-nguoi-dan-can-chu-y-1018710.html",
+      "published_at": "2025-05-17"
+    },
+    {
+      "source_id": "HMC-FLOOD-2026-MARKET",
+      "title": "Thông tin Sở Xây dựng về ngập khu vực chợ Thủ Đức",
+      "provider": "Sở Xây dựng TP.HCM, reported by Người Lao Động/Tuổi Trẻ",
+      "url": "https://tuoitre.vn/nld/so-xay-dung-tphcm-neu-nguyen-nhan-cho-thu-duc-ngap-nang-sau-mua-dau-mua-196260507181450735.htm",
+      "published_at": "2026-05-07"
+    }
+  ]
+}
