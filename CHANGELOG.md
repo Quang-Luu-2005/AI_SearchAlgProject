@@ -32,6 +32,8 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Added a `RANDOM` regenerate action so every click creates a new random seed and replaces the affected edge set.
 - RANDOM now deliberately includes both obstruction types in one draw: 1 closure, 3 flooded edges, and 3 congested edges.
 - Restored the frontend `NORMAL` demo scenario and made it the default baseline alongside congestion, flood, and random conditions.
+- Rewrote the v1.0.4 dataset descriptions in Vietnamese, synchronized normalized/processed README files and checksums, and repackaged the Group 7 submission archives.
+- Expanded `.gitignore` to exclude large ZIP/raw snapshots, compiled PDF/PPTX artifacts, LaTeX auxiliary files, and local temporary/package directories while keeping source and metadata files trackable.
 - Removed the historical-traffic notice card from the frontend panel while retaining provenance and limitations in the submission manifest.
 - Added the self-contained `data/submission/floodroute_dataset_v1.0.0` bundle with CSV/JSON data, validation report, checksums, provenance labels, and submission manifest.
 - Split the submission bundle into `raw_collected/` source snapshots and `normalized/` routing data, with separate checksums and provenance manifests.

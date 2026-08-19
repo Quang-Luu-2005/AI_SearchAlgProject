@@ -25,3 +25,15 @@
 - Frontend tests: 53 passed.
 - Frontend build: PASS.
 - Graph v1.0.3: 65 node, 283 edge, bốn scenario cố định.
+
+## Cập nhật mô tả dữ liệu — 2026-08-20
+
+- Viết lại README của release `thu_duc_landmarks_v1.0.4` bằng tiếng Việt, gồm mục
+  đích, quy mô 65 node/283 edge, cấu trúc file, bốn scenario demo, provenance và
+  giới hạn sử dụng.
+- Đồng bộ README ở lớp `normalized/` và thư mục `data/processed/`, sau đó cập nhật
+  checksum tương ứng.
+- Tạo lại `7 - Data.zip`, `Group7.zip` và `7.zip` với README mới.
+- Chạy data validator: PASS.
+- Bổ sung `.gitignore` cho các artifact nặng và sinh tự động: ZIP/raw snapshot, PDF/PPTX,
+  file phụ trợ LaTeX và thư mục tạm; đã kiểm tra bằng `git check-ignore`.

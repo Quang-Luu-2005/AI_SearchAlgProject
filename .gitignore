@@ -33,6 +33,34 @@ experiments/results/*
 !experiments/results/cost_profiles_v1.json
 !experiments/results/cost_profiles_v1.md
 
+# Large source snapshots and delivery archives
+# Keep the small metadata/CSV/JSON descriptions in Git, but store bulky
+# source snapshots and submission archives outside the repository.
+*.zip
+*.7z
+*.rar
+**/raw_collected/*.zip
+submission_group_7/
+Group7.zip
+7.zip
+
+# Compiled documents and presentation exports
+*.pdf
+*.pptx
+*.docx
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.fls
+*.fdb_latexmk
+
+# Local temporary render/package directories
+tmp/
+**/tmp/
+
 # Office temporary files
 ~$*
 

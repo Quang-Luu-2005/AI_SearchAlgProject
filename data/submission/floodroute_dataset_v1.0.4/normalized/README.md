@@ -1,7 +1,17 @@
-# Thu Duc major landmarks road graph v1.0.4
+# Dữ liệu graph landmark Thủ Đức đã chuẩn hóa — v1.0.4
 
-Selectable nodes are named major OSM places. Directed edges are aggregated UTraffic shortest road paths with frozen polyline geometry. This is a MIXED, historical academic demo and not real-time navigation.
+Đây là graph có hướng phục vụ bài toán tìm tuyến giữa các landmark lớn tại Thủ Đức.
+Graph gồm **65 node** và **283 directed edge**. Các edge được tổng hợp từ snapshot
+UTraffic đã cố định, giữ chiều di chuyển, chiều dài, thời gian đường thông và
+polyline hình học.
 
-This release keeps 65 nodes and 283 directed edges. It provides `LANDMARK_NORMAL`, `LANDMARK_FLOOD`, and `LANDMARK_CONGESTION` cost scenarios, plus the hard-closure scenario `LANDMARK_HARD_CLOSURE_DETOUR`. Flood and congestion each affect 57/283 edges (approximately 20 percent) and are labelled `ASSUMPTION` demonstrations, not live measurements.
+Bộ dữ liệu cung cấp các scenario `LANDMARK_NORMAL`, `LANDMARK_FLOOD` và
+`LANDMARK_CONGESTION`, cùng scenario kiểm thử `LANDMARK_HARD_CLOSURE_DETOUR`.
+Hai scenario FLOOD và CONGESTION mỗi scenario áp dụng lên 57/283 edge, khoảng 20%
+graph. Các giá trị này mang nhãn `ASSUMPTION`, chỉ dùng để minh họa thuật toán và
+không phải số liệu giao thông/ngập theo thời gian thực.
 
-Closure applies to exact landmark aggregate-edge IDs only; it does not propagate to other aggregate edges whose source segments or geometry overlap.
+Trong scenario NORMAL, không có cản trở và cost cơ sở được dùng làm baseline ưu tiên
+tuyến ngắn nhất khả thi. Với closure, hệ thống loại đúng edge ID bị đóng khỏi
+`neighbors()`; closure không lan sang aggregate edge khác chỉ vì source segment hoặc
+hình học của chúng bị chồng lấn.
