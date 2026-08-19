@@ -14,7 +14,7 @@
 ### 1.1. Thông tin Nhóm
 - **Tên nhóm**: FloodRoute Team
 - **Bảng Trello Quản lý Dự án**: [AI_Project_1 (https://trello.com/b/AGK7CP4q/aiproject1)](https://trello.com/b/AGK7CP4q/aiproject1)
-- **Giảng viên hướng dẫn**: TS. Nguyễn Văn Tân
+- **Giảng viên hướng dẫn**: Bùi Duy Đăng, Bùi Tiến Lên, Võ Nhật Tân
 
 ### 1.2. Bảng Phân công Trách nhiệm & Đóng góp Chi tiết
 

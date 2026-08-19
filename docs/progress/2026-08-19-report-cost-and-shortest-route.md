@@ -12,3 +12,11 @@
 
 - Đã rà các tham chiếu cũ `v1.0.0`/178 edge trong nguồn LaTeX của report và cập nhật các phần liên quan.
 - Sẽ xác nhận bản PDF sau khi biên dịch XeLaTeX hai lượt.
+
+## Hiệu chỉnh bố cục
+
+- Hạ đường viền trên của trang bìa từ 2.5 cm xuống 3.2 cm để không chồng lên tiêu đề trường.
+- Biên dịch lại XeLaTeX hai lượt và kiểm tra trực quan trang bìa sau khi sửa.
+- Gom ba dòng tên trường thành một `tabular` block để giữ khoảng cách liền nhau, đồng thời đưa đường viền lên phía trên toàn bộ block.
+- Cập nhật ba giảng viên trên trang bìa và các bản Markdown/HTML: Bùi Duy Đăng, Bùi Tiến Lên, Võ Nhật Tân.
+- Đưa dòng địa điểm/thời gian vào bên trong khung bìa bằng cách hạ cạnh dưới của khung xuống 1 cm; đã build và kiểm tra trực quan trang đầu.
