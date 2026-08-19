@@ -174,6 +174,24 @@ export type TourComparison = {
   selected_savings_percent: number
 }
 
+export function runAlternatives(
+  input: SearchInput & { algorithm: Algorithm; limit?: number },
+  signal?: AbortSignal,
+): Promise<{
+  start: string
+  goal: string
+  algorithm: string
+  scenario: string
+  results: SearchResult[]
+}> {
+  return requestJson('/api/v1/alternatives', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...input, limit: input.limit ?? 2 }),
+    signal,
+  })
+}
+
 export type OptimizeTourResult = {
   depot: string
   scenario: string

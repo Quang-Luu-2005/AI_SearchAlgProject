@@ -22,6 +22,8 @@ from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT, THU_DU
 from ..optimization import TourOptimizerService
 from ..services import SearchService
 from .models import (
+    AlternativesRequest,
+    AlternativesResponse,
     CompareRequest,
     CompareResponse,
     ErrorResponse,
@@ -363,11 +365,52 @@ def compare(payload: CompareRequest) -> dict[str, object]:
         ValueError,
     ) as error:
         _raise_search_http_error(error)
+    response_results = [_search_response(execution, graph) for execution in executions]
+    for item in response_results:
+        item["scenario"] = payload.scenario
     return {
         "start": payload.start,
         "goal": payload.goal,
         "scenario": payload.scenario,
-        "results": [_search_response(execution, graph) for execution in executions],
+        "results": response_results,
+    }
+
+
+@router.post(
+    "/alternatives",
+    tags=["search"],
+    response_model=AlternativesResponse,
+    responses={404: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
+)
+def alternatives(payload: AlternativesRequest) -> dict[str, object]:
+    """Find up to two alternatives using the same selected algorithm."""
+    _, graph, _ = _load_graph_for_scenario(payload.graph_id, payload.scenario)
+    try:
+        executions = SearchService(graph).alternatives(
+            start=payload.start,
+            goal=payload.goal,
+            algorithm=payload.algorithm,
+            scenario_id=payload.scenario,
+            limit=payload.limit,
+        )
+    except (
+        AlgorithmNotFoundError,
+        CostModelError,
+        NodeNotFoundError,
+        RouteNotFoundError,
+        ScenarioNotFoundError,
+        ValueError,
+    ) as error:
+        _raise_search_http_error(error)
+    response_results = [_search_response(execution, graph) for execution in executions]
+    for item in response_results:
+        item["scenario"] = payload.scenario
+    return {
+        "start": payload.start,
+        "goal": payload.goal,
+        "algorithm": payload.algorithm,
+        "scenario": payload.scenario,
+        "results": response_results,
     }
 
 

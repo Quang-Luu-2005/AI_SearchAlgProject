@@ -11,7 +11,7 @@ DATASET_DIR = (
     Path(__file__).resolve().parents[2]
     / "data"
     / "processed"
-    / "thu_duc_landmarks_v1.0.2"
+    / "thu_duc_landmarks_v1.0.3"
 )
 ALGORITHMS = ("BFS", "DFS", "UCS", "A_STAR", "GREEDY", "BIDIRECTIONAL")
 
@@ -108,3 +108,20 @@ def test_hard_closure_returns_no_route_when_all_start_edges_are_closed(
                 algorithm=algorithm,
                 scenario_id="TEST_NO_ROUTE_LOCKDOWN",
             )
+
+
+def test_alternatives_use_the_same_algorithm_and_distinct_edges(
+    service: SearchService,
+) -> None:
+    routes = service.alternatives(
+        start="LM_001",
+        goal="LM_036",
+        algorithm="A_STAR",
+        scenario_id="LANDMARK_FLOOD",
+        limit=2,
+    )
+
+    assert 1 <= len(routes) <= 3
+    assert {route.algorithm.value for route in routes} == {"A_STAR"}
+    assert len({route.edge_ids for route in routes}) == len(routes)
+    assert routes[0].result.metrics.total_cost <= routes[-1].result.metrics.total_cost

@@ -15,6 +15,8 @@
   hiển thị chi phí và đánh dấu route có weighted cost thấp nhất là `OPTIMAL`.
 - API graph detail trả `scenario_status` trên từng edge để map tô đúng màu theo scenario
   FLOOD/CONGESTION/CLOSED, không chỉ theo random overlay.
+- Thay so sánh thuật toán chéo bằng endpoint `/api/v1/alternatives`: cùng algorithm được
+  chọn sẽ tìm tối đa hai route khác bằng cách đóng từng edge của route trước.
 
 ## Kiểm tra
 

@@ -13,6 +13,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Simplified the frontend scenario selector to exactly congestion, flood, and random; hid technical normal/hard-closure entries and removed the duplicate below-map legend.
 - For flood, congestion, and random scenarios, the frontend now compares six algorithms, displays up to three distinct routes, and marks the lowest weighted-cost route as optimal with a cost proof.
 - Fixed map scenario coloring by returning the active edge status (`CONGESTED`, `FLOODED`, or `CLOSED`) in the graph payload for fixed and random scenarios.
+- Replaced cross-algorithm alternative-route comparison with `/api/v1/alternatives`, which uses the selected algorithm and returns up to two distinct detours under the same scenario.
 - Removed the historical-traffic notice card from the frontend panel while retaining provenance and limitations in the submission manifest.
 - Added the self-contained `data/submission/floodroute_dataset_v1.0.0` bundle with CSV/JSON data, validation report, checksums, provenance labels, and submission manifest.
 - Split the submission bundle into `raw_collected/` source snapshots and `normalized/` routing data, with separate checksums and provenance manifests.

@@ -23,6 +23,7 @@ import {
   fetchScenarios,
   generateRandomScenario,
   optimizeTour,
+  runAlternatives,
   runComparison,
   runSearch,
   type AlgorithmSelection,
@@ -623,11 +624,9 @@ export function App() {
       } else if (algorithm === 'A_STAR' || algorithm === 'UCS' || algorithm === 'BFS' || algorithm === 'DFS' || algorithm === 'GREEDY' || algorithm === 'BIDIRECTIONAL') {
         const primary = await runSearch({ ...input, algorithm })
         if (['LANDMARK_FLOOD', 'LANDMARK_CONGESTION'].includes(scenarioId) || scenarioId.startsWith('SCENARIO_')) {
-          const comparison = await runComparison(input, ['UCS', 'A_STAR', 'BFS', 'DFS', 'GREEDY', 'BIDIRECTIONAL'])
-          setComparisonResults(comparison.results)
-          setResult(comparison.results.reduce((best, candidate) => (
-            candidate.metrics.total_cost < best.metrics.total_cost ? candidate : best
-          ), primary))
+          const alternatives = await runAlternatives({ ...input, algorithm, limit: 2 })
+          setComparisonResults(alternatives.results)
+          setResult(alternatives.results[0] ?? primary)
         } else {
           setResult(primary)
         }

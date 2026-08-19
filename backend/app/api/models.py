@@ -116,6 +116,23 @@ class CompareResponse(BaseModel):
     results: list[SearchResponse]
 
 
+class AlternativesRequest(BaseModel):
+    start: str = Field(min_length=1, examples=["N01"])
+    goal: str = Field(min_length=1, examples=["N06"])
+    algorithm: str = Field(min_length=1, examples=["A_STAR"])
+    scenario: str = Field(min_length=1, examples=["LANDMARK_FLOOD"])
+    graph_id: str = Field(default="toy_graph_v0.1", min_length=1)
+    limit: int = Field(default=2, ge=1, le=2)
+
+
+class AlternativesResponse(BaseModel):
+    start: str
+    goal: str
+    algorithm: str
+    scenario: str
+    results: list[SearchResponse]
+
+
 class OptimizeTourRequest(BaseModel):
     depot: str = Field(min_length=1, examples=["N01"])
     stops: list[str] = Field(
