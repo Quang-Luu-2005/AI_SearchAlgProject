@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fixed the Chapter 5 algorithm-comparison table by using wrapped fixed-width columns, preventing text from collapsing into a narrow vertical strip.
 - Revised report wording to use a natural student-report voice while retaining technical terms, formulas, benchmark values, and conclusions.
 - Added a captured local GUI map image and an in-report system-flow diagram to the FloodRoute LaTeX report.
 - Added captured GUI states for A*, UCS, six-algorithm comparison, and a five-stop Held-Karp/Nearest Neighbor tour.

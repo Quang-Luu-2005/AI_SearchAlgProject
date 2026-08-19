@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 19:28
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 19:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1185,203 +1185,30 @@ LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 (Font)              scaled to size 11.32855pt on input line 2.
 )
-(content/2.Problem Context.tex [1]) (content/3.Problem Modeling.tex)
-(content/4.Dataset.tex [2]) (content/5.Algorithm Principles.tex
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Mở
+(content/2.Problem Context.tex
+Underfull \hbox (badness 10000) in paragraph at lines 31--1
+
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 rộng
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 các
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 node
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 theo
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 từng
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Đi sâu
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 theo
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 một
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 nhánh
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Luôn
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 chọn
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\OML/cmm/m/it/10.95 g$ \TU/TimesNewRoman(0)/m/n/10.95 nhỏ
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Chọn
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 node
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 theo
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Chọn
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\OML/cmm/m/it/10.95 h$ \TU/TimesNewRoman(0)/m/n/10.95 nhỏ
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Tìm
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 kiếm
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 đồng
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 thời từ
- []
-
-
-Overfull \hbox (3.51653pt too wide) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Dynamic
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 pro-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 gram-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 ming
- []
-
-
-Underfull \hbox (badness 1460) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 trên tập
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-[]|\TU/TimesNewRoman(0)/m/n/10.95 Mỗi
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 bước
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 chọn
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 điểm
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 gần/rẻ
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 nhất
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 16--16
-\TU/TimesNewRoman(0)/m/n/10.95 tiếp
- []
-
-
-Overfull \hbox (245.7928pt too wide) in paragraph at lines 2--17
-\TU/TimesNewRoman(0)/m/n/10.95 Trong đồ án, nhóm em cài đặt và so sánh các thuậ
-t toán sau: [] 
- []
-
-[3] [4]
-Overfull \vbox (4.97592pt too high) has occurred while \output is active []
-
-
-[5]) (content/6.Program Flow.tex) (content/7.Algorithm Comparison.tex [6]
+[1]) (content/3.Problem Modeling.tex) (content/4.Dataset.tex [2])
+(content/5.Algorithm Principles.tex
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
-(Font)              scaled to size 9.63638pt on input line 23.
+(Font)              scaled to size 9.63638pt on input line 4.
+
+Underfull \hbox (badness 10000) in paragraph at lines 22--24
+
+ []
+
+[3]) (content/6.Program Flow.tex) (content/7.Algorithm Comparison.tex [4]
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 (Font)              scaled to size 9.44046pt on input line 23.
 File: figures/gui-overview.png Graphic file (type bmp)
 <figures/gui-overview.png>
 
-[7]) (content/8.Multi-location Optimization.tex
+[5]) (content/8.Multi-location Optimization.tex
 File: figures/gui-astar-route.png Graphic file (type bmp)
 <figures/gui-astar-route.png>
-LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
-(Font)              scaled to size 6.74547pt on input line 35.
-LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
-(Font)              scaled to size 4.81819pt on input line 35.
- [8]
+ [6]
 File: figures/gui-ucs-route.png Graphic file (type bmp)
 <figures/gui-ucs-route.png>
 File: figures/gui-compare-algorithms.png Graphic file (type bmp)
@@ -1389,11 +1216,11 @@ File: figures/gui-compare-algorithms.png Graphic file (type bmp)
 File: figures/gui-tour-optimization.png Graphic file (type bmp)
 <figures/gui-tour-optimization.png>
 )
-(content/9.Program Instructions.tex [9] [10] [11] [12])
-(content/10.Limitations and Future Work.tex) (ref/ref.tex [13]
+(content/9.Program Instructions.tex [7] [8] [9] [10])
+(content/10.Limitations and Future Work.tex) (ref/ref.tex [11]
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/it' will be
 (Font)              scaled to size 10.97087pt on input line 5.
-) [14] (main.aux)
+) [12] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-29>
@@ -1404,10 +1231,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  30696 strings out of 402987
  634771 string characters out of 5448524
- 1132296 words of memory out of 5000000
+ 1134296 words of memory out of 5000000
  58916 multiletter control sequences out of 15000+600000
  634692 words of font info for 100 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 99i,12n,130p,579b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,11n,130p,576b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.pdf (17 pages).
+Output written on main.pdf (15 pages).

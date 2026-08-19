@@ -20,3 +20,4 @@
 - Captured the running local React/MapLibre GUI with the active 65-node map and added it to the architecture chapter, together with a TikZ system-flow diagram. Rendered pages containing both figures were checked visually.
 - Captured four additional local GUI states: A*, UCS, Compare all six algorithms, and five-stop tour optimization; inserted them into the experiments chapter and verified the final 14-page PDF.
 - Revised the prose to sound like a student report written for the instructor: first-person group wording, clearer explanations, and fewer unexplained engineering-style English phrases. Final XeLaTeX build is 17 pages.
+- Fixed the Chapter 5 table layout with wrapped columns; the table now fits the page and was visually checked after rebuilding.

@@ -13,7 +13,7 @@ f(n)=g(n)+h_s(n).
 \]
 Các edge đã đóng không được đưa vào phép tính \(\rho_s\). Những edge có khoảng cách Haversine quá nhỏ cũng được bỏ qua để tránh chia cho một số gần bằng 0. Nếu không còn edge hợp lệ thì nhóm em đặt \(\rho_s=0\). Với node không có tọa độ, heuristic được đặt bằng 0.
 
-\subsection{Giải thích tính đúng đắn}
+\subsection{Chứng minh lý do chọn hàm}
 Vì chi phí edge không âm và \(\rho_s\) không lớn hơn tỉ số giữa cost và khoảng cách của mọi edge hợp lệ, chi phí của một đường đi luôn lớn hơn hoặc bằng lower bound do heuristic ước lượng. Kết hợp với bất đẳng thức tam giác của Haversine, ta có:
 \[
 h_s(n)\leq \operatorname{cost}(\text{một đường đi từ }n\text{ đến goal}).

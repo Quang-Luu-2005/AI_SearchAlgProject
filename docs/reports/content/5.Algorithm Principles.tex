@@ -1,6 +1,12 @@
 \section{Nguyên lý các thuật toán}
 Trong đồ án, nhóm em cài đặt và so sánh các thuật toán sau:
-\begin{tabularx}{\textwidth}{l X l l}
+
+{\small
+\begin{tabularx}{\textwidth}{
+>{\raggedright\arraybackslash}p{2.6cm}
+>{\raggedright\arraybackslash}X
+>{\raggedright\arraybackslash}p{3.2cm}
+>{\raggedright\arraybackslash}p{2.5cm}}
 \toprule
 Thuật toán & Ý tưởng & Tối ưu? & Độ phức tạp khái quát\\
 \midrule
@@ -14,5 +20,6 @@ Held-Karp & Dynamic programming trên tập stop & Có trong TSP nhỏ & \(O(n^2
 Nearest Neighbor & Mỗi bước chọn điểm gần/rẻ nhất tiếp theo & Không đảm bảo & \(O(n^2)\)\\
 \bottomrule
 \end{tabularx}
+}
 
 BFS phù hợp khi các edge có cùng chi phí. UCS được nhóm em dùng làm mốc tham chiếu vì luôn cho nghiệm tối ưu khi chi phí không âm. A* có thể giảm số node phải mở rộng nếu heuristic phù hợp. Greedy chạy nhanh nhưng không thể dùng để khẳng định nghiệm tối ưu. Bidirectional có thể giúp giảm số node trong những graph phù hợp. Held-Karp cho nghiệm chính xác nhưng chỉ nên dùng khi số stop nhỏ, còn Nearest Neighbor cho nghiệm gần đúng với thời gian chạy ngắn hơn.
