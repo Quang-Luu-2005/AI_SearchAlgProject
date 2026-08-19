@@ -1,0 +1,73 @@
+{
+  "manifest_version": "1.0.0",
+  "dataset_id": "floodroute_dataset_submission_v1.0.3",
+  "dataset_version": "1.0.3",
+  "purpose": "Academic submission bundle for FloodRoute HCMC",
+  "source_release": "thu_duc_landmarks_v1.0.3",
+  "data_status": "MIXED",
+  "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+  "snapshot_date": "2026-08-09",
+  "real_time": false,
+  "graph": {
+    "directed": true,
+    "node_count": 65,
+    "edge_count": 178
+  },
+  "provenance": {
+    "source_backed": [
+      "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+      "OSM-THU-DUC-BOUNDARY-2026-08-09",
+      "UTRAFFIC-HCM-V6"
+    ],
+    "derived": [
+      "edges.csv aggregates shortest road paths from the frozen UTraffic road snapshot"
+    ],
+    "assumption": [
+      "scenarios.json weights and BALANCED cost preset",
+      "LM_EDGE_0001 hard closure detour scenario",
+      "20 km/h connector speed for landmark-to-road display connectors"
+    ],
+    "simulated": []
+  },
+  "raw_collected": {
+    "path": "raw_collected",
+    "data_status": "SOURCE_BACKED",
+    "files": [
+      "raw_collected/osm_major_places_snapshot.json",
+      "raw_collected/osm_relation_19407794.geojson",
+      "raw_collected/utraffic_hcm_v6.zip",
+      "raw_collected/source_registry.json"
+    ],
+    "checksums": "raw_collected/checksums.sha256"
+  },
+  "normalized": {
+    "path": "normalized",
+    "data_status": "MIXED",
+    "files": [
+      "normalized/nodes.csv",
+      "normalized/edges.csv",
+      "normalized/landmarks.csv",
+      "normalized/scenarios.json",
+      "normalized/metadata.json",
+      "normalized/validation_report.json",
+      "normalized/README.md"
+    ],
+    "checksums": "normalized/checksums.sha256"
+  },
+  "validation": {
+    "status": "PASS",
+    "report": "normalized/validation_report.json"
+  },
+  "limitations": [
+    "Historical snapshot; not real-time traffic.",
+    "Flood risk 0 means NO_RECORD in selected sources, not flood-safe.",
+    "Graph has 65 nodes and 283 directed edges, with up to four nearest outgoing alternatives per landmark.",
+    "Normal, flood and congestion scenarios are available; flood/congestion values are ASSUMPTION demonstrations.",
+    "Hard closure applies to exact landmark edge IDs and does not propagate to overlapping aggregate edges or source segments.",
+    "Academic visualization only; not navigation or safety guidance."
+  ],
+  "license_and_attribution": [
+    "OpenStreetMap contributors — ODbL-1.0",
+    "UTraffic/HCMUT historical network — source-backed academic use"
+  ]
+}

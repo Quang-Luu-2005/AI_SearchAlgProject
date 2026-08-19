@@ -1,0 +1,39 @@
+{
+  "dataset_id": "thu_duc_landmarks_v1.0.3",
+  "dataset_kind": "processed_landmark_graph",
+  "label": "Thu Duc major landmarks road graph",
+  "data_status": "MIXED",
+  "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+  "snapshot_date": "2026-08-09",
+  "real_time": false,
+  "source_ids": [
+    "UTRAFFIC-HCM-V6",
+    "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+    "OSM-THU-DUC-BOUNDARY-2026-08-09"
+  ],
+  "attribution": [
+    "UTraffic/HCMUT historical network",
+    "© OpenStreetMap contributors"
+  ],
+  "landmark_definition": "Named OSM features tagged as university/college, hospital, marketplace, bus station/townhall, mall, railway station, stadium, museum or theme park.",
+  "graph_properties": {
+    "directed": true,
+    "strongly_connected": true,
+    "node_count": 65,
+    "edge_count": 283,
+    "selectable_node_count": 65,
+    "hidden_source_road_node_count": 8952,
+    "hidden_source_road_edge_count": 14043
+  },
+  "limitations": [
+    "Only selected named major-place categories are exposed as selectable nodes.",
+    "Edges are derived aggregate shortest paths over the historic UTraffic road snapshot.",
+    "Traffic is historical, not real-time; flood risk 0 means NO_RECORD, not flood-safe.",
+    "Markers stay at OSM coordinates; straight POI-to-road connectors use a disclosed 20 km/h assumption.",
+    "Former Thu Duc City boundary is an OSM relation currently tagged historic.",
+    "The graph keeps four nearest outgoing road-path alternatives per landmark where available to improve detour choice without adding nodes.",
+    "LANDMARK_FLOOD and LANDMARK_CONGESTION use labelled ASSUMPTION edge overrides for demonstrations; they are not live measurements.",
+    "Hard closure scenarios apply to exact landmark edge IDs; they do not propagate to overlapping aggregate edges or source segments.",
+    "Academic visualization only; not navigation or safety guidance."
+  ]
+}

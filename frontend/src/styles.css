@@ -621,6 +621,57 @@ select:focus {
   border-radius: inherit;
 }
 
+.map-legend-overlay {
+  position: absolute;
+  z-index: 500;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 12px;
+  max-width: min(620px, calc(100% - 24px));
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 11px;
+  color: #24313b;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 14px rgba(25, 28, 29, 0.16);
+  backdrop-filter: blur(8px);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.map-legend-overlay strong {
+  width: 100%;
+  color: var(--primary);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.scenario-summary--random {
+  display: grid;
+  justify-content: initial;
+  gap: 5px;
+  color: #92400e;
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+.scenario-summary--random small {
+  color: #78350f;
+  line-height: 1.4;
+  text-transform: none;
+}
+
+.map-legend-overlay span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
 .map-placeholder {
   display: grid;
   place-items: center;
@@ -1241,6 +1292,14 @@ select:focus {
 
 .legend-line.open {
   border-color: var(--success);
+}
+
+.legend-line.congested {
+  border-color: #d97706;
+}
+
+.legend-line.flooded {
+  border-color: #2563eb;
 }
 
 .legend-line.blocked {

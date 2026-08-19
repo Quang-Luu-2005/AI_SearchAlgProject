@@ -22,6 +22,7 @@ class RandomScenarioService:
 
     def __init__(self, base_graph: Graph):
         self.base_graph = base_graph
+        self.generated_scenario: Scenario | None = None
 
     def generate(
         self,
@@ -89,6 +90,7 @@ class RandomScenarioService:
                     "edge_overrides": edge_overrides
                 }
             )
+            self.generated_scenario = test_scenario
             
             # Nhúng scenario mới vào một phiên bản Graph tạm thời
             temp_graph = Graph(

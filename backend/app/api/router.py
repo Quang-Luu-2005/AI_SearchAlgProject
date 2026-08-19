@@ -15,6 +15,7 @@ from ..core.contracts import (
     RouteNotFoundError,
     ScenarioNotFoundError,
     SearchExecution,
+    Scenario,
 )
 from ..core.graph import GraphLoader
 from ..core.paths import DATASET_MANIFEST, FIXTURES_ROOT, PROCESSED_ROOT, THU_DUC_BOUNDARY
@@ -37,6 +38,7 @@ from .models import (
 from ..services.random_scenario import RandomScenarioService
 
 router = APIRouter()
+_RANDOM_SCENARIOS: dict[tuple[str, str], Scenario] = {}
 
 
 @router.get("/health", tags=["system"])
@@ -91,6 +93,19 @@ def _load_graph(graph_id: str) -> tuple[Path, Graph, str]:
         return graph_path, GraphLoader.from_directory(graph_path), dataset_kind
     except GraphFormatError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+
+
+def _load_graph_for_scenario(graph_id: str, scenario_id: str) -> tuple[Path, Graph, str]:
+    graph_path, graph, dataset_kind = _load_graph(graph_id)
+    generated = _RANDOM_SCENARIOS.get((graph_id, scenario_id))
+    if generated is None or any(item.scenario_id == scenario_id for item in graph.scenarios):
+        return graph_path, graph, dataset_kind
+    return graph_path, Graph(
+        nodes=graph.nodes,
+        edges=graph.edges,
+        scenarios=tuple(graph.scenarios) + (generated,),
+        metadata=graph.metadata,
+    ), dataset_kind
 
 
 @router.get("/graphs", tags=["graph"])
@@ -303,7 +318,7 @@ def _raise_search_http_error(error: Exception) -> None:
 )
 def search(payload: SearchRequest) -> dict[str, object]:
     """Run one validated two-point search on an immutable scenario graph."""
-    _, graph, _ = _load_graph(payload.graph_id)
+    _, graph, _ = _load_graph_for_scenario(payload.graph_id, payload.scenario)
     try:
         execution = SearchService(graph).search(
             start=payload.start,
@@ -331,7 +346,7 @@ def search(payload: SearchRequest) -> dict[str, object]:
 )
 def compare(payload: CompareRequest) -> dict[str, object]:
     """Run multiple registered algorithms against the exact same graph/cost input."""
-    _, graph, _ = _load_graph(payload.graph_id)
+    _, graph, _ = _load_graph_for_scenario(payload.graph_id, payload.scenario)
     try:
         executions = SearchService(graph).compare(
             start=payload.start,
@@ -397,7 +412,7 @@ def graph_detail(
     scenario_id: str | None = Query(default=None),
 ) -> dict[str, object]:
     """Load one discovered graph folder and serialize it for visualization."""
-    _, graph, _ = _load_graph(graph_id)
+    _, graph, _ = _load_graph_for_scenario(graph_id, scenario_id or "")
     if scenario_id is not None:
         try:
             graph.scenario(scenario_id)
@@ -466,6 +481,8 @@ def generate_random_scenario(payload: RandomScenarioRequest) -> dict[str, object
             num_edges=payload.num_edges,
             seed=payload.seed
         )
+        if service.generated_scenario is not None:
+            _RANDOM_SCENARIOS[(payload.graph_id, response.scenario_id)] = service.generated_scenario
         return response.model_dump()
         
     except RouteNotFoundError as error:

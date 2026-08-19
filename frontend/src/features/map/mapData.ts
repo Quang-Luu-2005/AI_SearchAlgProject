@@ -21,6 +21,7 @@ export type EdgeFeatureProperties = {
   to_node_id: string
   road_name: string
   is_closed: boolean
+  affected_status: 'CONGESTED' | 'FLOODED' | 'CLOSED' | null
   route_index: number
 }
 
@@ -190,6 +191,7 @@ function edgeFeature(
   edge: GraphEdge,
   nodeById: Map<string, GraphNode>,
   routeIndex: number,
+  affectedStatuses: Map<string, EdgeFeatureProperties['affected_status']> = new Map(),
 ): Feature<LineString, EdgeFeatureProperties> | null {
   const from = nodeById.get(edge.from_node_id)
   const to = nodeById.get(edge.to_node_id)
@@ -233,6 +235,7 @@ function edgeFeature(
       to_node_id: edge.to_node_id,
       road_name: String(edge.attributes.road_name ?? ''),
       is_closed: edge.is_closed,
+      affected_status: affectedStatuses.get(edge.edge_id) ?? null,
       route_index: routeIndex,
     },
   }
@@ -240,10 +243,11 @@ function edgeFeature(
 
 export function buildEdgeFeatureCollection(
   graph: GraphPayload,
+  affectedStatuses: Map<string, EdgeFeatureProperties['affected_status']> = new Map(),
 ): FeatureCollection<LineString, EdgeFeatureProperties> {
   const nodeById = new Map(graph.nodes.map((node) => [node.node_id, node]))
   const features = graph.edges.flatMap((edge) => {
-    const feature = edgeFeature(edge, nodeById, -1)
+    const feature = edgeFeature(edge, nodeById, -1, affectedStatuses)
     return feature ? [feature] : []
   })
   return { type: 'FeatureCollection', features }

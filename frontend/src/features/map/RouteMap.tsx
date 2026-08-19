@@ -54,6 +54,7 @@ type RouteMapProps = {
   isTourMode?: boolean
   isSidebarCollapsed?: boolean
   lang?: Language
+  affectedEdges?: Array<{ edge_id: string; status: 'CONGESTED' | 'FLOODED' | 'CLOSED' }>
 }
 
 
@@ -127,7 +128,7 @@ function addGraphLayers(map: maplibregl.Map) {
       id: 'floodroute-edge-open',
       type: 'line',
       source: SOURCE_EDGES,
-      filter: ['==', ['get', 'is_closed'], false],
+      filter: ['all', ['==', ['get', 'is_closed'], false], ['==', ['get', 'affected_status'], null]],
       paint: {
         'line-color': '#00714d',
         'line-width': ['interpolate', ['linear'], ['zoom'], 13, 1.4, 17, 3.4],
@@ -135,6 +136,26 @@ function addGraphLayers(map: maplibregl.Map) {
       },
       layout: { 'line-cap': 'round', 'line-join': 'round' },
     })
+  }
+  for (const [status, color] of [
+    ['CONGESTED', '#d97706'],
+    ['FLOODED', '#2563eb'],
+  ] as const) {
+    const layerId = `floodroute-edge-${status.toLowerCase()}`
+    if (!map.getLayer(layerId)) {
+      map.addLayer({
+        id: layerId,
+        type: 'line',
+        source: SOURCE_EDGES,
+        filter: ['==', ['get', 'affected_status'], status],
+        paint: {
+          'line-color': color,
+          'line-width': ['interpolate', ['linear'], ['zoom'], 13, 2.4, 17, 5],
+          'line-opacity': 0.9,
+        },
+        layout: { 'line-cap': 'round', 'line-join': 'round' },
+      })
+    }
   }
   if (!map.getLayer('floodroute-edge-closed')) {
     map.addLayer({
@@ -414,6 +435,7 @@ export function RouteMap({
   isTourMode = false,
   isSidebarCollapsed = false,
   lang = 'en',
+  affectedEdges = [],
 }: RouteMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
@@ -437,7 +459,14 @@ export function RouteMap({
   graphRef.current = graph
   isTourModeRef.current = isTourMode
 
-  const edgeData = useMemo(() => buildEdgeFeatureCollection(graph), [graph])
+  const affectedStatuses = useMemo(
+    () => new Map(affectedEdges.map((edge) => [edge.edge_id, edge.status] as const)),
+    [affectedEdges],
+  )
+  const edgeData = useMemo(
+    () => buildEdgeFeatureCollection(graph, affectedStatuses),
+    [affectedStatuses, graph],
+  )
   const nodeData = useMemo(() => buildNodeFeatureCollection(graph, {
     startId,
     goalId,
@@ -762,6 +791,14 @@ export function RouteMap({
   return (
     <div className={`route-map-shell${pickTarget ? ' is-picking' : ''}`}>
       <div ref={containerRef} className="route-map" aria-label={t('map_aria', lang)} />
+      <div className="map-legend-overlay" aria-label={t('legend_title', lang)}>
+        <strong>{t('legend_title', lang)}</strong>
+        <span><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
+        <span><i className="legend-line congested" />{t('legend_congested_road', lang)}</span>
+        <span><i className="legend-line flooded" />{t('legend_flooded_road', lang)}</span>
+        <span><i className="legend-line blocked" />{t('legend_closed_road', lang)}</span>
+        <span><i className="legend-line path" />{t('legend_optimal_path', lang)}</span>
+      </div>
       {!hideEndpoints && (
         <div className="map-pick-toolbar" aria-label={t('pick_toolbar', lang)}>
           {isTourMode ? (
@@ -858,7 +895,9 @@ export function RouteMap({
           </div>
           <div className="popover-legend-items">
             <span className="legend-item legend-item--open"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
-            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line congested" />{t('legend_congested_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line flooded" />{t('legend_flooded_road', lang)}</span>
+            <span className="legend-item legend-item--blocked"><i className="legend-line blocked" />{t('legend_closed_road', lang)}</span>
             <span className="legend-item legend-item--node"><i className="legend-node" />{t('legend_node', lang)}</span>
             <span className="legend-item"><i className="legend-node legend-node--frontier" />{t('legend_frontier', lang)}</span>
             <span className="legend-item"><i className="legend-node legend-node--current" />{t('legend_current', lang)}</span>

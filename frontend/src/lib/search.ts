@@ -20,6 +20,16 @@ export type ScenarioItem = {
   data_status: string
 }
 
+export type RandomAffectedEdge = {
+  edge_id: string
+  status: 'CONGESTED' | 'FLOODED' | 'CLOSED'
+}
+
+export type RandomScenarioResponse = {
+  scenario_id: string
+  affected_edges: RandomAffectedEdge[]
+}
+
 export type TraceEvent = {
   step: number
   kind: string
@@ -101,6 +111,21 @@ export function runSearch(
   signal?: AbortSignal,
 ): Promise<SearchResult> {
   return requestJson('/api/v1/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+    signal,
+  })
+}
+
+export function generateRandomScenario(input: {
+  graph_id: string
+  start_node_id: string
+  goal_node_id: string
+  num_edges?: number
+  seed?: string
+}, signal?: AbortSignal): Promise<RandomScenarioResponse> {
+  return requestJson('/api/v1/scenarios/random', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),

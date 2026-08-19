@@ -1,0 +1,71 @@
+{
+  "dataset_id": "thu_duc_landmarks_v1.0.3",
+  "data_status": "MIXED",
+  "real_time": false,
+  "scenarios": [
+    {
+      "scenario_id": "LANDMARK_NORMAL",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "UTraffic source max-velocity historical baseline",
+      "cost_preset": "BALANCED",
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {}
+    },
+    {
+      "scenario_id": "LANDMARK_FLOOD",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "Selected landmark edges flooded",
+      "cost_preset": "RAIN_SAFE",
+      "weights": {
+        "distance": 0.1,
+        "freeflow_time": 0.25,
+        "congestion": 0.15,
+        "flood_risk": 0.5
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {
+        "LM_EDGE_0001": {"flood_risk": 1.0, "data_status": "ASSUMPTION"},
+        "LM_EDGE_0002": {"flood_risk": 1.0, "data_status": "ASSUMPTION"},
+        "LM_EDGE_0003": {"flood_risk": 1.0, "data_status": "ASSUMPTION"}
+      }
+    },
+    {
+      "scenario_id": "LANDMARK_CONGESTION",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "Selected landmark edges congested",
+      "cost_preset": "PEAK_TRAFFIC",
+      "weights": {
+        "distance": 0.15,
+        "freeflow_time": 0.25,
+        "congestion": 0.45,
+        "flood_risk": 0.15
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {
+        "LM_EDGE_0001": {"traffic_penalty_min": 5.0, "data_status": "ASSUMPTION"},
+        "LM_EDGE_0002": {"traffic_penalty_min": 5.0, "data_status": "ASSUMPTION"},
+        "LM_EDGE_0003": {"traffic_penalty_min": 5.0, "data_status": "ASSUMPTION"}
+      }
+    },
+    {
+      "scenario_id": "LANDMARK_HARD_CLOSURE_DETOUR",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "Fixed landmark edge hard-closure detour demonstration",
+      "cost_preset": "BALANCED",
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "closed_edge_ids": ["LM_EDGE_0001"],
+      "edge_overrides": {}
+    }
+  ]
+}

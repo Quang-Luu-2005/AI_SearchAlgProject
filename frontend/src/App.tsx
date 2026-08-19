@@ -21,6 +21,7 @@ import {
 import {
   fetchLocations,
   fetchScenarios,
+  generateRandomScenario,
   optimizeTour,
   runComparison,
   runSearch,
@@ -29,6 +30,7 @@ import {
   type OptimizeTourResult,
   type ScenarioItem,
   type SearchResult,
+  type RandomAffectedEdge,
 } from './lib/search'
 import { addTourStop, MAX_TOUR_STOPS } from './lib/tourSelection'
 import { summarizeComparison } from './lib/comparison'
@@ -116,6 +118,8 @@ export function App() {
   const [locations, setLocations] = useState<LocationItem[]>([])
   const [scenarios, setScenarios] = useState<ScenarioItem[]>([])
   const [scenarioId, setScenarioId] = useState('')
+  const [randomAffectedEdges, setRandomAffectedEdges] = useState<RandomAffectedEdge[]>([])
+  const [randomRunning, setRandomRunning] = useState(false)
   const [startId, setStartId] = useState('')
   const [goalId, setGoalId] = useState('')
   const [pickTarget, setPickTarget] = useState<EndpointPickTarget | null>(null)
@@ -379,7 +383,8 @@ export function App() {
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
-            : nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
+            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_NORMAL')?.scenario_id
+            ?? nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
             ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
             ?? nextScenarios[0]?.scenario_id
             ?? ''
@@ -495,7 +500,29 @@ export function App() {
 
   function selectScenario(nextScenarioId: string) {
     setScenarioId(nextScenarioId)
+    setRandomAffectedEdges([])
     clearRouteResult()
+  }
+
+  async function createRandomScenario() {
+    if (!graphId || !startId || !goalId || randomRunning) return
+    setRandomRunning(true)
+    setError('')
+    try {
+      const payload = await generateRandomScenario({
+        graph_id: graphId,
+        start_node_id: startId,
+        goal_node_id: goalId,
+        num_edges: 5,
+      })
+      setRandomAffectedEdges(payload.affected_edges)
+      setScenarioId(payload.scenario_id)
+      clearRouteResult()
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : 'KhĂ´ng thá»ƒ sinh scenario ngáº«u nhiĂªn.')
+    } finally {
+      setRandomRunning(false)
+    }
   }
 
   async function executeSearch(event?: FormEvent) {
@@ -758,11 +785,30 @@ export function App() {
               <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
                 {scenarios.map((item) => (
                   <option key={item.scenario_id} value={item.scenario_id}>
-                    {item.scenario_id}
+                    {item.scenario_id === 'LANDMARK_NORMAL' ? t('scenario_normal', lang) :
+                      item.scenario_id === 'LANDMARK_FLOOD' ? t('scenario_flood', lang) :
+                        item.scenario_id === 'LANDMARK_CONGESTION' ? t('scenario_congestion', lang) :
+                          item.scenario_id === 'LANDMARK_HARD_CLOSURE_DETOUR' ? t('scenario_hard_closure', lang) :
+                            item.scenario_id}
                   </option>
                 ))}
               </select>
             </label>
+            <button
+              className="generate-button"
+              type="button"
+              onClick={createRandomScenario}
+              disabled={!startId || !goalId || randomRunning}
+            >
+              {randomRunning ? t('random_generating', lang) : t('random_generate', lang)}
+            </button>
+            {randomAffectedEdges.length > 0 && (
+              <div className="scenario-summary scenario-summary--random">
+                <span>RANDOM</span>
+                <strong>{t('random_affected', lang, { count: randomAffectedEdges.length })}</strong>
+                <small>{randomAffectedEdges.map((edge) => `${edge.edge_id} (${edge.status === 'CONGESTED' ? t('status_congested', lang) : edge.status === 'FLOODED' ? t('status_flooded', lang) : t('status_closed', lang)})`).join(' · ')}</small>
+              </div>
+            )}
 
             {!algorithm ? (
               <div className="algorithm-prompt-note">
@@ -958,6 +1004,7 @@ export function App() {
                 isSidebarCollapsed={isSidebarCollapsed}
                 hideEndpoints={!algorithm}
                 lang={lang}
+                affectedEdges={randomAffectedEdges}
               />
             ) : (
               <div className="map-placeholder">{t('panel_subtitle', lang)}</div>
@@ -969,7 +1016,9 @@ export function App() {
               </div>
               <div className="legend-items">
                 <span className="legend-item"><i className="legend-line open" />{t('legend_normal_road', lang)}</span>
-                <span className="legend-item"><i className="legend-line blocked" />{t('legend_blocked_road', lang)}</span>
+                <span className="legend-item"><i className="legend-line congested" />{t('legend_congested_road', lang)}</span>
+                <span className="legend-item"><i className="legend-line flooded" />{t('legend_flooded_road', lang)}</span>
+                <span className="legend-item"><i className="legend-line blocked" />{t('legend_closed_road', lang)}</span>
                 <span className="legend-item"><i className="legend-node" />{t('legend_node', lang)}</span>
                 <span className="legend-item"><i className="legend-node legend-node--frontier" />{t('legend_frontier', lang)}</span>
                 <span className="legend-item"><i className="legend-node legend-node--current" />{t('legend_current', lang)}</span>
