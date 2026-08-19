@@ -463,6 +463,13 @@ export function App() {
     setIsPlaying(false)
   }
 
+  function selectAlternativeRoute(candidate: SearchResult) {
+    setResult(candidate)
+    setTourResult(null)
+    setCurrentStep(candidate.trace.length || 1)
+    setIsPlaying(false)
+  }
+
   function selectStart(nodeId: string) {
     setStartId(nodeId)
     if (isTourMode) {
@@ -1142,8 +1149,8 @@ export function App() {
                   <button
                     key={`${candidate.algorithm}-${candidate.edge_ids.join('-')}`}
                     type="button"
-                    className={index === 0 ? 'alternative-route-card alternative-route-card--optimal' : 'alternative-route-card'}
-                    onClick={() => setResult(candidate)}
+                    className={`alternative-route-card${index === 0 ? ' alternative-route-card--optimal' : ''}${result?.edge_ids.join('|') === candidate.edge_ids.join('|') ? ' alternative-route-card--selected' : ''}`}
+                    onClick={() => selectAlternativeRoute(candidate)}
                   >
                     <div className="alternative-route-card__topline">
                       <strong>{index === 0 ? t('optimal_route_badge', lang) : t('alternative_route_badge', lang)}</strong>
