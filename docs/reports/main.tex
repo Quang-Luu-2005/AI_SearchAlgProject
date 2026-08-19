@@ -1,61 +1,34 @@
 %!TEX program = xelatex
-% Written-report requirements matched here:
-% - Output: PDF via XeLaTeX
-% - Font size: 11pt
-% - Line spacing: 1.15
-% - Figures/tables: clear captions and cross-references
+% Build from docs/reports with XeLaTeX twice for references and the table of contents.
 \documentclass[11pt]{article}
 \usepackage{hcmus-report-template}
 \usepackage{amsmath}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage[nameinlink,noabbrev]{cleveref}
 \usepackage{dirtree}
-
-% Disable indentation on new paragraphs
+\usepackage{float}
 \setlength{\parindent}{0pt}
-
-% Report formatting requirement: line spacing in the 1.15--1.5 range.
 \setstretch{1.15}
+\graphicspath{{figures/}{img/}}
 
-% Default graphic search path for report figures
-\graphicspath{{img/}}
-
-% Define course name, report name and report title in Vietnamese.
+% ===== Editable project metadata =====
 \newcommand{\coursename}{Nhập môn Trí tuệ Nhân tạo}
-\newcommand{\reportname}{Tối ưu hóa Tuyến đường Giao hàng Đô thị TP. Hồ Chí Minh trong Điều kiện Kẹt xe và Ngập nước (FloodRoute HCMC)}
+\newcommand{\classname}{24CLC03}
+\newcommand{\reportname}{FloodRoute HCMC}
 \newcommand{\reporttitle}{BÁO CÁO ĐỒ ÁN LAB 1}
-
-\newcommand{\studentname}
-{
-Ngô Quang Thắng -- 23127473
-\\
-Vũ Lê Trọng Văn -- 20127095
-\\
-Nguyễn Duy Khang -- 23127202
-\\
-Lưu Huy Minh Quang -- 23127016
-}
+\newcommand{\reportdate}{THÁNG 08/2026}
+\newcommand{\studentname}{Ngô Quang Thắng -- 23127473\\Vũ Lê Trọng Văn -- 20127095\\Nguyễn Duy Khang -- 23127202\\Lưu Huy Minh Quang -- 23127016}
 \newcommand{\teachername}{TS. Nguyễn Văn Tân}
-
-% Header
 \lhead{\reporttitle}
-\rhead{
-Trường Đại học Khoa học Tự nhiên\\
-\coursename
-}
+\rhead{Trường Đại học Khoa học Tự nhiên\\\coursename}
 
-% ============ DOCUMENT ============
 \begin{document}
-
 \pagenumbering{roman}
 \input{content/title.tex}
-
 \tableofcontents
 \pagebreak
-
 \pagenumbering{arabic}
 \setcounter{page}{1}
-
 \input{content/1.Group Introduction.tex}
 \input{content/2.Problem Context.tex}
 \input{content/3.Problem Modeling.tex}
@@ -66,8 +39,5 @@ Trường Đại học Khoa học Tự nhiên\\
 \input{content/8.Multi-location Optimization.tex}
 \input{content/9.Program Instructions.tex}
 \input{content/10.Limitations and Future Work.tex}
-
-% References
 \input{ref/ref.tex}
-
 \end{document}

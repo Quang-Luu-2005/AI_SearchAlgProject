@@ -1,6 +1,6 @@
 {
   "benchmark_id": "COST_PROFILES_V1",
-  "generated_at_utc": "2026-08-19T02:44:21.247478+00:00",
+  "generated_at_utc": "2026-08-19T11:49:16.248886+00:00",
   "result_status": "DERIVED_PROFILE_REVIEW",
   "profiles_data_status": "ASSUMPTION",
   "formula": "cost(e) = distance*w_distance + freeflow_time*w_freeflow_time + traffic_penalty*w_congestion + flood_risk*w_flood_risk",

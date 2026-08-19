@@ -5,7 +5,22 @@
 \RequirePackage[a4paper, left=2.5cm, right=2.0cm, top=2.0cm, bottom=2.0cm]{geometry}
 
 % Typography & Language
-\RequirePackage[utf8]{vietnam}
+% XeLaTeX/LuaLaTeX handle UTF-8 natively and avoid the old T5 font encoding,
+% which can drop Vietnamese glyphs when the report is edited and rebuilt.
+\RequirePackage{iftex}
+\ifPDFTeX
+  \RequirePackage[utf8]{inputenc}
+  \RequirePackage[T5]{fontenc}
+  \RequirePackage[utf8]{vietnam}
+\else
+  \RequirePackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \IfFontExistsTF{Times New Roman}{
+    \setmainfont{Times New Roman}
+  }{
+    \setmainfont{TeX Gyre Termes}
+  }
+\fi
 \RequirePackage{amsmath, amssymb, amsthm}
 \RequirePackage{setspace}
 \RequirePackage{fancyhdr}
@@ -32,7 +47,7 @@
 % Header and Footer setup
 \pagestyle{fancy}
 \fancyhf{}
-\setlength{\headheight}{25pt}
+\setlength{\headheight}{26pt}
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.5pt}
 

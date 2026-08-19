@@ -1,57 +1,24 @@
-\section{Tập Dữ liệu \& Quy trình Quản lý}
-\label{sec:dataset}
+\section{Dataset và provenance}
+\subsection{Dataset đang sử dụng}
+Trong phiên bản hiện tại, ứng dụng sử dụng release \texttt{thu\_duc\_landmarks\_v1.0.0}, gồm 65 selectable landmarks và 178 directed road-path edges. Đây là bản đồ được dùng trong giao diện và benchmark search. Map 90 node đã được loại khỏi phạm vi sử dụng và không còn được dùng trong ứng dụng.
 
-\subsection{Quy trình Xử lý Dữ liệu 4 Tầng (4-Tier Data Pipeline)}
-Dự án áp dụng quy trình quản trị dữ liệu 4 tầng nghiêm ngặt nhằm đảm bảo tính toàn vẹn và khả năng tái lập:
+\subsection{Nguồn dữ liệu và pipeline}
+Nhóm em tổ chức pipeline theo các bước:
+\[
+\texttt{data/raw} \longrightarrow \texttt{processed} \longrightarrow \texttt{graph/scenario} \longrightarrow \texttt{search}.
+\]
+Nguồn đường và landmark được ghi nhận từ OSM/UTraffic; các trường được tính thêm trong quá trình xử lý được đánh dấu là derived. Nhóm em không chỉnh sửa trực tiếp \texttt{data/raw/}; các bản processed và manifest được version hóa để có thể kiểm tra lại.
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-    node distance=1.5cm and 2.5cm,
-    stage/.style={rectangle, draw=blue!70!black, fill=blue!5, rounded corners=4pt, text width=3.8cm, minimum height=1.6cm, align=center, font=\small},
-    arrow/.style={thick, ->, >=stealth, color=blue!80!black}
-]
-    \node[stage] (raw) {\textbf{data/raw/}\\ \footnotesize (OSM Snapshots, UTraffic, Checksums)};
-    \node[stage, right=of raw] (interim) {\textbf{data/interim/}\\ \footnotesize (Clean topology, BBox simplified)};
-    \node[stage, below=of raw] (fixtures) {\textbf{data/fixtures/}\\ \footnotesize (toy\_graph, golden unit tests)};
-\node[stage, below=of interim] (processed) {\textbf{data/processed/}\\ \footnotesize (Landmark 65, Capacity 3229)};
-
-    \draw[arrow] (raw) -- node[above, font=\footnotesize] {scripts/data/} (interim);
-    \draw[arrow] (interim) -- node[right, font=\footnotesize] {Build scripts} (processed);
-    \draw[arrow] (raw) -- node[left, font=\footnotesize] {SHA-256} (fixtures);
-\end{tikzpicture}
-\caption{Quy trình xử lý dữ liệu 4 tầng của FloodRoute HCMC.}
-\label{fig:data_pipeline}
-\end{figure}
-
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{\texttt{data/raw/}}: Chứa dữ liệu gốc bất biến (\texttt{osm\_relation\_19407794.geojson}, snapshot Kaggle UTraffic 8.952 nodes/14.043 edges), kiểm tra toàn vẹn bằng mã SHA-256.
-    \item \textbf{\texttt{data/interim/}}: Lưu trữ dữ liệu trung gian sau khi trích lọc theo Bounding Box địa lý.
-    \item \textbf{\texttt{data/processed/}}: Các graph release phục vụ chạy ứng dụng và thực nghiệm khoa học.
-    \item \textbf{\texttt{data/fixtures/}}: Các đồ thị nhỏ phục vụ unit test và golden validation (\texttt{toy\_graph\_v0.1}).
-\end{itemize}
-
-\subsection{Chi tiết 3 Bản Phát hành Dữ liệu (Processed Releases)}
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabularx}{\textwidth}{l c c l X}
+\begin{tabular}{l p{0.68\textwidth}}
 \toprule
-\textbf{Tên Dataset} & \textbf{Số Đỉnh ($V$)} & \textbf{Số Cạnh ($E$)} & \textbf{Trạng thái} & \textbf{Mục đích Sử dụng} \\
+Nhãn & Ý nghĩa\\
 \midrule
-\textbf{\texttt{thu\_duc\_landmarks\_v1.0.0}} & \textbf{65} POI & \textbf{178} Cạnh & \texttt{LANDMARK\_DEMO} & 65 địa điểm lớn có tên thật từ OSM (Đại học, Bệnh viện, Chợ); cạnh lưu polyline thực tế từ UTraffic. Mặc định trên GUI. \\
-\textbf{\texttt{thu\_duc\_core\_capacity\_v0.1.0}} & \textbf{3.229} Nút & \textbf{5.057} Cạnh & \texttt{CAPACITY\_ONLY} & Mạng lưới giao thông lõi TP. Thủ Đức phục vụ đo đạc hiệu năng và stress-test dung lượng. \\
+\texttt{SOURCE\_BACKED} & Dữ liệu có nguồn bên ngoài được ghi nhận.\\
+\texttt{DERIVED} & Dữ liệu được tính từ nguồn bằng pipeline hoặc công thức.\\
+\texttt{SIMULATED} & Giá trị được tạo ra để chạy fixture hoặc scenario kiểm thử.\\
+\texttt{ASSUMPTION} & Giả định tạm thời, cần được thay bằng dữ liệu thực khi có.\\
 \bottomrule
-\end{tabularx}
-\caption{Tổng hợp 3 bản phát hành dữ liệu chính thức trong hệ thống.}
-\label{tab:processed_releases}
-\end{table}
+\end{tabular}
 
-\subsection{Hệ thống Nhãn Dữ liệu Minh bạch (Provenance Transparency)}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{\texttt{SOURCE\_BACKED}}: Dữ liệu có nguồn trích xuất xác thực từ OpenStreetMap hoặc UTraffic.
-    \item \textbf{\texttt{DERIVED}}: Dữ liệu tính toán từ công thức/script tái lập (cự ly Haversine, Free-flow time).
-    \item \textbf{\texttt{SIMULATED / ASSUMPTION}}: Dữ liệu mô phỏng tham số giao thông (hiển thị rõ trên GUI).
-    \item \textbf{\texttt{REVIEW\_REQUIRED}}: Dữ liệu map-matching ngập nước đang chờ thẩm định bổ sung.
-\end{itemize}
+\subsection{Fixture kiểm chứng}
+\texttt{toy\_graph\_v0.1} là graph nhỏ có nhãn \texttt{SIMULATED}, được dùng để kiểm tra các tình huống traffic/flood và lower-bound heuristic. Fixture này giúp nhóm em có các test case cố định, dễ chạy lại và không làm thay đổi dataset chính.

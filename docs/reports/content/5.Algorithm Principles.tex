@@ -1,96 +1,18 @@
-\section{Cơ sở Lý thuyết \& Nguyên lý Thuật toán}
-\label{sec:algorithm_principles}
-
-\subsection{Thuật toán Tìm kiếm Không Trọng số (Unweighted Search)}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Breadth-First Search (BFS)}: Sử dụng hàng đợi FIFO (\texttt{collections.deque}). Khám phá đều theo từng mức độ sâu; đảm bảo tìm được đường đi có \textbf{số chặng ít nhất (\textit{minimum hop count})}.
-    \item \textbf{Depth-First Search (DFS)}: Sử dụng ngăn xếp LIFO kết hợp tập \texttt{expanded} để chống lặp chu trình. Khám phá sâu dọc theo từng nhánh đường trước khi quay lui (\textit{backtracking}); không đảm bảo tính tối ưu chi phí.
-\end{itemize}
-
-\subsection{Thuật toán Tìm kiếm Có Trọng số (Weighted Search)}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Uniform Cost Search (UCS / Dijkstra)}: Sử dụng Min-Priority Queue (\texttt{heapq}) với khóa sắp xếp là $g(n)$ (chi phí tích lũy từ Start đến $n$). Đảm bảo tìm được đường đi có \textbf{tổng chi phí $C^*$ nhỏ nhất} khi mọi $c(e) \ge 0$.
-    \item \textbf{A* Search}: Sử dụng Min-Priority Queue với hàm đánh giá:
-    \begin{equation}
-        f(n) = g(n) + h_s(n)
-    \end{equation}
-    với Scenario-aware Cost Lower-Bound Heuristic:
-    \begin{equation}
-        \rho_s = \min_{e\ \text{mở}} \frac{Cost_s(e)}{D_{\text{Haversine}}(e)},
-        \qquad h_s(n) = \rho_s \cdot D_{\text{Haversine}}(n, \text{Goal})
-    \end{equation}
-    Trong đó cạnh đóng và cạnh có khoảng cách Haversine gần 0 không tham gia tính
-    $\rho_s$; scenario được freeze trong một lần search.
-\end{itemize}
-
-\subsection{Chứng minh Toán học về Tính Đúng đắn của Heuristic}
-
-\begin{theorem}[Tính Chấp nhận được -- Admissibility]
-Với mọi cạnh mở, $Cost_s(e) \ge \rho_s D_{\text{Haversine}}(e)$ theo định nghĩa
-của $\rho_s$. Vì vậy $h_s(n) = \rho_s D_{\text{Haversine}}(n, \text{Goal})$ là
-lower bound và thỏa mãn $0 \le h_s(n) \le h^*(n)$ khi cost không âm và scenario tĩnh.
-\end{theorem}
-
-\begin{proof}
-1. Khoảng cách đường cong trắc địa (đường chim bay) $D_{\text{Haversine}}(n, \text{Goal})$ là khoảng cách vật lý ngắn nhất giữa hai điểm trên bề mặt Trái Đất. Do đó, với bất kỳ đường đi thực tế nào qua mạng lưới đường bộ, tổng chiều dài $D^*(n, \text{Goal}) \ge D_{\text{Haversine}}(n, \text{Goal})$.\\
-2. Mọi thành phần chi phí trong hàm mục tiêu ($T_{\text{ff}}, P_{\text{traffic}}, R_{\text{flood}}$) và các trọng số $w_i$ đều không âm ($\ge 0$).\\
-3. Do đó, theo định nghĩa $\rho_s$, chi phí của mỗi cạnh mở thỏa mãn
-$c_s(e) \ge \rho_s \cdot D_{\text{Haversine}}(e)$. Tổng chi phí thực tế tối ưu thỏa mãn:
-\begin{equation}
-    h^*(n) \ge \rho_s \cdot D^*(n, \text{Goal}) \ge \rho_s \cdot D_{\text{Haversine}}(n, \text{Goal}) = h_s(n)
-\end{equation}
-$\implies h_s(n)$ luôn là một chặn dưới (\textit{lower bound}) hợp lệ, do đó $h_s(n)$ \textbf{Admissible}.
-\end{proof}
-
-\begin{theorem}[Tính Nhất quán / Đơn điệu -- Consistency / Monotonicity]
-Với mọi cạnh mở $e = (n, n')$, hàm heuristic thỏa mãn $h_s(n) \le c_s(n, n') + h_s(n')$.
-\end{theorem}
-
-\begin{proof}
-1. Theo bất đẳng thức tam giác cầu (\textit{Spherical Triangle Inequality}) cho khoảng cách địa lý:
-\begin{equation}
-    D_{\text{Haversine}}(n, \text{Goal}) \le D_{\text{Haversine}}(n, n') + D_{\text{Haversine}}(n', \text{Goal})
-\end{equation}
-2. Nhân hai vế với $\rho_s \ge 0$:
-\begin{equation}
-    \rho_s \cdot D_{\text{Haversine}}(n, \text{Goal}) \le \rho_s \cdot D_{\text{Haversine}}(n, n') + \rho_s \cdot D_{\text{Haversine}}(n', \text{Goal})
-\end{equation}
-\begin{equation}
-    \iff h_s(n) \le \rho_s \cdot D_{\text{Haversine}}(n, n') + h_s(n')
-\end{equation}
-3. Theo định nghĩa $\rho_s$, $\rho_s \cdot D_{\text{Haversine}}(n, n') \le c_s(n, n')$ trên mọi cạnh mở:
-\begin{equation}
-    \rho_s \cdot D_{\text{Haversine}}(n, n') \le c_s(n, n')
-\end{equation}
-4. Kết hợp lại suy ra $h_s(n) \le c_s(n, n') + h_s(n') \quad \forall (n, n') \in E \implies h_s(n)$ \textbf{Consistent}.
-\end{proof}
-
-\subsection{Thuật toán Tìm kiếm Mở rộng}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Greedy Best-First Search}: Sử dụng hàng đợi ưu tiên với hàm đánh giá $f(n) = h(n)$. Tốc độ thực thi cực nhanh nhưng không đảm bảo tính tối ưu.
-    \item \textbf{Bidirectional Search}: Duyệt đồng thời hai luồng BFS: luồng thuận (\textit{Forward}) từ $\text{Start}$ và luồng nghịch (\textit{Backward}) từ $\text{Goal}$ trên đồ thị chuyển vị. Giảm không gian tìm kiếm từ $O(b^d)$ xuống $O(2 \cdot b^{d/2})$.
-\end{itemize}
-
-\subsection{Ví dụ Minh họa Từng bước Duyệt Nút (Trace Walkthrough Example)}
-Xét đồ thị mẫu 4 nút: $A \xrightarrow{c=2, h=5} B \xrightarrow{c=4, h=0} D$ và $A \xrightarrow{c=5, h=3} C \xrightarrow{c=1, h=0} D$ với $\text{Start}=A, \text{Goal}=D$.
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabular}{c l l p{6.5cm} c l}
+\section{Nguyên lý các thuật toán}
+Trong đồ án, nhóm em cài đặt và so sánh các thuật toán sau:
+\begin{tabularx}{\textwidth}{l X l l}
 \toprule
-\textbf{Bước} & \textbf{Thuật toán} & \textbf{Nút EXPAND} & \textbf{Frontier List (Nút, $g$, $h$, $f$)} & \textbf{Nút CLOSE} & \textbf{Ghi chú Trạng thái} \\
+Thuật toán & Ý tưởng & Tối ưu? & Độ phức tạp khái quát\\
 \midrule
-1 & \textbf{UCS} & $A$ ($g=0$) & $[(B, g=2), (C, g=5)]$ & $\{A\}$ & Mở rộng $A$, phát hiện $B$ và $C$. \\
-2 & \textbf{UCS} & $B$ ($g=2$) & $[(C, g=5), (D, g=6)]$ & $\{A, B\}$ & $B$ có $g=2$ nhỏ nhất. Thêm $D$ ($g=6$). \\
-3 & \textbf{UCS} & $C$ ($g=5$) & $[(D, g=6)_{\text{qua } C}, (D, g=6)_{\text{qua } B}]$ & $\{A, B, C\}$ & $C$ có $g=5$. Thêm $D$ qua $C$ ($g=6$). \\
-4 & \textbf{UCS} & $D$ ($g=6$) & Đích đạt được & $\{A, B, C, D\}$ & Nghiệm tối ưu: $A \to B \to D$ ($C=6.0$). \\
-\midrule
-1 & \textbf{A*} & $A$ ($f=5$) & $[(B, g=2, h=5, f=7), (C, g=5, h=3, f=8)]$ & $\{A\}$ & $A$ khởi tạo với $h(A)=5$. \\
-2 & \textbf{A*} & $B$ ($f=7$) & $[(D, g=6, h=0, f=6), (C, g=5, h=3, f=8)]$ & $\{A, B\}$ & $B$ có $f=7 < f(C)=8$. Thêm $D$ ($f=6$). \\
-3 & \textbf{A*} & $D$ ($f=6$) & Đích đạt được & $\{A, B, D\}$ & \textbf{A* dừng sớm, không cần duyệt $C$}! \\
+BFS & Mở rộng các node theo từng lớp & Có nếu các edge có cùng cost & \(O(V+E)\)\\
+DFS & Đi sâu theo một nhánh trước & Không đảm bảo & \(O(V+E)\)\\
+UCS/Dijkstra & Luôn chọn node có \(g\) nhỏ nhất & Có với cost không âm & \(O((V+E)\log V)\)\\
+A* & Chọn node theo \(g+h\) & Có nếu \(h\) admissible/consistent & Phụ thuộc heuristic\\
+Greedy Best-First & Chọn node có \(h\) nhỏ nhất & Không đảm bảo & Phụ thuộc heuristic\\
+Bidirectional & Tìm kiếm đồng thời từ hai đầu & Có nếu điều kiện dừng đúng & Giảm không gian trong một số trường hợp\\
+Held-Karp & Dynamic programming trên tập stop & Có trong TSP nhỏ & \(O(n^2 2^n)\)\\
+Nearest Neighbor & Mỗi bước chọn điểm gần/rẻ nhất tiếp theo & Không đảm bảo & \(O(n^2)\)\\
 \bottomrule
-\end{tabular}
-\caption{Bảng so sánh quá trình duyệt nút từng bước giữa UCS và A* trên đồ thị mẫu.}
-\label{tab:trace_walkthrough}
-\end{table}
+\end{tabularx}
+
+BFS phù hợp khi các edge có cùng chi phí. UCS được nhóm em dùng làm mốc tham chiếu vì luôn cho nghiệm tối ưu khi chi phí không âm. A* có thể giảm số node phải mở rộng nếu heuristic phù hợp. Greedy chạy nhanh nhưng không thể dùng để khẳng định nghiệm tối ưu. Bidirectional có thể giúp giảm số node trong những graph phù hợp. Held-Karp cho nghiệm chính xác nhưng chỉ nên dùng khi số stop nhỏ, còn Nearest Neighbor cho nghiệm gần đúng với thời gian chạy ngắn hơn.

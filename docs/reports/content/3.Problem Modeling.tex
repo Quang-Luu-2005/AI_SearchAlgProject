@@ -1,71 +1,28 @@
-\section{Mô hình hóa Bài toán \& Hàm Chi phí}
-\label{sec:problem_modeling}
+\section{Mô hình hóa bài toán}
+\subsection{Graph có hướng}
+Nhóm em biểu diễn bản đồ dưới dạng graph có hướng \(G=(V,E)\), trong đó node là các landmark và edge là các đoạn đường có thể đi qua. Mỗi node có mã, tên và tọa độ địa lý. Mỗi edge lưu node đầu, node cuối cùng các thông tin liên quan đến đoạn đường. Trong quá trình tìm kiếm, trạng thái của một node gồm chi phí tạm thời \(g(n)\), node cha và trạng thái đã được khám phá hay chưa.
 
-\subsection{Mô hình Không gian Trạng thái (State-Space Formulation)}
-Bài toán tìm đường được mô hình hóa toán học dưới dạng bài toán tìm kiếm trên không gian trạng thái:
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Tập trạng thái ($S$)}: Tập hợp tất cả các nút giao thông và địa điểm trọng yếu trên mạng lưới đường bộ ($S = V$).
-    \item \textbf{Trạng thái bắt đầu ($s_0$)}: Vị trí xuất phát của shipper ($s_0 = \text{Start} \in V$).
-    \item \textbf{Tập hành động ($A(s)$)}: Tập các cạnh có hướng xuất phát từ nút $s$ mà không bị đóng trong kịch bản hiện tại:
-    \begin{equation}
-        A(s) = \{ (s, v) \in E \mid (s, v) \notin \text{ClosedEdges}(\text{Scenario}) \}
-    \end{equation}
-    \item \textbf{Mô hình chuyển trạng thái ($\text{Result}(s, a)$)}: Khi thực hiện hành động $a = (s, v)$, trạng thái mới đạt được là $v$.
-    \item \textbf{Kiểm tra trạng thái đích ($\text{GoalTest}(s)$)}: Kiểm tra xem $s$ có trùng với điểm đích $\text{Goal}$ hay không ($s = \text{Goal}$).
-    \item \textbf{Chi phí từng bước ($c(s, a, s')$)}: Chi phí tổng hợp của cạnh $a = (s, s')$ tính theo mô hình chi phí của kịch bản đang chọn.
-\end{itemize}
+\subsection{Thuộc tính edge}
+Một edge có các thuộc tính: distance, free-flow time, traffic penalty, flood risk, direction và closure status. Transition chỉ được phép trên edge không đóng. Graph được giữ bất biến trong suốt quá trình chạy. Các thuật toán chỉ đọc graph, không tự ý thay đổi dữ liệu gốc và sử dụng quy tắc tie-break cố định để kết quả có thể lặp lại.
 
-\subsection{Mô hình Chi phí Tổng hợp 4 Thành phần (Composite Cost Function)}
-Chi phí của mỗi cạnh có hướng $e = (u, v)$ được tính toán thông qua hàm tuyến tính có trọng số chuẩn hóa:
+\subsection{Composite cost}
+Với scenario \(s\), chi phí của một edge được tính bởi
+\[
+\operatorname{Cost}_s(e)=w_d\,d(e)+w_t\,t(e)+w_c\,c_s(e)+w_f\,r_s(e).
+\]
+Trong đó \(d\) là distance, \(t\) là free-flow time, \(c_s\) là traffic penalty và \(r_s\) là flood risk.
+Các weight trong đồ án là hệ số ưu tiên dùng cho prototype và được chọn theo hướng mô phỏng/empirical. Đây không phải là phần trăm đóng góp thực tế, vì các thành phần có đơn vị và thang đo khác nhau.
 
-\begin{equation}
-\label{eq:cost_function}
-\boxed{C(e) = w_{\text{dist}} \cdot D(e) + w_{\text{time}} \cdot T_{\text{ff}}(e) + w_{\text{cong}} \cdot P_{\text{traffic}}(e) + w_{\text{flood}} \cdot R_{\text{flood}}(e)}
-\end{equation}
-
-Trong đó:
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{$D(e)$ -- Khoảng cách (Distance)}: Độ dài vật lý của đoạn đường, quy đổi ra kilômét:
-    \begin{equation}
-        D(e) = \frac{\text{distance\_m}(e)}{1000} \quad (\text{km})
-    \end{equation}
-    \item \textbf{$T_{\text{ff}}(e)$ -- Thời gian lưu thông tự do (Free-flow Time)}: Thời gian di chuyển ở điều kiện đường thông thoáng với vận tốc thiết kế:
-    \begin{equation}
-        T_{\text{ff}}(e) = \text{free\_flow\_time\_min}(e) \quad (\text{phút})
-    \end{equation}
-    \item \textbf{$P_{\text{traffic}}(e)$ -- Độ trễ do kẹt xe (Traffic Delay Penalty)}:
-    \begin{align}
-        T_{\text{travel}}(e) &= T_{\text{ff}}(e) \times \text{TrafficMultiplier}(e) \\
-        P_{\text{traffic}}(e) &= \max\big(0,\, T_{\text{travel}}(e) - T_{\text{ff}}(e)\big) \quad (\text{phút})
-    \end{align}
-    \textit{Lưu ý thiết kế}: Việc tách riêng $P_{\text{traffic}}$ khỏi $T_{\text{ff}}$ giúp chi phí không bị tính trùng lặp thời gian di chuyển cơ sở.
-    \item \textbf{$R_{\text{flood}}(e)$ -- Chỉ số Rủi ro Ngập nước (Flood Risk)}: Giá trị chuẩn hóa $R_{\text{flood}} \in [0.0, 1.0]$ dựa trên mức độ ngập lịch sử (0: khô ráo, 1: ngập sâu nguy hiểm).
-    \item \textbf{Bộ trọng số ($w_{\text{dist}}, w_{\text{time}}, w_{\text{cong}}, w_{\text{flood}}$)}: Thỏa mãn điều kiện chuẩn hóa $w_i \ge 0$ và:
-    \begin{equation}
-        \sum w_i = w_{\text{dist}} + w_{\text{time}} + w_{\text{cong}} + w_{\text{flood}} = 1.0
-    \end{equation}
-\end{enumerate}
-
-\subsection{Các Thiết lập Kịch bản Chuẩn (Cost Presets)}
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabular}{l c c c c p{7.5cm}}
+\subsection{Ba cost profiles}
+\begin{center}
+\begin{tabular}{l c}
 \toprule
-\textbf{Preset ID} & \textbf{$w_{\text{dist}}$} & \textbf{$w_{\text{time}}$} & \textbf{$w_{\text{cong}}$} & \textbf{$w_{\text{flood}}$} & \textbf{Mục tiêu Tối ưu hóa} \\
+Profile & \((w_d,w_t,w_c,w_f)\)\\
 \midrule
-\texttt{BALANCED} & 0.25 & 0.30 & 0.20 & 0.25 & Cân bằng hài hòa giữa cự ly, thời gian, kẹt xe và an toàn ngập nước (chế độ mặc định). \\
-\texttt{PEAK\_TRAFFIC} & 0.15 & 0.25 & 0.45 & 0.15 & Ưu tiên cao nhất cho việc tránh các điểm nóng kẹt xe trong giờ cao điểm. \\
-\texttt{RAIN\_SAFE} & 0.10 & 0.25 & 0.15 & 0.50 & Ưu tiên tối đa việc đi vòng qua các tuyến đường ngập sâu khi trời mưa to / triều cường. \\
+\texttt{BALANCED} & (0.25, 0.30, 0.20, 0.25)\\
+\texttt{PEAK\_TRAFFIC} & (0.15, 0.25, 0.45, 0.15)\\
+\texttt{RAIN\_SAFE} & (0.10, 0.25, 0.15, 0.50)\\
 \bottomrule
 \end{tabular}
-\caption{Các bộ trọng số kịch bản chuẩn được tích hợp sẵn trong hệ thống.}
-\label{tab:cost_presets}
-\end{table}
-
-Các trọng số trên là hệ số ưu tiên mô phỏng/empirical, không phải phần trăm
-đóng góp thực tế, vì bốn thành phần có đơn vị và scale khác nhau. Đóng đường
-không được mô hình hóa bằng một weight nhỏ: road closure là hard constraint,
-cạnh đóng bị loại khỏi tập hành động và không thể xuất hiện trong route. Public
-API chốt ba preset ổn định; custom weights không nằm trong phạm vi deadline.
+\end{center}
+Các profile có thể được thay bằng API custom weights nếu có validation; closure vẫn là hard constraint.

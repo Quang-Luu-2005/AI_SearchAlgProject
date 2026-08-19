@@ -1,35 +1,31 @@
-\section{Kiến trúc Hệ thống \& Luồng Thực thi}
-\label{sec:program_flow}
+\section{Heuristic A* lower-bound và kiểm tra tính đúng đắn}
+\subsection{Cách tính heuristic}
+Với mỗi scenario \(s\), nhóm em tính \(\rho_s\) một lần trước khi bắt đầu tìm kiếm:
+\[
+\rho_s=\min_{\substack{e\in E,\ e\text{ không đóng}\\
+\operatorname{Haversine}(e)>10^{-6}\ {\rm km}}}
+\frac{\operatorname{Cost}_s(e)}{\operatorname{Haversine}(e)}.
+\]
+Sau đó, heuristic của một node \(n\) được tính như sau:
+\[
+h_s(n)=\rho_s\cdot\operatorname{Haversine}(n,\mathrm{goal}),\qquad
+f(n)=g(n)+h_s(n).
+\]
+Các edge đã đóng không được đưa vào phép tính \(\rho_s\). Những edge có khoảng cách Haversine quá nhỏ cũng được bỏ qua để tránh chia cho một số gần bằng 0. Nếu không còn edge hợp lệ thì nhóm em đặt \(\rho_s=0\). Với node không có tọa độ, heuristic được đặt bằng 0.
 
-\subsection{Sơ đồ Kiến trúc Phân lớp (Clean Architecture)}
-Hệ thống được thiết kế theo mô hình phân lớp rõ ràng, đảm bảo tính độc lập giữa giao diện người dùng, API và động cơ thuật toán:
+\subsection{Giải thích tính đúng đắn}
+Vì chi phí edge không âm và \(\rho_s\) không lớn hơn tỉ số giữa cost và khoảng cách của mọi edge hợp lệ, chi phí của một đường đi luôn lớn hơn hoặc bằng lower bound do heuristic ước lượng. Kết hợp với bất đẳng thức tam giác của Haversine, ta có:
+\[
+h_s(n)\leq \operatorname{cost}(\text{một đường đi từ }n\text{ đến goal}).
+\]
+Do đó \(h_s(n)\geq0\) và heuristic là admissible. Khi đi qua edge \(e=(u,v)\), ta cũng có:
+\[
+h_s(u)\leq\operatorname{Cost}_s(e)+h_s(v),
+\]
+nên heuristic là consistent. Với chi phí edge không âm, A* sẽ trả về đường đi có cost tối ưu, giống như UCS.
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}[
-    layer/.style={rectangle, draw=blue!70!black, fill=blue!5, rounded corners=3pt, text width=12cm, minimum height=1.3cm, align=center, font=\small},
-    arrow/.style={thick, <->, >=stealth, color=blue!80!black}
-]
-    \node[layer] (fe) {\textbf{Frontend Layer (React + MapLibre GL JS)}\\ \footnotesize Map GPU Layers (Boundary, Edges, Nodes, Route), Trace Player, Dashboard};
-    \node[layer, below=0.8cm of fe] (api) {\textbf{API Layer (FastAPI)}\\ \footnotesize Endpoints: \texttt{/search}, \texttt{/compare}, \texttt{/optimize-tour}, \texttt{/locations}, \texttt{/scenarios}};
-    \node[layer, below=0.8cm of api] (service) {\textbf{Core Services \& Search Engine}\\ \footnotesize \texttt{SearchService}, \texttt{TourOptimizerService}, \texttt{ScenarioCostEngine}, \texttt{ExplanationEngine}};
-    \node[layer, below=0.8cm of service] (algo) {\textbf{Algorithms \& Data Layer (Pure Python)}\\ \footnotesize BFS, DFS, UCS, A*, Greedy, Bidirectional, Held-Karp DP, Immutable Graph Contracts};
+\subsection{Ảnh hưởng của scenario và weight}
+Scenario được giữ cố định trong một lần tìm kiếm. Vì vậy, \(\rho_s\) và chi phí edge không thay đổi giữa các bước mở rộng node. Nếu traffic, flood hoặc các weight thay đổi thì cần tính lại \(\rho_s\). Heuristic này tối ưu cho composite cost đang chọn, chứ không tối ưu riêng cho khoảng cách hoặc thời gian.
 
-    \draw[arrow] (fe) -- node[right, font=\footnotesize] {HTTP / JSON} (api);
-    \draw[arrow] (api) -- node[right, font=\footnotesize] {Pydantic Schemas} (service);
-    \draw[arrow] (service) -- node[right, font=\footnotesize] {Contracts} (algo);
-\end{tikzpicture}
-\caption{Kiến trúc phân tầng Clean Architecture của FloodRoute HCMC.}
-\label{fig:system_architecture}
-\end{figure}
-
-\subsection{Luồng Xử lý Tìm kiếm 2 Điểm (Two-Point Search Workflow)}
-Khi người dùng thực hiện tìm đường trên giao diện:
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{Khởi tạo Yêu cầu}: Người dùng chọn điểm Start, Goal (qua click map hoặc tìm kiếm), chọn Kịch bản (vd: Mưa lớn) và Thuật toán (vd: A*).
-    \item \textbf{Gửi API Request}: React gửi request \texttt{POST /api/v1/search} đến FastAPI Backend.
-    \item \textbf{Xác thực \& Điều phối}: \texttt{SearchService} nạp graph từ catalog, áp dụng kịch bản qua \texttt{GraphView} và gọi hàm thuật toán tương ứng.
-    \item \textbf{Tính toán \& Ghi nhận Trace}: Thuật toán duyệt đồ thị, tính chi phí cạnh qua \texttt{ScenarioCostEngine} và sinh danh sách \texttt{TraceEvent} (\texttt{OPEN}, \texttt{EXPAND}, \texttt{RELAX}, \texttt{CLOSE}, \texttt{GOAL}).
-    \item \textbf{Giải thích Tuyến đường}: \texttt{ExplanationEngine} phân tích thành phần chi phí chiếm ưu thế và xác định đoạn đường có penalty kẹt xe/ngập lớn nhất.
-    \item \textbf{Hiển thị Trực quan}: React vẽ đường đi tối ưu lên bản đồ vector và kích hoạt \textbf{Trace Player} cho phép người dùng xem lại toàn bộ quá trình mở rộng nút.
-\end{enumerate}
+\subsection{Phân biệt với Nearest Neighbor}
+A* dùng heuristic lower-bound để tìm đường cho một chặng từ Start đến Goal. Nearest Neighbor dùng chi phí đường đi giữa các cặp điểm để quyết định điểm nào sẽ được ghé tiếp theo. Do Nearest Neighbor chọn thứ tự theo cách greedy, việc dùng A* trong từng chặng không làm cho toàn bộ tour trở thành nghiệm tối ưu. Held-Karp mới là phương pháp exact trong giới hạn số stop nhỏ.

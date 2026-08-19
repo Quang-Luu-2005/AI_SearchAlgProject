@@ -1,23 +1,26 @@
-\section{Hạn chế \& Hướng Phát triển Tương lai}
-\label{sec:limitations_future_work}
+\section{Cài đặt, giới hạn và hướng phát triển}
+\subsection{Cách chạy}
+Sau khi cài đặt backend và frontend theo README, nhóm em dùng các lệnh sau để kiểm tra:
+\begin{verbatim}
+npm run test:data
+npm run test:backend
+npm run test:frontend
+npm run benchmark:search
+npm run benchmark:lower-bound
+npm run benchmark:cost-profiles
+\end{verbatim}
+Để biên dịch báo cáo, chạy:
+\begin{verbatim}
+cd docs/reports
+xelatex -interaction=nonstopmode main.tex
+xelatex -interaction=nonstopmode main.tex
+\end{verbatim}
 
-\subsection{Khó khăn Kỹ thuật Đã Vượt qua}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường}: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 178 cạnh nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
-    \item \textbf{Đảm bảo Tính Đúng đắn của Heuristic Đa Chi phí}: Chứng minh và thiết lập hàm heuristic Haversine có trọng số vừa thỏa mãn tính chấp nhận được (\textit{Admissible}), vừa thỏa mãn tính đơn điệu (\textit{Consistent}) trong không gian chi phí 4 thành phần.
-    \item \textbf{Kiến trúc Bất biến \& Deterministic Tie-breaking}: Đảm bảo thuật toán độc lập 100\% với framework HTTP và luôn cho kết quả tái lập tuyệt đối trên mọi nền tảng.
-\end{itemize}
+\subsection{Giới hạn của đồ án}
+Dataset hiện tại chưa phải dữ liệu traffic real-time. Một phần traffic/flood trong fixture là dữ liệu \texttt{SIMULATED}; một số nhận định cho dữ liệu tương lai vẫn là \texttt{ASSUMPTION}. Nếu cho phép người dùng nhập custom weights thì cần kiểm tra giá trị đầu vào và thang đo. Held-Karp có độ phức tạp tăng theo cấp số mũ nên chỉ phù hợp với số stop nhỏ. Heuristic lower-bound bảo đảm tính tối ưu cho composite cost hiện tại, nhưng có thể không mạnh nếu cost profile thay đổi nhiều.
 
-\subsection{Các Hạn chế Hiện tại của Hệ thống}
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{Dữ liệu Giao thông Lịch sử}: Hiện tại mô hình sử dụng hồ sơ giao thông lịch sử phân chia theo khung giờ (\textit{Historical Traffic Profile}), chưa kết nối với luồng dữ liệu GPS xe máy theo thời gian thực (\textit{Live Telemetry Feed}).
-    \item \textbf{Mô hình Ngập nước Tĩnh}: Kịch bản ngập dựa trên danh mục các điểm đen thống kê, chưa tích hợp mô hình mô phỏng thủy lực/thủy văn động lực học (\textit{Hydraulic Dynamic Inundation}) theo lượng mưa tức thời.
-    \item \textbf{Phạm vi Bài toán TSP}: Hiện tại giải quyết tối ưu cho 1 shipper xe máy đơn lẻ (Single-vehicle TSP), chưa mở rộng cho bài toán phân phối đội xe nhiều phương tiện có ràng buộc tải trọng và khung giờ giao hàng (\textit{Capacitated Vehicle Routing Problem with Time Windows -- CVRPTW}).
-\end{enumerate}
+\subsection{Hướng phát triển}
+Trong tương lai, nhóm em có thể bổ sung traffic real-time, thêm scenario peak/rain cho landmark release, hỗ trợ custom weights có validation, bài toán nhiều xe và time windows. Giao diện cũng có thể được mở rộng để hiển thị nhiều thông tin hơn về cost và trace. Khi thêm các thành phần mới, cần cập nhật provenance, benchmark và các contract liên quan.
 
-\subsection{Định hướng Mở rộng Tương lai}
-\begin{itemize}[leftmargin=1.5cm]
-    \item \textbf{Tích hợp API Bản đồ Thời gian Thực}: Kết nối Live Traffic API (Here Maps, TomTom, Vietbando) để cập nhật độ trễ thời gian thực vào $P_{\text{traffic}}$.
-    \item \textbf{Ứng dụng Meta-heuristics cho Bài toán Quy mô Lớn}: Cài đặt thuật toán Di truyền (\textit{Genetic Algorithm -- GA}) và Tối ưu hóa Đàn kiến (\textit{Ant Colony Optimization -- ACO}) để giải bài toán VRP cho đội xe quy mô lớn ($N > 50$ điểm giao hàng).
-    \item \textbf{Hệ thống Cảnh báo Dự báo Mưa ngập Tức thời (Nowcasting)}: Kết hợp dữ liệu radar thời tiết để dự báo trước 30--60 phút các cung đường sắp ngập và tự động tái định tuyến (\textit{dynamic rerouting}) cho shipper đang di chuyển.
-\end{itemize}
+\subsection{Kết luận}
+Qua đồ án, nhóm em xây dựng được một quy trình tìm đường gồm UCS, A*, các thuật toán tìm kiếm khác và hai phương pháp tối ưu tour. UCS được dùng làm mốc để kiểm tra A*. Trên 15 trường hợp kiểm thử lower-bound, A* cho cùng cost với UCS và không khám phá nhiều node hơn UCS. Kết quả này cho thấy heuristic đang dùng phù hợp với composite cost và các scenario đã kiểm tra.

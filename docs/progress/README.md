@@ -1,7 +1,10 @@
 # Progress log
 
+| 2026-08-19 | [Report rewrite and HomeWork_2-style cover](2026-08-19-report-rewrite.md) | Complete |
+
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
+| 2026-08-19 | [Sửa biên dịch báo cáo LaTeX](2026-08-19-fix-latex-report-build.md) | Hoàn tất |
 | 2026-08-19 | [Chốt cost profiles và trọng số](2026-08-19-cost-profiles.md) | Hoàn tất |
 | 2026-08-19 | [A* scenario-aware lower-bound heuristic](2026-08-19-astar-lower-bound-heuristic.md) | Hoàn tất |
 | 2026-08-16 | [Hoàn thiện khoảng trống technical Lab 1](2026-08-16-technical-rubric-completion.md) | Hoàn tất |

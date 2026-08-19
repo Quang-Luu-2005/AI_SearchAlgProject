@@ -1,45 +1,58 @@
-\section{Tối ưu hóa Tuyến đường Giao hàng Đa điểm (TSP)}
-\label{sec:multi_location_opt}
+\section{Thực nghiệm và so sánh}
+\subsection{Benchmark tìm kiếm trên bản đồ 65 node}
+Nhóm em chạy benchmark trên bản đồ \texttt{thu\_duc\_landmarks\_v1.0.0} với 10 cặp OD, một baseline scenario, 6 thuật toán và 20 lần lặp cho mỗi trường hợp. Tổng cộng có 1,200 lượt chạy được đo. Các bảng và số liệu trong phần này được lấy từ file kết quả JSON sau khi chạy benchmark.
 
-\subsection{Đặc tả Bài toán Giao hàng Đa điểm (TSP)}
-Khi shipper cần giao hàng cho $N$ địa điểm ($5 \le N \le 10$) xuất phát từ 1 kho hàng (\textit{Depot}):
-\begin{itemize}[leftmargin=1.5cm]
-    \item Cần xác định một chu trình ghé thăm mỗi điểm giao hàng đúng một lần rồi quay về kho sao cho tổng chi phí là nhỏ nhất.
-    \item Do mạng lưới đô thị có nhiều tuyến đường một chiều, ma trận chi phí giữa các điểm là \textbf{Ma trận Bất đối xứng (\textit{Asymmetric Pairwise Matrix})}: $c(u, v) \ne c(v, u)$.
-\end{itemize}
-
-\subsection{Hai Giải thuật Cài đặt}
-\begin{enumerate}[leftmargin=1.5cm]
-    \item \textbf{Held-Karp Dynamic Programming (Giải thuật Chính xác)}:
-    Sử dụng mặt nạ bit (\textit{bitmask}) biểu diễn tập các đỉnh đã thăm:
-    \begin{equation}
-        dp(\text{mask}, u) = \min_{v \in \text{mask} \setminus \{u\}} \Big[ dp(\text{mask} \setminus \{u\}, v) + c(v, u) \Big]
-    \end{equation}
-    Chi phí chu trình tối ưu:
-    \begin{equation}
-        \text{Cost}_{\text{optimal}} = \min_{u \in \{1, \dots, N-1\}} \Big[ dp((1 \ll N) - 1, u) + c(u, 0) \Big]
-    \end{equation}
-    Độ phức tạp: Thời gian $O(N^2 \cdot 2^N)$, Bộ nhớ $O(N \cdot 2^N)$. Với $N \le 10$, thời gian thực thi $< 5$ ms, đảm bảo nghiệm tối ưu tuyệt đối.
-    \item \textbf{Nearest Neighbor Heuristic (Giải thuật Xấp xỉ Nhanh)}:
-    Tham lam chọn chặng tiếp theo có chi phí nhỏ nhất. Độ phức tạp: Thời gian $O(N^2)$, Bộ nhớ $O(N)$.
-\end{enumerate}
-
-\subsection{Đánh giá Thực nghiệm: So sánh Held-Karp vs Nearest Neighbor vs Thứ tự Gốc}
-
-\begin{table}[htbp]
-\centering
-\small
-\begin{tabularx}{\textwidth}{l p{5.5cm} c c c c}
+\subsection{Kiểm tra heuristic A* với UCS}
+Để kiểm tra lower-bound heuristic trong nhiều điều kiện, nhóm em dùng fixture \texttt{toy\_graph\_v0.1} với 5 cặp OD và ba scenario: \texttt{OFFPEAK\_BALANCED}, \texttt{PEAK\_TRAFFIC}, \texttt{HEAVY\_RAIN\_SAFE}. Tổng cộng có 15 trường hợp.
+\begin{center}
+\begin{tabular}{l r}
 \toprule
-\textbf{Phương pháp} & \textbf{Lộ trình Ghé thăm (Visit Order)} & \textbf{Chi phí ($C$)} & \textbf{Cự ly ($D$)} & \textbf{\% Gap} & \textbf{\% Savings} \\
+Chỉ số & Kết quả\\
 \midrule
-\textbf{Thứ tự Gốc (User Input)} & $\text{Depot} \to S_1 \to S_2 \to S_3 \to S_4 \to S_5 \to \text{Depot}$ & 14.850 & 4.250 km & --- & \textbf{0.0\%} \textit{(Baseline)} \\
-\textbf{Nearest Neighbor} & $\text{Depot} \to S_2 \to S_1 \to S_3 \to S_5 \to S_4 \to \text{Depot}$ & 11.230 & 3.120 km & \textbf{+8.9\%} & \textbf{24.4\%} \\
-\textbf{Held-Karp (Optimal)} & $\text{Depot} \to S_2 \to S_3 \to S_5 \to S_4 \to S_1 \to \text{Depot}$ & \textbf{10.310} & \textbf{2.890 km} & \textbf{0.0\%} & \textbf{30.6\%} \\
+Cost mismatch A* so với UCS & 0/15\\
+Số case A* khám phá không quá UCS & 15/15\\
+Số scenario & 3\\
+Số cặp OD mỗi scenario & 5\\
 \bottomrule
-\end{tabularx}
-\caption{Bảng so sánh hiệu quả tối ưu hóa lộ trình giao hàng đa điểm ($N=6$).}
-\label{tab:tsp_comparison}
-\end{table}
+\end{tabular}
+\end{center}
+Kết quả cho thấy A* trả về cùng cost tối ưu với UCS trong cả 15 trường hợp. Số node A* khám phá cũng không lớn hơn UCS ở tất cả các case. Đây là kết quả kiểm thử cho phần cài đặt hiện tại, còn lý do về mặt lý thuyết đã được trình bày ở Chương 6.
 
-\textbf{Kết luận}: Thuật toán chính xác \textbf{Held-Karp DP} giúp shipper tiết kiệm đến \textbf{30.6\% chi phí và quãng đường} so với thứ tự nhập ban đầu; \textbf{Nearest Neighbor} đạt mức tiết kiệm 24.4\% với độ lệch xấp xỉ so với tối ưu chỉ 8.9\%.
+\subsection{Ảnh hưởng của cost profile}
+Ba profile \texttt{BALANCED}, \texttt{PEAK\_TRAFFIC} và \texttt{RAIN\_SAFE} sử dụng các hệ số được nêu ở Chương 3. Hai ví dụ trong kết quả chạy là:
+\begin{itemize}
+\item N01 \(\rightarrow\) N06: baseline cost 2.343; peak cost 2.9209; rain cost 2.562625 và tuyến có thể phải đi đường vòng.
+\item N05 \(\rightarrow\) N01: baseline cost 3.733 với path E14,E04,E02; rain cost 3.71325 với path E14,E10,E12,E02.
+\end{itemize}
+Các ví dụ này cho thấy khi thay đổi mức ưu tiên của traffic hoặc flood thì tuyến được chọn có thể thay đổi. Trong mọi profile, road closure vẫn được xử lý như một ràng buộc cứng.
+
+\subsection{Ảnh chụp kết quả chạy thuật toán}
+Các ảnh dưới đây được nhóm em chụp khi chạy ứng dụng trên máy với bản đồ 65 node. Ảnh thể hiện trực tiếp giao diện, trace và các chỉ số sau khi chạy, giúp người đọc dễ hình dung hơn về kết quả thực nghiệm.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-astar-route.png}
+\caption{Kết quả chạy A* trên cặp LM\_001 \(\rightarrow\) LM\_065, gồm route, trace và thông tin heuristic.}
+\label{fig:gui-astar-route}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-ucs-route.png}
+\caption{Kết quả chạy UCS trên cùng cặp start-goal, được dùng làm kết quả đối chiếu với A*.}
+\label{fig:gui-ucs-route}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-compare-algorithms.png}
+\caption{Chế độ Compare hiển thị cost và số node đã khám phá của 6 thuật toán.}
+\label{fig:gui-compare}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-tour-optimization.png}
+\caption{Kết quả tối ưu tour với 5 điểm giao hàng, gồm Held-Karp, Nearest Neighbor và chi tiết từng leg.}
+\label{fig:gui-tour}
+\end{figure}

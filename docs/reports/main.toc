@@ -1,0 +1,45 @@
+\contentsline {section}{\numberline {1}Giới thiệu nhóm và phạm vi đồ án}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Bối cảnh và mục tiêu}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Thành viên và phân công}{1}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Phạm vi}{1}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Mapping yêu cầu - triển khai}{1}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Bối cảnh giao thông Việt Nam}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Bài toán thực tế}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Các yếu tố ảnh hưởng}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Kịch bản shipper}{1}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Vì sao không chỉ tối ưu khoảng cách}{2}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Mô hình hóa bài toán}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Graph có hướng}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Thuộc tính edge}{2}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Composite cost}{2}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Ba cost profiles}{2}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Dataset và provenance}{2}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Dataset đang sử dụng}{2}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Nguồn dữ liệu và pipeline}{3}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Fixture kiểm chứng}{3}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Nguyên lý các thuật toán}{5}{section.5}%
+\contentsline {section}{\numberline {6}Heuristic A* lower-bound và kiểm tra tính đúng đắn}{6}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Cách tính heuristic}{6}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Giải thích tính đúng đắn}{6}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Ảnh hưởng của scenario và weight}{6}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Phân biệt với Nearest Neighbor}{6}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Kiến trúc hệ thống và luồng thực thi}{7}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Kiến trúc}{7}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Giao diện chạy thực tế}{7}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Các luồng chính}{8}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Tính tái lập}{8}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Thực nghiệm và so sánh}{8}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Benchmark tìm kiếm trên bản đồ 65 node}{8}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Kiểm tra heuristic A* với UCS}{8}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Ảnh hưởng của cost profile}{8}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Ảnh chụp kết quả chạy thuật toán}{9}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Tối ưu tuyến giao hàng nhiều điểm}{9}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Định nghĩa bài toán}{9}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Held-Karp}{13}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Nearest Neighbor}{13}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Cách đọc kết quả}{13}{subsection.9.4}%
+\contentsline {section}{\numberline {10}Cài đặt, giới hạn và hướng phát triển}{13}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Cách chạy}{13}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Giới hạn của đồ án}{13}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Hướng phát triển}{13}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Kết luận}{14}{subsection.10.4}%
