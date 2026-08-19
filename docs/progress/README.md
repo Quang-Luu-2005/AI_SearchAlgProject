@@ -1,6 +1,7 @@
 # Progress log
 
 | 2026-08-19 | [Report rewrite and HomeWork_2-style cover](2026-08-19-report-rewrite.md) | Complete |
+| 2026-08-19 | [Route explanation and alternative comparison](2026-08-19-report-rewrite.md) | Complete |
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|

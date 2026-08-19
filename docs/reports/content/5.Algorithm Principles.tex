@@ -1,25 +1,56 @@
 \section{Nguyên lý các thuật toán}
-Trong đồ án, nhóm em cài đặt và so sánh các thuật toán sau:
+Trong đồ án, nhóm em cài đặt và so sánh các thuật toán sau. Bảng dưới đây tóm tắt điều kiện áp dụng trên graph hữu hạn và cost không âm; riêng các thuật toán tour được đánh giá với số điểm giao hàng nhỏ.
 
-{\small
-\begin{tabularx}{\textwidth}{
->{\raggedright\arraybackslash}p{2.6cm}
->{\raggedright\arraybackslash}X
->{\raggedright\arraybackslash}p{3.2cm}
->{\raggedright\arraybackslash}p{2.5cm}}
+{\scriptsize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{1.45cm} >{\raggedright\arraybackslash}p{1.35cm} >{\raggedright\arraybackslash}p{1.25cm} >{\raggedright\arraybackslash}p{1.25cm}}
 \toprule
-Thuật toán & Ý tưởng & Tối ưu? & Độ phức tạp khái quát\\
+Thuật toán & Quy tắc chọn node & Thời gian & Bộ nhớ & Đầy đủ? & Tối ưu?\\
 \midrule
-BFS & Mở rộng các node theo từng lớp & Có nếu các edge có cùng cost & \(O(V+E)\)\\
-DFS & Đi sâu theo một nhánh trước & Không đảm bảo & \(O(V+E)\)\\
-UCS/Dijkstra & Luôn chọn node có \(g\) nhỏ nhất & Có với cost không âm & \(O((V+E)\log V)\)\\
-A* & Chọn node theo \(g+h\) & Có nếu \(h\) admissible/consistent & Phụ thuộc heuristic\\
-Greedy Best-First & Chọn node có \(h\) nhỏ nhất & Không đảm bảo & Phụ thuộc heuristic\\
-Bidirectional & Tìm kiếm đồng thời từ hai đầu & Có nếu điều kiện dừng đúng & Giảm không gian trong một số trường hợp\\
-Held-Karp & Dynamic programming trên tập stop & Có trong TSP nhỏ & \(O(n^2 2^n)\)\\
-Nearest Neighbor & Mỗi bước chọn điểm gần/rẻ nhất tiếp theo & Không đảm bảo & \(O(n^2)\)\\
+BFS & Mở rộng theo từng lớp & \(O(V+E)\) & \(O(V)\) & Có* & Có*\\
+DFS & Đi sâu một nhánh trước & \(O(V+E)\) & \(O(V)\) & Có* & Không\\
+UCS/Dijkstra & Chọn \(g\) nhỏ nhất & \(O((V+E)\log V)\) & \(O(V)\) & Có & Có\\
+A* & Chọn \(f=g+h\) nhỏ nhất & Phụ thuộc \(h\) & \(O(V)\) & Có & Có**\\
+Greedy Best-First & Chọn \(h\) nhỏ nhất & Phụ thuộc \(h\) & \(O(V)\) & Có* & Không\\
+Bidirectional & Tìm từ hai đầu & Thường giảm so với UCS & \(O(b^{d/2})\) & Có* & Có***\\
 \bottomrule
 \end{tabularx}
 }
 
-BFS phù hợp khi các edge có cùng chi phí. UCS được nhóm em dùng làm mốc tham chiếu vì luôn cho nghiệm tối ưu khi chi phí không âm. A* có thể giảm số node phải mở rộng nếu heuristic phù hợp. Greedy chạy nhanh nhưng không thể dùng để khẳng định nghiệm tối ưu. Bidirectional có thể giúp giảm số node trong những graph phù hợp. Held-Karp cho nghiệm chính xác nhưng chỉ nên dùng khi số stop nhỏ, còn Nearest Neighbor cho nghiệm gần đúng với thời gian chạy ngắn hơn.
+Các dấu sao trong bảng cần được hiểu theo điều kiện cụ thể. BFS tối ưu khi mọi edge có cùng cost, nên trong bài này chủ yếu dùng để so sánh. DFS có thể tìm được đường trên graph hữu hạn nhưng không đảm bảo đó là đường rẻ nhất. UCS được nhóm em dùng làm mốc tham chiếu vì tối ưu với mọi edge cost không âm. A* có cùng bảo đảm với UCS khi heuristic admissible và consistent; đây là lý do nhóm em kiểm tra A* với UCS thay vì chỉ nhìn thời gian chạy. Greedy thường nhanh nhưng không thể dùng để kết luận nghiệm tối ưu. Bidirectional cần điều kiện dừng đúng và cách xử lý graph có hướng rõ ràng.
+
+Với bài toán đi qua nhiều điểm, Held--Karp là dynamic programming chính xác với độ phức tạp \(O(n^2 2^n)\), còn Nearest Neighbor là heuristic tham lam khoảng \(O(n^2)\) và không bảo đảm tối ưu. Vì vậy nhóm em dùng Held--Karp làm mốc khi số stop nhỏ và dùng Nearest Neighbor để minh hoạ sự đánh đổi giữa chất lượng tour và thời gian chạy.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l l c c}
+\toprule
+Thuật toán tour & Cách chọn & Thời gian & Tối ưu?\\
+\midrule
+Held--Karp & Lưu nghiệm tốt nhất theo tập stop đã đi qua & \(O(n^2 2^n)\) & Có\\
+Nearest Neighbor & Chọn stop tiếp theo có pairwise cost nhỏ nhất & \(O(n^2)\) & Không\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+\begin{itemize}
+\item (*) Đầy đủ trên graph hữu hạn khi cách cài đặt có kiểm tra trạng thái đã thăm và không bị nhánh vô hạn.
+\item (**) A* tối ưu trong report vì dùng lower-bound heuristic của Chương 6; dùng heuristic tùy ý thì không còn kết luận này.
+\item (***) Bidirectional tối ưu khi hai hướng dùng cost tương thích và điều kiện dừng được chứng minh đúng.
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[>=stealth, node distance=17mm, every node/.style={font=\small}, point/.style={circle, draw, fill=blue!8, minimum size=8mm}]
+\node[point] (n1) {N01};
+\node[point, right=of n1] (n2) {N02};
+\node[point, right=of n2] (n6) {N06};
+\node[point, below=of n2] (n4) {N04};
+\draw[->] (n1) -- node[above] {E01} (n2);
+\draw[->] (n2) -- node[above] {E03} (n6);
+\draw[->] (n2) -- node[left] {E11} (n4);
+\draw[->] (n4) -- node[below] {E09} (n6);
+\end{tikzpicture}
+\caption{Toy graph minh hoạ hai phương án từ N01 đến N06. Thuật toán tìm kiếm đánh giá route theo tổng composite cost, không chỉ theo số cạnh.}
+\label{fig:toy-search-graph}
+\end{figure}

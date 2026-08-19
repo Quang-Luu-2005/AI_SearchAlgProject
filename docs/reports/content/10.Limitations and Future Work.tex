@@ -1,20 +1,11 @@
 \section{Cài đặt, giới hạn và hướng phát triển}
 \subsection{Cách chạy}
-Sau khi cài đặt backend và frontend theo README, nhóm em dùng các lệnh sau để kiểm tra:
+Sau khi cài đặt theo README, nhóm em khởi động chương trình bằng:
 \begin{verbatim}
-npm run test:data
-npm run test:backend
-npm run test:frontend
-npm run benchmark:search
-npm run benchmark:lower-bound
-npm run benchmark:cost-profiles
+npm install
+npm run dev
 \end{verbatim}
-Để biên dịch báo cáo, chạy:
-\begin{verbatim}
-cd docs/reports
-xelatex -interaction=nonstopmode main.tex
-xelatex -interaction=nonstopmode main.tex
-\end{verbatim}
+Trong giao diện, người dùng chọn dataset, thuật toán, scenario, start và goal, sau đó bấm \textit{Run Algorithm}. Với bài toán nhiều điểm, chọn depot và thêm các stop trước khi chạy phần tối ưu tour. Các lệnh kiểm thử và benchmark được giữ trong README để nhóm có thể kiểm tra lại artifact khi cần.
 
 \subsection{Giới hạn của đồ án}
 Dataset hiện tại chưa phải dữ liệu traffic real-time. Một phần traffic/flood trong fixture là dữ liệu \texttt{SIMULATED}; một số nhận định cho dữ liệu tương lai vẫn là \texttt{ASSUMPTION}. Nếu cho phép người dùng nhập custom weights thì cần kiểm tra giá trị đầu vào và thang đo. Held-Karp có độ phức tạp tăng theo cấp số mũ nên chỉ phù hợp với số stop nhỏ. Heuristic lower-bound bảo đảm tính tối ưu cho composite cost hiện tại, nhưng có thể không mạnh nếu cost profile thay đổi nhiều.

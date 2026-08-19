@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Streamlined the report around the Lab 1 rubric: removed the internal requirement-mapping table, shortened dataset/provenance and A* exposition, moved fixture context to experiments, removed the duplicate UCS screenshot, and simplified usage instructions.
+- Added compact algorithm and A*/UCS result tables so the space is used for direct experimental evidence instead of engineering documentation.
+- Added a deterministic route-explanation benchmark with selected/alternative route costs, edge breakdowns, closure handling, and UCS/A* validation for the report.
+- Added a student-style Chapter 8 comparison for peak traffic and heavy rain, plus a compact algorithm guarantee table and toy graph figure.
 - Fixed the Chapter 5 algorithm-comparison table by using wrapped fixed-width columns, preventing text from collapsing into a narrow vertical strip.
 - Revised report wording to use a natural student-report voice while retaining technical terms, formulas, benchmark values, and conclusions.
 - Added a captured local GUI map image and an in-report system-flow diagram to the FloodRoute LaTeX report.

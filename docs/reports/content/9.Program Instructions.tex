@@ -1,12 +1,22 @@
 \section{Tối ưu tuyến giao hàng nhiều điểm}
-\subsection{Định nghĩa bài toán}
-Bài toán delivery gồm một depot và khoảng 5--10 điểm giao hàng. Với mỗi cặp điểm, nhóm em tính chi phí đường đi ngắn nhất để tạo thành pairwise matrix. Mục tiêu là tìm thứ tự đi qua các điểm sao cho tổng chi phí là nhỏ nhất. Tùy cấu hình, tuyến đường có thể quay lại depot.
+\subsection{Cách áp dụng vào đồ án}
+Bài toán delivery gồm một depot và khoảng 5--10 điểm giao hàng. Nhóm em tính chi phí đường đi ngắn nhất giữa depot và các stop để tạo thành pairwise cost matrix. Held--Karp được dùng làm nghiệm exact reference khi số stop nhỏ; Nearest Neighbor được dùng như một heuristic nhanh để chọn stop tiếp theo có pairwise cost nhỏ nhất.
 
-\subsection{Held-Karp}
-Held-Karp lưu kết quả theo tập các stop đã đi qua và điểm cuối cùng. Đây là phương pháp dynamic programming cho nghiệm chính xác, có độ phức tạp \(O(n^2 2^n)\). Vì độ phức tạp tăng nhanh, nhóm em chỉ dùng Held-Karp làm nghiệm tham chiếu khi số stop còn nhỏ.
+A* hoặc UCS chỉ giải quyết từng chặng giữa hai điểm. Vì Nearest Neighbor còn phải quyết định thứ tự các stop nên việc dùng A* cho từng chặng không làm toàn bộ tour trở thành nghiệm tối ưu. Đây là lý do nhóm em so sánh riêng thứ tự ban đầu, Nearest Neighbor và Held--Karp.
 
-\subsection{Nearest Neighbor}
-Nearest Neighbor bắt đầu từ depot. Ở mỗi bước, thuật toán chọn điểm chưa đi qua có pairwise cost nhỏ nhất. Khi có nhiều lựa chọn bằng nhau, node id được dùng để quyết định theo một thứ tự cố định. Cách này có độ phức tạp khoảng \(O(n^2)\) sau khi đã có matrix, chạy nhanh nhưng chỉ cho nghiệm gần đúng.
+\subsection{So sánh kết quả tour}
+\begin{center}
+{\small
+\begin{tabular}{l l l l}
+\toprule
+Phương án & Cách chọn thứ tự & Tối ưu? & Vai trò trong đồ án\\
+\midrule
+Original order & Giữ thứ tự input & Không kết luận & Mốc ban đầu\\
+Nearest Neighbor & Chọn stop rẻ nhất tiếp theo & Không & Chạy nhanh\\
+Held--Karp & Dynamic programming trên các tập stop & Có & Nghiệm tham chiếu\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
 
-\subsection{Cách đọc kết quả}
-Khi đánh giá tour, nhóm em so sánh thứ tự ban đầu, kết quả của Nearest Neighbor và kết quả của Held-Karp dựa trên tổng cost, thứ tự stop và thời gian chạy. A* hoặc UCS chỉ giải quyết từng chặng riêng lẻ; chất lượng của cả tour còn phụ thuộc vào thuật toán chọn thứ tự điểm.
+Hình minh họa tour ở cuối Chương 8 cho thấy giao diện đồng thời hiển thị route, tổng cost, các leg và kết quả của Held--Karp/Nearest Neighbor. Khi số stop tăng, Held--Karp tăng chi phí tính toán theo \(O(n^2 2^n)\), nên Nearest Neighbor phù hợp hơn cho việc chạy nhanh trên giao diện.

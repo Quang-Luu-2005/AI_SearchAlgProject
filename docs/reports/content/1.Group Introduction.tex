@@ -1,6 +1,6 @@
 \section{Giới thiệu nhóm và phạm vi đồ án}
 \subsection{Bối cảnh và mục tiêu}
-FloodRoute HCMC là đồ án Lab 1 của nhóm em trong môn Nhập môn Trí tuệ Nhân tạo. Nhóm em xây dựng một mô hình tìm đường giao hàng trên mạng đường có hướng, trong đó chi phí còn phụ thuộc vào thời gian, tình trạng traffic và nguy cơ ngập. Mục tiêu của đồ án là cài đặt các thuật toán tìm kiếm, giải thích được cách hoạt động và kiểm tra kết quả với UCS.
+FloodRoute HCMC là đồ án Lab 1 của nhóm em trong môn Nhập môn Trí tuệ Nhân tạo. Mục tiêu của nhóm là mô hình hóa bài toán tìm đường giao hàng trên graph có hướng, cài đặt các thuật toán tìm kiếm và so sánh kết quả theo composite cost. Nhóm em dùng UCS làm mốc để kiểm tra A* và dùng các scenario traffic/flood để minh họa ảnh hưởng của môi trường.
 
 \subsection{Thành viên và phân công}
 \begin{tabularx}{\textwidth}{l l X}
@@ -15,17 +15,4 @@ Lưu Huy Minh Quang & 23127016 & Frontend, bản đồ và báo cáo\\
 \end{tabularx}
 
 \subsection{Phạm vi}
-Trong phạm vi báo cáo này, nhóm em sử dụng bản đồ chính gồm 65 landmark và 178 directed road-path edges. Phần kiểm tra các tình huống peak/rain dùng một graph nhỏ có nhãn \texttt{SIMULATED}. Graph này chỉ phục vụ kiểm thử, không đại diện cho dữ liệu giao thông thời gian thực.
-
-\subsection{Mapping yêu cầu - triển khai}
-\begin{tabularx}{\textwidth}{X X}
-\toprule
-Yêu cầu Lab 1 & Thành phần tương ứng\\
-\midrule
-Tìm kiếm trên graph & BFS, DFS, UCS, A*, Greedy và Bidirectional Search\\
-Tối ưu chi phí đa yếu tố & ScenarioCostEngine và ba cost profiles\\
-Heuristic có chứng minh & lower-bound heuristic \(\rho_s\) của Chương 6\\
-Nhiều điểm giao hàng & PairwiseMatrix, Nearest Neighbor và Held-Karp\\
-Đánh giá thực nghiệm & benchmark search, lower-bound và cost profiles\\
-\bottomrule
-\end{tabularx}
+Trong báo cáo, nhóm em sử dụng bản đồ chính gồm 65 landmark và 178 directed road-path edges. Các scenario peak/rain trong phần kiểm chứng dùng graph nhỏ có nhãn \texttt{SIMULATED}, không đại diện cho traffic thời gian thực.

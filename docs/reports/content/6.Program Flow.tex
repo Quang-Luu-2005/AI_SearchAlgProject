@@ -1,31 +1,28 @@
-\section{Heuristic A* lower-bound và kiểm tra tính đúng đắn}
-\subsection{Cách tính heuristic}
+\section{Heuristic A*}
+\subsection{Định nghĩa heuristic}
 Với mỗi scenario \(s\), nhóm em tính \(\rho_s\) một lần trước khi bắt đầu tìm kiếm:
 \[
 \rho_s=\min_{\substack{e\in E,\ e\text{ không đóng}\\
 \operatorname{Haversine}(e)>10^{-6}\ {\rm km}}}
 \frac{\operatorname{Cost}_s(e)}{\operatorname{Haversine}(e)}.
 \]
-Sau đó, heuristic của một node \(n\) được tính như sau:
+Sau đó:
 \[
-h_s(n)=\rho_s\cdot\operatorname{Haversine}(n,\mathrm{goal}),\qquad
-f(n)=g(n)+h_s(n).
+h_s(n)=\rho_s\cdot\operatorname{Haversine}(n,\mathrm{goal}),
+\qquad f(n)=g(n)+h_s(n).
 \]
-Các edge đã đóng không được đưa vào phép tính \(\rho_s\). Những edge có khoảng cách Haversine quá nhỏ cũng được bỏ qua để tránh chia cho một số gần bằng 0. Nếu không còn edge hợp lệ thì nhóm em đặt \(\rho_s=0\). Với node không có tọa độ, heuristic được đặt bằng 0.
+Edge đã đóng không được đưa vào phép tính \(\rho_s\). Edge có khoảng cách Haversine gần 0 cũng được bỏ qua để tránh chia cho số quá nhỏ. Nếu không còn edge hợp lệ thì \(\rho_s=0\); node thiếu tọa độ có \(h(n)=0\).
 
-\subsection{Chứng minh lý do chọn hàm}
-Vì chi phí edge không âm và \(\rho_s\) không lớn hơn tỉ số giữa cost và khoảng cách của mọi edge hợp lệ, chi phí của một đường đi luôn lớn hơn hoặc bằng lower bound do heuristic ước lượng. Kết hợp với bất đẳng thức tam giác của Haversine, ta có:
+\subsection{Admissibility và consistency}
+Vì \(\rho_s\) không lớn hơn tỉ số giữa cost và khoảng cách của mọi edge hợp lệ, đồng thời Haversine thỏa bất đẳng thức tam giác, ta có:
 \[
 h_s(n)\leq \operatorname{cost}(\text{một đường đi từ }n\text{ đến goal}).
 \]
-Do đó \(h_s(n)\geq0\) và heuristic là admissible. Khi đi qua edge \(e=(u,v)\), ta cũng có:
+Do đó \(h_s(n)\geq0\) và heuristic là admissible. Với một edge \(e=(u,v)\), ta cũng có:
 \[
-h_s(u)\leq\operatorname{Cost}_s(e)+h_s(v),
+h_s(u)\leq \operatorname{Cost}_s(e)+h_s(v),
 \]
-nên heuristic là consistent. Với chi phí edge không âm, A* sẽ trả về đường đi có cost tối ưu, giống như UCS.
+nên heuristic là consistent. Khi edge cost không âm, A* trả về route có composite cost tối ưu, giống như UCS.
 
-\subsection{Ảnh hưởng của scenario và weight}
-Scenario được giữ cố định trong một lần tìm kiếm. Vì vậy, \(\rho_s\) và chi phí edge không thay đổi giữa các bước mở rộng node. Nếu traffic, flood hoặc các weight thay đổi thì cần tính lại \(\rho_s\). Heuristic này tối ưu cho composite cost đang chọn, chứ không tối ưu riêng cho khoảng cách hoặc thời gian.
-
-\subsection{Phân biệt với Nearest Neighbor}
-A* dùng heuristic lower-bound để tìm đường cho một chặng từ Start đến Goal. Nearest Neighbor dùng chi phí đường đi giữa các cặp điểm để quyết định điểm nào sẽ được ghé tiếp theo. Do Nearest Neighbor chọn thứ tự theo cách greedy, việc dùng A* trong từng chặng không làm cho toàn bộ tour trở thành nghiệm tối ưu. Held-Karp mới là phương pháp exact trong giới hạn số stop nhỏ.
+\subsection{Ảnh hưởng của scenario}
+Scenario được giữ cố định trong một lần tìm kiếm nên cost edge và \(\rho_s\) không thay đổi giữa các bước mở rộng node. Khi traffic, flood hoặc weight thay đổi, cần tính lại \(\rho_s\). Heuristic này được thiết kế cho composite cost đang chọn, không phải để tối ưu riêng khoảng cách hoặc thời gian.

@@ -24,16 +24,6 @@ Nhóm em chia chương trình thành các phần tương đối độc lập. Gr
 \label{fig:architecture-flow}
 \end{figure}
 
-\subsection{Giao diện chạy thực tế}
-\Cref{fig:gui-overview} là ảnh chụp ứng dụng sau khi nhóm em chạy local và nạp bản đồ landmark. Bản đồ hiển thị 65 node và 178 directed road-path edges. Panel bên trái cho phép chọn dataset, thuật toán và scenario. Đây là ảnh chụp từ chương trình đang chạy, không phải hình dựng minh họa.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{gui-overview.png}
-\caption{Giao diện FloodRoute HCMC khi nạp bản đồ active 65 node.}
-\label{fig:gui-overview}
-\end{figure}
-
 \subsection{Các luồng chính}
 \begin{enumerate}
 \item Tìm đường giữa hai điểm: nạp graph, giữ scenario cố định, tính \(\rho_s\), chạy thuật toán và trả về path/cost.
@@ -43,5 +33,4 @@ Nhóm em chia chương trình thành các phần tương đối độc lập. Gr
 \item Mỗi chặng đường đều dùng UCS hoặc A* tùy lựa chọn, trong khi graph ban đầu vẫn được giữ nguyên.
 \end{enumerate}
 
-\subsection{Tính tái lập}
-Scenario, quy tắc tie-break và phiên bản bộ kết quả được lưu cùng kết quả chạy. Những giá trị mô phỏng được ghi nhãn \texttt{SIMULATED}; những giả định về dữ liệu thực được ghi nhãn \texttt{ASSUMPTION}.
+Các lần chạy trên cùng input sử dụng quy tắc tie-break cố định để kết quả nhất quán. Những giá trị mô phỏng trong phần thực nghiệm được ghi nhãn \texttt{SIMULATED}.

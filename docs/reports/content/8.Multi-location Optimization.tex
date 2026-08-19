@@ -2,6 +2,24 @@
 \subsection{Benchmark tìm kiếm trên bản đồ 65 node}
 Nhóm em chạy benchmark trên bản đồ \texttt{thu\_duc\_landmarks\_v1.0.0} với 10 cặp OD, một baseline scenario, 6 thuật toán và 20 lần lặp cho mỗi trường hợp. Tổng cộng có 1,200 lượt chạy được đo. Các bảng và số liệu trong phần này được lấy từ file kết quả JSON sau khi chạy benchmark.
 
+\begin{center}
+{\small
+\begin{tabular}{l r r l}
+\toprule
+Thuật toán & Cost trên case minh họa & Node khám phá & Nhận xét\\
+\midrule
+UCS & 2.606 & 4 & Nghiệm tối ưu tham chiếu\\
+A* & 2.606 & 4 & Nghiệm tối ưu với lower bound\\
+BFS & 2.606 & 4 & Tối ưu chỉ khi edge cùng cost\\
+DFS & 2.606 & 6 & Không bảo đảm tối ưu\\
+Greedy & 2.606 & 4 & Heuristic, không bảo đảm\\
+Bidirectional & 2.606 & 4 & Tìm kiếm từ hai đầu\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Trên giao diện, thời gian xử lý thay đổi theo máy và trạng thái server nên nhóm em không dùng thời gian của một lần chụp làm kết luận chính. Cost và số node là các chỉ số ổn định hơn để so sánh thuật toán.
+
 \subsection{Kiểm tra heuristic A* với UCS}
 Để kiểm tra lower-bound heuristic trong nhiều điều kiện, nhóm em dùng fixture \texttt{toy\_graph\_v0.1} với 5 cặp OD và ba scenario: \texttt{OFFPEAK\_BALANCED}, \texttt{PEAK\_TRAFFIC}, \texttt{HEAVY\_RAIN\_SAFE}. Tổng cộng có 15 trường hợp.
 \begin{center}
@@ -26,27 +44,119 @@ Ba profile \texttt{BALANCED}, \texttt{PEAK\_TRAFFIC} và \texttt{RAIN\_SAFE} s�
 \end{itemize}
 Các ví dụ này cho thấy khi thay đổi mức ưu tiên của traffic hoặc flood thì tuyến được chọn có thể thay đổi. Trong mọi profile, road closure vẫn được xử lý như một ràng buộc cứng.
 
-\subsection{Ảnh chụp kết quả chạy thuật toán}
-Các ảnh dưới đây được nhóm em chụp khi chạy ứng dụng trên máy với bản đồ 65 node. Ảnh thể hiện trực tiếp giao diện, trace và các chỉ số sau khi chạy, giúp người đọc dễ hình dung hơn về kết quả thực nghiệm.
+\subsection{Giải thích route và so sánh phương án thay thế}
+Để giải thích route rõ hơn, nhóm em không chỉ báo cáo path cuối cùng mà còn tách tổng cost theo từng cạnh. Hai ví dụ dưới đây dùng fixture \texttt{toy\_graph\_v0.1}; toàn bộ traffic và flood trong fixture đều mang nhãn \texttt{SIMULATED}. Số liệu được sinh bởi benchmark \texttt{ROUTE\_EXPLANATIONS\_V1}, sau đó đối chiếu lại với cost engine.
+
+\subsubsection{Case A -- Peak traffic, so sánh cost thành phần}
+Với N01 \(\rightarrow\) N06 trong scenario \texttt{PEAK\_TRAFFIC}, UCS và A* cùng chọn N01--N02--N06, qua E01 và E03. Đây là route có composite cost thấp nhất trong các cạnh mở. Phương án thay thế đi qua E11 và E09 dài hơn nhưng quan trọng hơn là vẫn chịu cùng mức peak trong fixture. Vì fixture này đặt congestion level 4 và multiplier 1.45 cho các cạnh mở, nhóm em không kết luận rằng route đã ``né kẹt xe''; kết luận đúng là profile peak làm thành phần congestion tăng và route ngắn vẫn có cost thấp hơn.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l l r r r r r}
+\toprule
+Phương án & Edge & Distance (km) & ETA (min) & Traffic & Flood & Total cost\\
+\midrule
+Được chọn & E01,E03 & 2.500 & 8.062 & 1.125900 & 0.030000 & 2.920900\\
+Thay thế & E01,E11,E09 & 3.000 & 11.412 & 1.593675 & 0.000000 & 4.011175\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Các giá trị traffic và flood trong bảng cạnh dưới đây là thành phần đã nhân weight, không phải giá trị thô.
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Edge & Distance & Time & Traffic & Flood & Cost\\
+\midrule
+E01 & 1.100 & 2.200 & 0.445500 & 0.000000 & 1.160500\\
+E03 & 1.400 & 3.360 & 0.680400 & 0.030000 & 1.760400\\
+\midrule
+E11 (alt.) & 0.800 & 2.670 & 0.540675 & 0.000000 & 1.328175\\
+E09 (alt.) & 1.100 & 3.000 & 0.607500 & 0.000000 & 1.522500\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Như vậy E03 là cạnh đóng góp lớn nhất vào cost của route được chọn, chủ yếu do thời gian và congestion. Hai cạnh E11 và E09 làm phương án thay thế tăng lên 4.011175. Vì vậy route được chọn là ngắn nhất trong ví dụ này, có ETA nhỏ hơn và cũng là route có composite cost tốt nhất.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Route & Distance & Free-flow time & Traffic & Flood & Total\\
+\midrule
+N01--N02--N06 & 0.375000 & 1.390000 & 1.125900 & 0.030000 & 2.920900\\
+N01--N02--N04--N06 & 0.450000 & 1.967500 & 1.593675 & 0.000000 & 4.011175\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+\subsubsection{Case B -- Heavy rain, route đổi vì road closure}
+Với N05 \(\rightarrow\) N01 trong scenario \texttt{HEAVY\_RAIN\_SAFE}, route baseline E14,E04,E02 có khoảng cách 3.8 km nhưng E04 bị đóng. Do đó route này không có total cost hợp lệ. UCS và A* đều chọn route thay thế E14,E10,E12,E02, tương ứng N05--N06--N04--N02--N01.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l l r r r r r}
+\toprule
+Phương án & Edge & Distance (km) & ETA (min) & Traffic & Flood & Total cost\\
+\midrule
+Được chọn & E14,E10,E12,E02 & 4.300 & 14.275 & 0.428250 & 0.000000 & 3.713250\\
+Route cũ & E14,E04,E02 & 3.800 & 11.388 & N/A & N/A & Không hợp lệ\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Các cạnh của route được chọn lần lượt đóng góp: E14 = 1.150625, E10 = 0.972500, E12 = 0.847625 và E02 = 0.742500. Bảng chi tiết là:
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Edge & Distance & Time & Traffic & Flood & Cost\\
+\midrule
+E14 & 1.300 & 3.550 & 0.133125 & 0.000000 & 1.150625\\
+E10 & 1.100 & 3.000 & 0.112500 & 0.000000 & 0.972500\\
+E12 & 0.800 & 2.670 & 0.100125 & 0.000000 & 0.847625\\
+E02 & 1.100 & 2.200 & 0.082500 & 0.000000 & 0.742500\\
+E04 (route cũ) & 1.400 & 3.360 & 0.126000 & 0.500000 & closed\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+Tổng theo component là distance 0.430000, free-flow time 2.855000, congestion 0.428250, flood 0 và tổng cost 3.713250. Route cũ bị loại không phải vì tổng cost lớn hơn mà vì E04 có flood risk 1.0 và trạng thái closed; cost engine đặt total cost của cạnh này thành null. Đây là ví dụ rõ về việc closure là ràng buộc cứng, không thể dùng weight để ``bù'' cho một đoạn đường đã đóng.
+
+\begin{center}
+{\scriptsize
+\begin{tabular}{l r r r r r}
+\toprule
+Route & Distance & Free-flow time & Traffic & Flood & Total\\
+\midrule
+N05--N06--N04--N02--N01 & 0.430000 & 2.855000 & 0.428250 & 0.000000 & 3.713250\\
+N05--N06--N02--N01 & 0.380000 & N/A & N/A & N/A & Không hợp lệ\\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Trong cả hai case, UCS được dùng làm chuẩn vì tối ưu trên cost không âm. A* dùng cùng graph/scenario đã freeze, tính \(\rho_s\) một lần và dùng heuristic admissible, consistent; vì vậy A* cũng có bảo đảm tối ưu. Kết quả benchmark ghi nhận cost A* và UCS lệch 0.000000 ở cả hai case, đồng thời A* khám phá lần lượt 4 so với 5 node ở Case A và 5 so với 6 node ở Case B.
+
+\subsection{Hình minh họa kết quả chạy thuật toán}
+Các hình dưới đây được nhóm em chụp khi chạy ứng dụng trên máy với bản đồ 65 node. Nhóm em chỉ giữ lại một ảnh A*, một ảnh Compare và một ảnh tối ưu tour vì ba hình này đã thể hiện đủ route, trace, metrics và các chức năng chính.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-astar-route.png}
-\caption{Kết quả chạy A* trên cặp LM\_001 \(\rightarrow\) LM\_065, gồm route, trace và thông tin heuristic.}
+\caption{Kết quả chạy A* trên cặp LM\_001 \(\rightarrow\) LM\_065. Người đọc có thể kiểm tra route, total cost khoảng 2.606, số node khám phá và guarantee tối ưu trên giao diện.}
 \label{fig:gui-astar-route}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-ucs-route.png}
-\caption{Kết quả chạy UCS trên cùng cặp start-goal, được dùng làm kết quả đối chiếu với A*.}
-\label{fig:gui-ucs-route}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
 \includegraphics[width=0.94\textwidth,height=0.70\textheight,keepaspectratio]{gui-compare-algorithms.png}
-\caption{Chế độ Compare hiển thị cost và số node đã khám phá của 6 thuật toán.}
+\caption{Chế độ Compare hiển thị cost và số node đã khám phá của 6 thuật toán, giúp thấy rõ thuật toán nào có guarantee tối ưu và thuật toán nào chỉ là heuristic.}
 \label{fig:gui-compare}
 \end{figure}
 
