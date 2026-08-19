@@ -5,6 +5,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Added the Slides branch presentation bundle: 28-slide PPTX, HTML preview, Markdown source, slide report README, and progress note. Conflicting report metadata was kept from the current main branch.
 - Moved the title-page date inside the cover frame by lowering the frame bottom and preserving a balanced bottom margin.
 - Updated the report cover and HTML/Markdown metadata to list the three instructors: Bùi Duy Đăng, Bùi Tiến Lên, and Võ Nhật Tân.
 - Reworked the title-page institution heading into one compact block (`TRƯỜNG...`, `ĐHQG-HCM`, `KHOA...`) and moved the frame above the full block.
