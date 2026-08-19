@@ -109,7 +109,7 @@ weights chưa mở trong phạm vi deadline để giữ contract ổn định.
 | Ví dụ | Điều kiện | Tuyến trước | Tuyến sau | Diễn giải |
 |---|---|---|---|---|
 | `EX01_TOY_PROFILE_AND_RAIN` (`SIMULATED`) | `N01 → N06`, `OFFPEAK_BALANCED` → `HEAVY_RAIN_SAFE` | `N01 → N02 → N06`, cost `2.343000` | `N01 → N02 → N04 → N06`, cost `2.562625` | `E03/E04` bị đóng như hard constraint; route buộc đi vòng qua `E11/E09`. |
-| `EX02_MARKET_GOLDEN_FLOOD_DETOUR` (`MIXED`) | `UTR_NODE_2947068442 → UTR_NODE_366385739`, off-peak → rain/flood | 4 cạnh, cost `0.348775` | 27 cạnh, cost `0.435970` | Tuyến golden đổi sang detour flood-aware; chi tiết path/edge nằm trong artifact benchmark. |
+| `EX02_TOY_ALTERNATIVE_RAIN` (`SIMULATED`) | `N05 → N01`, off-peak → heavy rain | 3 cạnh, cost `3.733000` | 4 cạnh, cost `3.713250` | `E04` đóng; tuyến mô phỏng đổi sang detour qua `E10/E12`. |
 
 Ở fixture toy, `PEAK_TRAFFIC` giữ nguyên tuyến vì topology nhỏ và tuyến đó vẫn
 đủ rẻ, nhưng cost tăng từ `2.343000` lên `2.920900` và ETA tăng từ `5.560` lên
@@ -118,6 +118,12 @@ delay mạnh hơn; nó có thể đổi route khi có alternative đủ cạnh t
 không được hứa rằng route luôn đổi.
 
 ---
+
+## Active dataset scope
+
+The application keeps only `thu_duc_landmarks_v1.0.0` as its selectable
+processed map: 65 nodes and 178 derived road-path edges. The former 90-node
+processed map is retired; raw provenance is unchanged.
 
 ## 4. Tập Dữ liệu & Quy trình Quản lý
 
@@ -132,7 +138,6 @@ không được hứa rằng route luôn đổi.
 | Tên Dataset | Số Đỉnh ($V$) | Số Cạnh ($E$) | Trạng thái Dữ liệu | Mục đích Sử dụng |
 |---|:---:|:---:|---|---|
 | **`thu_duc_landmarks_v1.0.0`** | **65** POI | **178** Cạnh | `LANDMARK_DEMO` | 65 địa điểm lớn có tên thật từ OSM (Trường ĐH, Bệnh viện, Chợ); cạnh lưu tọa độ polyline thực tế từ UTraffic. Mặc định trên GUI. |
-| **`thu_duc_market_v1.0.0`** | **90** Nút | **155** Cạnh | `REVIEW_REQUIRED` | Vùng trọng điểm Chợ Thủ Đức; tích hợp 3 kịch bản thời tiết và 24 điểm ngập phục vụ kiểm tra đổi tuyến. |
 | **`thu_duc_core_capacity_v0.1.0`** | **3.229** Nút | **5.057** Cạnh | `CAPACITY_ONLY` | Mạng lưới giao thông lõi TP. Thủ Đức phục vụ đo đạc hiệu năng và stress-test thuật toán. |
 
 ### 4.3. Hệ thống Nhãn Dữ liệu Minh bạch (Provenance Transparency)

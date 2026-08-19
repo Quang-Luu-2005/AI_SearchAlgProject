@@ -6,7 +6,7 @@ Catalog graph đọc hai root cố định: `data/fixtures` và `data/processed`
 graph ID tương đối cũ; processed graph có prefix `processed/`. API resolve path và xác
 nhận candidate qua `GraphLoader.discover_directories` trong đúng root, vì vậy client
 không thể yêu cầu path filesystem tùy ý. UI ưu tiên
-`processed/thu_duc_market_v1.0.0` nhưng thuật toán vẫn chỉ phụ thuộc immutable graph
+`processed/thu_duc_landmarks_v1.0.0` nhưng thuật toán vẫn chỉ phụ thuộc immutable graph
 contract, không phụ thuộc FastAPI hay loại dataset.
 
 ## Mục tiêu thiết kế
@@ -17,6 +17,10 @@ contract, không phụ thuộc FastAPI hay loại dataset.
 - Explanation sinh từ cost breakdown và guarantee có cấu trúc.
 
 ## Map renderer
+
+The application map contract is limited to the 65-node landmark release. The
+90-node processed market release is retired and must not be used by the UI, API
+examples, or benchmark cases. The capacity graph remains benchmark-only.
 
 Frontend dùng MapLibre GL JS. OpenFreeMap là basemap best-effort; Node, Edge và route
 được chuyển từ API payload sang ba GeoJSON source và render bằng GPU layers. Snapshot
@@ -40,9 +44,8 @@ không tự đóng sau mỗi click để người dùng chọn liên tiếp, nh�
 và stop thứ 11. Marker stop được đánh số theo thứ tự nhập trước khi chạy, rồi chuyển sang
 thứ tự tour tối ưu/heuristic khi có kết quả.
 
-Frontend giữ landmark 65 node làm mặc định và cho phép chọn pilot 90 node để demo ba
-scenario cùng golden route-change. Pilot vẫn hiển thị nguyên trạng `REVIEW_REQUIRED` và
-traffic lịch sử; capacity graph chỉ tồn tại qua API/script benchmark.
+Frontend giữ landmark 65 node làm mặc định và là map duy nhất cho lựa chọn endpoint.
+Capacity graph chỉ tồn tại qua API/script benchmark.
 
 Camera dùng `maxBounds=B`, `renderWorldCopies=false` và min zoom 10.5 để chỉ hoạt động
 trong vùng nghiên cứu. B được lấy từ bounding rectangle của polygon ranh A rồi cộng 3%

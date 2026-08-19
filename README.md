@@ -1,5 +1,11 @@
 # FloodRoute HCMC
 
+## Active map release
+
+The active processed map is `processed/thu_duc_landmarks_v1.0.0` (65 selectable
+landmarks and 178 road-path edges). The former 90-node processed map has been
+removed from the catalog and is no longer an application or benchmark target.
+
 ## Dataset mặc định đang dùng
 
 Ứng dụng mặc định dùng `processed/thu_duc_landmarks_v1.0.0`: 65 địa điểm lớn có tên thật
@@ -7,8 +13,8 @@ từ OSM và 178 cạnh có hướng được tổng hợp theo đường đi ng
 Mạng nguồn 8.952 node/14.043 cạnh chỉ dùng lúc build; UI chỉ nhận landmark nên bản đồ
 không bị phủ bởi node kỹ thuật. Traffic là dữ liệu lịch sử, **không phải real-time**.
 
-Pilot flood-aware quanh chợ Thủ Đức 90/155 có thể chọn trong GUI để demo ba scenario,
-nhưng vẫn còn trạng thái `REVIEW_REQUIRED`. Chi tiết landmark release nằm trong
+Map 65 landmark là release duy nhất được chọn trong GUI và benchmark search.
+Các scenario traffic/flood mô phỏng vẫn được kiểm thử trong fixture `SIMULATED`.
 [`metadata.json`](data/processed/thu_duc_landmarks_v1.0.0/metadata.json) và
 [ADR 0011](docs/decisions/0011-thu-duc-selectable-landmark-graph.md).
 
@@ -101,7 +107,7 @@ thể kéo bản đồ ra toàn TP.HCM hoặc world view.
 
 Catalog có thêm `processed/thu_duc_core_capacity_v0.1.0` gồm 3.229 node/5.057 directed
 edge để stress-test. Capacity graph không xuất hiện trong dropdown; landmark 65 node là
-mặc định và pilot 90 node là lựa chọn demo scenario. Chạy benchmark bằng:
+map 65 node là lựa chọn demo duy nhất. Chạy benchmark bằng:
 
 ```powershell
 npm run benchmark:capacity
@@ -155,7 +161,7 @@ npm test
 | Khung React/FastAPI | Hoàn tất |
 | Phân lớp dataset + checksum | Hoàn tất |
 | Fixture/golden cases | Hoàn tất |
-| Graph pilot thực tế 80–150 nút | Có: UTraffic 90 node/155 edge |
+| Graph landmark thực tế | Có: 65 node/178 edge |
 | Map-match flood hotspot trong bbox | Candidate; chờ hai reviewer |
 | UCS và A* (scenario-aware cost lower bound) | Hoàn tất |
 | BFS/DFS/Greedy/Bidirectional | Hoàn tất API/GUI/compare |

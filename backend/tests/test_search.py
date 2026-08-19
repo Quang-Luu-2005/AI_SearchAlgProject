@@ -7,7 +7,7 @@ from backend.app.services import SearchService
 
 
 FIXTURE_DIR = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "toy_graph_v0.1"
-PROCESSED_DIR = Path(__file__).resolve().parents[2] / "data" / "processed" / "thu_duc_market_v1.0.0"
+LANDMARKS_DIR = Path(__file__).resolve().parents[2] / "data" / "processed" / "thu_duc_landmarks_v1.0.0"
 
 
 @pytest.fixture()
@@ -75,33 +75,20 @@ def test_start_equal_goal_returns_zero_metric_route(service: SearchService) -> N
     assert execution.result.trace[-1].kind.value == "GOAL"
 
 
-def test_thu_duc_golden_case_changes_route_and_remains_optimal() -> None:
-    service = SearchService(GraphLoader.from_directory(PROCESSED_DIR))
-    offpeak = service.search(
-        start="UTR_NODE_2947068442",
-        goal="UTR_NODE_366385739",
+def test_landmark_graph_ucs_and_astar_remain_optimal() -> None:
+    service = SearchService(GraphLoader.from_directory(LANDMARKS_DIR))
+    ucs = service.search(
+        start="LM_001",
+        goal="LM_065",
         algorithm="UCS",
-        scenario_id="HISTORICAL_OFFPEAK",
+        scenario_id="LANDMARK_HISTORICAL_BASELINE",
     )
-    rain_ucs = service.search(
-        start="UTR_NODE_2947068442",
-        goal="UTR_NODE_366385739",
-        algorithm="UCS",
-        scenario_id="RAIN_FLOOD_AWARE_2025_2026",
-    )
-    rain_astar = service.search(
-        start="UTR_NODE_2947068442",
-        goal="UTR_NODE_366385739",
+    astar = service.search(
+        start="LM_001",
+        goal="LM_065",
         algorithm="A_STAR",
-        scenario_id="RAIN_FLOOD_AWARE_2025_2026",
+        scenario_id="LANDMARK_HISTORICAL_BASELINE",
     )
 
-    assert offpeak.edge_ids != rain_ucs.edge_ids
-    assert rain_ucs.edge_ids == rain_astar.edge_ids
-    assert rain_ucs.result.metrics.total_cost == pytest.approx(rain_astar.result.metrics.total_cost)
-    assert rain_ucs.result.trace == service.search(
-        start="UTR_NODE_2947068442",
-        goal="UTR_NODE_366385739",
-        algorithm="UCS",
-        scenario_id="RAIN_FLOOD_AWARE_2025_2026",
-    ).result.trace
+    assert astar.edge_ids == ucs.edge_ids
+    assert astar.result.metrics.total_cost == pytest.approx(ucs.result.metrics.total_cost)

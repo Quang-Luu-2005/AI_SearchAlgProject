@@ -15,7 +15,6 @@ from backend.app.services.search import SearchService
 
 ROOT = Path(__file__).resolve().parents[1]
 TOY_GRAPH = ROOT / "data" / "fixtures" / "toy_graph_v0.1"
-MARKET_GRAPH = ROOT / "data" / "processed" / "thu_duc_market_v1.0.0"
 
 PROFILE_STORIES = {
     "BALANCED": "Default trade-off across distance, free-flow time, congestion and flood risk.",
@@ -44,16 +43,9 @@ def run() -> dict[str, Any]:
         for scenario in ("OFFPEAK_BALANCED", "PEAK_TRAFFIC", "HEAVY_RAIN_SAFE")
     ]
 
-    market_case = json.loads((MARKET_GRAPH / "test_cases.json").read_text(encoding="utf-8"))["cases"][0]
-    market_service = SearchService(GraphLoader.from_directory(MARKET_GRAPH))
-    market_routes = [
-        _search_summary(
-            market_service,
-            market_case["start"],
-            market_case["goal"],
-            scenario,
-        )
-        for scenario in (market_case["baseline_scenario_id"], market_case["comparison_scenario_id"])
+    toy_route_change = [
+        _search_summary(toy_service, "N05", "N01", scenario)
+        for scenario in ("OFFPEAK_BALANCED", "HEAVY_RAIN_SAFE")
     ]
 
     profiles = []
@@ -88,13 +80,13 @@ def run() -> dict[str, Any]:
                 "interpretation": "Peak raises cost on the same available route; heavy rain closes E03/E04, so the route must detour through E11/E09.",
             },
             {
-                "example_id": "EX02_MARKET_GOLDEN_FLOOD_DETOUR",
-                "data_status": market_case["data_status"],
-                "graph_id": "processed/thu_duc_market_v1.0.0",
-                "start": market_case["start"],
-                "goal": market_case["goal"],
-                "routes": market_routes,
-                "interpretation": "The frozen market golden case changes from the off-peak route to a longer flood-aware detour when the rain/flood profile is active.",
+                "example_id": "EX02_TOY_ALTERNATIVE_RAIN",
+                "data_status": "SIMULATED",
+                "graph_id": "toy_graph_v0.1",
+                "start": "N05",
+                "goal": "N01",
+                "routes": toy_route_change,
+                "interpretation": "The simulated N05 to N01 route changes under heavy rain because the direct E04 segment is closed and the path detours through E10/E12.",
             },
         ],
     }

@@ -2,29 +2,28 @@
 
 ## Release chợ Thủ Đức v1.0.0
 
-Processed release đã được đóng băng với 90 node, 155 directed edge và ba scenario.
-Dataset có trạng thái `MIXED`, `real_time=false`; manifest giữ `REVIEW_REQUIRED` do
-mapping flood chưa có hai chữ ký reviewer. Không được hiểu
+Processed release đang dùng là landmark graph với 65 node và 178 directed edge.
+Dataset có trạng thái `MIXED`, `real_time=false`; scenario active là baseline lịch sử.
+Không được hiểu
 `NO_RECORD_IN_SELECTED_SOURCES` là an toàn và không được nâng
 `ACADEMIC_DEMO_READY` trước khi toàn bộ review đạt.
 
-Pipeline tái lập:
+Pipeline tái lập landmark release:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts/data/build_thu_duc_market.py `
-  --utraffic-zip <path-to-immutable-kaggle-zip>
+node scripts/python.mjs scripts/data/build_thu_duc_landmarks.py
 npm run test:data
 ```
 
-Ngoài các file processed tối thiểu, release này có `flood_hotspots.csv`,
-`traffic_profiles.csv`, `mapping_review.csv` và `test_cases.json`.
+Landmark release giữ polyline road-path, metadata và scenario baseline; dữ liệu
+raw cũ chỉ giữ vai trò provenance bất biến.
 
 ## Capacity graph Thủ Đức v0.1.0
 
 `thu_duc_core_capacity_v0.1.0` là graph benchmark riêng, sinh từ cùng raw UTraffic nhưng
 dùng bbox lõi Thủ Đức rộng hơn và giữ thành phần liên thông mạnh lớn nhất: 3.229 node,
 5.057 directed edge. Dataset mang trạng thái `CAPACITY_BENCHMARK_ONLY`, không thay thế
-pilot 90/155 và không tuyên bố flood-aware hoặc real-time.
+landmark map và không tuyên bố flood-aware hoặc real-time.
 
 ```powershell
 node scripts/python.mjs scripts/data/build_thu_duc_capacity.py
@@ -32,7 +31,7 @@ npm run benchmark:capacity
 ```
 
 Benchmark search canonical không sửa processed data. Lệnh `npm run benchmark:search`
-đọc case `experiments/cases/search_benchmark_v1.json`, warm-up rồi đo 10 OD × 3 scenario
+đọc case `experiments/cases/search_benchmark_v1.json`, warm-up rồi đo 10 OD × 1 scenario
 × 6 thuật toán × 20 lần. Output là `DERIVED_BENCHMARK`, không phải nguồn traffic mới và
 không thay đổi provenance của dataset.
 
@@ -70,6 +69,13 @@ node scripts/python.mjs scripts/data/build_thu_duc_landmarks.py
 Workbook v0.1 vẫn là nguồn nghiên cứu không routable. Ứng dụng hiện dùng processed
 pilot chợ Thủ Đức, còn fixture phục vụ regression. Manifest giữ
 `routing_dataset_status = REVIEW_REQUIRED` cho đến khi có hai reviewer.
+
+## Current active release
+
+The application uses `thu_duc_landmarks_v1.0.0` as its only selectable processed
+map: 65 nodes and 178 directed road-path edges. The former 90-node processed
+market release was removed from the registry and workspace; immutable
+`data/raw/` provenance remains unchanged.
 
 ## Vòng đời dữ liệu
 

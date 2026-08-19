@@ -5,6 +5,10 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Xóa processed map 90 node `thu_duc_market_v1.0.0` khỏi workspace, manifest,
+  catalog và benchmark active; giữ `thu_duc_landmarks_v1.0.0` làm map duy nhất
+  cho lựa chọn endpoint/search. `data/raw/` không bị chỉnh sửa.
+
 - Chốt ba cost profile `BALANCED`, `PEAK_TRAFFIC`, `RAIN_SAFE` với vector trọng số
   hiện có; ghi rõ đây là hệ số ưu tiên empirical/simulated, giữ road closure là hard
   constraint và bổ sung artifact `cost_profiles_v1` với hai ví dụ đổi tuyến.

@@ -14,7 +14,7 @@ Dự án áp dụng quy trình quản trị dữ liệu 4 tầng nghiêm ngặt 
     \node[stage] (raw) {\textbf{data/raw/}\\ \footnotesize (OSM Snapshots, UTraffic, Checksums)};
     \node[stage, right=of raw] (interim) {\textbf{data/interim/}\\ \footnotesize (Clean topology, BBox simplified)};
     \node[stage, below=of raw] (fixtures) {\textbf{data/fixtures/}\\ \footnotesize (toy\_graph, golden unit tests)};
-    \node[stage, below=of interim] (processed) {\textbf{data/processed/}\\ \footnotesize (Landmark 65, Market 90, Capacity 3229)};
+\node[stage, below=of interim] (processed) {\textbf{data/processed/}\\ \footnotesize (Landmark 65, Capacity 3229)};
 
     \draw[arrow] (raw) -- node[above, font=\footnotesize] {scripts/data/} (interim);
     \draw[arrow] (interim) -- node[right, font=\footnotesize] {Build scripts} (processed);
@@ -41,7 +41,6 @@ Dự án áp dụng quy trình quản trị dữ liệu 4 tầng nghiêm ngặt 
 \textbf{Tên Dataset} & \textbf{Số Đỉnh ($V$)} & \textbf{Số Cạnh ($E$)} & \textbf{Trạng thái} & \textbf{Mục đích Sử dụng} \\
 \midrule
 \textbf{\texttt{thu\_duc\_landmarks\_v1.0.0}} & \textbf{65} POI & \textbf{178} Cạnh & \texttt{LANDMARK\_DEMO} & 65 địa điểm lớn có tên thật từ OSM (Đại học, Bệnh viện, Chợ); cạnh lưu polyline thực tế từ UTraffic. Mặc định trên GUI. \\
-\textbf{\texttt{thu\_duc\_market\_v1.0.0}} & \textbf{90} Nút & \textbf{155} Cạnh & \texttt{REVIEW\_REQUIRED} & Vùng trọng điểm Chợ Thủ Đức; tích hợp 3 kịch bản thời tiết và 24 điểm ngập phục vụ demo đổi tuyến. \\
 \textbf{\texttt{thu\_duc\_core\_capacity\_v0.1.0}} & \textbf{3.229} Nút & \textbf{5.057} Cạnh & \texttt{CAPACITY\_ONLY} & Mạng lưới giao thông lõi TP. Thủ Đức phục vụ đo đạc hiệu năng và stress-test dung lượng. \\
 \bottomrule
 \end{tabularx}

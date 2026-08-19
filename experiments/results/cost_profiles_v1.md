@@ -28,13 +28,13 @@ OD: `N01 → N06`
 
 Interpretation: Peak raises cost on the same available route; heavy rain closes E03/E04, so the route must detour through E11/E09.
 
-### EX02_MARKET_GOLDEN_FLOOD_DETOUR — processed/thu_duc_market_v1.0.0 (MIXED)
+### EX02_TOY_ALTERNATIVE_RAIN — toy_graph_v0.1 (SIMULATED)
 
-OD: `UTR_NODE_2947068442 → UTR_NODE_366385739`
+OD: `N05 → N01`
 
 | Scenario | Route | Edges | Cost | Distance (km) | ETA (min) |
 |---|---|---:|---:|---:|---:|
-| HISTORICAL_OFFPEAK | `UTR_NODE_2947068442 → UTR_NODE_5758041297 → UTR_NODE_2947068443 → UTR_NODE_366410061 → UTR_NODE_366385739` | 4 | 0.348775 | 0.143 | 0.225 |
-| RAIN_FLOOD_AWARE_2025_2026 | `UTR_NODE_2947068442 → UTR_NODE_5758041297 → UTR_NODE_2947068443 → … → UTR_NODE_366457374 → UTR_NODE_366442171 → UTR_NODE_366385739` | 27 | 0.435970 | 0.612 | 1.764 |
+| OFFPEAK_BALANCED | `N05 → N06 → N02 → N01` | 3 | 3.733000 | 3.800 | 9.110 |
+| HEAVY_RAIN_SAFE | `N05 → N06 → N04 → N02 → N01` | 4 | 3.713250 | 4.300 | 14.275 |
 
-Interpretation: The frozen market golden case changes from the off-peak route to a longer flood-aware detour when the rain/flood profile is active.
+Interpretation: The simulated N05 to N01 route changes under heavy rain because the direct E04 segment is closed and the path detours through E10/E12.

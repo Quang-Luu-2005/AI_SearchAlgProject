@@ -16,7 +16,6 @@ DATA_ROOT = REPOSITORY_ROOT / "data"
 MANIFEST_PATH = DATA_ROOT / "registry" / "dataset_manifest.json"
 FIXTURE_ROOT = DATA_ROOT / "fixtures" / "toy_graph_v0.1"
 EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
-PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_market_v1.0.0"
 CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
 LANDMARK_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.0"
 OSM_THU_DUC_PROCESSED_ROOT = DATA_ROOT / "processed" / "osm_thu_duc_v1.0.0"
@@ -141,8 +140,6 @@ def validate_processed_dataset(dataset_root: Path) -> list[str]:
     reviews = read_csv(dataset_root / "mapping_review.csv")
     test_cases = read_json(dataset_root / "test_cases.json")
 
-    if len(nodes) != 90 or len(edges) != 155:
-        errors.append(f"{dataset_name}: expected exactly 90 nodes and 155 directed edges")
     node_ids = [row["node_id"] for row in nodes]
     edge_ids = [row["edge_id"] for row in edges]
     node_id_set, edge_id_set = set(node_ids), set(edge_ids)
@@ -552,9 +549,7 @@ def validate() -> list[str]:
 
     for processed in manifest.get("processed_datasets", []):
         processed_root = REPOSITORY_ROOT / processed["path"]
-        if processed_root == PROCESSED_ROOT:
-            errors.extend(validate_processed_dataset(processed_root))
-        elif processed_root == CAPACITY_PROCESSED_ROOT:
+        if processed_root == CAPACITY_PROCESSED_ROOT:
             errors.extend(validate_capacity_dataset(processed_root))
         elif processed_root == LANDMARK_PROCESSED_ROOT:
             errors.extend(validate_landmark_dataset(processed_root))
@@ -580,8 +575,7 @@ if __name__ == "__main__":
     print("- toy graph: 6 nodes, 14 directed edges")
     print("- graph examples: simple path, one-way branch, cycle with closure")
     print("- scenario weights, labels and golden paths verified")
-    print("- Thu Duc Market: 90 nodes, 155 directed edges, strongly connected")
     print("- Thu Duc capacity graph: 3229 nodes, 5057 directed edges, strongly connected")
     print("- Thu Duc landmarks: 65 selectable POIs, 178 derived road-path edges")
-    print("- traffic/flood provenance and route-change golden case verified")
-    print("- release status: REVIEW_REQUIRED (two human map-match reviews pending)")
+    print("- landmark graph provenance and deterministic search cases verified")
+    print("- active map release: 65 selectable landmarks; no 90-node processed map")

@@ -48,12 +48,6 @@ def test_graph_catalog_discovers_fixture_and_processed_folders() -> None:
         "BREAK_CYCLE",
         "OPEN_CYCLE",
     ]
-    real_graph = graph_by_id["processed/thu_duc_market_v1.0.0"]
-    assert (real_graph["node_count"], real_graph["edge_count"]) == (90, 155)
-    assert real_graph["dataset_kind"] == "processed"
-    assert real_graph["data_status"] == "MIXED"
-    assert real_graph["real_time"] is False
-    assert real_graph["routing_dataset_status"] == "REVIEW_REQUIRED"
     capacity_graph = graph_by_id["processed/thu_duc_core_capacity_v0.1.0"]
     assert (capacity_graph["node_count"], capacity_graph["edge_count"]) == (3229, 5057)
     assert capacity_graph["routing_dataset_status"] == "CAPACITY_BENCHMARK_ONLY"
@@ -99,19 +93,17 @@ def test_locations_returns_selectable_simulated_nodes() -> None:
     assert all(item["data_status"] == "SIMULATED" for item in payload["locations"])
 
 
-def test_processed_locations_return_every_topology_node_with_pois_first() -> None:
+def test_landmark_locations_return_only_the_65_selectable_places() -> None:
     response = client.get(
         "/api/v1/locations",
-        params={"graph_id": "processed/thu_duc_market_v1.0.0"},
+        params={"graph_id": "processed/thu_duc_landmarks_v1.0.0"},
     )
 
     assert response.status_code == 200
     payload = response.json()
-    assert len(payload["locations"]) == 90
-    assert payload["locations"][0]["point_id"] == "DP00"
-    assert "Chợ Thủ Đức" in payload["locations"][0]["name"]
-    assert len({item["node_id"] for item in payload["locations"]}) == 90
-    assert any(item["name"].startswith("Giao ") for item in payload["locations"])
+    assert len(payload["locations"]) == 65
+    assert len({item["node_id"] for item in payload["locations"]}) == 65
+    assert all(item["node_type"] == "SELECTABLE_LANDMARK" for item in payload["locations"])
     assert all(item["data_status"] == "SOURCE_BACKED" for item in payload["locations"])
 
 
@@ -342,22 +334,20 @@ def test_compare_can_run_bfs_and_dfs_with_weighted_algorithms() -> None:
     ]
 
 
-def test_processed_search_discloses_historical_limitations() -> None:
+def test_landmark_search_discloses_historical_limitations() -> None:
     response = client.post(
         "/api/v1/search",
         json={
-            "graph_id": "processed/thu_duc_market_v1.0.0",
-            "start": "UTR_NODE_2947068442",
-            "goal": "UTR_NODE_366385739",
+            "graph_id": "processed/thu_duc_landmarks_v1.0.0",
+            "start": "LM_001",
+            "goal": "LM_065",
             "algorithm": "UCS",
-            "scenario": "RAIN_FLOOD_AWARE_2025_2026",
+            "scenario": "LANDMARK_HISTORICAL_BASELINE",
         },
     )
 
     assert response.status_code == 200
     payload = response.json()
-    # The selected detour contains only derived traffic edges; the dataset/scenario
-    # remains MIXED, while route status is intentionally edge-granular.
     assert payload["data_status"] == "DERIVED"
     assert "historical, not real-time" in payload["explanation"]
     assert any("not real-time" in item for item in payload["limitations"])

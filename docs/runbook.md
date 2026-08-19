@@ -147,7 +147,6 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/simple_path` | Đường thẳng có hướng |
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
-| `processed/thu_duc_market_v1.0.0` | Pilot thực tế 90 node/155 edge, historical/not real-time |
 | `processed/thu_duc_landmarks_v1.0.0` | Mặc định: 65 landmark chọn được/178 road-path edge |
 | `processed/thu_duc_core_capacity_v0.1.0` | Chỉ dùng benchmark 3.229/5.057; ẩn khỏi dropdown UI |
 
@@ -162,6 +161,11 @@ trong rectangle B có lề bao trọn polygon ranh A; min zoom 10.5 và
 `renderWorldCopies=false` ngăn viewport đi ra toàn TP.HCM hoặc bản đồ thế giới. Nút reset
 fit lại B, nhờ vậy các cạnh sát biên và một vành nhỏ bên ngoài đường đỏ vẫn nhìn thấy.
 Nếu boundary API lỗi, camera fallback và giới hạn theo graph context bounds.
+
+## Active processed map
+
+The only selectable processed map is `processed/thu_duc_landmarks_v1.0.0`.
+The former 90-node processed map has been retired and is intentionally absent.
 
 ## 6. Thêm dataset folder mới
 

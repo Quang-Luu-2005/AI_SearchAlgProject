@@ -4,7 +4,7 @@
 
 `GET /api/v1/graphs` chỉ khám phá hai root cấu hình (`data/fixtures` và
 `data/processed`). Processed graph ID có prefix `processed/`, ví dụ
-`processed/thu_duc_market_v1.0.0`. Mỗi catalog row bổ sung `dataset_kind`,
+`processed/thu_duc_landmarks_v1.0.0`. Mỗi catalog row bổ sung `dataset_kind`,
 `snapshot_date`, `real_time`, `source_ids`, `limitations` và
 `routing_dataset_status`.
 
@@ -23,6 +23,10 @@ Frontend dùng polygon để vẽ “Ranh TP Thủ Đức cũ” và tính overv
 không tham gia topology hoặc cost.
 
 ## Search catalog
+
+The active processed graph is `processed/thu_duc_landmarks_v1.0.0` with 65
+selectable landmarks. The retired 90-node processed graph is not part of the
+catalog or API examples.
 
 - `GET /api/v1/locations?graph_id=toy_graph_v0.1` lists every selectable topology node.
   Với processed pilot, POI thật đứng trước và node còn lại có tên giao lộ deterministic;

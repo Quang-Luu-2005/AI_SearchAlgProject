@@ -1,6 +1,5 @@
 """Acceptance tests for the frozen cost profiles and route-change evidence."""
 
-import json
 from pathlib import Path
 
 import pytest
@@ -12,7 +11,6 @@ from backend.app.services.search import SearchService
 
 ROOT = Path(__file__).resolve().parents[2]
 TOY_GRAPH_DIR = ROOT / "data" / "fixtures" / "toy_graph_v0.1"
-MARKET_GRAPH_DIR = ROOT / "data" / "processed" / "thu_duc_market_v1.0.0"
 
 EXPECTED_WEIGHTS = {
     "BALANCED": {
@@ -81,25 +79,15 @@ def test_toy_fixture_records_profile_and_scenario_route_change() -> None:
     assert rain.edge_ids != baseline.edge_ids
 
 
-def test_processed_market_golden_case_records_second_route_change() -> None:
-    graph = GraphLoader.from_directory(MARKET_GRAPH_DIR)
-    case = json.loads((MARKET_GRAPH_DIR / "test_cases.json").read_text(encoding="utf-8"))["cases"][0]
-    service = SearchService(graph)
-
+def test_second_simulated_route_change_stays_within_the_toy_fixture() -> None:
+    service = SearchService(GraphLoader.from_directory(TOY_GRAPH_DIR))
     baseline = service.search(
-        start=case["start"],
-        goal=case["goal"],
-        algorithm="UCS",
-        scenario_id=case["baseline_scenario_id"],
+        start="N05", goal="N01", algorithm="UCS", scenario_id="OFFPEAK_BALANCED"
     )
     comparison = service.search(
-        start=case["start"],
-        goal=case["goal"],
-        algorithm="UCS",
-        scenario_id=case["comparison_scenario_id"],
+        start="N05", goal="N01", algorithm="UCS", scenario_id="HEAVY_RAIN_SAFE"
     )
 
-    assert baseline.edge_ids == tuple(case["expected_baseline_edge_ids"])
-    assert comparison.edge_ids == tuple(case["expected_comparison_edge_ids"])
+    assert baseline.edge_ids == ("E14", "E04", "E02")
+    assert comparison.edge_ids == ("E14", "E10", "E12", "E02")
     assert baseline.edge_ids != comparison.edge_ids
-    assert case["data_status"] == "MIXED"
