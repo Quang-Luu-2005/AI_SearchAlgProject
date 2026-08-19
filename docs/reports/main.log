@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 20:14
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 20:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1222,7 +1222,7 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-29>
  ***********
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: A3083304EB3A9A51380C27C355F37897;1972.
+(rerunfilecheck)             Checksum: F98169173D2E65B58D38F0197170B8E7;1820.
  ) 
 Here is how much of TeX's memory you used:
  30728 strings out of 402987

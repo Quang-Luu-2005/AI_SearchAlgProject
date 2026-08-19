@@ -1,18 +1,12 @@
-\section{Giới thiệu nhóm và phạm vi đồ án}
-\subsection{Bối cảnh và mục tiêu}
-FloodRoute HCMC là đồ án Lab 1 của nhóm em trong môn Nhập môn Trí tuệ Nhân tạo. Mục tiêu của nhóm là mô hình hóa bài toán tìm đường giao hàng trên graph có hướng, cài đặt các thuật toán tìm kiếm và so sánh kết quả theo composite cost. Nhóm em dùng UCS làm mốc để kiểm tra A* và dùng các scenario traffic/flood để minh họa ảnh hưởng của môi trường.
+\section{Giới thiệu bài toán}
+\subsection{Bối cảnh giao thông tại TP. Hồ Chí Minh}
+TP. Hồ Chí Minh, đặc biệt là khu vực TP. Thủ Đức, có mật độ giao thông cao và nhiều tuyến đường một chiều. Khi traffic tăng, đường bị đóng hoặc xuất hiện ngập cục bộ, tuyến ngắn nhất về khoảng cách chưa chắc là tuyến phù hợp nhất.
 
-\subsection{Thành viên và phân công}
-\begin{tabularx}{\textwidth}{l l X}
-\toprule
-Thành viên & Mã số & Phạm vi chính\\
-\midrule
-Ngô Quang Thắng & 23127473 & Mô hình graph, cost engine, tích hợp backend\\
-Vũ Lê Trọng Văn & 20127095 & Các thuật toán tìm kiếm và trace frontier\\
-Nguyễn Duy Khang & 23127202 & Dataset, scenario và kiểm thử\\
-Lưu Huy Minh Quang & 23127016 & Frontend, bản đồ và báo cáo\\
-\bottomrule
-\end{tabularx}
+\subsection{Bài toán đặt ra}
+Trong bối cảnh trên, bài toán cần giải quyết là tìm một tuyến đường có hướng từ điểm xuất phát đến điểm đích với tổng chi phí nhỏ nhất. Tổng chi phí không chỉ phụ thuộc vào khoảng cách mà còn phụ thuộc vào thời gian di chuyển, mức độ congestion, flood risk và trạng thái đóng/mở của đường.
 
-\subsection{Phạm vi}
-Trong báo cáo, nhóm em sử dụng bản đồ chính gồm 65 landmark và 178 directed road-path edges. Các scenario peak/rain trong phần kiểm chứng dùng graph nhỏ có nhãn \texttt{SIMULATED}, không đại diện cho traffic thời gian thực.
+\subsection{Kịch bản shipper}
+Shipper xuất phát từ depot và giao hàng đến một hoặc nhiều landmark. Với một cặp start-goal, hệ thống cần tìm route có composite cost nhỏ nhất. Khi có nhiều điểm giao hàng, hệ thống còn phải quyết định thứ tự ghé thăm các điểm; phần này được trình bày ở Chương 9.
+
+\subsection{Tiêu chí tối ưu}
+Khoảng cách Haversine chỉ phản ánh khoảng cách địa lý, không thể hiện hướng đường, mức độ tắc nghẽn hay nguy cơ ngập. Vì vậy, nhóm em tối ưu theo composite cost. Nếu một edge bị đóng thì thuật toán không được phép đi qua edge đó. Heuristic A* chỉ cung cấp lower bound an toàn để vẫn giữ được tính tối ưu của route.
