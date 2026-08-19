@@ -216,9 +216,7 @@ class ScenarioCostEngine:
             "congestion": traffic_penalty * preset.weights["congestion"],
             "flood_risk": flood_risk * preset.weights["flood_risk"],
         }
-        is_closed = edge.edge_id in scenario.closed_edge_ids or bool(
-            override.get("is_closed", False)
-        )
+        is_closed = self._graph.is_edge_closed(edge.edge_id, scenario_id)
         return EdgeCostBreakdown(
             edge_id=edge.edge_id,
             scenario_id=scenario_id,

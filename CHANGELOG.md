@@ -5,6 +5,13 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Added processed/submission release `thu_duc_landmarks_v1.0.1` with unchanged 65-node/178-edge topology and an `ASSUMPTION` hard-closure detour scenario for `LM_EDGE_0001`.
+- Normalized graph closure semantics so both `closed_edge_ids` and `edge_overrides.is_closed` are excluded before every search algorithm; impossible scenarios return `NO_ROUTE`.
+- Added `thu_duc_landmarks_v1.0.2`: 65 nodes and 283 directed edges, with up to four nearest outgoing road-path alternatives per landmark for more detour choices.
+- Removed the historical-traffic notice card from the frontend panel while retaining provenance and limitations in the submission manifest.
+- Added the self-contained `data/submission/floodroute_dataset_v1.0.0` bundle with CSV/JSON data, validation report, checksums, provenance labels, and submission manifest.
+- Split the submission bundle into `raw_collected/` source snapshots and `normalized/` routing data, with separate checksums and provenance manifests.
+
 - Streamlined the report around the Lab 1 rubric: removed the internal requirement-mapping table, shortened dataset/provenance and A* exposition, moved fixture context to experiments, removed the duplicate UCS screenshot, and simplified usage instructions.
 - Added compact algorithm and A*/UCS result tables so the space is used for direct experimental evidence instead of engineering documentation.
 - Added a deterministic route-explanation benchmark with selected/alternative route costs, edge breakdowns, closure handling, and UCS/A* validation for the report.

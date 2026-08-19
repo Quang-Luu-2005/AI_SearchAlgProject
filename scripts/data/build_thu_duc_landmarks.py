@@ -27,8 +27,8 @@ BOUNDARY_PATH = (
     REPOSITORY_ROOT
     / "data/raw/thu_duc_boundary_v1.0.0/osm_relation_19407794.geojson"
 )
-OUTPUT_ROOT = REPOSITORY_ROOT / "data/processed/thu_duc_landmarks_v1.0.0"
-DATASET_ID = "thu_duc_landmarks_v1.0.0"
+OUTPUT_ROOT = REPOSITORY_ROOT / "data/processed/thu_duc_landmarks_v1.0.2"
+DATASET_ID = "thu_duc_landmarks_v1.0.2"
 ROAD_TYPES = {
     "motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link",
     "secondary", "secondary_link", "tertiary", "tertiary_link", "residential",
@@ -418,7 +418,7 @@ def build() -> tuple[int, int]:
     }
     landmark_by_snap = {item["snap_node_id"]: item for item in snapped}
 
-    # Directed edges = bidirectional road-distance MST + two nearest outgoing alternatives.
+    # Directed edges = bidirectional road-distance MST + four nearest outgoing alternatives.
     root = min(snap_ids, key=lambda item: normalized_name(landmark_by_snap[item]["name"]))
     tree_nodes = {root}
     undirected_pairs: set[tuple[str, str]] = set()
@@ -440,7 +440,7 @@ def build() -> tuple[int, int]:
         nearest = sorted(
             (routes_by_source[origin][destination][0], destination)
             for destination in snap_ids if destination != origin
-        )[:2]
+        )[:4]
         directed_pairs.update((origin, destination) for _, destination in nearest)
 
     node_id_by_snap: dict[str, str] = {}

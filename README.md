@@ -2,20 +2,20 @@
 
 ## Active map release
 
-The active processed map is `processed/thu_duc_landmarks_v1.0.0` (65 selectable
-landmarks and 178 road-path edges). The former 90-node processed map has been
+The active processed map is `processed/thu_duc_landmarks_v1.0.2` (65 selectable
+landmarks and 283 road-path edges). The former 90-node processed map has been
 removed from the catalog and is no longer an application or benchmark target.
 
 ## Dataset mặc định đang dùng
 
-Ứng dụng mặc định dùng `processed/thu_duc_landmarks_v1.0.0`: 65 địa điểm lớn có tên thật
-từ OSM và 178 cạnh có hướng được tổng hợp theo đường đi ngắn nhất trên snapshot UTraffic.
+Ứng dụng mặc định dùng `processed/thu_duc_landmarks_v1.0.2`: 65 địa điểm lớn có tên thật
+từ OSM và 283 cạnh có hướng được tổng hợp theo đường đi ngắn nhất trên snapshot UTraffic.
 Mạng nguồn 8.952 node/14.043 cạnh chỉ dùng lúc build; UI chỉ nhận landmark nên bản đồ
 không bị phủ bởi node kỹ thuật. Traffic là dữ liệu lịch sử, **không phải real-time**.
 
 Map 65 landmark là release duy nhất được chọn trong GUI và benchmark search.
 Các scenario traffic/flood mô phỏng vẫn được kiểm thử trong fixture `SIMULATED`.
-[`metadata.json`](data/processed/thu_duc_landmarks_v1.0.0/metadata.json) và
+[`metadata.json`](data/processed/thu_duc_landmarks_v1.0.2/metadata.json) và
 [ADR 0011](docs/decisions/0011-thu-duc-selectable-landmark-graph.md).
 
 Website mô phỏng tìm đường giao hàng đa điểm cho shipper xe máy tại TP.HCM trong

@@ -34,19 +34,19 @@ describe('default dataset selection', () => {
     expect(preferredGraphId([
       summary('toy_graph_v0.1', 'fixture'),
       summary('processed/thu_duc_market_v1.0.0', 'processed'),
-      summary('processed/thu_duc_landmarks_v1.0.0', 'processed'),
-    ])).toBe('processed/thu_duc_landmarks_v1.0.0')
+      summary('processed/thu_duc_landmarks_v1.0.2', 'processed'),
+    ])).toBe('processed/thu_duc_landmarks_v1.0.2')
   })
 
   it('keeps capacity-only graphs out of the interactive routing dropdown', () => {
     const graphs = [
-      { graph_id: 'processed/thu_duc_landmarks_v1.0.0', routing_dataset_status: 'ACADEMIC_LANDMARK_DEMO' },
+      { graph_id: 'processed/thu_duc_landmarks_v1.0.2', routing_dataset_status: 'ACADEMIC_LANDMARK_DEMO' },
       { graph_id: 'processed/thu_duc_market_v1.0.0', routing_dataset_status: 'REVIEW_REQUIRED' },
       { graph_id: 'processed/thu_duc_core_capacity_v0.1.0', routing_dataset_status: 'CAPACITY_BENCHMARK_ONLY' },
     ] as GraphSummary[]
 
     expect(interactiveGraphs(graphs).map((item) => item.graph_id)).toEqual([
-      'processed/thu_duc_landmarks_v1.0.0',
+      'processed/thu_duc_landmarks_v1.0.2',
       'processed/thu_duc_market_v1.0.0',
     ])
   })

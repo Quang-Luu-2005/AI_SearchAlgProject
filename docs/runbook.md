@@ -147,7 +147,7 @@ Các fixture có sẵn:
 | `graph_examples_v0.1/simple_path` | Đường thẳng có hướng |
 | `graph_examples_v0.1/one_way_branch` | Nhánh một chiều |
 | `graph_examples_v0.1/cycle_with_closure` | Cycle và scenario phá cycle |
-| `processed/thu_duc_landmarks_v1.0.0` | Mặc định: 65 landmark chọn được/178 road-path edge |
+| `processed/thu_duc_landmarks_v1.0.2` | Mặc định: 65 landmark chọn được/283 road-path edge; có hard closure scenario |
 | `processed/thu_duc_core_capacity_v0.1.0` | Chỉ dùng benchmark 3.229/5.057; ẩn khỏi dropdown UI |
 
 Trong landmark dataset, circle trắng viền xanh là nút có thể chọn. Trong chế độ START/GOAL
@@ -164,7 +164,7 @@ Nếu boundary API lỗi, camera fallback và giới hạn theo graph context bo
 
 ## Active processed map
 
-The only selectable processed map is `processed/thu_duc_landmarks_v1.0.0`.
+The default selectable processed map is `processed/thu_duc_landmarks_v1.0.2`; v1.0.1 and v1.0.0 remain as previous releases.
 The former 90-node processed map has been retired and is intentionally absent.
 
 ## 6. Thêm dataset folder mới

@@ -49,7 +49,7 @@ hành chính hiện hành.
 
 ## Landmark graph Thủ Đức v1.0.0
 
-`thu_duc_landmarks_v1.0.0` là release mặc định: 65 named major places và 178 directed
+`thu_duc_landmarks_v1.0.2` là release mặc định: 65 named major places và 283 directed
 aggregate road-path edge. “Địa điểm lớn” được định nghĩa bằng nhóm tag OSM có tên:
 university/college, hospital, marketplace, bus station/townhall, mall, railway station,
 stadium, museum hoặc theme park. Snapshot candidate được lưu bất biến tại
@@ -72,8 +72,8 @@ pilot chợ Thủ Đức, còn fixture phục vụ regression. Manifest giữ
 
 ## Current active release
 
-The application uses `thu_duc_landmarks_v1.0.0` as its only selectable processed
-map: 65 nodes and 178 directed road-path edges. The former 90-node processed
+The application uses `thu_duc_landmarks_v1.0.2` as its default selectable processed
+map: 65 nodes and 283 directed road-path edges. The former 90-node processed
 market release was removed from the registry and workspace; immutable
 `data/raw/` provenance remains unchanged.
 
@@ -85,6 +85,13 @@ market release was removed from the registry and workspace; immutable
 | `interim` | Clean/simplify/map-match tạm | Không | Phải tạo lại được bằng script |
 | `processed` | Graph release cho app/thí nghiệm | Có khi freeze | Version + metadata + validation |
 | `fixtures` | Graph nhỏ với expected result | Có | Deterministic, luôn gắn SIMULATED |
+
+## Bundle nộp bài
+
+Các bundle dùng để nộp bài được đặt dưới `data/submission/`, có version riêng,
+manifest, provenance, validation report và checksum. Bundle được tách thành
+`raw_collected/` (snapshot nguồn sao chép nguyên trạng) và `normalized/` (graph
+đã chuẩn hóa cho bài toán); không sửa hoặc di chuyển dữ liệu trong `data/raw/`.
 
 ## Gói processed tối thiểu
 

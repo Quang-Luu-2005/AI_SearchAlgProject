@@ -6,7 +6,7 @@ Catalog graph đọc hai root cố định: `data/fixtures` và `data/processed`
 graph ID tương đối cũ; processed graph có prefix `processed/`. API resolve path và xác
 nhận candidate qua `GraphLoader.discover_directories` trong đúng root, vì vậy client
 không thể yêu cầu path filesystem tùy ý. UI ưu tiên
-`processed/thu_duc_landmarks_v1.0.0` nhưng thuật toán vẫn chỉ phụ thuộc immutable graph
+`processed/thu_duc_landmarks_v1.0.2` nhưng thuật toán vẫn chỉ phụ thuộc immutable graph
 contract, không phụ thuộc FastAPI hay loại dataset.
 
 ## Mục tiêu thiết kế
@@ -36,7 +36,7 @@ dùng tên POI OSM source-backed.
 Khi chọn endpoint, click ngoài marker được snap phía client tới node có thể chọn gần nhất
 trong 200 m. Search request vẫn chỉ chứa `node_id` hợp lệ. Landmark edge giữ
 `path_coordinates_json`, là polyline shortest path đã tổng hợp từ mạng nguồn UTraffic
-8.952/14.043; thuật toán chạy trên graph nén 65/178. Graph capacity 3.229/5.057 vẫn là
+8.952/14.043; thuật toán chạy trên graph nén 65/283. Graph capacity 3.229/5.057 vẫn là
 benchmark riêng.
 
 Ở tour mode, map picker ánh xạ START vào depot và GOAL vào danh sách stop. GOAL mode
@@ -155,7 +155,7 @@ immutable graph and deterministic tie-break boundaries.
 `from_json` và `load_graph`. Loader tạo các model bất biến trong
 `backend/app/core/contracts.py`. Graph là directed-only; neighbor được sort
 deterministic theo `(to_node_id, edge_id)` và mỗi scenario được biểu diễn bằng
-`GraphView` lọc `closed_edge_ids`, không thay đổi graph gốc. Chi tiết field và
+`GraphView` lọc hợp nhất `closed_edge_ids` và `edge_overrides.is_closed`, không thay đổi graph gốc. Chi tiết field và
 ví dụ input nằm trong [graph-format.md](graph-format.md).
 
 Graph explorer không nhận filesystem path tùy ý từ frontend. Backend chỉ khám

@@ -353,6 +353,28 @@ class Graph:
                     f"Scenario {scenario.scenario_id} closes missing edges: "
                     f"{sorted(unknown_edges)}"
                 )
+            edge_overrides = scenario.attributes.get("edge_overrides", {})
+            if not isinstance(edge_overrides, Mapping):
+                raise GraphFormatError(
+                    f"Scenario {scenario.scenario_id} edge_overrides must be a mapping"
+                )
+            unknown_override_edges = set(edge_overrides) - edge_by_id.keys()
+            if unknown_override_edges:
+                raise GraphFormatError(
+                    f"Scenario {scenario.scenario_id} overrides missing edges: "
+                    f"{sorted(unknown_override_edges)}"
+                )
+            for edge_id, override in edge_overrides.items():
+                if not isinstance(override, Mapping):
+                    raise GraphFormatError(
+                        f"Scenario {scenario.scenario_id} override for {edge_id} "
+                        "must be a mapping"
+                    )
+                if "is_closed" in override and not isinstance(override["is_closed"], bool):
+                    raise GraphFormatError(
+                        f"Scenario {scenario.scenario_id} override for {edge_id} "
+                        "is_closed must be boolean"
+                    )
             scenario_by_id[scenario.scenario_id] = scenario
 
         sorted_nodes = tuple(sorted(node_values, key=lambda node: node.node_id))
@@ -516,7 +538,15 @@ class Graph:
     def _closed_edge_ids(self, scenario_id: str | None) -> frozenset[str]:
         if scenario_id is None:
             return frozenset()
-        return frozenset(self.scenario(scenario_id).closed_edge_ids)
+        scenario = self.scenario(scenario_id)
+        closed_edge_ids = set(scenario.closed_edge_ids)
+        edge_overrides = scenario.attributes.get("edge_overrides", {})
+        closed_edge_ids.update(
+            edge_id
+            for edge_id, override in edge_overrides.items()
+            if override.get("is_closed") is True
+        )
+        return frozenset(closed_edge_ids)
 
     @classmethod
     def from_csv(cls, nodes_path: str, edges_path: str, scenarios_path: str | None = None) -> "Graph":

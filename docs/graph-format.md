@@ -158,7 +158,9 @@ Neighbor được sắp xếp ổn định theo `(to_node_id, edge_id)`. Vì v�
 
 ## Scenario và tính bất biến
 
-Scenario có `scenario_id` và `closed_edge_ids`. Dùng:
+Scenario có `scenario_id` và `closed_edge_ids`; `edge_overrides.<edge_id>.is_closed: true`
+cũng là hard closure tương đương. Graph contract hợp nhất hai nguồn này trước khi
+đưa cạnh vào thuật toán. Dùng:
 
 ```python
 rainy = graph.for_scenario("HEAVY_RAIN_SAFE")

@@ -913,32 +913,6 @@ export function App() {
               <strong>{selectedScenario.closed_edge_ids.length} cạnh đóng</strong>
             </div>
           )}
-          {selectedGraph?.dataset_kind === 'processed' && (
-            <div className="dataset-notice">
-              <strong>{selectedGraph.real_time ? 'Real-time dataset' : 'Historical traffic · not real-time'}</strong>
-              <span>Snapshot {selectedGraph.snapshot_date ?? 'unknown'} · {selectedGraph.routing_dataset_status}</span>
-              {selectedGraph.graph_id === 'processed/thu_duc_market_v1.0.0' && (
-                <small>No flood record does not mean a road is safe.</small>
-              )}
-              <details>
-                <summary>{t('dataset_summary_title', lang)}</summary>
-                <ul>
-                  {selectedGraph.limitations.map((item) => <li key={item}>{item}</li>)}
-                </ul>
-                {selectedGraph.graph_id === 'processed/thu_duc_market_v1.0.0' && (
-                  <div>
-                    <a href="https://ttbc-hcm.gov.vn/24-diem-mua-la-ngap-o-tp-thu-duc-nguoi-dan-can-chu-y-1018710.html" target="_blank" rel="noreferrer">
-                      Flood hotspots 2025
-                    </a>
-                    {' · '}
-                    <a href="https://tuoitre.vn/nld/so-xay-dung-tphcm-neu-nguyen-nhan-cho-thu-duc-ngap-nang-sau-mua-dau-mua-196260507181450735.htm" target="_blank" rel="noreferrer">
-                      Thu Duc Market update 2026
-                    </a>
-                  </div>
-                )}
-              </details>
-            </div>
-          )}
           {invalidGraphs.length > 0 && (
             <p className="warning-note">{invalidGraphs.length} graph không hợp lệ đã bị bỏ qua.</p>
           )}

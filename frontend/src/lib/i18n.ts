@@ -40,7 +40,6 @@ export const translations = {
     group_comparison: '📊 Algorithm Comparison',
     scenario_label: 'Cost Scenario',
     preset: 'preset',
-    dataset_summary_title: 'Dataset sources & limitations',
     api_connected: 'Backend API connected',
 
     // Form fields & prompts
@@ -211,7 +210,6 @@ export const translations = {
     group_comparison: '📊 So sánh thuật toán',
     scenario_label: 'Kịch bản chi phí',
     preset: 'preset',
-    dataset_summary_title: 'Nguồn và giới hạn dataset',
     api_connected: 'Backend API đã kết nối',
 
     // Form fields & prompts

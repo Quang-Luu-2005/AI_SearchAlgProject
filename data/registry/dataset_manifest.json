@@ -81,6 +81,38 @@
       ]
     },
     {
+      "dataset_id": "thu_duc_landmarks_v1.0.1",
+      "path": "data/processed/thu_duc_landmarks_v1.0.1",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 178,
+      "source_ids": [
+        "UTRAFFIC-HCM-V6",
+        "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+        "OSM-THU-DUC-BOUNDARY-2026-08-09"
+      ],
+      "release_note": "Hard closure semantics for exact landmark edge IDs; topology unchanged."
+    },
+    {
+      "dataset_id": "thu_duc_landmarks_v1.0.2",
+      "path": "data/processed/thu_duc_landmarks_v1.0.2",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 283,
+      "source_ids": [
+        "UTRAFFIC-HCM-V6",
+        "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+        "OSM-THU-DUC-BOUNDARY-2026-08-09"
+      ],
+      "release_note": "Four nearest outgoing road-path alternatives per landmark; topology has 65 nodes and 283 edges."
+    },
+    {
       "dataset_id": "thu_duc_core_capacity_v0.1.0",
       "path": "data/processed/thu_duc_core_capacity_v0.1.0",
       "data_status": "MIXED",
@@ -106,6 +138,50 @@
         "OSM-OVERPASS-ROAD-2026-08-10",
         "OSM-OVERPASS-REGISTRY-2026-08-10"
       ]
+    }
+  ],
+  "submission_bundles": [
+    {
+      "dataset_id": "floodroute_dataset_submission_v1.0.0",
+      "path": "data/submission/floodroute_dataset_v1.0.0",
+      "raw_path": "data/submission/floodroute_dataset_v1.0.0/raw_collected",
+      "normalized_path": "data/submission/floodroute_dataset_v1.0.0/normalized",
+      "source_release": "thu_duc_landmarks_v1.0.0",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 178,
+      "manifest": "data/submission/floodroute_dataset_v1.0.0/submission_manifest.json"
+    },
+    {
+      "dataset_id": "floodroute_dataset_submission_v1.0.1",
+      "path": "data/submission/floodroute_dataset_v1.0.1",
+      "raw_path": "data/submission/floodroute_dataset_v1.0.1/raw_collected",
+      "normalized_path": "data/submission/floodroute_dataset_v1.0.1/normalized",
+      "source_release": "thu_duc_landmarks_v1.0.1",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 178,
+      "manifest": "data/submission/floodroute_dataset_v1.0.1/submission_manifest.json"
+    },
+    {
+      "dataset_id": "floodroute_dataset_submission_v1.0.2",
+      "path": "data/submission/floodroute_dataset_v1.0.2",
+      "raw_path": "data/submission/floodroute_dataset_v1.0.2/raw_collected",
+      "normalized_path": "data/submission/floodroute_dataset_v1.0.2/normalized",
+      "source_release": "thu_duc_landmarks_v1.0.2",
+      "data_status": "MIXED",
+      "routing_dataset_status": "ACADEMIC_LANDMARK_DEMO",
+      "snapshot_date": "2026-08-09",
+      "real_time": false,
+      "node_count": 65,
+      "edge_count": 283,
+      "manifest": "data/submission/floodroute_dataset_v1.0.2/submission_manifest.json"
     }
   ],
   "fixtures": [

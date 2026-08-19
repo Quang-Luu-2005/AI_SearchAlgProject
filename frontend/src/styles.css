@@ -560,34 +560,6 @@ select:focus {
   background: #c9f0e4;
 }
 
-.dataset-notice {
-  display: grid;
-  gap: 4px;
-  margin-top: 14px;
-  padding: 12px;
-  border: 1px solid #d8c48b;
-  border-radius: 12px;
-  color: #54451d;
-  background: #fff9e8;
-  font-size: 0.76rem;
-}
-
-.dataset-notice span,
-.dataset-notice small {
-  color: var(--muted);
-}
-
-.dataset-notice summary {
-  cursor: pointer;
-  font-weight: 750;
-}
-
-.dataset-notice ul {
-  margin: 8px 0;
-  padding-left: 18px;
-}
-
-.dataset-notice a,
 .dataset-attribution a {
   color: var(--primary);
 }

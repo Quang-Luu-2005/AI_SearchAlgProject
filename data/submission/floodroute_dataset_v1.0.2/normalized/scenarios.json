@@ -1,0 +1,35 @@
+{
+  "dataset_id": "thu_duc_landmarks_v1.0.2",
+  "data_status": "MIXED",
+  "real_time": false,
+  "scenarios": [
+    {
+      "scenario_id": "LANDMARK_HISTORICAL_BASELINE",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "UTraffic source max-velocity historical baseline",
+      "cost_preset": "BALANCED",
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "closed_edge_ids": [],
+      "edge_overrides": {}
+    },
+    {
+      "scenario_id": "LANDMARK_HARD_CLOSURE_DETOUR",
+      "data_status": "ASSUMPTION",
+      "traffic_scenario": "Fixed landmark edge hard-closure detour demonstration",
+      "cost_preset": "BALANCED",
+      "weights": {
+        "distance": 0.25,
+        "freeflow_time": 0.3,
+        "congestion": 0.2,
+        "flood_risk": 0.25
+      },
+      "closed_edge_ids": ["LM_EDGE_0001"],
+      "edge_overrides": {}
+    }
+  ]
+}

@@ -18,6 +18,8 @@ FIXTURE_ROOT = DATA_ROOT / "fixtures" / "toy_graph_v0.1"
 EXAMPLE_FIXTURE_ROOT = DATA_ROOT / "fixtures" / "graph_examples_v0.1"
 CAPACITY_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_core_capacity_v0.1.0"
 LANDMARK_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.0"
+LANDMARK_V101_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.1"
+LANDMARK_V102_PROCESSED_ROOT = DATA_ROOT / "processed" / "thu_duc_landmarks_v1.0.2"
 OSM_THU_DUC_PROCESSED_ROOT = DATA_ROOT / "processed" / "osm_thu_duc_v1.0.0"
 THU_DUC_BOUNDARY_PATH = (
     DATA_ROOT / "raw" / "thu_duc_boundary_v1.0.0" / "osm_relation_19407794.geojson"
@@ -342,8 +344,9 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
     landmarks = read_csv(dataset_root / "landmarks.csv")
     scenarios = read_json(dataset_root / "scenarios.json")
     metadata = read_json(dataset_root / "metadata.json")
-    if len(nodes) != 65 or len(edges) != 178 or len(landmarks) != 65:
-        errors.append(f"{dataset_name}: expected 65 landmarks and 178 directed edges")
+    expected_edge_count = 283 if dataset_root == LANDMARK_V102_PROCESSED_ROOT else 178
+    if len(nodes) != 65 or len(edges) != expected_edge_count or len(landmarks) != 65:
+        errors.append(f"{dataset_name}: expected 65 landmarks and {expected_edge_count} directed edges")
     node_ids = {row["node_id"] for row in nodes}
     if len(node_ids) != len(nodes) or len({row["edge_id"] for row in edges}) != len(edges):
         errors.append(f"{dataset_name}: node and edge IDs must be unique")
@@ -394,8 +397,21 @@ def validate_landmark_dataset(dataset_root: Path) -> list[str]:
         errors.append(f"{dataset_name}: landmark graph must be strongly connected")
 
     scenario_rows = scenarios.get("scenarios", [])
-    if [row.get("scenario_id") for row in scenario_rows] != ["LANDMARK_HISTORICAL_BASELINE"]:
-        errors.append(f"{dataset_name}: landmark baseline scenario is required")
+    scenario_ids = [row.get("scenario_id") for row in scenario_rows]
+    expected_scenario_ids = ["LANDMARK_HISTORICAL_BASELINE"]
+    if dataset_root in {LANDMARK_V101_PROCESSED_ROOT, LANDMARK_V102_PROCESSED_ROOT}:
+        expected_scenario_ids.append("LANDMARK_HARD_CLOSURE_DETOUR")
+    if scenario_ids != expected_scenario_ids:
+        errors.append(f"{dataset_name}: expected scenarios are {expected_scenario_ids}")
+    if dataset_root in {LANDMARK_V101_PROCESSED_ROOT, LANDMARK_V102_PROCESSED_ROOT}:
+        closure = next(
+            (row for row in scenario_rows if row.get("scenario_id") == "LANDMARK_HARD_CLOSURE_DETOUR"),
+            None,
+        )
+        if not closure or closure.get("data_status") != "ASSUMPTION":
+            errors.append(f"{dataset_name}: hard closure scenario must be labelled ASSUMPTION")
+        elif closure.get("closed_edge_ids") != ["LM_EDGE_0001"]:
+            errors.append(f"{dataset_name}: hard closure scenario must close LM_EDGE_0001")
     properties = metadata.get("graph_properties", {})
     if properties.get("selectable_node_count") != len(nodes):
         errors.append(f"{dataset_name}: selectable count does not match nodes")
@@ -551,7 +567,11 @@ def validate() -> list[str]:
         processed_root = REPOSITORY_ROOT / processed["path"]
         if processed_root == CAPACITY_PROCESSED_ROOT:
             errors.extend(validate_capacity_dataset(processed_root))
-        elif processed_root == LANDMARK_PROCESSED_ROOT:
+        elif processed_root in {
+            LANDMARK_PROCESSED_ROOT,
+            LANDMARK_V101_PROCESSED_ROOT,
+            LANDMARK_V102_PROCESSED_ROOT,
+        }:
             errors.extend(validate_landmark_dataset(processed_root))
         elif processed_root == OSM_THU_DUC_PROCESSED_ROOT:
             errors.extend(validate_osm_thu_duc_dataset(processed_root))

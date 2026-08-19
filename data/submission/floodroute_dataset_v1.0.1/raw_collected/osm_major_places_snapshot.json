@@ -1,0 +1,5947 @@
+{
+  "snapshot_date": "2026-08-09",
+  "source_id": "OSM-THU-DUC-MAJOR-PLACES-2026-08-09",
+  "license": "ODbL-1.0",
+  "attribution": "© OpenStreetMap contributors",
+  "bbox": {
+    "south": 10.737393497,
+    "west": 106.692316968,
+    "north": 10.903548603,
+    "east": 106.887276832
+  },
+  "definition": "Named OSM features tagged as university/college, hospital, marketplace, bus station/townhall, mall, railway station, stadium, museum or theme park.",
+  "query_registry": [
+    {
+      "category": "EDUCATION",
+      "selector": "nwr[\"name\"][\"amenity\"~\"^(university|college)$\"]",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"amenity\"~\"^(university|college)$\"];out center tags;",
+      "result_count": 105
+    },
+    {
+      "category": "HOSPITAL",
+      "selector": "nwr[\"name\"][\"amenity\"=\"hospital\"]",
+      "endpoint": "https://overpass.kumi.systems/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"amenity\"=\"hospital\"];out center tags;",
+      "result_count": 42
+    },
+    {
+      "category": "MARKET",
+      "selector": "nwr[\"name\"][\"amenity\"=\"marketplace\"]",
+      "endpoint": "https://overpass.kumi.systems/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"amenity\"=\"marketplace\"];out center tags;",
+      "result_count": 55
+    },
+    {
+      "category": "CIVIC_TRANSPORT",
+      "selector": "nwr[\"name\"][\"amenity\"~\"^(bus_station|townhall)$\"]",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"amenity\"~\"^(bus_station|townhall)$\"];out center tags;",
+      "result_count": 47
+    },
+    {
+      "category": "MALL",
+      "selector": "nwr[\"name\"][\"shop\"=\"mall\"]",
+      "endpoint": "https://overpass.kumi.systems/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"shop\"=\"mall\"];out center tags;",
+      "result_count": 21
+    },
+    {
+      "category": "RAIL_STATION",
+      "selector": "nwr[\"name\"][\"railway\"=\"station\"]",
+      "endpoint": "https://overpass.kumi.systems/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"railway\"=\"station\"];out center tags;",
+      "result_count": 16
+    },
+    {
+      "category": "STADIUM",
+      "selector": "nwr[\"name\"][\"leisure\"=\"stadium\"]",
+      "endpoint": "https://overpass-api.de/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"leisure\"=\"stadium\"];out center tags;",
+      "result_count": 4
+    },
+    {
+      "category": "CULTURE_THEME",
+      "selector": "nwr[\"name\"][\"tourism\"~\"^(museum|theme_park)$\"]",
+      "endpoint": "https://overpass.kumi.systems/api/interpreter",
+      "query": "[out:json][timeout:90][bbox:10.737393497,106.692316968,10.903548603,106.887276832];nwr[\"name\"][\"tourism\"~\"^(museum|theme_park)$\"];out center tags;",
+      "result_count": 21
+    }
+  ],
+  "elements": [
+    {
+      "type": "node",
+      "id": 947763632,
+      "lat": 10.764268,
+      "lon": 106.707021,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung Tâm Y Tế Dự Phòng - Phòng Khám Tiêm Phòng"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1001114513,
+      "lat": 10.7849957,
+      "lon": 106.7076753,
+      "tags": {
+        "name": "Bảo Tàng Địa Chất",
+        "name:en": "Museum of Geology",
+        "name:fr": "Musée de géologie",
+        "name:vi": "Bảo Tàng Địa Chất",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1001114521,
+      "lat": 10.7966169,
+      "lon": 106.7103518,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Nghiệp Vụ Nhà Hàng Thành Phố"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1274090728,
+      "lat": 10.7704853,
+      "lon": 106.7047872,
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Đại Học Ngân Hàng"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1770193818,
+      "lat": 10.7820744,
+      "lon": 106.6977069,
+      "tags": {
+        "name": "Phòng Truyền thống Thành Đoàn",
+        "name:en": "HCMC Youth Museum",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1779408189,
+      "lat": 10.758802,
+      "lon": 106.694865,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cầu Dừa",
+        "name:en": "Cau Dua Market",
+        "name:zh": "椰桥市场"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 1921519106,
+      "lat": 10.8724735,
+      "lon": 106.7572494,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ An Bình"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2230447361,
+      "lat": 10.7849924,
+      "lon": 106.698682,
+      "tags": {
+        "name": "Nhà Thiếu Nhi Quận 1",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2624268215,
+      "lat": 10.8011701,
+      "lon": 106.7331602,
+      "tags": {
+        "name": "Station Mall",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2672572232,
+      "lat": 10.79191,
+      "lon": 106.799223,
+      "tags": {
+        "amenity": "townhall",
+        "name": "UBND phường Phú Hữu"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2776788997,
+      "lat": 10.831297,
+      "lon": 106.7840226,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Tăng Nhơn Phú B"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2817112818,
+      "lat": 10.7866226,
+      "lon": 106.7383719,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Bình Khánh"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2891038201,
+      "lat": 10.8273477,
+      "lon": 106.7159069,
+      "tags": {
+        "name": "Bình Triệu",
+        "name:zh": "平趙",
+        "public_transport": "station",
+        "railway": "station"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2930719503,
+      "lat": 10.7795758,
+      "lon": 106.6965213,
+      "tags": {
+        "addr:housenumber": "8",
+        "addr:street": "Alexandre de Rhodes",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Columbia Asia Saigon",
+        "operator": "Columbia Asia",
+        "operator:type": "private",
+        "operator:wikidata": "Q5149612"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2949151276,
+      "lat": 10.8453975,
+      "lon": 106.7674443,
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Trung Cấp Đại Việt"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 3217904580,
+      "lat": 10.9034999,
+      "lon": 106.7102737,
+      "tags": {
+        "amenity": "hospital",
+        "name": "Bệnh viện Đa khoa Quốc Tế Miền Đông"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4131348092,
+      "lat": 10.8097524,
+      "lon": 106.8497582,
+      "tags": {
+        "name": "Bảo Tàng Áo Dài",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4131498489,
+      "lat": 10.8408403,
+      "lon": 106.765554,
+      "tags": {
+        "addr:housenumber": "31",
+        "addr:street": "Lê Quý Đôn",
+        "name": "Bảo Tàng Tư Nhân Đức Minh",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4295824693,
+      "lat": 10.863161,
+      "lon": 106.7210254,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Hiệp Bình Phước"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4374995103,
+      "lat": 10.8061332,
+      "lon": 106.8224664,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Long Trường"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4596372690,
+      "lat": 10.7617399,
+      "lon": 106.6950862,
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Quan 1",
+        "addr:postcode": "710200",
+        "addr:street": "Võ Văn Kiệt",
+        "addr:subdistrict": "Phường Cô Giang",
+        "name": "Trung Tâm Mua Sắm Russian",
+        "name:en": "RUSSIAN Clothes Market",
+        "name:id": "Pasar Rusia",
+        "name:ru": "Русский Рынок",
+        "name:vi": "Chợ Nga",
+        "name:zh": "俄罗斯市场",
+        "name:zh-Hant": "俄羅斯市場",
+        "opening_hours": "Mo-Su 09:00-21:00",
+        "payment:cash": "yes",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4617175606,
+      "lat": 10.7676377,
+      "lon": 106.6928286,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Chiều"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 4938463194,
+      "lat": 10.8763939,
+      "lon": 106.746659,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Khiết Tâm"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 5397202421,
+      "lat": 10.8115266,
+      "lon": 106.8515004,
+      "tags": {
+        "name": "アオザイ博物館入口",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 5436824926,
+      "lat": 10.7515198,
+      "lon": 106.7054977,
+      "tags": {
+        "addr:street": "Trần Xuân Soạn",
+        "amenity": "marketplace",
+        "name": "Chợ Tân Kiểng 1",
+        "name:en": "Local Market - Tan Kieng 1",
+        "opening_hours": "Mo-Su 05:00-21:00"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 5612900521,
+      "lat": 10.7856151,
+      "lon": 106.7030012,
+      "tags": {
+        "addr:street": "10-12 Đinh Tiên Hoàng, Bến Nghé, Quận 1, Hồ Chí Minh",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Đại Học KHXH&NV Thành phố Hồ Chí Minh - Cơ Sở 1"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 5747292796,
+      "lat": 10.8984228,
+      "lon": 106.8084973,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Bình An"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 5760993325,
+      "lat": 10.9020982,
+      "lon": 106.7787302,
+      "tags": {
+        "leisure": "stadium",
+        "name": "Sân vận động Dĩ An"
+      },
+      "floodroute_candidate_categories": [
+        "STADIUM"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6239863087,
+      "lat": 10.7720132,
+      "lon": 106.7716974,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Co.op Mart"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6388617477,
+      "lat": 10.7557673,
+      "lon": 106.6932361,
+      "tags": {
+        "amenity": "college",
+        "name": "Trung Tâm Ngoại Ngữ Tin Học Maritime"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6388617479,
+      "lat": 10.7559742,
+      "lon": 106.6931489,
+      "tags": {
+        "amenity": "college",
+        "name": "Trung Tâm Ngoại Ngữ Junior"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6512360893,
+      "lat": 10.7943977,
+      "lon": 106.7346479,
+      "tags": {
+        "addr:city": "Ho Chi Minh",
+        "addr:district": "Quan 2",
+        "addr:street": "Đường Số 7",
+        "addr:subdistrict": "Binh An",
+        "amenity": "marketplace",
+        "name": "Chợ Đo Đạc"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6741858303,
+      "lat": 10.8778839,
+      "lon": 106.8015666,
+      "tags": {
+        "addr:city": "Bình Dương",
+        "addr:district": "Dĩ An",
+        "addr:street": "Quảng trường sáng tạo",
+        "addr:subdistrict": "Đông Hòa",
+        "amenity": "university",
+        "internet_access": "wlan",
+        "name": "Ho Chi Minh city International University",
+        "name:vi": "Trường Đại học Quốc tế, Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator": "Vietnam National University HCMC",
+        "operator:type": "public",
+        "wikidata": "Q5873959",
+        "wikipedia": "en:Ho Chi Minh City International University"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6794788987,
+      "lat": 10.841436,
+      "lon": 106.8098568,
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại Học FPT Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 6808469859,
+      "lat": 10.8772665,
+      "lon": 106.801773,
+      "tags": {
+        "amenity": "university",
+        "check_date": "2026-01-16",
+        "name": "Tòa nhà hành chính IU (Đang xây dựng)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 8269175107,
+      "lat": 10.7921246,
+      "lon": 106.7228756,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Siêu Thị Sky Fresh"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9585162923,
+      "lat": 10.7692272,
+      "lon": 106.6998101,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Hoa Mai",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9585162924,
+      "lat": 10.7701978,
+      "lon": 106.7009692,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà Xe Toàn Thắng",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9585476419,
+      "lat": 10.7679444,
+      "lon": 106.6983944,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Huy Hoàng Limousine",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9585835374,
+      "lat": 10.8131239,
+      "lon": 106.6947329,
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại Học Văn Lang - Cơ Sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9586251041,
+      "lat": 10.7515951,
+      "lon": 106.696342,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Tân Hưng"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9586890718,
+      "lat": 10.7733608,
+      "lon": 106.7038659,
+      "tags": {
+        "name": "Trung tâm mua sắm Sài Gòn Garden",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9586916912,
+      "lat": 10.8276722,
+      "lon": 106.721539,
+      "tags": {
+        "name": "Gigamall Thủ Đức",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9586916914,
+      "lat": 10.8699419,
+      "lon": 106.7631673,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Hoà Hảo"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587042690,
+      "lat": 10.7970171,
+      "lon": 106.7031929,
+      "tags": {
+        "addr:city": "Thành Phố Hồ Chí Minh",
+        "addr:district": "Quận Bình Thạnh",
+        "addr:housenumber": "276",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Điện Biên Phủ",
+        "addr:subdistrict": "17",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Kinh tế Tài chính Thành phố Hồ Chí Minh (UEF)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587268683,
+      "lat": 10.7985763,
+      "lon": 106.7184993,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Thành Bưởi - Hàng Xanh",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587268684,
+      "lat": 10.7985379,
+      "lon": 106.7184705,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Nhà xe Thành Bưởi - Điện Biên Phủ",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587329643,
+      "lat": 10.7431156,
+      "lon": 106.7024554,
+      "tags": {
+        "amenity": "university",
+        "name": "Đại Học Nguyễn Tất Thành - Cơ Sở Nguyễn Hữu Thọ"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587375643,
+      "lat": 10.8292978,
+      "lon": 106.7687005,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Phước Long B"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587486344,
+      "lat": 10.7665534,
+      "lon": 106.6979948,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Dân Sinh"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587486348,
+      "lat": 10.7627952,
+      "lon": 106.6947299,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cô Giang"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587493562,
+      "lat": 10.7482605,
+      "lon": 106.7167158,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cư xá Ngân hàng"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587493568,
+      "lat": 10.8774415,
+      "lon": 106.7660961,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Linh Xuân"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587566626,
+      "lat": 10.743815,
+      "lon": 106.7325841,
+      "tags": {
+        "name": "Vincom Plus Nam Long Quận 7",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587618717,
+      "lat": 10.8595247,
+      "lon": 106.7559889,
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại Học Cảnh Sát Nhân Dân - Cơ Sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587618740,
+      "lat": 10.8602415,
+      "lon": 106.6946936,
+      "tags": {
+        "amenity": "university",
+        "name": "Đại học Nguyễn Tất Thành - Quận 12"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587618741,
+      "lat": 10.7905502,
+      "lon": 106.789698,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Phú Hữu"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9587618753,
+      "lat": 10.7882994,
+      "lon": 106.7657527,
+      "tags": {
+        "name": "Vincom Quận 2",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593340023,
+      "lat": 10.8896113,
+      "lon": 106.7269697,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Đêm Linh Trung"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593340024,
+      "lat": 10.8910082,
+      "lon": 106.7273892,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Hoàn Hảo 2"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593358298,
+      "lat": 10.8500849,
+      "lon": 106.7963248,
+      "tags": {
+        "name": "Chợ Đêm Man Thiện",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572487,
+      "lat": 10.8731005,
+      "lon": 106.8020069,
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Khoa học Xã hội và Nhân văn - CS Dĩ An"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572488,
+      "lat": 10.8759265,
+      "lon": 106.7977759,
+      "tags": {
+        "amenity": "university",
+        "name": "Đại học Khoa học Tự Nhiên Thành phố Hồ Chí Minh - Cơ sở Linh Trung"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572489,
+      "lat": 10.8753395,
+      "lon": 106.8000331,
+      "tags": {
+        "addr:city": "Thủ Dầu Một",
+        "addr:district": "Dĩ An",
+        "addr:province": "Bình Dương",
+        "addr:street": "Quảng Trường Sáng Tạo",
+        "addr:subdistrict": "Đông Hòa",
+        "amenity": "university",
+        "check_date": "2026-01-16",
+        "contact:facebook": "https://www.facebook.com/nvhsvtphcm",
+        "email": "vanphong@nhavanhoasinhvien.vn",
+        "internet_access": "wlan",
+        "internet_access:fee": "no",
+        "mobile": "+842838351118",
+        "name": "Nhà Văn Hóa Sinh Viên",
+        "opening_hours": "Mo-Su 07:00-23:00",
+        "operator": "Đại học Quốc gia TP. Hồ Chí Minh (Vietnam National University Ho Chi Minh City)",
+        "operator:type": "public",
+        "panoramax": "a08c0d6c-cde6-43c0-851f-32e39fc69ffa",
+        "website": "https://www.nhavanhoasinhvien.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572496,
+      "lat": 10.8847076,
+      "lon": 106.7579605,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Dĩ An 2"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572510,
+      "lat": 10.8710319,
+      "lon": 106.79145,
+      "tags": {
+        "amenity": "university",
+        "name": "Đại Học Nông Lâm Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9593572513,
+      "lat": 10.8799198,
+      "lon": 106.8047006,
+      "tags": {
+        "amenity": "university",
+        "name": "Đại học Bách Khoa - Cơ sở Dĩ An"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9699800177,
+      "lat": 10.7740881,
+      "lon": 106.7980152,
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:district": "Phường Cát Lái",
+        "addr:postcode": "700000",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường 60 - CL",
+        "addr:subdistrict": "Khu đô thị Cát Lái",
+        "amenity": "university",
+        "internet_access": "yes",
+        "name": "Trường Đại học Quản lý và Công nghệ Thành phố Hồ Chí Minh (UMT)",
+        "website": "https://www.umt.edu.vn"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9729070768,
+      "lat": 10.8111914,
+      "lon": 106.6953748,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cây Điệp"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 9965185460,
+      "lat": 10.7651115,
+      "lon": 106.6932273,
+      "tags": {
+        "addr:housenumber": "235-237",
+        "addr:street": "Trần Hưng Ðạo",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Quận 1 (cơ sở 2)"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 10047410618,
+      "lat": 10.7441887,
+      "lon": 106.7275329,
+      "tags": {
+        "addr:street": "Hẻm 458 Huỳnh Tấn Phát",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "BỆNH VIỆN MẮT"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 10170524317,
+      "lat": 10.8558331,
+      "lon": 106.7665022,
+      "tags": {
+        "addr:city": "Phường Linh Chiểu",
+        "addr:district": "Quan Thu Duc",
+        "addr:housenumber": "148D",
+        "addr:postcode": "700000",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Hoàng Diệu 2",
+        "addr:subdistrict": "Linh Trung",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "traditional_chinese_medicine",
+        "name": "Phòng khám đa khoa YHCT Thiên Phúc Đường",
+        "operator": "Thiên Phúc Đường",
+        "operator:type": "business"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 10259341541,
+      "lat": 10.881767,
+      "lon": 106.8061565,
+      "tags": {
+        "leisure": "stadium",
+        "name": "Nhà Thi Đấu ĐH Bách Khoa Tp.HCM"
+      },
+      "floodroute_candidate_categories": [
+        "STADIUM"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11136225851,
+      "lat": 10.8781962,
+      "lon": 106.7517797,
+      "tags": {
+        "name": "Sóng Thần",
+        "name:en": "Song Than",
+        "network": "VN:railway",
+        "operator": "VNR",
+        "public_transport": "station",
+        "railway": "station",
+        "railway:ref": "ST",
+        "train": "yes",
+        "wikidata": "Q7561050",
+        "wikipedia": "vi:Ga Sóng Thần"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11153640080,
+      "lat": 10.8888316,
+      "lon": 106.8616285,
+      "tags": {
+        "addr:city": "Thành phố Biên Hòa",
+        "addr:district": "An Hòa",
+        "addr:province": "Đồng Nai",
+        "addr:street": "Đường Ngô Quyền",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y Tế Xã An Hòa"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11343699081,
+      "lat": 10.7925945,
+      "lon": 106.7718011,
+      "tags": {
+        "addr:city": "Thủ Đức",
+        "addr:district": "Thủ Đức",
+        "addr:housenumber": "7",
+        "addr:postcode": "70000",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường M",
+        "addr:subdistrict": "An Phú",
+        "level": "3",
+        "museum": "nature",
+        "name": "CBES Mini Museum",
+        "operator": "CBES",
+        "operator:type": "private_non_profit",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11346766808,
+      "lat": 10.8449583,
+      "lon": 106.8377232,
+      "tags": {
+        "name": "Phố Thương Mại",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11391582959,
+      "lat": 10.8375648,
+      "lon": 106.8153901,
+      "tags": {
+        "addr:housenumber": "123",
+        "addr:street": "Đường D1",
+        "amenity": "hospital",
+        "emergency": "yes",
+        "name": "Kyo",
+        "operator": "Kyo"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280298,
+      "lat": 10.7960548,
+      "lon": 106.7155056,
+      "tags": {
+        "level": "1",
+        "name": "Công viên Văn Thánh",
+        "name:de": "Park Văn Thánh",
+        "name:en": "Van Thanh Park",
+        "name:fr": "Parc Văn Thánh",
+        "name:nl": "Văn Thánhpark",
+        "name:th": "สวนสาธารณะวันทั้ญ",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314194",
+        "wikipedia": "vi:Ga Công viên Văn Thánh"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280299,
+      "lat": 10.7985879,
+      "lon": 106.7232392,
+      "tags": {
+        "departures_board": "realtime",
+        "level": "1",
+        "name": "Tân Cảng",
+        "name:en": "Tan Cang",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314173",
+        "wikipedia": "vi:Ga Tân Cảng"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280300,
+      "lat": 10.8004871,
+      "lon": 106.7336512,
+      "tags": {
+        "internet_access": "wlan",
+        "name": "Thảo Điền",
+        "name:en": "Thao Dien",
+        "name:th": "ถาวเดี่ยน",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60313686",
+        "wikipedia": "vi:Ga Thảo Điền"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280301,
+      "lat": 10.8021337,
+      "lon": 106.7422498,
+      "tags": {
+        "name": "An Phú",
+        "name:en": "An Phu",
+        "name:th": "อานฟู้",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314166",
+        "wikipedia": "vi:Ga An Phú"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280302,
+      "lat": 10.8085535,
+      "lon": 106.755277,
+      "tags": {
+        "name": "Rạch Chiếc",
+        "name:en": "Rach Chiec",
+        "name:th": "สักเจี๊ยก",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314161",
+        "wikipedia": "vi:Ga Rạch Chiếc"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280303,
+      "lat": 10.821435,
+      "lon": 106.758185,
+      "tags": {
+        "name": "Phước Long",
+        "name:en": "Phuoc Long",
+        "name:th": "เฟื้อกล็อง",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314158",
+        "wikipedia": "vi:Ga Phước Long"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280304,
+      "lat": 10.832652,
+      "lon": 106.7638944,
+      "tags": {
+        "name": "Bình Thái",
+        "name:en": "Binh Thai",
+        "name:th": "บิ่ญท้าย",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314150",
+        "wikipedia": "vi:Ga Bình Thái"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280305,
+      "lat": 10.8589894,
+      "lon": 106.7888364,
+      "tags": {
+        "name": "Khu Công Nghệ Cao",
+        "name:en": "High Tech Park",
+        "name:th": "ไฮเทคพาร์ก",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314137",
+        "wikipedia": "vi:Ga Khu Công nghệ cao"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280306,
+      "lat": 10.8662985,
+      "lon": 106.8012008,
+      "tags": {
+        "name": "Đại học Quốc gia",
+        "name:en": "National University",
+        "name:th": "มหาวิทยาลัยแห่งชาติ",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314143",
+        "wikipedia": "vi:Ga Đại học Quốc gia, Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280307,
+      "lat": 10.8795447,
+      "lon": 106.8140929,
+      "tags": {
+        "name": "Bến xe Suối Tiên",
+        "name:en": "Suoi Tien Terminal",
+        "name:th": "ขนส่งซ้วยเตียน",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q61132106",
+        "wikipedia": "vi:Ga Bến xe Suối Tiên"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11586280327,
+      "lat": 10.8464061,
+      "lon": 106.7716521,
+      "tags": {
+        "name": "Thủ Đức",
+        "name:en": "Thu Duc",
+        "name:th": "ถูดึ๊ก",
+        "network": "Ho Chi Minh City Metro",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wikidata": "Q60314119",
+        "wikipedia": "vi:Ga Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11755184276,
+      "lat": 10.8680054,
+      "lon": 106.7877072,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Đại học Nông Lâm",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11757386654,
+      "lat": 10.8149424,
+      "lon": 106.7107009,
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận Bình Thạnh",
+        "addr:housenumber": "292",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Đinh Bộ Lĩnh",
+        "addr:subdistrict": "Phường 26",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Miền Đông",
+        "public_transport": "station",
+        "wikidata": "Q6843804"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11773635263,
+      "lat": 10.8841829,
+      "lon": 106.778731,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Đại học Quốc gia",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 11868497849,
+      "lat": 10.8802354,
+      "lon": 106.8154992,
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Miền Đông mới",
+        "name:th": "สถานีขนส่งซ้วยเตียน",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 12249370630,
+      "lat": 10.7404252,
+      "lon": 106.6998107,
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "addr:district": "Quận 7",
+        "addr:housenumber": "1",
+        "addr:postcode": "70000",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Nguyễn Thị Thập",
+        "addr:subdistrict": "Phường Tân Hưng",
+        "amenity": "hospital",
+        "contact:facebook": "https://www.facebook.com/nhakhoasingdent",
+        "healthcare": "hospital",
+        "healthcare:speciality": "dentist;orthodontics",
+        "mobile": "+84868033966",
+        "name": "Nha Khoa SingDent",
+        "operator": "Nha Khoa SingDent",
+        "operator:type": "business"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 12259274107,
+      "lat": 10.7910098,
+      "lon": 106.7073948,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Seafood mini-market",
+        "opening_hours": "06:00-18:00"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 12315783825,
+      "lat": 10.7888402,
+      "lon": 106.6974043,
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Quận 1",
+        "addr:housenumber": "11",
+        "addr:postcode": "710000",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Trần Doãn Khanh",
+        "addr:subdistrict": "Đa Kao",
+        "amenity": "hospital",
+        "contact:facebook": "https://www.facebook.com/wedobydr.meddi",
+        "healthcare": "hospital",
+        "healthcare:speciality": "dermatology",
+        "name": "Wedo Skin Clinic Quan 1",
+        "operator": "Dr. Meddi",
+        "operator:type": "private",
+        "phone": "+84 08 988 988 75",
+        "website": "https://wedoskinclinic.com/"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 12315789355,
+      "lat": 10.7982784,
+      "lon": 106.7384179,
+      "tags": {
+        "addr:city": "Phường An Phú",
+        "addr:district": "Thành phố Thủ Đức",
+        "addr:housenumber": "17",
+        "addr:postcode": "710000",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Thái Thuận",
+        "addr:subdistrict": "Phường An Phú",
+        "amenity": "hospital",
+        "contact:facebook": "https://www.facebook.com/wedobydr.meddi",
+        "description": "Wedo Skin Clinic (wedoskinclinic.com) is led by our Medical Advisor and Director, and excellent Dermatologist Dr. Quỳnh Trang, who has 10 years of experience in dermatology and aesthetic medicine. We specialize in acne treatment, melasma care, skin rejuve",
+        "healthcare": "hospital",
+        "healthcare:speciality": "dermatology",
+        "name": "Wedo Skin Clinic",
+        "operator": "Dr. Meddi",
+        "operator:type": "private",
+        "phone": "+84 07 07 19 66 22",
+        "website": "https://wedoskinclinic.com/"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 12901443422,
+      "lat": 10.8052246,
+      "lon": 106.6992364,
+      "tags": {
+        "addr:housenumber": "11",
+        "addr:street": "Nguyễn Thiện Thuật",
+        "museum": "history",
+        "name": "Vân Đường Phủ (Nhà cụ Vương Hồng Sển)",
+        "status": "inactive",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 13336584701,
+      "lat": 10.8180655,
+      "lon": 106.7300732,
+      "tags": {
+        "addr:street": "Nguyễn Văn Hưởng",
+        "name": "Quang San Art Museum",
+        "opening_hours": "Tu-Su 09:00-16:30",
+        "phone": "0981277745",
+        "tourism": "museum",
+        "website": "https://quangsanartmuseum.com.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 13531546501,
+      "lat": 10.7724861,
+      "lon": 106.7027582,
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Awesome cheap market"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "node",
+      "id": 13711065242,
+      "lat": 10.7725665,
+      "lon": 106.7006849,
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "addr:housenumber": "65-67",
+        "addr:street": "Lê Lợi",
+        "addr:subdistrict": "P. Sài Gòn",
+        "name": "Saigon Centre - Cổng Nam Kỳ Khởi Nghĩa - Điểm Đón Trả",
+        "name:en": "Saigon Centre - Nam Ky Khoi Nghia Gate - Pick-up and Drop-off Point",
+        "opening_hours": "08:00-21:00",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 9487536,
+      "center": {
+        "lat": 10.7611356,
+        "lon": 106.7097573
+      },
+      "tags": {
+        "addr:housenumber": "300A",
+        "addr:street": "Nguyễn Tất Thành",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Nguyễn Tất Thành",
+        "name:en": "Nguyen Tat Thanh University",
+        "name:id": "Universitas Nguyen Tat Thanh",
+        "name:ms": "Universiti Nguyen Tat Thanh",
+        "name:ru": "Нгуен Тат Тханский Университет",
+        "name:zh": "阮必成大学",
+        "type": "multipolygon"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 11102209,
+      "center": {
+        "lat": 10.7719499,
+        "lon": 106.7029683
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "landuse": "retail",
+        "name": "Chợ cũ Tôn Thất Đạm",
+        "name:en": "Old Market",
+        "name:zh": "尊室澹旧市场",
+        "type": "multipolygon"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 16241635,
+      "center": {
+        "lat": 10.8145273,
+        "lon": 106.8092252
+      },
+      "tags": {
+        "addr:housenumber": "306",
+        "addr:street": "Võ Văn Hát",
+        "amenity": "university",
+        "name": "Trường Đại học Tài chính - Marketing",
+        "type": "multipolygon"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "relation",
+      "id": 17758150,
+      "center": {
+        "lat": 10.7879621,
+        "lon": 106.7049183
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Nguyễn Thị Minh Khai",
+        "building": "yes",
+        "museum": "history",
+        "name": "Bảo tàng Lịch sử Thành phố Hồ Chí Minh",
+        "name:en": "History Museum of Ho Chi Minh City",
+        "name:id": "Muzium Serajah Vietnam",
+        "name:vi": "Bảo tàng Lịch sử Thành phố Hồ Chí Minh",
+        "name:vi-Hani": "寶藏歷史越南",
+        "opening_hours": "Tu-Su 08:00-11:30, 13:00-17:00",
+        "start_date": "1929",
+        "tourism": "museum",
+        "type": "multipolygon",
+        "website": "http://www.baotanglichsutphcm.com.vn/en-US/sightseeing/policy",
+        "wikidata": "Q6941045",
+        "wikimedia_commons": "Category:Ho Chi Minh City Museum of History",
+        "wikipedia": "vi:Bảo tàng Lịch sử Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 32587159,
+      "center": {
+        "lat": 10.8084246,
+        "lon": 106.8598815
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Long Phước"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 39514795,
+      "center": {
+        "lat": 10.7725707,
+        "lon": 106.6980174
+      },
+      "tags": {
+        "addr:postcode": "71009",
+        "addr:street": "Công trường Quách Thị Trang",
+        "alt_name": "Chợ Sài Gòn",
+        "amenity": "marketplace",
+        "building": "retail",
+        "name": "Chợ Bến Thành",
+        "name:ar": "بن ثانه السوق",
+        "name:cja-Latn": "Pasa Ben Thanh",
+        "name:cjm-Latn": "Darak Ben Thanh",
+        "name:cs": "Ben Thanh trhu",
+        "name:da": "Ben Thanh markedet",
+        "name:de": "Ben Thanh Markt",
+        "name:en": "Ben Thanh Market",
+        "name:eo": "Ben Thanh Merkato",
+        "name:es": "Mercado de Ben Thanh",
+        "name:fi": "Ben Thanh markkinoille",
+        "name:fr": "Marché de Ben Thanh",
+        "name:hi": "बेन थान बाजार",
+        "name:hu": "Ben Thanh piac",
+        "name:id": "Pasar Ben Thanh",
+        "name:it": "Mercato di Ben Thanh",
+        "name:ja": "ベンタイン市場",
+        "name:ko": "벤타인 시장",
+        "name:mn": "Бен Thanh зах зээл",
+        "name:ms": "Pasar Ben Thanh",
+        "name:nl": "Ben Thanh markt",
+        "name:no": "Ben Thanh-markedet",
+        "name:pl": "Targ Ben Thanh",
+        "name:pt": "Mercado Ben Thanh",
+        "name:ro": "Piață Ben Thanh",
+        "name:ru": "Рынок Бен Тхань",
+        "name:sv": "Ben Thanh-Marknaden",
+        "name:th": "ตลาดเบนถั่น",
+        "name:tr": "Ben Thanh Pazarı",
+        "name:uk": "Ринок Бен Тхань",
+        "name:vi": "Chợ Bến Thành",
+        "name:vi-Hani": "𢄂𡔖城",
+        "name:yue": "濱城市場",
+        "name:zh": "滨城市场",
+        "old_name": "Marché Central de Saïgon;Chợ Sài Gòn",
+        "opening_hours": "Mo-Su 06:00-18:00",
+        "phone": "0973756776",
+        "tourism": "attraction",
+        "website": "https://benthanhmarket.vn/",
+        "wheelchair": "yes",
+        "wikidata": "Q3232879",
+        "wikimedia_commons": "Category:Ben Thanh Market",
+        "wikipedia": "en:Bến Thành Market"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 39598492,
+      "center": {
+        "lat": 10.7924476,
+        "lon": 106.6965889
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Đa Kao",
+        "name:de": "Da Kao Markt",
+        "name:en": "Da Kao Market",
+        "name:fr": "Marché de Dakao;Marché de Da-Kao"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 39622432,
+      "center": {
+        "lat": 10.8023353,
+        "lon": 106.6948886
+      },
+      "tags": {
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "5",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Phan Đăng Lưu",
+        "addr:subdistrict": "Phường 3",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Mỹ thuật Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 59585216,
+      "center": {
+        "lat": 10.8147331,
+        "lon": 106.7112488
+      },
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến Xe Miền Đông (Bến Thanh)",
+        "name:en": "Miền Đông Bus Station (Bến Thanh)",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 79345731,
+      "center": {
+        "lat": 10.7635257,
+        "lon": 106.7061049
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "commercial",
+        "name": "Chợ Xóm Chiếu",
+        "name:en": "Xom Chieu Market",
+        "name:id": "Pasar Xom Chieu",
+        "name:zh": "坫𥴜市場"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 127299413,
+      "center": {
+        "lat": 10.8039083,
+        "lon": 106.6941137
+      },
+      "tags": {
+        "addr:district": "Bình Thạnh",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Phan Đăng Lưu",
+        "addr:subdistrict": "Phường 7",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Nhân dân Gia Định",
+        "old_name": "Bệnh viện Nguyễn Văn Học",
+        "wikidata": "Q115150671",
+        "wikipedia": "vi:Bệnh viện Nhân dân Gia Định"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 127299415,
+      "center": {
+        "lat": 10.8032232,
+        "lon": 106.6945681
+      },
+      "tags": {
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "1",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường Nơ Trang Long",
+        "addr:subdistrict": "Phường 7",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh Viện Quốc Tế Columbia Asia",
+        "name:en": "Columbia Asia",
+        "not:operator:wikidata": "Q5149612"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 165420599,
+      "center": {
+        "lat": 10.7860261,
+        "lon": 106.7031781
+      },
+      "tags": {
+        "addr:housenumber": "10-12",
+        "addr:street": "Đinh Tiên Hoàng",
+        "amenity": "university",
+        "barrier": "fence",
+        "education": "university",
+        "int_name": "Ho Chi Minh City University of Social Sciences and Humanities",
+        "layer": "1",
+        "name": "Trường Đại học Khoa học xã hội và Nhân văn",
+        "name:en": "University of Social Sciences and Humanities - HCMC",
+        "name:ja": "ホーチミン市人文社会科学大学",
+        "name:vi-Hani": "大學科學社會吧人文",
+        "name:zh": "胡志明市社会科学与人文大学",
+        "official_name": "Trường Đại học Khoa học Xã hội và Nhân văn - ĐHQG TP.HCM - cơ sở 1",
+        "official_name:en": "University of Social Sciences and Humanities - VNUHCM - Campus 1",
+        "old_name": "Đại học Văn Khoa Sài Gòn",
+        "old_name:en": "Faculty of Letters",
+        "short_name": "ĐH KHXH&NV",
+        "short_name:en": "HCMUSSH"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 165420602,
+      "center": {
+        "lat": 10.7849244,
+        "lon": 106.7020679
+      },
+      "tags": {
+        "addr:housenumber": "41",
+        "addr:street": "Tôn Đức Thắng",
+        "amenity": "university",
+        "education": "university",
+        "int_name": "Faculty of Pharmacy",
+        "name": "Khoa Dược - Đại học Y Dược Thành phố Hồ Chí Minh",
+        "name:en": "Faculty of Pharmacy - Ho Chi Minh City Medicine and Pharmacy University",
+        "name:id": "Fakultas Farmasi",
+        "name:ja": "ホーチミン医科薬科大学（薬学部）",
+        "name:vi": "Khoa Dược - Đại học Y Dược Thành phố Hồ Chí Minh",
+        "name:zh": "胡志明市医药大学药科",
+        "short_name": "UPHCM",
+        "short_name:en": "UPHCM"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 165518961,
+      "center": {
+        "lat": 10.7765844,
+        "lon": 106.6972837
+      },
+      "tags": {
+        "addr:housenumber": "106",
+        "addr:street": "Nguyễn Du",
+        "building": "yes",
+        "fee": "yes",
+        "name": "Trưng bày Từ Dinh Norodom đến Dinh Độc Lập",
+        "name:en": "Exhibition From Norodon Palace to Independence Palace",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 165887838,
+      "center": {
+        "lat": 10.7869832,
+        "lon": 106.7042406
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Lê Duẩn",
+        "building": "yes",
+        "name": "Bảo tàng Chiến dịch Hồ Chí Minh",
+        "name:en": "Ho Chi Minh Campaign Museum",
+        "name:ja": "ホーチミン作戦博物館",
+        "name:vi": "Bảo tàng Chiến dịch Hồ Chí Minh",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 166264569,
+      "center": {
+        "lat": 10.7623211,
+        "lon": 106.7002213
+      },
+      "tags": {
+        "alt_name": "Chợ Hãng Phân",
+        "amenity": "marketplace",
+        "name": "Chợ Hãng Phân",
+        "name:en": "Hang Phan Market",
+        "name:id": "Pasar Hang Phan",
+        "name:zh": "杭分市场"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 186249226,
+      "center": {
+        "lat": 10.7793793,
+        "lon": 106.6921923
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:housenumber": "28",
+        "addr:street": "Võ Văn Tần",
+        "barrier": "wall",
+        "contact:email": "wrm@baotangchungtichchientranh.vn",
+        "fee": "yes",
+        "museum": "war",
+        "name": "Bảo tàng Chứng tích Chiến tranh",
+        "name:de": "Kriegsopfermuseum",
+        "name:en": "War Remnants Museum",
+        "name:es": "Museo de los Vestigios de la Guerra de Vietnam",
+        "name:id": "Muzium Sisa Perang",
+        "name:ru": "Музей жертв войны",
+        "name:sv": "Krigsminnesmuseet",
+        "name:vi": "Bảo tàng Chứng tích Chiến tranh",
+        "opening_hours": "Mo-Su 07:30-12:00, 13:30-17:00",
+        "tourism": "museum",
+        "website": "https://www.baotangchungtichchientranh.vn/contact.html",
+        "wikidata": "Q703871",
+        "wikipedia": "en:War Remnants Museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 186274986,
+      "center": {
+        "lat": 10.7716605,
+        "lon": 106.7015799
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận 1",
+        "addr:housenumber": "65",
+        "addr:street": "Huỳnh Thúc Kháng",
+        "addr:subdistrict": "Phường Bến Nghé",
+        "amenity": "college",
+        "education": "college",
+        "int_name": "Cao Thang Technical College",
+        "name": "Trường Cao đẳng Kỹ thuật Cao Thắng",
+        "name:en": "Cao Thang Technical College",
+        "name:id": "Perguruan Tinggi Teknik Cao Thang",
+        "name:vi": "Trường Cao đẳng Kỹ thuật Cao Thắng",
+        "name:zh": "高胜技说高等学校"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 186545014,
+      "center": {
+        "lat": 10.7824309,
+        "lon": 106.6944399
+      },
+      "tags": {
+        "addr:housenumber": "196",
+        "addr:street": "Đường Pasteur",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Kiến trúc Thành phố Hồ Chí Minh",
+        "wikidata": "Q3037890",
+        "wikimedia_commons": "Category:Ho Chi Minh City University of Architecture",
+        "wikipedia": "vi:Trường Đại học Kiến trúc Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 187895176,
+      "center": {
+        "lat": 10.7814535,
+        "lon": 106.7028174
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "1",
+        "addr:housenumber": "14",
+        "addr:street": "Lý Tự Trọng",
+        "addr:subdistrict": "Bến Nghé",
+        "amenity": "hospital",
+        "description": "One of the main hospital in HCMC specialized in treating children from 0-16",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Nhi đồng 2",
+        "name:en": "Children's Hospital No 2",
+        "name:vi": "Bệnh viện Nhi đồng 2",
+        "name:zh": "二号儿童医院",
+        "old_name": "Hôpital Grall;Bệnh viện Đồn Đất",
+        "old_name:en": "Grall Hospital",
+        "old_name:fr": "Hôpital Grall",
+        "old_name:vi": "Bệnh viện Grall",
+        "phone": "+84 28 3829 5723",
+        "start_date": "1870s",
+        "website": "http://www.benhviennhi.org.vn",
+        "wheelchair": "yes",
+        "wikidata": "Q30293454",
+        "wikimedia_commons": "Category:Children's Hospital 2",
+        "wikipedia": "vi:Bệnh viện Nhi đồng 2"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 187895187,
+      "center": {
+        "lat": 10.7741404,
+        "lon": 106.7045043
+      },
+      "tags": {
+        "building": "yes",
+        "building:levels": "3",
+        "name": "Lucky Plaza",
+        "name:ja": "ラッキープラザ",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 187949834,
+      "center": {
+        "lat": 10.7720169,
+        "lon": 106.6994936
+      },
+      "tags": {
+        "addr:housenumber": "125",
+        "addr:postcode": "71006",
+        "addr:street": "Lê Lợi",
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Nhân dân Gia Định - cơ sở 2",
+        "old_name": "Bệnh viện Đa khoa Sài Gòn",
+        "old_name:cja-Latn": "Sang ruak Baigaon",
+        "old_name:cjm-Latn": "Sang ruak Baigaon",
+        "old_name:de": "Krankenhausgelände",
+        "old_name:en": "Saigon General Hospital",
+        "old_name:id": "Rumah Sakit Umum Saigon",
+        "old_name:zh": "西贡多科医院",
+        "wikidata": "Q10743499",
+        "wikimedia_commons": "Category:Saigon General Hospital",
+        "wikipedia": "vi:Bệnh viện Đa khoa Sài Gòn"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 187949844,
+      "center": {
+        "lat": 10.7652457,
+        "lon": 106.7021855
+      },
+      "tags": {
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Khánh Hội",
+        "name:en": "Khanh Hoi General Hospital",
+        "old_name": "Bệnh viện Quận 4"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 187949847,
+      "center": {
+        "lat": 10.759454,
+        "lon": 106.700427
+      },
+      "tags": {
+        "addr:housenumber": "85-87",
+        "addr:street": "Tân Vĩnh",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trung tâm Bồi Dưỡng Chính Trị Quận 4"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 192512338,
+      "center": {
+        "lat": 10.7924305,
+        "lon": 106.7113108
+      },
+      "tags": {
+        "addr:housenumber": "98",
+        "addr:street": "Ngô Tất Tố",
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học Tôn Đức Thắng"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 192512382,
+      "center": {
+        "lat": 10.8021655,
+        "lon": 106.714718
+      },
+      "tags": {
+        "addr:housenumber": "475",
+        "addr:street": "Điện Biên Phủ",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Công nghệ Thành phố Hồ Chí Minh",
+        "name:en": "HCMC University of Technology"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 193085693,
+      "center": {
+        "lat": 10.7832846,
+        "lon": 106.7063885
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "faculty": "Kindergarten Education",
+        "name": "Trường Đại học Sài Gòn (cơ sở 2)",
+        "name:en": "Sai Gon University (the second campus)",
+        "name:ja": "サイゴン大学 （第二キャンパス）"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 198123915,
+      "center": {
+        "lat": 10.7846118,
+        "lon": 106.7050593
+      },
+      "tags": {
+        "addr:housenumber": "6",
+        "amenity": "college",
+        "denomination": "roman_catholic",
+        "education": "college",
+        "int_name": "Saint Joseph Major Seminary",
+        "landuse": "religious",
+        "name": "Đại chủng viện thánh Giuse",
+        "name:en": "Saigon Saint Joseph Major Seminary",
+        "name:es": "Seminario Mayor de San José",
+        "name:fr": "Séminaire majeur Saint Joseph de Saigon",
+        "name:id": "Seminari Tinggi Santo Yusuf",
+        "name:it": "Seminario Maggiore San Giuseppe di Saigon",
+        "name:ja": "セントジョセフ神学校",
+        "name:ko": "성 요셉의 주요 신학교",
+        "name:ru": "семинария святого Иосифа",
+        "name:vi": "Đại chủng viện thánh Giuse",
+        "name:vi-Hani": "大種院聖若瑟",
+        "name:zh": "圣约瑟夫神学院",
+        "name:zh-Hant": "聖約瑟夫神學院",
+        "operator": "Tổng Giáo phận Tp. Hồ Chí Minh",
+        "phone": "+84-8-38236167",
+        "religion": "christian",
+        "website": "http://tgpsaigon.net/taxonomy/term/314"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 218273808,
+      "center": {
+        "lat": 10.8520722,
+        "lon": 106.7717145
+      },
+      "tags": {
+        "addr:housenumber": "1",
+        "addr:street": "Võ Văn Ngân",
+        "alt_name": "HCMUTE",
+        "amenity": "university",
+        "name": "Trường Đại học Công nghệ Kỹ thuật Thành phố Hồ Chí Minh",
+        "name:en": "Ho Chi Minh City University of Technology and Engineering",
+        "name:th": "มหาวิทยาลัยเทคโนโลยีและวิศวกรรมศาสตร์โฮจิมินห์",
+        "name:zh": "胡志明市科技工程大学",
+        "website": "https://www.hcmute.edu.vn/",
+        "wikidata": "Q10829131",
+        "wikimedia_commons": "Category:Ho Chi Minh City University of Technology and Education",
+        "wikipedia": "vi:Trường Đại học Công nghệ Kỹ thuật Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 224457308,
+      "center": {
+        "lat": 10.8522658,
+        "lon": 106.758729
+      },
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Công nghệ Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 224851458,
+      "center": {
+        "lat": 10.7490065,
+        "lon": 106.728401
+      },
+      "tags": {
+        "addr:housenumber": "342",
+        "addr:street": "Huỳnh Tấn Phát",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Tân Thuận",
+        "name:en": "People's Committee of Tan Thuan ward",
+        "office": "government",
+        "short_name": "UBND phường Tân Thuận"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 225056511,
+      "center": {
+        "lat": 10.8678097,
+        "lon": 106.7142927
+      },
+      "tags": {
+        "amenity": "hospital",
+        "name": "Bệnh viện Quốc tế Hạnh Phúc",
+        "phone": "+84 650 3636068",
+        "website": "https://www.hanhphuchospital.com/"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 226185751,
+      "center": {
+        "lat": 10.8048991,
+        "lon": 106.7167817
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "2",
+        "addr:postcode": "700000",
+        "addr:street": "Võ Oanh",
+        "addr:subdistrict": "25",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Giao thông Vận tải Thành phố Hồ Chí Minh",
+        "website": "https://ut.edu.vn"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 226522664,
+      "center": {
+        "lat": 10.7531159,
+        "lon": 106.7079909
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường ĐH Văn Hiến"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 230070394,
+      "center": {
+        "lat": 10.737275,
+        "lon": 106.7240834
+      },
+      "tags": {
+        "addr:housenumber": "101",
+        "addr:street": "Nguyễn Thị Thập",
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Nguyễn Thị Thập",
+        "name:en": "Nguyễn Thị Thập General Hospital",
+        "old_name": "Bệnh viện Quận 7"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 237759926,
+      "center": {
+        "lat": 10.8056944,
+        "lon": 106.8165106
+      },
+      "tags": {
+        "addr:housenumber": "1341",
+        "addr:street": "Nguyễn Duy Trinh",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Long Trường",
+        "name:en": "People's Committee of Long Truong ward",
+        "office": "government",
+        "short_name": "UBND phường Long Trường"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 260017032,
+      "center": {
+        "lat": 10.8155252,
+        "lon": 106.720531
+      },
+      "tags": {
+        "addr:street": "Thanh Đa",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Bình Quới",
+        "name:en": "People's Committee of Binh Quoi ward",
+        "office": "government",
+        "short_name": "UBND phường Bình Quới"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 262630557,
+      "center": {
+        "lat": 10.7449265,
+        "lon": 106.7067222
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Tân Quy"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 263170654,
+      "center": {
+        "lat": 10.783026,
+        "lon": 106.6948717
+      },
+      "tags": {
+        "addr:street": "Nguyễn Ðình Chiểu",
+        "amenity": "university",
+        "education": "university",
+        "name": "Đại học Kinh tế Thành phố Hồ Chí Minh - Cơ sở A",
+        "name:en": "University of Economics Ho Chi Minh City - Campus A",
+        "name:id": "Universitas Ekonomi Kota Ho Chi Minh",
+        "name:vi": "Trường Đại học Kinh tế Thành phố Hồ Chí Minh - cơ sở A",
+        "name:vi-Hani": "大學經濟城埔胡志明-基所A",
+        "name:zh": "胡志明市经济大学",
+        "official_name": "Trường Đại học Kinh tế Thành phố Hồ Chí Minh",
+        "official_name:vi": "Trường Đại học Kinh tế Thành phố Hồ Chí Minh",
+        "service": "59C",
+        "short_name": "ĐHKT",
+        "short_name:en": "UEH",
+        "short_name:vi": "ĐHKT",
+        "wikidata": "Q2562140",
+        "wikimedia_commons": "Category:University of Economics Ho Chi Minh City",
+        "wikipedia": "vi:Trường Đại học Kinh tế Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 263311733,
+      "center": {
+        "lat": 10.7920425,
+        "lon": 106.707548
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Thị Nghè"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 263311738,
+      "center": {
+        "lat": 10.7927633,
+        "lon": 106.7065142
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Trường Sa",
+        "amenity": "university",
+        "building": "yes",
+        "education": "university",
+        "name": "Đại học Thuỷ Lợi - Cơ sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 263313887,
+      "center": {
+        "lat": 10.7454228,
+        "lon": 106.7047774
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Tân Kiểng 2"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 263506611,
+      "center": {
+        "lat": 10.7702917,
+        "lon": 106.7040575
+      },
+      "tags": {
+        "addr:housenumber": "39",
+        "addr:street": "Tôn Thất Ðạm",
+        "amenity": "university",
+        "building": "yes",
+        "education": "university",
+        "name": "Trường Đại học Ngân hàng Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 289042052,
+      "center": {
+        "lat": 10.800449,
+        "lon": 106.7060806
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "215",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Điện Biên Phủ",
+        "addr:subdistrict": "Phường 15",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Đại Học Quốc Tế Hồng Bàng"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 289042058,
+      "center": {
+        "lat": 10.8123535,
+        "lon": 106.7024202
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "324",
+        "addr:street": "Chu Văn An",
+        "addr:subdistrict": "12",
+        "amenity": "university",
+        "barrier": "fence",
+        "education": "university",
+        "name": "Học viện Cán bộ Thành phố Hồ Chí Minh",
+        "office": "educational_institution",
+        "opening_hours": "Mo-Sa 08:00-20:00",
+        "phone": "+84 28 2243 7830",
+        "website": "http://hocviencanbo.hochiminhcity.gov.vn/web/guest/home"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 290218574,
+      "center": {
+        "lat": 10.7356156,
+        "lon": 106.6976293
+      },
+      "tags": {
+        "addr:city": "TP. HCM",
+        "addr:district": "Quận 7",
+        "addr:street": "Nguyễn Hữu Thọ",
+        "addr:subdistrict": "Phường Tân Phong",
+        "amenity": "university",
+        "name": "Trường Đại học Cảnh sát Nhân dân",
+        "name:en": "People's Police University"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 290222665,
+      "center": {
+        "lat": 10.7743925,
+        "lon": 106.6950257
+      },
+      "tags": {
+        "addr:housenumber": "112",
+        "addr:street": "Nguyễn Du",
+        "amenity": "university",
+        "name": "Nhạc viện Thành phố Hồ Chí Minh",
+        "name:en": "Ho Chi Minh City Conservatory of Music",
+        "name:id": "Konservatori Musik Kota Ho Chi Minh",
+        "name:vi": "Nhạc viện Thành phố Hồ Chí Minh",
+        "name:zh": "胡志明市音乐学院",
+        "wikidata": "Q1377237"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 290247572,
+      "center": {
+        "lat": 10.7431044,
+        "lon": 106.7024118
+      },
+      "tags": {
+        "addr:housenumber": "3F",
+        "addr:street": "Nguyễn Hữu Thọ",
+        "amenity": "university",
+        "name": "Trường Đại học Nguyễn Tất Thành (cơ sở Nguyễn Hữu Thọ)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 290326852,
+      "center": {
+        "lat": 10.8720215,
+        "lon": 106.7958388
+      },
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "amenity": "university",
+        "name": "Trường Đại học Thể dục Thể thao Thành phố Hồ Chí Minh",
+        "name:en": "Ho Chi Minh City University of Sports",
+        "name:vi": "Trường Đại học Thể dục Thể thao Thành phố Hồ Chí Minh",
+        "phone": "0932944442",
+        "website": "https://ush.edu.vn/",
+        "wikidata": "Q7579810",
+        "wikipedia": "vi:Trường Đại học Thể dục thể thao Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291052405,
+      "center": {
+        "lat": 10.8952994,
+        "lon": 106.7925977
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Cao đẳng Công nghệ và Nông lâm Nam Bộ"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291139291,
+      "center": {
+        "lat": 10.8902566,
+        "lon": 106.7858188
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Đông Hòa"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291269265,
+      "center": {
+        "lat": 10.89156,
+        "lon": 106.7629132
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "civic",
+        "name": "UBND Thành phố Dĩ An",
+        "name:en": "People's Committee of Di An City",
+        "name:zh": "以安市人民委员会",
+        "name:zh-Hant": "以安市人民委員會"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291493818,
+      "center": {
+        "lat": 10.8911561,
+        "lon": 106.7848039
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "UBND Phường Đông Hòa"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291493844,
+      "center": {
+        "lat": 10.8991288,
+        "lon": 106.7919107
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Nội Hóa"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291672229,
+      "center": {
+        "lat": 10.8689715,
+        "lon": 106.8076192
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Tân Phú"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 291853364,
+      "center": {
+        "lat": 10.8671055,
+        "lon": 106.7463839
+      },
+      "tags": {
+        "addr:housenumber": "37",
+        "addr:street": "Phú Châu",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trung tâm Điều dưỡng Người bệnh Tâm Thần Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 292075521,
+      "center": {
+        "lat": 10.8016821,
+        "lon": 106.6988175
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Bình Thạnh",
+        "addr:street": "Phan Đăng Lưu",
+        "addr:subdistrict": "1",
+        "amenity": "marketplace",
+        "building": "commercial",
+        "landuse": "retail",
+        "level": "1",
+        "name": "Chợ Bà Chiểu",
+        "name:en": "Ba Chieu Market",
+        "opening_hours": "24/7",
+        "payment:cash": "yes",
+        "start_date": "1942",
+        "wikipedia": "vi:Chợ Bà Chiểu"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 292839313,
+      "center": {
+        "lat": 10.8699654,
+        "lon": 106.7275743
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "141",
+        "addr:province": "Thành phố Hồ Chí MInh",
+        "addr:street": "Quốc lộ 1A",
+        "addr:subdistrict": "Phường Tam Bình",
+        "amenity": "marketplace",
+        "landuse": "retail",
+        "name": "Chợ đầu mối Thủ Đức",
+        "official_name": "Chợ Đầu Mối Nông Sản Thực Phẩm Thủ Đức",
+        "opening_hours": "Mo-Su 06:00-09:00",
+        "wikipedia": "vi:Chợ đầu mối Nông sản Thực phẩm Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 301514506,
+      "center": {
+        "lat": 10.8571239,
+        "lon": 106.7608407
+      },
+      "tags": {
+        "addr:housenumber": "56",
+        "addr:street": "Hoàng Diệu 2",
+        "amenity": "university",
+        "name": "Trường Đại học Ngân hàng Thành phố Hồ Chí Minh",
+        "website": "https://buh.edu.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 306440163,
+      "center": {
+        "lat": 10.8449562,
+        "lon": 106.7727016
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Saigon International University",
+        "wikidata": "Q10829119",
+        "wikimedia_commons": "Category:The Saigon International University",
+        "wikipedia": "en:The Saigon International University"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 306649187,
+      "center": {
+        "lat": 10.8500499,
+        "lon": 106.7990996
+      },
+      "tags": {
+        "leisure": "stadium",
+        "name": "Sân banh FTown"
+      },
+      "floodroute_candidate_categories": [
+        "STADIUM"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 314210189,
+      "center": {
+        "lat": 10.8172086,
+        "lon": 106.7721339
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Phước Bình"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 314222713,
+      "center": {
+        "lat": 10.8158227,
+        "lon": 106.7731278
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế Phước Bình",
+        "name:en": "Trạm Y tế Phước Bình"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 314228846,
+      "center": {
+        "lat": 10.8131507,
+        "lon": 106.7720723
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao Đẳng Kinh tế Đối ngoại"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 317498945,
+      "center": {
+        "lat": 10.8489437,
+        "lon": 106.7656481
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Từ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 318679201,
+      "center": {
+        "lat": 10.8067954,
+        "lon": 106.713052
+      },
+      "tags": {
+        "addr:housenumber": "25",
+        "addr:street": "Đường D5",
+        "amenity": "university",
+        "education": "university",
+        "name": "Phân hiệu Trường Đại học Ngoại thương tại Thành phố Hồ Chí Minh",
+        "name:en": "Foreign Trade University HCMC",
+        "opening_hours": "Mo-Su 06:00-21:00"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 321939234,
+      "center": {
+        "lat": 10.8622334,
+        "lon": 106.7805429
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa khu vực Thủ Đức",
+        "name:en": "Thu Duc General Hospital",
+        "name:vi": "Bệnh viện Đa khoa khu vực Thủ Đức",
+        "name:zh": "守德医院"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 321939965,
+      "center": {
+        "lat": 10.841778,
+        "lon": 106.8187339
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Cao đẳng Cảnh sát Nhân dân 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 322860994,
+      "center": {
+        "lat": 10.903128,
+        "lon": 106.6994992
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Lái Thiêu"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 325249009,
+      "center": {
+        "lat": 10.8299239,
+        "lon": 106.7137374
+      },
+      "tags": {
+        "addr:housenumber": "123",
+        "addr:street": "Quốc lộ 13",
+        "amenity": "university",
+        "name": "Trường Đại học Luật Thành phố Hồ Chí Minh (cơ sở 2)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 341504305,
+      "center": {
+        "lat": 10.7765959,
+        "lon": 106.7009554
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:country": "VN",
+        "addr:district": "Quận 1",
+        "addr:housenumber": "86",
+        "addr:postcode": "71006",
+        "addr:street": "Lê Thánh Tôn",
+        "amenity": "townhall",
+        "architect": "Femand Gardès",
+        "building": "civic",
+        "building:levels": "3",
+        "end_date": "1909",
+        "heritage": "2",
+        "name": "Trụ sở Ủy ban nhân dân Thành phố Hồ Chí Minh",
+        "name:cjm-Latn": "Kommit Buel-bhap Madin Ho Chi Minh",
+        "name:de": "Sitz des Volkskomitees",
+        "name:en": "Ho Chi Minh City Hall",
+        "name:es": "Ayuntamiento de Ciudad Ho Chi Minh",
+        "name:fr": "Hôtel de ville de Hô-Chi-Minh-Ville",
+        "name:id": "Balai Komite Rakyat Kota Ho Chi Minh",
+        "name:it": "Palazzo del Comitato del Popolo",
+        "name:ja": "ホーチミン人民委員会庁舎",
+        "name:ko": "호찌민 시청",
+        "name:ru": "Здание Народного комитета Хошимина",
+        "name:vi": "Trụ sở Ủy ban nhân dân Thành phố Hồ Chí Minh",
+        "name:vi-Hani": "住所委辦人民城庯胡志明",
+        "name:zh": "胡志明市政宮",
+        "official_name:ko": "호찌민시 인민위원회 청사",
+        "old_name": "Tòa đô chánh Saigon",
+        "old_name:en": "Saigon City Hall",
+        "old_name:fr": "Hôtel de Ville de Saïgon",
+        "old_name:zh": "都政宫",
+        "opening_hours": "Mo-Fr 07:30-17:00",
+        "phone": "+84 28 3829 6052",
+        "polling_station": "no",
+        "smoking": "outside",
+        "start_date": "1898",
+        "tourism": "attraction",
+        "townhall:type": "city",
+        "website": "https://vpub.hochiminhcity.gov.vn/",
+        "wikidata": "Q2227195",
+        "wikimedia_commons": "Category:People's Committee Building of Ho Chi Minh City",
+        "wikipedia": "vi:Trụ sở Ủy ban Nhân dân Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 345416007,
+      "center": {
+        "lat": 10.8466553,
+        "lon": 106.7944796
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "451",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Lê Văn Việt",
+        "addr:subdistrict": "Phường Tăng Nhơn Phú A",
+        "amenity": "university",
+        "internet_access": "yes",
+        "internet_access:fee": "yes",
+        "name": "Phân hiệu Trường Đại học Giao thông Vận tải tại Thành phố Hồ Chí Minh",
+        "operator": "Bộ Giáo dục và Đào tạo",
+        "operator:type": "government",
+        "start_date": "27/04/1990",
+        "website": "https://utc2.edu.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 345416008,
+      "center": {
+        "lat": 10.8448529,
+        "lon": 106.7949332
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "450",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Lê Văn Việt",
+        "addr:subdistrict": "Phường Tăng Nhơn Phú A",
+        "amenity": "university",
+        "internet_access": "yes",
+        "name": "Phân hiệu Trường Đại học Giao thông vận tải tại Thành phố Hồ Chí Minh - Khu Văn phòng",
+        "operator": "Bộ Giáo dục và Đào tạo",
+        "operator:type": "government",
+        "start_date": "27/04/1990",
+        "website": "https://utc2.edu.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 366651481,
+      "center": {
+        "lat": 10.7702578,
+        "lon": 106.7697558
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Thạnh Mỹ Lợi"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 367930334,
+      "center": {
+        "lat": 10.8499711,
+        "lon": 106.7651648
+      },
+      "tags": {
+        "addr:housenumber": "216",
+        "addr:street": "Võ Văn Ngân",
+        "building": "retail",
+        "name": "Vincom Plaza Thủ Đức",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 402881850,
+      "center": {
+        "lat": 10.821013,
+        "lon": 106.7711006
+      },
+      "tags": {
+        "addr:housenumber": "502",
+        "addr:street": "Đường Đỗ Xuân Hợp",
+        "amenity": "college",
+        "name": "Trường Cao đẳng Kỹ nghệ II"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 402881896,
+      "center": {
+        "lat": 10.8219489,
+        "lon": 106.7704677
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Văn hóa Thành phố Hồ Chí Minh - cơ sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 403107463,
+      "center": {
+        "lat": 10.8550888,
+        "lon": 106.7600729
+      },
+      "tags": {
+        "addr:housenumber": "19A",
+        "addr:street": "Đường số 17",
+        "amenity": "college",
+        "name": "Trường Cao đẳng nghề Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 403107465,
+      "center": {
+        "lat": 10.8588452,
+        "lon": 106.7553555
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Đại học Cảnh sát Nhân dân Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 430290607,
+      "center": {
+        "lat": 10.8023666,
+        "lon": 106.740878
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "159-161",
+        "addr:interpolation": "odd",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Đường Võ Nguyên Giáp",
+        "addr:subdistrict": "Phường Thảo Điền",
+        "building": "retail",
+        "building:levels": "4",
+        "building:levels:underground": "2",
+        "name": "Vincom Megamall Thảo Điền",
+        "opening_hours": "Mo-Fr 10:00-22:00; Sa,Su 09:30-22:00",
+        "shop": "mall",
+        "toilets": "yes"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 463548000,
+      "center": {
+        "lat": 10.8619124,
+        "lon": 106.8037899
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "120",
+        "addr:province": "Thành phố Hồ Chí Minh",
+        "addr:street": "Xa lộ Hà Nội",
+        "addr:subdistrict": "Phường Tân Phú",
+        "alt_name": "Suối Tiên Amusement Park",
+        "name": "Khu du lịch Suối Tiên",
+        "name:th": "สวนสนุกซ้วยเตียน",
+        "opening_hours": "08:00-17:00",
+        "phone": "+84 1900 636787;+84 28 3896 0260",
+        "tourism": "theme_park",
+        "website": "https://www.suoitien.com/",
+        "wikidata": "Q2930683",
+        "wikimedia_commons": "Category:Suoi Tien Amusement Park",
+        "wikipedia": "en:Suối Tiên Amusement Park"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 493157641,
+      "center": {
+        "lat": 10.8273088,
+        "lon": 106.6994241
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Văn Lang"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 497179452,
+      "center": {
+        "lat": 10.8122524,
+        "lon": 106.7711737
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Cao đẳng Sư phạm Mầm non TW3"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 497179454,
+      "center": {
+        "lat": 10.8146595,
+        "lon": 106.7745794
+      },
+      "tags": {
+        "addr:housenumber": "420",
+        "addr:street": "Đường Đỗ Xuân Hợp",
+        "amenity": "college",
+        "name": "Phân viện Học viện Phụ nữ Việt Nam"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 499426667,
+      "center": {
+        "lat": 10.8502385,
+        "lon": 106.7541973
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Thủ Đức",
+        "name:en": "Thu Duc Market",
+        "name:zh": "守德市长"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 499426669,
+      "center": {
+        "lat": 10.8487907,
+        "lon": 106.7581499
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao đẳng Cảnh sát Nhân dân 2",
+        "name:en": "People's Police Academy number 2",
+        "name:zh": "第二号人民警察高等学校"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 499426682,
+      "center": {
+        "lat": 10.8455517,
+        "lon": 106.764167
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh",
+        "addr:country": "VN",
+        "addr:housenumber": "3",
+        "addr:street": "Dân Chủ",
+        "addr:suburb": "Quận Thủ Đức",
+        "amenity": "college",
+        "name": "Trường Đoàn Lý Tự Trọng",
+        "name:en": "Ly Tu Trong Youth Union Institute",
+        "name:zh": "李自仲共青团学院"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 503216454,
+      "center": {
+        "lat": 10.8599715,
+        "lon": 106.7731619
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "retail",
+        "name": "Chợ Linh Trung",
+        "name:en": "Linh Trung Market"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 503282437,
+      "center": {
+        "lat": 10.8703194,
+        "lon": 106.735563
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Tam Bình"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 504577398,
+      "center": {
+        "lat": 10.7822228,
+        "lon": 106.7685006
+      },
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "addr:district": "2",
+        "addr:housenumber": "130",
+        "addr:street": "Lê Văn Thịnh",
+        "addr:subdistrict": "Bình Trưng Tây",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Lê Văn Thịnh",
+        "old_name": "Bệnh viện Quận 2"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 506167683,
+      "center": {
+        "lat": 10.807607,
+        "lon": 106.733795
+      },
+      "tags": {
+        "amenity": "hospital",
+        "name": "Family Practice"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538758,
+      "center": {
+        "lat": 10.8449005,
+        "lon": 106.7902318
+      },
+      "tags": {
+        "addr:housenumber": "387",
+        "addr:street": "Đường Lê Văn Việt",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Lê Văn Việt",
+        "old_name": "Bệnh viện Quận 9"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538760,
+      "center": {
+        "lat": 10.8499148,
+        "lon": 106.7855939
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Học viện Chính trị khu vực II"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538761,
+      "center": {
+        "lat": 10.8486985,
+        "lon": 106.7919159
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Tài chính - Marketing"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538762,
+      "center": {
+        "lat": 10.8477293,
+        "lon": 106.7859253
+      },
+      "tags": {
+        "addr:housenumber": "97",
+        "addr:postcode": "700000",
+        "addr:street": "Man Thiện",
+        "amenity": "university",
+        "name": "Học viện Công nghệ Bưu chính Viễn thông - Cơ sở Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538764,
+      "center": {
+        "lat": 10.8443916,
+        "lon": 106.787967
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "retail",
+        "name": "Chợ Tăng Nhơn Phú"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538770,
+      "center": {
+        "lat": 10.8451819,
+        "lon": 106.7969363
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Công nghệ Kỹ thuật Thành phố Hồ Chí Minh - cơ sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 507538772,
+      "center": {
+        "lat": 10.8427121,
+        "lon": 106.7965034
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:street": "448",
+        "amenity": "university",
+        "name": "Ký túc xá Phân hiệu Trường Đại học Giao thông Vận tải tại Thành phố Hồ Chí Minh",
+        "operator": "Bộ Giáo dục và Đào tạo",
+        "operator:type": "government"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 529015846,
+      "center": {
+        "lat": 10.8024021,
+        "lon": 106.7282374
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Thảo Điền"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 537669583,
+      "center": {
+        "lat": 10.7989905,
+        "lon": 106.706784
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận Bình Thạnh",
+        "addr:housenumber": "276",
+        "addr:postcode": "700000",
+        "addr:street": "Đường Điện Biên Phủ",
+        "addr:subdistrict": "Phường 17",
+        "amenity": "university",
+        "building:levels": "16",
+        "education": "university",
+        "ele": "15",
+        "name": "UEF - Đại học Kinh Tế Tài Chính"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 561802036,
+      "center": {
+        "lat": 10.8427693,
+        "lon": 106.8237297
+      },
+      "tags": {
+        "addr:housenumber": "325",
+        "addr:street": "Nguyễn Văn Tăng",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Long Bình",
+        "name:en": "People's Committee of Long Binh ward",
+        "office": "government",
+        "short_name": "UBND phường Long Bình"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 582526129,
+      "center": {
+        "lat": 10.8968766,
+        "lon": 106.8632765
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đại học Y dược Shingmark Đồng Nai"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 589929838,
+      "center": {
+        "lat": 10.8308263,
+        "lon": 106.7290708
+      },
+      "tags": {
+        "addr:city": "Phường Hiệp Bình Chánh",
+        "addr:district": "Thủ Đức",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường số 3",
+        "addr:subdistrict": "Hiệp Bình Chánh",
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Hiệp Bình Chánh"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 590218027,
+      "center": {
+        "lat": 10.8300415,
+        "lon": 106.7146752
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Bình Triệu"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 597466819,
+      "center": {
+        "lat": 10.8018459,
+        "lon": 106.7208087
+      },
+      "tags": {
+        "addr:city": "Ho Chi Minh City",
+        "addr:district": "Quận Bình Thạnh",
+        "addr:postcode": "700000",
+        "addr:street": "Hẻm 152 Nguyễn Văn Thương",
+        "addr:subdistrict": "25",
+        "amenity": "marketplace",
+        "building": "commercial",
+        "name": "Chợ Văn Thánh",
+        "opening_hours": "Mo-Su 04:30-20:00"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 604998675,
+      "center": {
+        "lat": 10.8921094,
+        "lon": 106.8115363
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Cao đẳng Công nghệ cao Đồng An",
+        "name:en": "Binh An Polytechnic"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 605281197,
+      "center": {
+        "lat": 10.8631668,
+        "lon": 106.812483
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Phân hiệu Học viện Thanh thiếu niên Việt Nam tại Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 605281203,
+      "center": {
+        "lat": 10.8677594,
+        "lon": 106.8111245
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Trung cấp Kỹ thuật Nông nghiệp Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 605281204,
+      "center": {
+        "lat": 10.8702234,
+        "lon": 106.8093249
+      },
+      "tags": {
+        "addr:district": "Quận 9",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường Số 400",
+        "addr:subdistrict": "Tân Phú",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "oncology",
+        "name": "Bệnh viện Ung bướu cơ sở 2",
+        "name:en": "HCMC Oncology Hospital 2"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 605774020,
+      "center": {
+        "lat": 10.7720547,
+        "lon": 106.7219492
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận 2",
+        "addr:housenumber": "10 Đ",
+        "addr:postcode": "70000",
+        "addr:street": "Mai Chí Thọ",
+        "addr:subdistrict": "Thủ Thiêm",
+        "building": "yes",
+        "height": "45",
+        "name": "SALA Shopping Mall Thiso mall",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 665759768,
+      "center": {
+        "lat": 10.8278719,
+        "lon": 106.7216284
+      },
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "addr:district": "Thủ Đức",
+        "addr:housenumber": "240-242",
+        "addr:street": "Phạm Văn Đồng",
+        "addr:subdistrict": "Hiệp Bình Chánh",
+        "landuse": "retail",
+        "name": "Giga Mall Phạm Văn Đồng",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 682250553,
+      "center": {
+        "lat": 10.7530496,
+        "lon": 106.7052273
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Long Kiểng"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 682250581,
+      "center": {
+        "lat": 10.7532099,
+        "lon": 106.7000398
+      },
+      "tags": {
+        "amenity": "hospital",
+        "name": "Bệnh viện Phước An"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 682250586,
+      "center": {
+        "lat": 10.7550974,
+        "lon": 106.694496
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trung tâm GD Nghề nghiệp - Giáo dục thường xuyên Quận 4"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 682412609,
+      "center": {
+        "lat": 10.7534287,
+        "lon": 106.7046332
+      },
+      "tags": {
+        "addr:housenumber": "183",
+        "addr:street": "Tôn Thất Thuyết",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Vĩnh Hội",
+        "name:en": "People's Committee of Vinh Hoi ward",
+        "office": "government",
+        "short_name": "UBND phường Vĩnh Hội"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 682692498,
+      "center": {
+        "lat": 10.766513,
+        "lon": 106.7050019
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:housenumber": "18",
+        "addr:street": "Đường Đoàn Như Hài",
+        "addr:subdistrict": "Phường Xóm Chiếu",
+        "amenity": "townhall",
+        "barrier": "wall",
+        "name": "Ủy ban nhân dân phường Xóm Chiếu",
+        "name:en": "People's Committee of Xom Chieu ward",
+        "short_name": "UBND phường Xóm Chiếu",
+        "townhall:type": "administrative"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 683113623,
+      "center": {
+        "lat": 10.7602626,
+        "lon": 106.7000056
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "UBND phường 6",
+        "name:en": "People’s Committee of Ward 6",
+        "name:id": "Komite Rakyat Kelurahan 6",
+        "name:ru": "Народный комитет квартала 6",
+        "name:zh": "第六坊人民委员会"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 683697151,
+      "center": {
+        "lat": 10.7642696,
+        "lon": 106.7073126
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "UBND phường 13"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 683910659,
+      "center": {
+        "lat": 10.7613728,
+        "lon": 106.705479
+      },
+      "tags": {
+        "addr:district": "Quận 4",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Vĩnh Khánh",
+        "addr:subdistrict": "Phường 10",
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "UBND phường 10",
+        "name:en": "People's Committee of Ward 10",
+        "name:id": "Komite Rakyat Kelurahan 10",
+        "name:ru": "Народный комитет квартала 10",
+        "name:zh": "第十坊人民委员会"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 683917148,
+      "center": {
+        "lat": 10.7589764,
+        "lon": 106.7140039
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "Đảng ủy - HĐND - UBND phường 18"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 693649725,
+      "center": {
+        "lat": 10.7774416,
+        "lon": 106.7664433
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "name": "Chợ Cây Xoài"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 718066047,
+      "center": {
+        "lat": 10.8744915,
+        "lon": 106.8076274
+      },
+      "tags": {
+        "addr:city": "Dĩ An",
+        "addr:province": "Bình Dương",
+        "addr:street": "Nguyễn Hiền",
+        "addr:subdistrict": "Đông Hòa",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe khu A đại học quốc gia (mới)",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 723041514,
+      "center": {
+        "lat": 10.8017598,
+        "lon": 106.7485681
+      },
+      "tags": {
+        "building": "yes",
+        "building:levels": "5",
+        "layer": "0",
+        "name": "Trung Tâm Thương Mại Estella",
+        "name:en": "Estella Place",
+        "parking": "underground",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 723912448,
+      "center": {
+        "lat": 10.8014554,
+        "lon": 106.7469576
+      },
+      "tags": {
+        "building": "yes",
+        "name": "Cantavil Mall",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 724934204,
+      "center": {
+        "lat": 10.8379239,
+        "lon": 106.8096846
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Nguyễn Tất Thành (cơ sở Thành phố Thủ Đức)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 737440143,
+      "center": {
+        "lat": 10.8420854,
+        "lon": 106.7645056
+      },
+      "tags": {
+        "addr:housenumber": "48",
+        "addr:street": "Đặng Văn Bi",
+        "amenity": "university",
+        "name": "Trường Đại học Kiến trúc Thành phố Hồ Chí Minh - Cơ sở Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 802105071,
+      "center": {
+        "lat": 10.775916,
+        "lon": 106.6996734
+      },
+      "tags": {
+        "addr:postcode": "71006",
+        "addr:street": "Lý Tự Trọng",
+        "building": "yes",
+        "email": "bttphcm114@yahoo.com.vn",
+        "int_name": "Ho Chi Minh City Museum",
+        "name": "Bảo tàng Thành phố Hồ Chí Minh",
+        "name:de": "Stadtmuseum",
+        "name:en": "Museum of Ho Chi Minh City",
+        "name:es": "Museo de la Ciudad Ho Chi Minh",
+        "name:fr": "Musée du Hô-Chi-Minh-ville",
+        "name:id": "Muzium Kota Ho Chi Minh",
+        "name:ko": "호찌민 시립 박물관",
+        "name:ms": "Muzium Kota Ho Chi Minh",
+        "name:ru": "Музей города Хошимина",
+        "name:vi": "Bảo tàng TPHCM",
+        "name:zh": "胡志明市宝物院",
+        "name:zh-Hant": "胡志明市寶物院",
+        "old_name": "Dinh Gia Long",
+        "tourism": "museum",
+        "website": "https://www.hcmc-museum.edu.vn/"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 802125674,
+      "center": {
+        "lat": 10.7729521,
+        "lon": 106.7006604
+      },
+      "tags": {
+        "building": "yes",
+        "building:levels": "39",
+        "building:part": "yes",
+        "height": "193",
+        "name": "Trung tâm mua sắm Saigon Centre",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 802125677,
+      "center": {
+        "lat": 10.7732401,
+        "lon": 106.7008784
+      },
+      "tags": {
+        "addr:housenumber": "65",
+        "addr:postcode": "71006",
+        "addr:street": "Lê Lợi",
+        "building": "commercial",
+        "name": "Toà Nhà Saigon Centre",
+        "name:ru": "Сайгон Сентер",
+        "name:zh": "西贡中心",
+        "name:zh-Hant": "西貢中心",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 802157427,
+      "center": {
+        "lat": 10.7698768,
+        "lon": 106.6990696
+      },
+      "tags": {
+        "addr:housenumber": "97A",
+        "addr:postcode": "71010",
+        "addr:street": "Phó Ðức Chính",
+        "building": "yes",
+        "building:levels": "3",
+        "check_date": "2025-11-14",
+        "fee": "yes",
+        "name": "Bảo tàng Mỹ thuật Thành phố Hồ Chí Minh",
+        "name:de": "Museum der bildenden Künste",
+        "name:en": "Museum of Fine Arts",
+        "name:es": "Museo de Bellas Artes",
+        "name:id": "Muzium Seni Rupa",
+        "name:it": "Museo di Belle Arti",
+        "name:ru": "Хошиминский музей изобразительных искусств",
+        "name:vi": "Bảo tàng Mỹ thuật",
+        "name:zh": "胡志明美术馆",
+        "name:zh-Hant": "胡志明市美術館",
+        "operator:type": "government",
+        "tourism": "museum",
+        "wikidata": "Q2756351",
+        "wikimedia_commons": "Category:Ho Chi Minh City Museum of Fine Arts",
+        "wikipedia": "en:Ho Chi Minh City Museum of Fine Arts"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 804047536,
+      "center": {
+        "lat": 10.7714901,
+        "lon": 106.703432
+      },
+      "tags": {
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Hoa Ngữ Nhật Tân"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 804925965,
+      "center": {
+        "lat": 10.7860018,
+        "lon": 106.7059845
+      },
+      "tags": {
+        "amenity": "college",
+        "building": "yes",
+        "education": "college",
+        "name": "Trường Cán bộ Quản lý giáo dục Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 806359773,
+      "center": {
+        "lat": 10.7591897,
+        "lon": 106.7067473
+      },
+      "tags": {
+        "amenity": "college",
+        "building": "yes",
+        "education": "college",
+        "name": "Trung tâm Học tập Cộng đồng Phường 10",
+        "name:en": "Ward 10 Community Learning Centre",
+        "name:id": "Pusat Pembelajaran Masyarakat Kelurahan 10"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 806654929,
+      "center": {
+        "lat": 10.7889551,
+        "lon": 106.7556147
+      },
+      "tags": {
+        "addr:street": "Đường Nguyễn Duy Trinh",
+        "addr:subdistrict": "Phường Bình Trưng Tây",
+        "amenity": "marketplace",
+        "building": "yes",
+        "name": "Chợ Bình Trưng"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 806860787,
+      "center": {
+        "lat": 10.7665431,
+        "lon": 106.6981651
+      },
+      "tags": {
+        "landuse": "retail",
+        "name": "Chợ Dân Sinh",
+        "name:de": "Chợ Dân Sinh (American Market)",
+        "name:en": "Dan Sinh market",
+        "name:es": "Mercado Dan Sinh",
+        "name:id": "Pasar Dan Sinh",
+        "name:ru": "Рынок Зан Синь",
+        "name:zh": "民生市场",
+        "shop": "mall",
+        "wikidata": "Q10748771"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 807297549,
+      "center": {
+        "lat": 10.7647807,
+        "lon": 106.6978818
+      },
+      "tags": {
+        "alt_name": "Chợ Gà",
+        "amenity": "marketplace",
+        "landuse": "retail",
+        "name": "Chợ Cháy",
+        "name:en": "Burned Market"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 807577739,
+      "center": {
+        "lat": 10.7628184,
+        "lon": 106.6932824
+      },
+      "tags": {
+        "addr:housenumber": "45",
+        "addr:street": "Nguyễn Khắc Nhu",
+        "amenity": "university",
+        "building": "yes",
+        "int_name": "Văn Lang University",
+        "name": "Đại học Văn Lang",
+        "name:en": "Van Lang University",
+        "name:ru": "Ванлангский университет",
+        "name:zh": "文郎大学",
+        "wikidata": "Q7913477",
+        "wikimedia_commons": "Category:Văn Lang University",
+        "wikipedia": "en:Văn Lang University"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 808022726,
+      "center": {
+        "lat": 10.7682684,
+        "lon": 106.7068035
+      },
+      "tags": {
+        "building": "yes",
+        "name": "Bảo tàng Hồ Chí Minh",
+        "name:en": "Ho Chi Minh Museum",
+        "name:fr": "Musée de Ho Chi Minh",
+        "name:id": "Muzium Presiden Ho Chi Minh",
+        "name:ms": "Muzium Presiden Ho Chi Minh",
+        "name:ru": "Музей Хо Ши Мина",
+        "name:vi": "Bảo tàng Hồ Chí Minh",
+        "name:zh": "胡志明主席宝物院",
+        "name:zh-Hant": "胡志明主席寶物院",
+        "old_name": "Trụ sở công ty Messageries maritimes",
+        "old_name:en": "Headquarters of Messageries maritimes",
+        "opening_hours": "Mo,Fr 08:00-12:00; Tu-Th,Sa,Su 08:00-12:00,14:00-16:30",
+        "tourism": "museum",
+        "wikidata": "Q10743440",
+        "wikimedia_commons": "Category:Dragon House (Ho Chi Minh City)",
+        "wikipedia": "en:Dragon House (Ho Chi Minh City)"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 808321428,
+      "center": {
+        "lat": 10.7653929,
+        "lon": 106.7031308
+      },
+      "tags": {
+        "addr:housenumber": "51",
+        "addr:street": "Lê Quốc Hưng",
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "UBND phường 12",
+        "name:en": "People's Committee of Ward 12",
+        "name:id": "Komite Rakyat Kelurahan 12",
+        "name:ru": "Народный комитет квартала 12",
+        "name:zh": "地十二坊人民委员会"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 854573861,
+      "center": {
+        "lat": 10.8049698,
+        "lon": 106.6942613
+      },
+      "tags": {
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "3",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đường Nơ Trang Long",
+        "addr:subdistrict": "Phường 7",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Ung bướu"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 854573862,
+      "center": {
+        "lat": 10.8051582,
+        "lon": 106.6956218
+      },
+      "tags": {
+        "addr:district": "Bình Thạnh",
+        "addr:housenumber": "47",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Nguyễn Huy Lượng",
+        "addr:subdistrict": "Phường 14",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Ung bướu"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 907749157,
+      "center": {
+        "lat": 10.8642934,
+        "lon": 106.7619545
+      },
+      "tags": {
+        "addr:housenumber": "1262",
+        "addr:street": "Kha Vạn Cân",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Linh Xuân",
+        "name:en": "People's Committee of Linh Xuan ward",
+        "office": "government",
+        "short_name": "UBND phường Linh Xuân"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 907749159,
+      "center": {
+        "lat": 10.8681251,
+        "lon": 106.7347353
+      },
+      "tags": {
+        "addr:housenumber": "707",
+        "addr:street": "Tô Ngọc Vân",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Tam Bình",
+        "name:en": "People's Committee of Tam Binh ward",
+        "office": "government",
+        "short_name": "UBND phường Tam Bình"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 907749183,
+      "center": {
+        "lat": 10.8092436,
+        "lon": 106.8596817
+      },
+      "tags": {
+        "addr:housenumber": "239",
+        "addr:street": "Long Phước",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Long Phước",
+        "name:en": "People's Committee of Long Phuoc ward",
+        "office": "government",
+        "short_name": "UBND phường Long Phước"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 907749189,
+      "center": {
+        "lat": 10.826169,
+        "lon": 106.769175
+      },
+      "tags": {
+        "addr:housenumber": "183",
+        "addr:street": "Đỗ Xuân Hợp",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Phước Long",
+        "name:en": "People's Committee of Phuoc Long ward",
+        "office": "government",
+        "short_name": "UBND phường Phước Long"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 907749191,
+      "center": {
+        "lat": 10.8458319,
+        "lon": 106.7872684
+      },
+      "tags": {
+        "addr:housenumber": "29",
+        "addr:street": "Lê Văn Việt",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Tăng Nhơn Phú",
+        "name:en": "People's Committee of Tang Nhon Phu ward",
+        "office": "government",
+        "short_name": "UBND phường Tăng Nhơn Phú"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 952517299,
+      "center": {
+        "lat": 10.7642581,
+        "lon": 106.7009719
+      },
+      "tags": {
+        "addr:housenumber": "104",
+        "addr:street": "Bến Vân Đồn",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Khánh Hội",
+        "name:en": "People's Committee of Khanh Hoi ward",
+        "office": "government",
+        "short_name": "UBND phường Khánh Hội"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 952517673,
+      "center": {
+        "lat": 10.8205076,
+        "lon": 106.702464
+      },
+      "tags": {
+        "addr:housenumber": "355/5",
+        "addr:street": "Hẻm 355 Nơ Trang Long",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Bình Lợi Trung",
+        "name:en": "People's Committee of Binh Loi Trung ward",
+        "office": "government",
+        "short_name": "UBND phường Bình Lợi Trung"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 961620960,
+      "center": {
+        "lat": 10.7891613,
+        "lon": 106.7720345
+      },
+      "tags": {
+        "addr:housenumber": "8",
+        "addr:street": "Hồ Thị Nhung",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Bình Trưng",
+        "name:en": "People's Committee of Binh Trung ward",
+        "office": "government",
+        "short_name": "UBND phường Bình Trưng"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 976860768,
+      "center": {
+        "lat": 10.8681935,
+        "lon": 106.7874003
+      },
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Đại học Nông lâm",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 987255769,
+      "center": {
+        "lat": 10.7890425,
+        "lon": 106.6997391
+      },
+      "tags": {
+        "addr:housenumber": "58B",
+        "addr:street": "Nguyễn Đình Chiểu",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Tân Định",
+        "name:en": "People's Committee of Tan Dinh ward",
+        "office": "government",
+        "short_name": "UBND phường Tân Định"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 996080489,
+      "center": {
+        "lat": 10.8302363,
+        "lon": 106.7753457
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao Đẳng Công Thương Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1015368266,
+      "center": {
+        "lat": 10.8980981,
+        "lon": 106.8818889
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao đẳng Lê Quý Đôn"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1019360367,
+      "center": {
+        "lat": 10.9035578,
+        "lon": 106.8506978
+      },
+      "tags": {
+        "amenity": "marketplace",
+        "landuse": "retail",
+        "name": "Chợ Long Bình Tân",
+        "opening_hours": "02:00-19:00"
+      },
+      "floodroute_candidate_categories": [
+        "MARKET"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1022939891,
+      "center": {
+        "lat": 10.8414179,
+        "lon": 106.8100399
+      },
+      "tags": {
+        "addr:city": "Thành phố Thủ Đức",
+        "addr:housenumber": "Lô E2a-7",
+        "addr:street": "Đường D1",
+        "addr:subdistrict": "Long Thạnh Mỹ",
+        "amenity": "university",
+        "name": "Trường Đại học FPT Thành phố Hồ Chí Minh",
+        "name:en": "FPT University - HCMC Campus",
+        "website": "https://hcmuni.fpt.edu.vn",
+        "wikidata": "Q610220",
+        "wikipedia": "vi:Trường Đại học FPT"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023122039,
+      "center": {
+        "lat": 10.8643971,
+        "lon": 106.7455723
+      },
+      "tags": {
+        "addr:housenumber": "29",
+        "addr:street": "Đường Phú Châu",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Đa khoa Thủ Đức",
+        "name:en": "Thu Duc General Hospital",
+        "old_name": "Bệnh viện quận Thủ Đức;Bệnh viện thành phố Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023122041,
+      "center": {
+        "lat": 10.8455356,
+        "lon": 106.7769375
+      },
+      "tags": {
+        "addr:housenumber": "50",
+        "addr:street": "Đường Lê Văn Việt",
+        "amenity": "college",
+        "landuse": "military",
+        "name": "Trường Cao đẳng Hậu cần 2",
+        "operator": "Quân khu 7"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023126419,
+      "center": {
+        "lat": 10.8420891,
+        "lon": 106.845603
+      },
+      "tags": {
+        "name": "Công viên giải trí VinWonders Grand Park",
+        "operator": "VinWonders",
+        "tourism": "theme_park"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023240915,
+      "center": {
+        "lat": 10.8698098,
+        "lon": 106.7627408
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Hoàn Hảo Kei Mei Kai"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023330892,
+      "center": {
+        "lat": 10.8054057,
+        "lon": 106.7308464
+      },
+      "tags": {
+        "addr:housenumber": "51",
+        "addr:street": "Đường Quốc Hương",
+        "amenity": "university",
+        "name": "Trường Đại học Văn hóa Thành phố Hồ Chí Minh",
+        "name:en": "Ho Chi Minh City University of Culture",
+        "wikidata": "Q5873981",
+        "wikipedia": "vi:Trường Đại học Văn hóa Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023514803,
+      "center": {
+        "lat": 10.7856371,
+        "lon": 106.7016723
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Quận 1",
+        "addr:housenumber": "45",
+        "addr:street": "Đinh Tiên Hoàng",
+        "addr:subdistrict": "Bến Nghé",
+        "amenity": "college",
+        "check_date": "2025-01-05",
+        "education": "college",
+        "name": "Trường Chính sách công và Phát triển nông thôn"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023697347,
+      "center": {
+        "lat": 10.8716321,
+        "lon": 106.7573956
+      },
+      "tags": {
+        "amenity": "townhall",
+        "name": "UBND phường An Bình",
+        "townhall:type": "ward"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1023704926,
+      "center": {
+        "lat": 10.8509752,
+        "lon": 106.7602131
+      },
+      "tags": {
+        "museum": "history",
+        "name": "Nhà Truyền Thống Thủ Đức",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1024308083,
+      "center": {
+        "lat": 10.887672,
+        "lon": 106.7737207
+      },
+      "tags": {
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Bệnh viện Hoàn Mỹ Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1024454554,
+      "center": {
+        "lat": 10.8626402,
+        "lon": 106.7437487
+      },
+      "tags": {
+        "amenity": "townhall",
+        "name": "UBND phường Tam Phú",
+        "townhall:type": "ward"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1026567598,
+      "center": {
+        "lat": 10.9044363,
+        "lon": 106.8570293
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Phân hiệu Trường Đại học Mở Thành phố Hồ Chí Minh tại Đồng Nai"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1026798691,
+      "center": {
+        "lat": 10.8948585,
+        "lon": 106.8711538
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Điều dưỡng - Phục hồi Chức năng 2"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1042554078,
+      "center": {
+        "lat": 10.7905572,
+        "lon": 106.7128776
+      },
+      "tags": {
+        "addr:housenumber": "85/16",
+        "addr:street": "Hẻm 85 Phạm Viết Chánh",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Thạnh Mỹ Tây",
+        "name:en": "People's Committee of Thanh My Tay ward",
+        "office": "government",
+        "short_name": "UBND phường Thạnh Mỹ Tây"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1057874323,
+      "center": {
+        "lat": 10.8094852,
+        "lon": 106.7150377
+      },
+      "tags": {
+        "addr:housenumber": "36",
+        "addr:street": "Hẻm 31 Ung Văn Khiêm",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Công nghệ Thành phố Hồ Chí Minh (cơ sở Ung Văn Khiêm)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1084609765,
+      "center": {
+        "lat": 10.8723693,
+        "lon": 106.805223
+      },
+      "tags": {
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Xa lộ Hà Nội",
+        "amenity": "university",
+        "name": "Trường Đại học An ninh Nhân dân",
+        "name:en": "People's Security University",
+        "name:vi": "Trường Đại học An ninh Nhân dân",
+        "operator": "Bộ Công an Việt Nam",
+        "operator:type": "government",
+        "website": "https://dhannd.edu.vn/",
+        "wikidata": "Q86012406",
+        "wikipedia": "vi:Trường Đại học An ninh nhân dân (Thành phố Hồ Chí Minh)"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1085944223,
+      "center": {
+        "lat": 10.8597282,
+        "lon": 106.6946638
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Nguyễn Tất Thành (cơ sở Quận 12))"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1085962671,
+      "center": {
+        "lat": 10.7611092,
+        "lon": 106.6922405
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Mở Thành phố Hồ Chí Minh",
+        "wikidata": "Q10829094"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1085965818,
+      "center": {
+        "lat": 10.7927721,
+        "lon": 106.7063694
+      },
+      "tags": {
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Thuỷ Lợi - Cơ sở 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1087729699,
+      "center": {
+        "lat": 10.7980558,
+        "lon": 106.6967399
+      },
+      "tags": {
+        "addr:housenumber": "132",
+        "addr:street": "Đường Lê Văn Duyệt",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Đa khoa Bình Thạnh",
+        "name:en": "Binh Thanh General Hospital",
+        "old_name": "Bệnh viện quận Bình Thạnh"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1098537795,
+      "center": {
+        "lat": 10.7465975,
+        "lon": 106.7948014
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm y tế Xã Phú Hữu"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1115566351,
+      "center": {
+        "lat": 10.8433729,
+        "lon": 106.8428377
+      },
+      "tags": {
+        "building": "yes",
+        "building:levels": "5",
+        "name": "Vincom Mega Mall",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1116582922,
+      "center": {
+        "lat": 10.7774203,
+        "lon": 106.7063661
+      },
+      "tags": {
+        "barrier": "fence",
+        "name": "Bảo tàng Tôn Đức Thắng",
+        "name:en": "Ton Duc Thang Museum",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1137249771,
+      "center": {
+        "lat": 10.8895125,
+        "lon": 106.741575
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "landuse": "military",
+        "name": "Bệnh viên Quân y 4"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1139091053,
+      "center": {
+        "lat": 10.8837665,
+        "lon": 106.7428221
+      },
+      "tags": {
+        "landuse": "commercial",
+        "name": "Bảo tàng Quân đoàn 4",
+        "tourism": "museum"
+      },
+      "floodroute_candidate_categories": [
+        "CULTURE_THEME"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1155955878,
+      "center": {
+        "lat": 10.7440007,
+        "lon": 106.7006631
+      },
+      "tags": {
+        "addr:housenumber": "9",
+        "addr:street": "Đường 2A",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Tân Hưng",
+        "name:en": "People's Committee of Tan Hung ward",
+        "office": "government",
+        "short_name": "UBND phường Tân Hưng"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1162981728,
+      "center": {
+        "lat": 10.7709487,
+        "lon": 106.697883
+      },
+      "tags": {
+        "air_conditioning": "yes",
+        "layer": "-1",
+        "level": "-4;-3;-2;-1",
+        "location": "underground",
+        "max_level": "-1",
+        "min_level": "-4",
+        "name": "Bến Thành",
+        "name:de": "U-Bahnhof Ben Thanh",
+        "name:en": "Ben Thanh Station",
+        "name:fr": "Gare de Ben Thanh",
+        "name:ja": "ベンタイン駅",
+        "name:th": "เบ๊นถั่ญ",
+        "name:vi": "Ga Bến Thành",
+        "name:zh": "濱城站",
+        "network": "Ho Chi Minh City Metro",
+        "opening_date": "2024-12-22",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes",
+        "wheelchair": "yes"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1162989826,
+      "center": {
+        "lat": 10.775303,
+        "lon": 106.7020679
+      },
+      "tags": {
+        "layer": "-1",
+        "level": "-4;-3;-2;-1",
+        "location": "underground",
+        "max_level": "-1",
+        "min_level": "-4",
+        "name": "Nhà Hát Thành Phố",
+        "name:de": "U-Bahnhof Opernhaus",
+        "name:en": "Opera House Station",
+        "name:fr": "Gare de l'Opéra",
+        "name:ja": "オペラハウス駅",
+        "name:th": "โรงอุปรากร",
+        "name:vi": "Ga Nhà Hát Thành Phố",
+        "name:zh": "市劇院站",
+        "network": "Ho Chi Minh City Metro",
+        "opening_date": "2024-12-22",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1163010587,
+      "center": {
+        "lat": 10.7817906,
+        "lon": 106.7083401
+      },
+      "tags": {
+        "departures_board": "realtime",
+        "layer": "-1",
+        "level": "-2;-1",
+        "location": "underground",
+        "max_level": "-1",
+        "min_level": "-2",
+        "name": "Ba Son",
+        "name:de": "U-Bahnhof Ba Son",
+        "name:en": "Ba Son Station",
+        "name:fr": "Gare de Ba Son",
+        "name:ja": "バソン駅",
+        "name:th": "บาสอน",
+        "name:vi": "Ga Ba Son",
+        "name:zh": "巴遜站",
+        "network": "Ho Chi Minh City Metro",
+        "opening_date": "2024-12-22",
+        "operator": "Ban Quản lý Đường sắt đô thị Thành phố Hồ Chí Minh",
+        "public_transport": "station",
+        "railway": "station",
+        "station": "subway",
+        "subway": "yes"
+      },
+      "floodroute_candidate_categories": [
+        "RAIL_STATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1169331602,
+      "center": {
+        "lat": 10.7674479,
+        "lon": 106.7054623
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Đường Nguyễn Tất Thành",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Luật Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1178249798,
+      "center": {
+        "lat": 10.8795527,
+        "lon": 106.8161871
+      },
+      "tags": {
+        "addr:street": "Xa lộ Hà Nội",
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe Miền Đông Mới",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1212036325,
+      "center": {
+        "lat": 10.8723619,
+        "lon": 106.7898363
+      },
+      "tags": {
+        "addr:district": "Thủ Đức",
+        "addr:postcode": "70000",
+        "addr:province": "Hồ Chí Minh",
+        "addr:street": "Đỗ Mười",
+        "addr:subdistrict": "Linh Trung",
+        "amenity": "university",
+        "education": "university",
+        "internet_access": "yes",
+        "name": "Trường Đại học Nông Lâm Thành phố Hồ Chí Minh",
+        "name:en": "Nong Lam University Ho Chi Minh City",
+        "name:vi": "Trường Đại học Nông Lâm Thành phố Hồ Chí Minh",
+        "operator": "Bộ Giáo dục và Đào tạo Việt Nam",
+        "operator:type": "government",
+        "phone": "+842838966780",
+        "website": "https://hcmuaf.edu.vn",
+        "wikidata": "Q5873976",
+        "wikipedia": "vi:Trường Đại học Nông Lâm Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1214273262,
+      "center": {
+        "lat": 10.8145333,
+        "lon": 106.7023704
+      },
+      "tags": {
+        "addr:city": "Phường 12",
+        "addr:district": "Bình Thạnh",
+        "addr:province": "Hồ Chí Minh",
+        "addr:subdistrict": "Phường 12",
+        "leisure": "stadium",
+        "name": "Sân vận động Gia Định"
+      },
+      "floodroute_candidate_categories": [
+        "STADIUM"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1223412800,
+      "center": {
+        "lat": 10.8477063,
+        "lon": 106.8199685
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao đẳng Cảnh sát Nhân dân 2"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1223412806,
+      "center": {
+        "lat": 10.8456653,
+        "lon": 106.8431477
+      },
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Trạm xe bus điện VinBus",
+        "public_transport": "station"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1241980323,
+      "center": {
+        "lat": 10.79377,
+        "lon": 106.7468051
+      },
+      "tags": {
+        "addr:city": "Thành phố Hồ Chí Minh",
+        "addr:district": "Thành phố Thủ Đức",
+        "addr:housenumber": "199",
+        "addr:street": "Nguyễn Hoàng",
+        "addr:subdistrict": "An Phú",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Bệnh viện Quốc tế Mỹ AIH",
+        "name:en": "American International Hospital"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1271043475,
+      "center": {
+        "lat": 10.8056408,
+        "lon": 106.7826662
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Trường Cao Đẳng Sư Phạm Trung Ương Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1271061070,
+      "center": {
+        "lat": 10.8404375,
+        "lon": 106.8085906
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Công Nghệ Chi nhánh CNC"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1271884826,
+      "center": {
+        "lat": 10.7896008,
+        "lon": 106.7720079
+      },
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Trạm Y tế phường Bình Trưng Đông"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1302162923,
+      "center": {
+        "lat": 10.8448592,
+        "lon": 106.7777477
+      },
+      "tags": {
+        "addr:housenumber": "50",
+        "addr:street": "Đường Lê Văn Việt",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "landuse": "military",
+        "name": "Bệnh viện Quân Dân y Miền Đông",
+        "old_name": "Bệnh viện 7C",
+        "operator": "Quân khu 7"
+      },
+      "floodroute_candidate_categories": [
+        "HOSPITAL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1303838982,
+      "center": {
+        "lat": 10.8699883,
+        "lon": 106.8034308
+      },
+      "tags": {
+        "addr:city": "Hồ Chí Minh",
+        "amenity": "university",
+        "name": "Trường Đại học Công nghệ Thông tin",
+        "name:en": "University of Information Technology",
+        "name:vi": "Trường Đại học Công nghệ Thông tin",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university",
+        "website": "https://www.uit.edu.vn/",
+        "wikidata": "Q5873994",
+        "wikipedia": "vi:Trường Đại học Công nghệ Thông tin, Đại học Quốc gia Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1306624213,
+      "center": {
+        "lat": 10.7743991,
+        "lon": 106.770305
+      },
+      "tags": {
+        "addr:housenumber": "707",
+        "addr:street": "Nguyễn Thị Định",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Cát Lái",
+        "name:en": "People's Committee of Cat Lai ward",
+        "office": "government",
+        "short_name": "UBND phường Cát Lái"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1314190857,
+      "center": {
+        "lat": 10.860168,
+        "lon": 106.7236342
+      },
+      "tags": {
+        "addr:housenumber": "719",
+        "addr:street": "Quốc lộ 13",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Hiệp Bình",
+        "name:en": "People's Committee of Hiep Binh ward",
+        "office": "government",
+        "short_name": "UBND phường Hiệp Bình"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1353816424,
+      "center": {
+        "lat": 10.8476602,
+        "lon": 106.7715014
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Nguyễn Công Trứ",
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường Thủ Đức",
+        "name:en": "People's Committee of Thu Duc Ward",
+        "office": "government",
+        "short_name": "UBND phường Thủ Đức"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1393700001,
+      "center": {
+        "lat": 10.848947,
+        "lon": 106.7933979
+      },
+      "tags": {
+        "amenity": "college",
+        "name": "Phân hiệu Trường Đại học Kiểm sát tại Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1411078754,
+      "center": {
+        "lat": 10.7884669,
+        "lon": 106.7338681
+      },
+      "tags": {
+        "amenity": "townhall",
+        "building": "yes",
+        "government": "administrative",
+        "name": "Ủy ban nhân dân phường An Khánh",
+        "name:en": "People's Committee of An Khanh ward",
+        "office": "government",
+        "short_name": "UBND phường An Khánh"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1414094291,
+      "center": {
+        "lat": 10.8011614,
+        "lon": 106.7175675
+      },
+      "tags": {
+        "amenity": "bus_station",
+        "bus": "yes",
+        "name": "Bến xe buýt Văn Thánh",
+        "public_transport": "platform"
+      },
+      "floodroute_candidate_categories": [
+        "CIVIC_TRANSPORT"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1419077157,
+      "center": {
+        "lat": 10.8886404,
+        "lon": 106.797667
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Khoa học Sức khỏe",
+        "name:en": "University of Health Sciences",
+        "name:vi": "Trường Đại học Khoa học Sức khỏe",
+        "official_name": "Trường Đại học Khoa học Sức khỏe, Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "official_name:en": "University of Health Sciences, Viet Nam National University, Ho Chi Minh City",
+        "official_name:vi": "Trường Đại học Khoa học Sức khỏe, Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university",
+        "short_name": "UHS",
+        "website": "https://www.uhsvnu.edu.vn/",
+        "wikidata": "Q61131917",
+        "wikipedia": "vi:Trường Đại học Khoa học Sức khỏe, Đại học Quốc gia Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1419105579,
+      "center": {
+        "lat": 10.8761964,
+        "lon": 106.7969492
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Khoa học tự nhiên (cơ sở 2)",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1419109086,
+      "center": {
+        "lat": 10.8776808,
+        "lon": 106.8012827
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Quốc tế",
+        "name:en": "Ho Chi Minh City International University",
+        "name:vi": "Trường Đại học Quốc tế",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university",
+        "website": "https://hcmiu.edu.vn/",
+        "wikidata": "Q5873959",
+        "wikipedia": "vi:Trường Đại học Quốc tế, Đại học Quốc gia Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1419118309,
+      "center": {
+        "lat": 10.8802192,
+        "lon": 106.8057041
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Bách khoa (cơ sở 2)",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1419197268,
+      "center": {
+        "lat": 10.8710357,
+        "lon": 106.8001813
+      },
+      "tags": {
+        "amenity": "university",
+        "name": "Trường Đại học Khoa học Xã hội và Nhân văn (cơ sở 2)",
+        "operator": "Đại học Quốc gia Thành phố Hồ Chí Minh",
+        "operator:type": "university"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1507378789,
+      "center": {
+        "lat": 10.7905344,
+        "lon": 106.7003469
+      },
+      "tags": {
+        "addr:housenumber": "2",
+        "addr:street": "Mai Thị Lựu",
+        "amenity": "college",
+        "education": "college",
+        "name": "Trường Cao đẳng Kỹ thuật Nguyễn Trường Tộ"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1527137541,
+      "center": {
+        "lat": 10.7733315,
+        "lon": 106.7037938
+      },
+      "tags": {
+        "building": "yes",
+        "name": "Saigon Garden",
+        "shop": "mall"
+      },
+      "floodroute_candidate_categories": [
+        "MALL"
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1529277586,
+      "center": {
+        "lat": 10.8500847,
+        "lon": 106.7642525
+      },
+      "tags": {
+        "addr:housenumber": "190",
+        "addr:street": "Võ Văn Ngân",
+        "amenity": "university",
+        "education": "university",
+        "name": "Trường Đại học Xây dựng Hà Nội - Phân hiệu tại Thành phố Hồ Chí Minh",
+        "old_name": "Trường Cao đẳng Xây dựng Thành phố Hồ Chí Minh"
+      },
+      "floodroute_candidate_categories": [
+        "EDUCATION"
+      ]
+    }
+  ]
+}
