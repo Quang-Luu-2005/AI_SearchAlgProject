@@ -5,7 +5,7 @@
 **Khoa**: Công nghệ Thông tin  
 **Đề tài**: Lab 1 -- Thuật toán Tìm kiếm Tối ưu Tuyến đường Giao thông Đô thị  
 **Mã đồ án**: `FloodRoute_HCMC_v0.1`  
-**Ngày cập nhật**: 17/08/2026  
+**Ngày cập nhật**: 19/08/2026
 
 ---
 
@@ -35,7 +35,7 @@
 | **4. Cài đặt các thuật toán mở rộng (Greedy, Bidirectional)** | 10 | 10/10 | Cài đặt Greedy Best-First Search và Bidirectional Search trên đồ thị có hướng chuyển vị; kèm phản ví dụ và ADR. |
 | **5. Bài toán tối ưu hóa nhiều địa điểm (TSP)** | 10 | 10/10 | Xây dựng Pairwise Matrix có hướng, giải thuật chính xác Held-Karp DP ($O(N^2 \cdot 2^N)$), Nearest Neighbor, đo % Gap và % Baseline Savings. |
 | **6. Giao diện người dùng (GUI) & Trực quan hóa tiến trình** | 10 | 10/10 | Web app React + MapLibre GL JS vector tiles, GPU layers, snap 200m, Trace Player (Frontier/Current/Visited), i18n EN/VI, Responsive. |
-| **7. Giải thích tuyến đường & So sánh phương án** | 10 | 10/10 | Tự động sinh diễn giải ngôn ngữ tự nhiên: phân tích thành phần chi phí chiếm ưu thế, chỉ ra đoạn đường gây penalty lớn nhất, so sánh shortest vs fastest vs best cost. |
+| **7. Giải thích tuyến đường & So sánh phương án** | 10 | 10/10 | Tự động sinh diễn giải theo khoảng cách, ETA, thành phần chi phí và tối đa hai tuyến thay thế bằng cùng thuật toán đang chọn. |
 | **8. Chất lượng Báo cáo Kỹ thuật** | 10 | 10/10 | Đầy đủ 10 chương mục theo chuẩn học thuật HCMUS, số liệu thực nghiệm từ 3.600 lượt chạy benchmark, công thức toán và sơ đồ rõ ràng. |
 | **9. Chất lượng Video Demo** | 5 | 5/5 | Video demo trực quan đầy đủ các tính năng, giải thích thuật toán từng bước qua trace player và so sánh kịch bản. |
 | **TỔNG CỘNG** | **100** | **100/100** | **Dự án hoàn thành toàn diện 100% các tiêu chí kỹ thuật.** |
@@ -54,7 +54,7 @@ Tại các đô thị lớn của Việt Nam, đặc biệt là TP. Hồ Chí Mi
 
 ### 2.3. Mục tiêu Ứng dụng FloodRoute HCMC
 Hệ thống **FloodRoute HCMC** giải quyết bài toán:
-- **Tìm đường 2 điểm thích ứng động**: Không chỉ dựa trên cự ly hình học, mà kết hợp đồng thời khoảng cách, thời gian lưu thông, mức độ kẹt xe và nguy cơ ngập lụt để đề xuất lộ trình an toàn, tối ưu nhất.
+- **Tìm đường 2 điểm, ưu tiên đường ngắn nhất khả thi**: Trong điều kiện bình thường, hệ thống ưu tiên tuyến có khoảng cách ngắn nhất. Khi có kẹt xe hoặc ngập nước, các yếu tố cản trở được đưa vào composite cost để chọn tuyến phù hợp trong số các tuyến khả thi.
 - **Tối ưu hóa hành trình giao hàng đa điểm (TSP)**: Cho phép shipper nhập 1 kho hàng (*depot*) và 5--10 điểm giao hàng (*stops*), từ đó giải thuật tự động sắp xếp thứ tự giao hàng tối ưu nhằm giảm thiểu tổng chi phí, thời gian và nhiên liệu.
 
 ---
@@ -104,6 +104,17 @@ constraint**. Cạnh đóng có `total_cost = null` và không thể xuất hi�
 route, bất kể profile đang chọn. Public API hiện chốt ba profile trên; custom
 weights chưa mở trong phạm vi deadline để giữ contract ổn định.
 
+Thời gian đường thông `free_flow_time_min` được suy ra theo công thức
+`distance_km / speed_kmh * 60`. Hệ thống ưu tiên `max_velocity` từ UTraffic; nếu
+thiếu tốc độ hợp lệ thì dùng fallback theo loại đường (60, 50, 40, 35, 30 hoặc
+25 km/h), còn connector landmark dùng giả định 20 km/h. Đây là dữ liệu
+historical/derived, không phải tốc độ giao thông thời gian thực.
+
+Trong release hiện tại, scenario CONGESTION và FLOOD lần lượt tác động 57/283
+edge (xấp xỉ 20%). Scenario RANDOM sinh một tập edge mới mỗi lần kích hoạt và
+bao gồm đồng thời cả cạnh kẹt lẫn cạnh ngập. Khi cần tuyến thay thế, hệ thống
+dùng cùng thuật toán đang chọn và hiển thị distance, ETA cùng total cost.
+
 ### 3.4. Hai ví dụ route thay đổi để trình bày
 
 | Ví dụ | Điều kiện | Tuyến trước | Tuyến sau | Diễn giải |
@@ -121,8 +132,8 @@ không được hứa rằng route luôn đổi.
 
 ## Active dataset scope
 
-The application keeps only `thu_duc_landmarks_v1.0.0` as its selectable
-processed map: 65 nodes and 178 derived road-path edges. The former 90-node
+The application uses `thu_duc_landmarks_v1.0.4` as its active processed map:
+65 nodes and 283 derived directed road-path edges. The former 90-node
 processed map is retired; raw provenance is unchanged.
 
 ## 4. Tập Dữ liệu & Quy trình Quản lý
@@ -137,7 +148,7 @@ processed map is retired; raw provenance is unchanged.
 
 | Tên Dataset | Số Đỉnh ($V$) | Số Cạnh ($E$) | Trạng thái Dữ liệu | Mục đích Sử dụng |
 |---|:---:|:---:|---|---|
-| **`thu_duc_landmarks_v1.0.0`** | **65** POI | **178** Cạnh | `LANDMARK_DEMO` | 65 địa điểm lớn có tên thật từ OSM (Trường ĐH, Bệnh viện, Chợ); cạnh lưu tọa độ polyline thực tế từ UTraffic. Mặc định trên GUI. |
+| **`thu_duc_landmarks_v1.0.4`** | **65** POI | **283** Cạnh có hướng | `LANDMARK_DEMO` | 65 địa điểm lớn có tên thật từ OSM; cạnh lưu tọa độ polyline thực tế từ UTraffic. Mặc định trên GUI. |
 | **`thu_duc_core_capacity_v0.1.0`** | **3.229** Nút | **5.057** Cạnh | `CAPACITY_ONLY` | Mạng lưới giao thông lõi TP. Thủ Đức phục vụ đo đạc hiệu năng và stress-test thuật toán. |
 
 ### 4.3. Hệ thống Nhãn Dữ liệu Minh bạch (Provenance Transparency)
@@ -265,10 +276,13 @@ Số liệu được trích xuất trực tiếp từ artifact chuẩn `experime
 - **Tốc độ Đột phá của Bidirectional Search**: Bidirectional đạt thời gian thực thi siêu nhanh ($0.0997$ ms), nhanh hơn A\* gấp 15 lần nhờ giảm bán kính tìm kiếm.
 
 ### 7.3. Phân tích Ca Điển hình: Tuyến đường Thay đổi theo Kịch bản
-Xét cặp điểm O-D số `OD03` (khu vực kết nối xuyên qua Chợ Thủ Đức):
-- **Kịch bản `HISTORICAL_OFFPEAK`**: Đường phố thông thoáng, thuật toán chọn tuyến đường thẳng ngắn nhất xuyên qua trung tâm Chợ Thủ Đức (Cự ly $0.163$ km, Chi phí $0.1045$, ETA $0.22$ phút).
-- **Kịch bản `HISTORICAL_PM_PEAK`**: Giao thông xung quanh chợ ùn tắc, chi phí cạnh tăng lên do thành phần $P_{\text{traffic}}$, tổng chi phí tuyến tăng lên $0.1250$ (ETA tăng lên $0.31$ phút).
-- **Kịch bản `RAIN_FLOOD_AWARE_2025_2026`**: Các cạnh qua đường Dương Văn Cam và Đặng Thị Rành có rủi ro ngập $R_{\text{flood}} = 1.0$. Thuật toán tự động chuyển hướng đường đi vòng qua đường vành đai cao ráo, bảo đảm phương tiện không bị chết máy.
+Trên bản đồ landmark hiện tại, người dùng có thể chọn bốn scenario:
+- **`NORMAL`**: Không gán cản trở; dùng làm baseline để quan sát tuyến ngắn nhất khả thi.
+- **`CONGESTION`**: 57/283 cạnh có traffic penalty, tương đương khoảng 20% mạng đường.
+- **`FLOOD`**: 57/283 cạnh có flood risk, tương đương khoảng 20% mạng đường.
+- **`RANDOM`**: Mỗi lần kích hoạt sinh seed mới và đồng thời chọn cạnh closure, cạnh flood và cạnh congestion; vì vậy trạng thái trên bản đồ thay đổi giữa các lần nhấn.
+
+Khi scenario có cản trở, hệ thống tìm tuyến chính và tối đa hai tuyến thay thế bằng cùng thuật toán đang chọn. Mỗi kết quả hiển thị distance, ETA và total cost. Tuyến được đánh dấu tối ưu là tuyến có composite cost thấp nhất trong các tuyến khả thi; cạnh closure bị loại khỏi quá trình tìm kiếm và không thể xuất hiện trong route.
 
 ---
 
@@ -335,7 +349,7 @@ npm run dev
 ## 10. Hạn chế & Hướng Phát triển Tương lai
 
 ### 10.1. Khó khăn Kỹ thuật Đã Vượt qua
-- **Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường**: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 178 cạnh nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
+- **Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường**: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 283 directed aggregate edges nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
 - **Đảm bảo Tính Đúng đắn của Heuristic Đa Chi phí**: Chứng minh và thiết lập hàm heuristic Haversine có trọng số vừa thỏa mãn tính chấp nhận được (*Admissible*), vừa thỏa mãn tính đơn điệu (*Consistent*) trong không gian chi phí 4 thành phần.
 - **Kiến trúc Bất biến & Deterministic Tie-breaking**: Đảm bảo thuật toán độc lập 100% với framework HTTP và luôn cho kết quả tái lập tuyệt đối trên mọi nền tảng.
 

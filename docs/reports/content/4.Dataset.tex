@@ -1,6 +1,6 @@
 \section{Dataset}
 \subsection{Nguồn và quy mô dữ liệu}
-Trong phiên bản hiện tại, ứng dụng sử dụng release \texttt{thu\_duc\_landmarks\_v1.0.0}, gồm 65 landmark và 178 directed road-path edges tại khu vực Thủ Đức. Thông tin vị trí và đường được xây dựng từ OSM/UTraffic; một số thuộc tính traffic/flood được bổ sung để chạy các scenario thử nghiệm.
+Trong phiên bản hiện tại, ứng dụng sử dụng release \texttt{thu\_duc\_landmarks\_v1.0.4}, gồm 65 landmark và 283 directed road-path edges tại khu vực Thủ Đức. Thông tin vị trí và hình học tuyến được xây dựng từ OSM/UTraffic; một số thuộc tính traffic/flood được bổ sung để chạy các scenario thử nghiệm.
 
 \subsection{Các thuộc tính và giả định}
 Các thuộc tính chính của edge được nhóm em sử dụng như sau:
@@ -11,7 +11,7 @@ Các thuộc tính chính của edge được nhóm em sử dụng như sau:
 Thuộc tính & Ý nghĩa & Nguồn/nhãn\\
 \midrule
 distance & Khoảng cách của edge & DERIVED\\
-free-flow time & Thời gian khi đường thông thoáng & SOURCE\_BACKED/DERIVED\\
+free-flow time & Thời gian khi đường thông thoáng, suy ra từ khoảng cách và tốc độ & SOURCE\_BACKED/DERIVED\\
 congestion & Mức độ traffic và traffic penalty & SIMULATED hoặc dữ liệu lịch sử\\
 flood risk & Nguy cơ ngập của edge & SIMULATED/ASSUMPTION\\
 direction & Hướng di chuyển của đường & SOURCE\_BACKED/DERIVED\\
@@ -21,4 +21,4 @@ closure status & Edge có được phép đi qua hay không & Scenario\\
 }
 \end{center}
 
-Dataset chính được dùng trong giao diện và benchmark bản đồ 65 node. Các giá trị traffic/flood trong fixture kiểm chứng được ghi rõ là \texttt{SIMULATED}; vì vậy kết quả dùng để đánh giá thuật toán, không phải hướng dẫn giao thông thực tế.
+Dataset chính được dùng trong giao diện và benchmark bản đồ 65 node/283 edge. Hai scenario cố định CONGESTION và FLOOD áp dụng trên 57/283 edge (xấp xỉ 20\%), còn RANDOM sinh một tập edge mới mỗi lần người dùng kích hoạt, bao gồm cả trạng thái kẹt và ngập. Các giá trị traffic/flood trong release được ghi rõ là \texttt{SIMULATED} hoặc \texttt{ASSUMPTION}; vì vậy kết quả dùng để đánh giá thuật toán, không phải hướng dẫn giao thông thực tế.

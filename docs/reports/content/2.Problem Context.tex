@@ -1,8 +1,8 @@
 \section{Giới thiệu đồ án}
 \subsection{Mục tiêu của FloodRoute HCMC}
-FloodRoute HCMC được nhóm em xây dựng để giải quyết bài toán tìm đường giao hàng trong bối cảnh traffic và flood đã nêu ở Chương 1. Đồ án mô hình hóa bản đồ dưới dạng graph có hướng, cài đặt nhiều thuật toán tìm kiếm và so sánh route theo composite cost.
+FloodRoute HCMC được nhóm em xây dựng để giải quyết bài toán tìm đường giao hàng trong bối cảnh traffic và flood đã nêu ở Chương 1. Đồ án mô hình hóa bản đồ dưới dạng graph có hướng, cài đặt nhiều thuật toán tìm kiếm và so sánh route theo composite cost, trong đó ưu tiên thực tế của nhóm là tìm tuyến đường ngắn nhất khả thi.
 
-Mục tiêu chính của nhóm là giải thích được cách các thuật toán tìm kiếm hoạt động, kiểm tra A* với UCS và quan sát ảnh hưởng của các scenario môi trường lên route. Với bài toán nhiều điểm giao hàng, nhóm em bổ sung Nearest Neighbor và Held--Karp để so sánh nghiệm nhanh với nghiệm exact.
+Mục tiêu chính của nhóm là tìm tuyến có khoảng cách ngắn nhất trong điều kiện bình thường, sau đó đánh giá ảnh hưởng của kẹt xe và ngập nước lên tuyến được chọn. Trong scenario có cản trở, cạnh đóng bị loại như hard constraint; các cạnh kẹt/ngập làm tăng cost để hệ thống chọn tuyến ngắn và phù hợp hơn trong số các tuyến khả thi. Nhóm em cũng kiểm tra A* với UCS và bổ sung Nearest Neighbor cùng Held--Karp cho bài toán nhiều điểm giao hàng.
 
 \subsection{Thành viên và phân công}
 \begin{tabularx}{\textwidth}{l l X}
@@ -17,4 +17,4 @@ Lưu Huy Minh Quang & 23127016 & Frontend, bản đồ và báo cáo\\
 \end{tabularx}
 
 \subsection{Phạm vi đồ án}
-Trong báo cáo, nhóm em sử dụng bản đồ chính gồm 65 landmark và 178 directed road-path edges. Các scenario peak/rain trong phần kiểm chứng dùng graph nhỏ có nhãn \texttt{SIMULATED}, không đại diện cho traffic thời gian thực. Phần mô hình hóa chi phí, thuật toán và thực nghiệm ở các chương sau được xây dựng để trả lời trực tiếp bài toán đã đặt ra.
+Trong báo cáo, nhóm em sử dụng release \texttt{thu\_duc\_landmarks\_v1.0.4}, gồm 65 landmark và 283 directed road-path edges. Giao diện cung cấp các scenario NORMAL, CONGESTION, FLOOD và RANDOM; các giá trị cản trở được gắn nhãn \texttt{SIMULATED}/\texttt{ASSUMPTION}, không đại diện cho traffic thời gian thực. Phần mô hình hóa chi phí, thuật toán và thực nghiệm ở các chương sau được xây dựng để trả lời trực tiếp bài toán ưu tiên đường ngắn nhất trong điều kiện có cản trở.

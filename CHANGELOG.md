@@ -5,6 +5,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Updated the LaTeX report to describe the active v1.0.4 dataset (65 nodes/283 edges), the four current cost scenarios, the 20% fixed obstruction coverage, random mixed obstructions, same-algorithm detours, and the shortest-route priority. Documented free-flow-time derivation and clarified that A* optimizes the complete scenario cost rather than distance alone.
 - Added processed/submission release `thu_duc_landmarks_v1.0.1` with unchanged 65-node/178-edge topology and an `ASSUMPTION` hard-closure detour scenario for `LM_EDGE_0001`.
 - Normalized graph closure semantics so both `closed_edge_ids` and `edge_overrides.is_closed` are excluded before every search algorithm; impossible scenarios return `NO_ROUTE`.
 - Added `thu_duc_landmarks_v1.0.2`: 65 nodes and 283 directed edges, with up to four nearest outgoing road-path alternatives per landmark for more detour choices.

@@ -25,4 +25,4 @@ h_s(u)\leq \operatorname{Cost}_s(e)+h_s(v),
 nên heuristic là consistent. Khi edge cost không âm, A* trả về route có composite cost tối ưu, giống như UCS.
 
 \subsection{Ảnh hưởng của scenario}
-Scenario được giữ cố định trong một lần tìm kiếm nên cost edge và \(\rho_s\) không thay đổi giữa các bước mở rộng node. Khi traffic, flood hoặc weight thay đổi, cần tính lại \(\rho_s\). Heuristic này được thiết kế cho composite cost đang chọn, không phải để tối ưu riêng khoảng cách hoặc thời gian.
+Scenario được giữ cố định trong một lần tìm kiếm nên cost edge và \(\rho_s\) không thay đổi giữa các bước mở rộng node. Khi traffic, flood hoặc weight thay đổi, cần tính lại \(\rho_s\). Heuristic sử dụng cost của edge sau khi đã kết hợp distance, free-flow time, congestion và flood risk; do đó không bị dư dữ kiện mà đang tạo lower bound cho đúng composite cost của scenario. Heuristic này không tự biến bài toán thành tối ưu khoảng cách thuần túy: A* tối ưu composite cost, còn mục tiêu ưu tiên đường ngắn nhất được thể hiện bằng cost cơ sở và cách diễn giải kết quả.

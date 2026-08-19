@@ -2,6 +2,7 @@
 
 | 2026-08-19 | [Report rewrite and HomeWork_2-style cover](2026-08-19-report-rewrite.md) | Complete |
 | 2026-08-19 | [Route explanation and alternative comparison](2026-08-19-report-rewrite.md) | Complete |
+| 2026-08-19 | [Report cost model and shortest-route priority](2026-08-19-report-cost-and-shortest-route.md) | Complete |
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|

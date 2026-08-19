@@ -5,13 +5,22 @@ Nhóm em biểu diễn bản đồ dưới dạng graph có hướng \(G=(V,E)\)
 \subsection{Thuộc tính edge}
 Một edge có các thuộc tính: distance, free-flow time, traffic penalty, flood risk, direction và closure status. Transition chỉ được phép trên edge không đóng. Graph được giữ bất biến trong suốt quá trình chạy. Các thuật toán chỉ đọc graph, không tự ý thay đổi dữ liệu gốc và sử dụng quy tắc tie-break cố định để kết quả có thể lặp lại.
 
-\subsection{Composite cost}
+\subsection{Composite cost và mục tiêu ưu tiên đường ngắn nhất}
 Với scenario \(s\), chi phí của một edge được tính bởi
 \[
 \operatorname{Cost}_s(e)=w_d\,d(e)+w_t\,t(e)+w_c\,c_s(e)+w_f\,r_s(e).
 \]
 Trong đó \(d\) là distance, \(t\) là free-flow time, \(c_s\) là traffic penalty và \(r_s\) là flood risk.
 Các weight trong đồ án là hệ số ưu tiên dùng cho prototype và được chọn theo hướng mô phỏng/empirical. Đây không phải là phần trăm đóng góp thực tế, vì các thành phần có đơn vị và thang đo khác nhau.
+
+Trong scenario NORMAL, hệ thống không áp dụng penalty kẹt/ngập và dùng cost cơ sở để tìm tuyến ngắn, khả thi. Trong các scenario có cản trở, mục tiêu được hiểu là chọn tuyến có composite cost thấp nhất trong tập tuyến khả thi; khoảng cách vẫn là tiêu chí chính để so sánh, còn traffic và flood là các yếu tố phụ dùng để tránh tuyến có thời gian hoặc rủi ro cao. Vì các thành phần có đơn vị khác nhau, kết quả được gọi chính xác là tuyến tối ưu theo composite cost, không phải tối ưu khoảng cách thuần túy trong mọi scenario.
+
+\subsection{Cách suy ra free-flow time}
+Với mỗi edge, thời gian đường thông được lưu tại trường \texttt{free\_flow\_time\_min} và tính theo
+\[
+t(e)=\frac{d(e)\ [{\rm km}]}{v(e)\ [{\rm km/h}]}\times 60.
+\]
+Hệ thống ưu tiên tốc độ \texttt{max\_velocity} từ UTraffic. Nếu nguồn không có tốc độ hợp lệ, nhóm dùng tốc độ fallback theo loại đường: motorway 60 km/h, trunk 50 km/h, primary 40 km/h, secondary 35 km/h, tertiary 30 km/h và residential/unclassified 25 km/h. Các đoạn nối landmark vào mạng đường dùng giả định 20 km/h. Đây là dữ liệu historical/derived cho prototype, không phải tốc độ giao thông thời gian thực.
 
 \subsection{Ba cost profiles}
 \begin{center}
@@ -25,4 +34,4 @@ Profile & \((w_d,w_t,w_c,w_f)\)\\
 \bottomrule
 \end{tabular}
 \end{center}
-Các profile có thể được thay bằng API custom weights nếu có validation; closure vẫn là hard constraint.
+Các profile trên là profile nội bộ của cost engine; các scenario release ánh xạ vào profile đã khai báo. Closure vẫn là hard constraint và không thể được bù bằng một weight nhỏ.

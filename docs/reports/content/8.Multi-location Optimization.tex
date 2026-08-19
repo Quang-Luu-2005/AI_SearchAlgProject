@@ -1,6 +1,6 @@
 \section{Thực nghiệm và so sánh}
 \subsection{Benchmark tìm kiếm trên bản đồ 65 node}
-Nhóm em chạy benchmark trên bản đồ \texttt{thu\_duc\_landmarks\_v1.0.0} với 10 cặp OD, một baseline scenario, 6 thuật toán và 20 lần lặp cho mỗi trường hợp. Tổng cộng có 1,200 lượt chạy được đo. Các bảng và số liệu trong phần này được lấy từ file kết quả JSON sau khi chạy benchmark.
+Nhóm em chạy benchmark trên bản đồ \texttt{thu\_duc\_landmarks\_v1.0.4} với 10 cặp OD, một baseline scenario, 6 thuật toán và 20 lần lặp cho mỗi trường hợp. Tổng cộng có 1,200 lượt chạy được đo. Các bảng và số liệu trong phần này được lấy từ file kết quả JSON sau khi chạy benchmark.
 
 \begin{center}
 {\small
@@ -45,7 +45,7 @@ Ba profile \texttt{BALANCED}, \texttt{PEAK\_TRAFFIC} và \texttt{RAIN\_SAFE} s�
 Các ví dụ này cho thấy khi thay đổi mức ưu tiên của traffic hoặc flood thì tuyến được chọn có thể thay đổi. Trong mọi profile, road closure vẫn được xử lý như một ràng buộc cứng.
 
 \subsection{Giải thích route và so sánh phương án thay thế}
-Để giải thích route rõ hơn, nhóm em không chỉ báo cáo path cuối cùng mà còn tách tổng cost theo từng cạnh. Hai ví dụ dưới đây dùng fixture \texttt{toy\_graph\_v0.1}; toàn bộ traffic và flood trong fixture đều mang nhãn \texttt{SIMULATED}. Số liệu được sinh bởi benchmark \texttt{ROUTE\_EXPLANATIONS\_V1}, sau đó đối chiếu lại với cost engine.
+Để giải thích route rõ hơn, nhóm em không chỉ báo cáo path cuối cùng mà còn tách tổng cost theo từng cạnh. Hai ví dụ dưới đây dùng fixture \texttt{toy\_graph\_v0.1}; toàn bộ traffic và flood trong fixture đều mang nhãn \texttt{SIMULATED}. Số liệu được sinh bởi benchmark \texttt{ROUTE\_EXPLANATIONS\_V1}, sau đó đối chiếu lại với cost engine. Trên giao diện landmark, khi scenario có cản trở, hệ thống dùng cùng thuật toán đang chọn để sinh tối đa hai tuyến thay thế và hiển thị distance, ETA, total cost cho từng tuyến. Tuyến được chọn là tuyến có composite cost thấp nhất; khi các tuyến có cost gần nhau, khoảng cách là tiêu chí ưu tiên trong phần giải thích.
 
 \subsubsection{Case A -- Peak traffic, so sánh cost thành phần}
 Với N01 \(\rightarrow\) N06 trong scenario \texttt{PEAK\_TRAFFIC}, UCS và A* cùng chọn N01--N02--N06, qua E01 và E03. Đây là route có composite cost thấp nhất trong các cạnh mở. Phương án thay thế đi qua E11 và E09 dài hơn nhưng quan trọng hơn là vẫn chịu cùng mức peak trong fixture. Vì fixture này đặt congestion level 4 và multiplier 1.45 cho các cạnh mở, nhóm em không kết luận rằng route đã ``né kẹt xe''; kết luận đúng là profile peak làm thành phần congestion tăng và route ngắn vẫn có cost thấp hơn.

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 20:19
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.1.18)  19 AUG 2026 23:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1185,7 +1185,7 @@ LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 (Font)              scaled to size 11.32855pt on input line 2.
 )
-(content/2.Problem Context.tex) (content/3.Problem Modeling.tex [1])
+(content/2.Problem Context.tex) (content/3.Problem Modeling.tex [1] [2])
 (content/4.Dataset.tex
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 (Font)              scaled to size 9.63638pt on input line 8.
@@ -1193,7 +1193,12 @@ LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 (Font)              scaled to size 6.74547pt on input line 9.
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 (Font)              scaled to size 4.81819pt on input line 9.
- [2]) (content/5.Algorithm Principles.tex
+
+Overfull \hbox (14.01924pt too wide) in paragraph at lines 9--22
+ [] 
+ []
+
+) (content/5.Algorithm Principles.tex
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/n' will be
 (Font)              scaled to size 8.67274pt on input line 4.
 
@@ -1201,10 +1206,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 16--18
 
  []
 
+[3]
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/b/n' will be
 (Font)              scaled to size 9.44046pt on input line 50.
-) (content/6.Program Flow.tex [3]) (content/7.Algorithm Comparison.tex [4])
-(content/8.Multi-location Optimization.tex [5] [6]
+) (content/6.Program Flow.tex [4]) (content/7.Algorithm Comparison.tex)
+(content/8.Multi-location Optimization.tex [5] [6] [7]
 File: figures/gui-astar-route.png Graphic file (type bmp)
 <figures/gui-astar-route.png>
 File: figures/gui-compare-algorithms.png Graphic file (type bmp)
@@ -1212,11 +1218,12 @@ File: figures/gui-compare-algorithms.png Graphic file (type bmp)
 File: figures/gui-tour-optimization.png Graphic file (type bmp)
 <figures/gui-tour-optimization.png>
 )
-(content/9.Program Instructions.tex [7] [8] [9] [10])
+(content/9.Program Instructions.tex)
 (content/10.Limitations and Future Work.tex
 LaTeX Font Info:    Font shape `TU/TimesNewRoman(0)/m/it' will be
 (Font)              scaled to size 10.97087pt on input line 8.
-) (ref/ref.tex [11]) [12] (main.aux)
+ [8] [9] [10] [11]) (ref/ref.tex)
+[12] (main.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2025-12-29>
@@ -1227,10 +1234,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  30728 strings out of 402987
  635137 string characters out of 5448524
- 1140296 words of memory out of 5000000
+ 1138296 words of memory out of 5000000
  58948 multiletter control sequences out of 15000+600000
  636229 words of font info for 105 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 99i,12n,130p,705b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,12n,130p,752b,796s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on main.pdf (14 pages).

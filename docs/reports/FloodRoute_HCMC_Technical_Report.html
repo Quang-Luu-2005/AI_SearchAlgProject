@@ -686,9 +686,9 @@ Dự án áp dụng quy trình quản trị dữ liệu 4 tầng nghiêm ngặt 
 <th><strong>Mục đích Sử dụng</strong></th>
 </tr>
 <tr>
-<td><strong><code>thu_duc_landmarks_v1.0.0</strong></code></td>
+<td><strong><code>thu_duc_landmarks_v1.0.4</strong></code></td>
 <td><strong>65</strong> POI</td>
-<td><strong>178</strong> Cạnh</td>
+<td><strong>283</strong> Cạnh có hướng</td>
 <td><code>LANDMARK_DEMO</code></td>
 <td>65 địa điểm lớn có tên thật từ OSM (Đại học, Bệnh viện, Chợ); cạnh lưu polyline thực tế từ UTraffic. Mặc định trên GUI.</td>
 </tr>
@@ -1002,9 +1002,10 @@ Dữ liệu được trích xuất trực tiếp từ artifact thực nghiệm c
 <h3 class="latex-subsection">Phân tích Tuyến đường Thay đổi theo Kịch bản (Case Study OD03)</h3>
 Xét cặp điểm O-D số <strong><code>OD03</strong></code> kết nối xuyên qua khu vực Chợ Thủ Đức:
 <ul class="latex-list">
-    <li><strong>Kịch bản <code>HISTORICAL_OFFPEAK</strong></code>: Đường phố thông thoáng, thuật toán chọn tuyến đường thẳng ngắn nhất xuyên qua trung tâm Chợ Thủ Đức ($D = 0.163$ km, Chi phí $C = 0.1045$, ETA $0.22$ phút).
-    <li><strong>Kịch bản <code>HISTORICAL_PM_PEAK</strong></code>: Giao thông quanh chợ ùn tắc, thành phần $P_{\text{traffic}}$ làm chi phí tăng lên $C = 0.1250$ (ETA tăng lên $0.31$ phút).
-    <li><strong>Kịch bản <code>RAIN_FLOOD_AWARE_2025_2026</strong></code>: Cạnh qua đường Dương Văn Cam và Đặng Thị Rành có rủi ro ngập $R_{\text{flood}} = 1.0$. Thuật toán tự động chuyển hướng đường đi vòng qua đường vành đai cao ráo, bảo đảm phương tiện không bị chết máy.
+    <li><strong>Kịch bản <code>NORMAL</code></strong>: Không gán cản trở; dùng làm baseline để quan sát tuyến ngắn nhất khả thi.</li>
+    <li><strong>Kịch bản <code>CONGESTION</code></strong>: 57/283 cạnh có traffic penalty, tương đương khoảng 20% mạng đường.</li>
+    <li><strong>Kịch bản <code>FLOOD</code></strong>: 57/283 cạnh có flood risk, tương đương khoảng 20% mạng đường.</li>
+    <li><strong>Kịch bản <code>RANDOM</code></strong>: Mỗi lần kích hoạt sinh seed mới và đồng thời chọn cạnh closure, flood và congestion.</li>
 </ul>
 </div>
 <div class="latex-chapter" id="sec-8"><h2 class="latex-section">Tối ưu hóa Tuyến đường Giao hàng Đa điểm (TSP)</h2>
@@ -1105,7 +1106,7 @@ npm run dev</code></pre>
 
 <h3 class="latex-subsection">Khó khăn Kỹ thuật Đã Vượt qua</h3>
 <ul class="latex-list">
-    <li><strong>Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường</strong>: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 178 cạnh nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
+    <li><strong>Xử lý Đồ thị Nén nhưng Bảo toàn Hình học Tuyến đường</strong>: Rút gọn mạng lưới giao thông phức tạp 14.043 cạnh thành 283 directed aggregate edges nối giữa 65 địa điểm lớn mà vẫn giữ nguyên tọa độ polyline khúc khuỷu của đường phố thật thay vì vẽ đường thẳng giả tạo.
     <li><strong>Đảm bảo Tính Đúng đắn của Heuristic Đa Chi phí</strong>: Chứng minh và thiết lập hàm heuristic Haversine có trọng số vừa thỏa mãn tính chấp nhận được (<em>Admissible</em>), vừa thỏa mãn tính đơn điệu (<em>Consistent</em>) trong không gian chi phí 4 thành phần.
     <li><strong>Kiến trúc Bất biến \& Deterministic Tie-breaking</strong>: Đảm bảo thuật toán độc lập 100 với framework HTTP và luôn cho kết quả tái lập tuyệt đối trên mọi nền tảng.
 </ul>
