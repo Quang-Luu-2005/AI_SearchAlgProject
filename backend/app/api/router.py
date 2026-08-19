@@ -419,6 +419,25 @@ def graph_detail(
         except ScenarioNotFoundError as error:
             raise HTTPException(status_code=404, detail=str(error)) from error
 
+    active_scenario = graph.scenario(scenario_id) if scenario_id is not None else None
+    active_overrides = (
+        active_scenario.attributes.get("edge_overrides", {})
+        if active_scenario is not None
+        else {}
+    )
+
+    def edge_scenario_status(edge_id: str) -> str | None:
+        if scenario_id is None:
+            return None
+        if graph.is_edge_closed(edge_id, scenario_id):
+            return "CLOSED"
+        override = active_overrides.get(edge_id, {})
+        if float(override.get("traffic_penalty_min", 0) or 0) > 0:
+            return "CONGESTED"
+        if float(override.get("flood_risk", 0) or 0) > 0:
+            return "FLOODED"
+        return None
+
     nodes = [
         {
             "node_id": node.node_id,
@@ -441,6 +460,7 @@ def graph_detail(
                 if scenario_id is not None
                 else False
             ),
+            "scenario_status": edge_scenario_status(edge.edge_id),
             "attributes": _json_value(edge.attributes),
         }
         for edge in graph.edges

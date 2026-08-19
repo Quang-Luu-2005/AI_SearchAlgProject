@@ -235,7 +235,7 @@ function edgeFeature(
       to_node_id: edge.to_node_id,
       road_name: String(edge.attributes.road_name ?? ''),
       is_closed: edge.is_closed,
-      affected_status: affectedStatuses.get(edge.edge_id) ?? null,
+      affected_status: affectedStatuses.get(edge.edge_id) ?? edge.scenario_status ?? null,
       route_index: routeIndex,
     },
   }

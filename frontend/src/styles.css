@@ -642,6 +642,11 @@ select:focus {
   font-weight: 700;
 }
 
+/* Keep a single legend on the map; the old below-map legend is redundant. */
+.map-card > .legend {
+  display: none;
+}
+
 .map-legend-overlay strong {
   width: 100%;
   color: var(--primary);
@@ -1328,6 +1333,7 @@ select:focus {
 
 @media (max-width: 1024px) {
   .metrics-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .alternative-routes-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
@@ -1428,6 +1434,108 @@ select:focus {
 }
 
 .comparison-section .comparison-grid { width: 100%; margin-top: 10px; }
+
+.alternative-routes-section {
+  width: min(1180px, 100%);
+  margin: 16px auto 0;
+  padding: 16px;
+  border: 1px solid var(--outline);
+  border-radius: 16px;
+  background: var(--surface-glass);
+  box-shadow: 0 6px 20px rgba(25, 28, 29, 0.06);
+}
+
+.alternative-routes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.alternative-routes-header h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.alternative-routes-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.alternative-routes-header > span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: var(--primary);
+  background: #eef6ff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.alternative-routes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.alternative-route-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--surface-high);
+  text-align: left;
+  cursor: pointer;
+}
+
+.alternative-route-card:hover,
+.alternative-route-card--optimal {
+  border-color: #8b5cf6;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.12);
+}
+
+.alternative-route-card__topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.alternative-route-card__topline strong {
+  color: #6d28d9;
+}
+
+.alternative-route-card__cost {
+  color: var(--primary);
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.alternative-route-card small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.alternative-route-card__proof {
+  color: #166534 !important;
+  font-weight: 800;
+}
+
+.alternative-route-card code {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .comparison-insight {
   margin: 0;
   padding: 12px 14px;

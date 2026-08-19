@@ -10,6 +10,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Added `thu_duc_landmarks_v1.0.2`: 65 nodes and 283 directed edges, with up to four nearest outgoing road-path alternatives per landmark for more detour choices.
 - Added `thu_duc_landmarks_v1.0.3` cost scenarios: normal, flood, congestion, and hard closure; added frontend random affected-edge generation and map highlighting.
 - Added bilingual Vietnamese/English labels for cost scenarios, random edge statuses, and an always-visible map legend for normal, congested, flooded, closed, and selected-route edges.
+- Simplified the frontend scenario selector to exactly congestion, flood, and random; hid technical normal/hard-closure entries and removed the duplicate below-map legend.
+- For flood, congestion, and random scenarios, the frontend now compares six algorithms, displays up to three distinct routes, and marks the lowest weighted-cost route as optimal with a cost proof.
+- Fixed map scenario coloring by returning the active edge status (`CONGESTED`, `FLOODED`, or `CLOSED`) in the graph payload for fixed and random scenarios.
 - Removed the historical-traffic notice card from the frontend panel while retaining provenance and limitations in the submission manifest.
 - Added the self-contained `data/submission/floodroute_dataset_v1.0.0` bundle with CSV/JSON data, validation report, checksums, provenance labels, and submission manifest.
 - Split the submission bundle into `raw_collected/` source snapshots and `normalized/` routing data, with separate checksums and provenance manifests.

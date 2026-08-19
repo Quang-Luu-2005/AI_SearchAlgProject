@@ -202,6 +202,19 @@ export function App() {
     () => summarizeComparison(comparisonResults),
     [comparisonResults],
   )
+  const alternativeRoutes = useMemo(() => {
+    if (!['LANDMARK_FLOOD', 'LANDMARK_CONGESTION'].includes(scenarioId)
+      && !scenarioId.startsWith('SCENARIO_')) return []
+    const unique = new Map<string, SearchResult>()
+    comparisonResults.forEach((candidate) => {
+      const key = candidate.edge_ids.join('|')
+      const previous = unique.get(key)
+      if (!previous || candidate.metrics.total_cost < previous.metrics.total_cost) unique.set(key, candidate)
+    })
+    return [...unique.values()]
+      .sort((left, right) => left.metrics.total_cost - right.metrics.total_cost)
+      .slice(0, 3)
+  }, [comparisonResults, scenarioId])
   const isTourMode = algorithm === 'HELD_KARP' || algorithm === 'NEAREST_NEIGHBOR' || algorithm === 'OPTIMIZE_TOUR'
   const canRun = Boolean(
     algorithm &&
@@ -383,7 +396,7 @@ export function App() {
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
-            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_NORMAL')?.scenario_id
+            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_CONGESTION')?.scenario_id
             ?? nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
             ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
             ?? nextScenarios[0]?.scenario_id
@@ -499,6 +512,10 @@ export function App() {
   }
 
   function selectScenario(nextScenarioId: string) {
+    if (nextScenarioId === 'RANDOM') {
+      void createRandomScenario()
+      return
+    }
     setScenarioId(nextScenarioId)
     setRandomAffectedEdges([])
     clearRouteResult()
@@ -604,7 +621,16 @@ export function App() {
         setComparisonResults(payload.results)
         setResult(payload.results[0] ?? null)
       } else if (algorithm === 'A_STAR' || algorithm === 'UCS' || algorithm === 'BFS' || algorithm === 'DFS' || algorithm === 'GREEDY' || algorithm === 'BIDIRECTIONAL') {
-        setResult(await runSearch({ ...input, algorithm }))
+        const primary = await runSearch({ ...input, algorithm })
+        if (['LANDMARK_FLOOD', 'LANDMARK_CONGESTION'].includes(scenarioId) || scenarioId.startsWith('SCENARIO_')) {
+          const comparison = await runComparison(input, ['UCS', 'A_STAR', 'BFS', 'DFS', 'GREEDY', 'BIDIRECTIONAL'])
+          setComparisonResults(comparison.results)
+          setResult(comparison.results.reduce((best, candidate) => (
+            candidate.metrics.total_cost < best.metrics.total_cost ? candidate : best
+          ), primary))
+        } else {
+          setResult(primary)
+        }
       }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Không thể chạy thuật toán.')
@@ -782,26 +808,12 @@ export function App() {
 
             <label>
               {t('scenario_label', lang)}
-              <select value={scenarioId} onChange={(event) => selectScenario(event.target.value)}>
-                {scenarios.map((item) => (
-                  <option key={item.scenario_id} value={item.scenario_id}>
-                    {item.scenario_id === 'LANDMARK_NORMAL' ? t('scenario_normal', lang) :
-                      item.scenario_id === 'LANDMARK_FLOOD' ? t('scenario_flood', lang) :
-                        item.scenario_id === 'LANDMARK_CONGESTION' ? t('scenario_congestion', lang) :
-                          item.scenario_id === 'LANDMARK_HARD_CLOSURE_DETOUR' ? t('scenario_hard_closure', lang) :
-                            item.scenario_id}
-                  </option>
-                ))}
+              <select value={scenarioId.startsWith('SCENARIO_') ? 'RANDOM' : scenarioId} onChange={(event) => selectScenario(event.target.value)}>
+                <option value="LANDMARK_CONGESTION">{t('scenario_congestion', lang)}</option>
+                <option value="LANDMARK_FLOOD">{t('scenario_flood', lang)}</option>
+                <option value="RANDOM">{t('scenario_random', lang)}</option>
               </select>
             </label>
-            <button
-              className="generate-button"
-              type="button"
-              onClick={createRandomScenario}
-              disabled={!startId || !goalId || randomRunning}
-            >
-              {randomRunning ? t('random_generating', lang) : t('random_generate', lang)}
-            </button>
             {randomAffectedEdges.length > 0 && (
               <div className="scenario-summary scenario-summary--random">
                 <span>RANDOM</span>
@@ -1098,7 +1110,7 @@ export function App() {
 
           {error && <div className="error-banner" role="alert">{error}</div>}
 
-          {comparisonResults.length > 0 && (
+          {comparisonResults.length > 0 && algorithm === 'COMPARE' && (
             <section className="comparison-section" aria-label="Comparison results">
               {comparisonInsight && <p className="comparison-insight">{t('comparison_insight', lang, {
                 cost: comparisonInsight.bestCost.algorithm,
@@ -1114,6 +1126,37 @@ export function App() {
                   <small>{item.metrics.explored_nodes} nodes · {item.metrics.processing_time_ms.toFixed(3)} ms</small>
                 </button>
               ))}</div>
+            </section>
+          )}
+
+          {alternativeRoutes.length > 0 && (
+            <section className="alternative-routes-section" aria-label={t('alternative_routes_title', lang)}>
+              <div className="alternative-routes-header">
+                <div>
+                  <h3>{t('alternative_routes_title', lang)}</h3>
+                  <p>{t('alternative_routes_subtitle', lang)}</p>
+                </div>
+                <span>{alternativeRoutes.length} route(s)</span>
+              </div>
+              <div className="alternative-routes-grid">
+                {alternativeRoutes.map((candidate, index) => (
+                  <button
+                    key={`${candidate.algorithm}-${candidate.edge_ids.join('-')}`}
+                    type="button"
+                    className={index === 0 ? 'alternative-route-card alternative-route-card--optimal' : 'alternative-route-card'}
+                    onClick={() => setResult(candidate)}
+                  >
+                    <div className="alternative-route-card__topline">
+                      <strong>{index === 0 ? t('optimal_route_badge', lang) : t('alternative_route_badge', lang)}</strong>
+                      <span>{candidate.algorithm}</span>
+                    </div>
+                    <div className="alternative-route-card__cost">{candidate.metrics.total_cost.toFixed(3)}</div>
+                    <small>{t('total_cost', lang)} · {candidate.metrics.distance_km.toFixed(2)} km · {candidate.metrics.estimated_time_min.toFixed(2)} min</small>
+                    {index === 0 && <small className="alternative-route-card__proof">{t('cost_proof', lang)}</small>}
+                    <code>{candidate.path.join(' → ')}</code>
+                  </button>
+                ))}
+              </div>
             </section>
           )}
 

@@ -151,6 +151,11 @@ export const translations = {
     metric_algorithm: 'Algorithm',
     metric_runtime: 'Processing time',
     comparison_insight: 'Best weighted cost: {cost} · shortest: {distance} · fastest: {time} · {routes} distinct route(s).',
+    alternative_routes_title: 'Obstacle scenario route alternatives',
+    alternative_routes_subtitle: 'The lowest-cost route is marked as optimal; other routes are shown for comparison.',
+    optimal_route_badge: 'OPTIMAL',
+    alternative_route_badge: 'ALTERNATIVE',
+    cost_proof: 'Lowest weighted cost under the active scenario',
     tour_savings: 'Selected tour savings',
     minutes: 'min',
 
@@ -335,6 +340,11 @@ export const translations = {
     metric_algorithm: 'Thuật toán',
     metric_runtime: 'Thời gian xử lý',
     comparison_insight: 'Chi phí trọng số tốt nhất: {cost} · ngắn nhất: {distance} · nhanh nhất: {time} · {routes} tuyến khác nhau.',
+    alternative_routes_title: 'Các tuyến thay thế khi có cản trở',
+    alternative_routes_subtitle: 'Tuyến có chi phí thấp nhất được đánh dấu tối ưu; các tuyến khác dùng để đối chiếu.',
+    optimal_route_badge: 'TỐI ƯU',
+    alternative_route_badge: 'THAY THẾ',
+    cost_proof: 'Chi phí có trọng số thấp nhất trong kịch bản hiện tại',
     tour_savings: 'Mức tiết kiệm của tour chọn',
     minutes: 'phút',
 

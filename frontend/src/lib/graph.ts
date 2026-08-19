@@ -61,6 +61,7 @@ export type GraphEdge = {
   distance_m: number
   free_flow_time_min: number
   is_closed: boolean
+  scenario_status?: 'CONGESTED' | 'FLOODED' | 'CLOSED' | null
   attributes: Record<string, unknown>
 }
 

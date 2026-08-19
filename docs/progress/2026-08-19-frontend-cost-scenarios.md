@@ -10,6 +10,11 @@
   `CONGESTED`, `FLOODED` hoặc `CLOSED`.
 - Tô màu edge random trên bản đồ: cam/kẹt xe, xanh/ngập, đỏ/đóng đường.
 - Thêm nhãn song ngữ Việt/Anh theo nút chọn ngôn ngữ và legend nổi cố định ngay trên map.
+- Rút dropdown còn đúng `CONGESTION`, `FLOOD`, `RANDOM`; ẩn scenario kỹ thuật và bỏ legend trùng phía dưới map.
+- Với scenario có cản trở, tự động so sánh sáu thuật toán, gom tối đa ba route khác nhau,
+  hiển thị chi phí và đánh dấu route có weighted cost thấp nhất là `OPTIMAL`.
+- API graph detail trả `scenario_status` trên từng edge để map tô đúng màu theo scenario
+  FLOOD/CONGESTION/CLOSED, không chỉ theo random overlay.
 
 ## Kiểm tra
 
