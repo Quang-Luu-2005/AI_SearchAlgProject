@@ -11,6 +11,9 @@ describe('i18n module', () => {
     expect(t('run_algorithm', 'en')).toBe('Run Algorithm')
     expect(t('panel_title', 'en')).toBe('Control Panel')
     expect(t('eyebrow_title', 'en')).toBe('Optimal path visualizer')
+    expect(t('group_two_point', 'en')).toBe('🔍 Two-Point Search (Single Algorithm)')
+    expect(t('group_multi_stop', 'en')).toBe('📦 Multi-Stop Tour (TSP)')
+    expect(t('group_comparison', 'en')).toBe('📊 Algorithm Comparison')
   })
 
   it('translates keys correctly into Vietnamese', () => {
@@ -18,6 +21,9 @@ describe('i18n module', () => {
     expect(t('run_algorithm', 'vi')).toBe('Chạy thuật toán')
     expect(t('panel_title', 'vi')).toBe('Bảng điều khiển')
     expect(t('eyebrow_title', 'vi')).toBe('Trực quan hóa lộ trình tối ưu')
+    expect(t('group_two_point', 'vi')).toBe('🔍 Tìm đường 2 điểm (Thuật toán đơn lẻ)')
+    expect(t('group_multi_stop', 'vi')).toBe('📦 Giao hàng đa điểm (TSP)')
+    expect(t('group_comparison', 'vi')).toBe('📊 So sánh thuật toán')
   })
 
   it('interpolates parameters correctly', () => {

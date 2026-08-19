@@ -285,9 +285,17 @@ select {
   text-transform: none;
 }
 
+select optgroup {
+  background-color: var(--surface-low);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
 select option {
   background-color: var(--surface-low);
   color: var(--ink);
+  font-weight: 500;
 }
 
 select:focus {

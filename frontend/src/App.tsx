@@ -734,16 +734,22 @@ export function App() {
                 onChange={(event) => changeAlgorithm(event.target.value as AlgorithmSelection)}
               >
                 <option value="">{t('select_alg_placeholder', lang)}</option>
-                <option value="A_STAR">{t('alg_a_star', lang)}</option>
-                <option value="UCS">{t('alg_ucs', lang)}</option>
-                <option value="BFS">{t('alg_bfs', lang)}</option>
-                <option value="DFS">{t('alg_dfs', lang)}</option>
-                <option value="GREEDY">{t('alg_greedy', lang)}</option>
-                <option value="BIDIRECTIONAL">{t('alg_bidirectional', lang)}</option>
-                <option value="COMPARE">{t('alg_compare', lang)}</option>
-                <option value="HELD_KARP">{t('alg_held_karp', lang)}</option>
-                <option value="NEAREST_NEIGHBOR">{t('alg_nearest_neighbor', lang)}</option>
-                <option value="OPTIMIZE_TOUR">{t('alg_optimize_tour', lang)}</option>
+                <optgroup label={t('group_two_point', lang)}>
+                  <option value="A_STAR">{t('alg_a_star', lang)}</option>
+                  <option value="UCS">{t('alg_ucs', lang)}</option>
+                  <option value="BFS">{t('alg_bfs', lang)}</option>
+                  <option value="DFS">{t('alg_dfs', lang)}</option>
+                  <option value="GREEDY">{t('alg_greedy', lang)}</option>
+                  <option value="BIDIRECTIONAL">{t('alg_bidirectional', lang)}</option>
+                </optgroup>
+                <optgroup label={t('group_multi_stop', lang)}>
+                  <option value="HELD_KARP">{t('alg_held_karp', lang)}</option>
+                  <option value="NEAREST_NEIGHBOR">{t('alg_nearest_neighbor', lang)}</option>
+                </optgroup>
+                <optgroup label={t('group_comparison', lang)}>
+                  <option value="COMPARE">{t('alg_compare', lang)}</option>
+                  <option value="OPTIMIZE_TOUR">{t('alg_optimize_tour', lang)}</option>
+                </optgroup>
               </select>
             </label>
 
