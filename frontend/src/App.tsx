@@ -397,7 +397,8 @@ export function App() {
         setScenarioId((current) => (
           nextScenarios.some((item) => item.scenario_id === current)
             ? current
-            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_CONGESTION')?.scenario_id
+            : nextScenarios.find((item) => item.scenario_id === 'LANDMARK_NORMAL')?.scenario_id
+            ?? nextScenarios.find((item) => item.scenario_id === 'LANDMARK_CONGESTION')?.scenario_id
             ?? nextScenarios.find((item) => item.scenario_id === 'RAIN_FLOOD_AWARE_2025_2026')?.scenario_id
             ?? nextScenarios.find((item) => item.scenario_id === 'HEAVY_RAIN_SAFE')?.scenario_id
             ?? nextScenarios[0]?.scenario_id
@@ -816,6 +817,7 @@ export function App() {
             <label>
               {t('scenario_label', lang)}
               <select value={scenarioId.startsWith('SCENARIO_') ? 'RANDOM' : scenarioId} onChange={(event) => selectScenario(event.target.value)}>
+                <option value="LANDMARK_NORMAL">{t('scenario_normal', lang)}</option>
                 <option value="LANDMARK_CONGESTION">{t('scenario_congestion', lang)}</option>
                 <option value="LANDMARK_FLOOD">{t('scenario_flood', lang)}</option>
                 <option value="RANDOM">{t('scenario_random', lang)}</option>

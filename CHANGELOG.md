@@ -5,6 +5,14 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Added an editable XeLaTeX Beamer presentation source `docs/reports/presentation_slides.tex` and compiled PDF with 30 frames covering the current dataset, scenarios, cost model, algorithms, frontend flow, experiments, limitations, and conclusion.
+- Added four project UI illustrations and the KHTN logo to the LaTeX deck, including two dedicated gallery frames for map, route, comparison, and delivery-tour views; rebuilt the PDF with 32 frames.
+- Updated the LaTeX team slide to show the requested score allocation table: 35%, 25%, 20%, 20%, total 100%.
+- Restyled the LaTeX presentation to follow the supplied Madrid template: white canvas, navy title bars, light-blue blocks, Latin Modern typography, and a matching cover layout.
+- Packaged Group 7 submission archive `7.zip` with GitHub source link, technical report, PDF slides, and the v1.0.4 dataset release; added a video-link placeholder pending the real demo URL.
+- Added concrete failure-case analysis to the technical report and presentation, including incorrect snapping, one-way edge assumptions, geometry-overlapping closures, stale random scenarios, cost-objective mismatch, sparse topology, heuristic/profile mismatch, and invalid data.
+- Unified the LaTeX slide deck on the TeX Gyre Heros font and redesigned the release metrics/architecture slides with clearer cards, spacing, and arrows.
+- Removed undersized duplicate screenshots from explanatory slides and centered the map color/status legend table for readability.
 - Added the Slides branch presentation bundle: 28-slide PPTX, HTML preview, Markdown source, slide report README, and progress note. Conflicting report metadata was kept from the current main branch.
 - Moved the title-page date inside the cover frame by lowering the frame bottom and preserving a balanced bottom margin.
 - Updated the report cover and HTML/Markdown metadata to list the three instructors: Bùi Duy Đăng, Bùi Tiến Lên, and Võ Nhật Tân.
@@ -23,6 +31,7 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 - Added dataset release `thu_duc_landmarks_v1.0.4`; FLOOD and CONGESTION now affect 57/283 edges each (20.14%), while topology remains unchanged.
 - Added a `RANDOM` regenerate action so every click creates a new random seed and replaces the affected edge set.
 - RANDOM now deliberately includes both obstruction types in one draw: 1 closure, 3 flooded edges, and 3 congested edges.
+- Restored the frontend `NORMAL` demo scenario and made it the default baseline alongside congestion, flood, and random conditions.
 - Removed the historical-traffic notice card from the frontend panel while retaining provenance and limitations in the submission manifest.
 - Added the self-contained `data/submission/floodroute_dataset_v1.0.0` bundle with CSV/JSON data, validation report, checksums, provenance labels, and submission manifest.
 - Split the submission bundle into `raw_collected/` source snapshots and `normalized/` routing data, with separate checksums and provenance manifests.

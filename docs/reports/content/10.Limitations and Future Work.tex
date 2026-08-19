@@ -10,6 +10,29 @@ Trong giao diện, người dùng chọn dataset, thuật toán, scenario, start
 \subsection{Giới hạn của đồ án}
 Dataset hiện tại chưa phải dữ liệu traffic real-time. Tốc độ và thời gian đường thông được suy ra từ UTraffic hoặc tốc độ fallback theo loại đường; các đoạn nối landmark dùng giả định 20 km/h. Một phần traffic/flood trong release là dữ liệu \texttt{SIMULATED}; các cấu hình scenario là \texttt{ASSUMPTION}. Hệ thống ưu tiên đường ngắn nhất thông qua cost cơ sở, nhưng vẫn tối ưu composite cost thay vì khoảng cách thuần túy. Held-Karp có độ phức tạp tăng theo cấp số mũ nên chỉ phù hợp với số stop nhỏ. Heuristic lower-bound bảo đảm tính tối ưu cho composite cost hiện tại, nhưng có thể không mạnh nếu cost profile thay đổi nhiều.
 
+\subsection{Các trường hợp có thể cho kết quả sai hoặc không phản ánh thực tế}
+Các trường hợp dưới đây cần được phân biệt giữa ``thuật toán trả lời sai theo graph'' và ``graph/cost không đủ đại diện cho thực tế'':
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth} X X@{}}
+\toprule
+\textbf{Trường hợp} & \textbf{Ví dụ cụ thể} & \textbf{Hậu quả và cách kiểm soát}\\
+\midrule
+Start/goal không khớp node & Người dùng chọn một địa chỉ nằm giữa hai landmark nhưng hệ thống gán vào landmark gần nhất theo khoảng cách thẳng. & Route có thể bắt đầu/kết thúc sai vị trí. Cần báo rõ node được snap và khoảng cách snap.\\
+Graph một chiều bị hiểu sai & Có cạnh LM\_001 $\rightarrow$ LM\_036 nhưng không có chiều ngược lại; nếu người dùng giả định đường hai chiều, route ngược có thể bị báo \texttt{NO\_ROUTE}. & Đây là hành vi đúng theo graph, nhưng sai so với thực tế nếu dữ liệu thiếu chiều đường. Cần kiểm tra hướng cạnh và validation topology.\\
+Đóng cạnh nhưng không lan theo hình học & Một landmark edge bị đóng, trong khi aggregate edge khác chồng lấn cùng đoạn đường vẫn mở. & Bản đồ có thể vẫn cho đi qua đoạn hình học tương tự. Release hiện tại chỉ đóng theo \texttt{edge\_id}; cần ghi rõ giới hạn hoặc bổ sung mapping source segment.\\
+Scenario thay đổi giữa lúc tính và lúc hiển thị & RANDOM sinh seed mới sau khi route đã được tính, nhưng frontend vẫn giữ route cũ. & Màu edge, cost và route không còn cùng một scenario. Cần freeze seed/scenario trong toàn bộ request và lưu seed để tái lập.\\
+Cost không phản ánh mục tiêu người dùng & Một route ngắn hơn 500 m nhưng có flood penalty lớn có thể bị chọn sau route dài hơn; ngược lại weight không phù hợp có thể ưu tiên đường không đúng mong muốn. & A*/UCS vẫn tối ưu đúng composite cost, nhưng không chứng minh tối ưu khoảng cách thuần túy. Cần hiển thị breakdown và validate weight.\\
+Topology quá thưa & Nếu LM\_010 chỉ có một cạnh ra và cạnh đó bị closure, hệ thống trả \texttt{NO\_ROUTE} dù ngoài thực tế còn đường nhỏ chưa được đưa vào graph. & Đây là giới hạn dữ liệu, không phải lỗi search. Cần phân biệt ``không có đường trong graph'' với ``không có đường ngoài thực tế''.\\
+Heuristic/cost profile không đồng bộ & Nếu heuristic dùng scale của BALANCED nhưng search chạy RAIN\_SAFE, điều kiện lower-bound có thể mất. & A* có thể mở rộng sai thứ tự hoặc mất bảo đảm tối ưu. Heuristic phải được tính lại theo đúng scenario đã freeze; UCS là mốc kiểm chứng.\\
+Nhiều stop hoặc dữ liệu lỗi & Held--Karp với 15--20 điểm có thể tăng thời gian theo cấp số mũ; polyline lỗi hoặc tọa độ đảo lat/lon cũng làm khoảng cách sai. & Cần giới hạn số stop, fallback heuristic, validate schema, range tọa độ và hình học trước khi search.\\
+\bottomrule
+\end{tabularx}
+\caption{Các failure case cần kiểm tra khi diễn giải kết quả FloodRoute.}
+\end{table}
+
 \subsection{Hướng phát triển}
 Trong tương lai, nhóm em có thể bổ sung traffic real-time, hiệu chỉnh tốc độ theo dữ liệu đo thực tế, hỗ trợ custom weights có validation và tách rõ chế độ tối ưu khoảng cách với chế độ tối ưu composite cost. Nhóm cũng có thể mở rộng bài toán nhiều xe và time windows. Khi thêm các thành phần mới, cần cập nhật provenance, benchmark và các contract liên quan.
 

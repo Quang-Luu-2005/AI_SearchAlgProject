@@ -4,6 +4,7 @@
 | 2026-08-19 | [Route explanation and alternative comparison](2026-08-19-report-rewrite.md) | Complete |
 | 2026-08-19 | [Report cost model and shortest-route priority](2026-08-19-report-cost-and-shortest-route.md) | Complete |
 | 2026-08-19 | [Presentation slides](2026-08-19-presentation-slides.md) | Complete |
+| 2026-08-19 | [LaTeX Beamer presentation](2026-08-19-presentation-slides-latex.md) | Complete |
 
 | Ngày | Mốc | Trạng thái |
 |---|---|---|
