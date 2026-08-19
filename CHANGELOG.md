@@ -5,6 +5,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Phát hành bộ Slide thuyết trình toàn diện 24 slides phục vụ bảo vệ đồ án FloodRoute
+  HCMC dưới 2 định dạng: Markdown Slide Deck (`docs/reports/presentation_slides.md`)
+  tương thích Marp/Reveal.js và Interactive Web Slide Deck (`docs/reports/presentation_slides.html`)
+  tự chứa giao diện Dark Glassmorphism, MathJax LaTeX, phím tắt điều hướng (`Left/Right/Space/F/O`),
+  thanh tiến trình, bảng số liệu thực nghiệm 3.600 lượt chạy và bộ Flashcards hỗ trợ vấn đáp.
+
 - Nâng cấp toàn diện giao diện hiển thị kết quả thuật toán giao hàng đa điểm (Tour
   Held-Karp DP, Nearest Neighbor và So sánh Tour): hiển thị lộ trình dạng huy hiệu tên
   địa danh thực tế thay vì node ID thô, đối chiếu 2 cột Trước vs Sau tối ưu kèm mức tiết
