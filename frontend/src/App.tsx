@@ -1062,7 +1062,7 @@ export function App() {
           )}
 
 
-          {result && (
+          {result && !tourResult && (
             <section className="metrics-bar" aria-label="Route search metrics">
               <div className="metric-chip"><span>{t('metric_algorithm', lang)}</span><strong>{result.algorithm}</strong></div>
               <div className="metric-chip"><span>{t('explored_nodes', lang)}</span><strong>{result.metrics.explored_nodes}</strong></div>
@@ -1096,36 +1096,129 @@ export function App() {
 
           {tourResult && (
             <section className="tour-result-card" aria-label="Tour result">
+              {/* 1. Header with Landmark Stop Badges */}
               <div className="tour-header">
-                <span className="tour-kicker">{t('tour_kicker', lang)} · {tourResult.scenario}</span>
-                <h3>{t('tour_route', lang)} {tourResult.visit_order.join(' → ')}</h3>
-                <p>{tourResult.explanation}</p>
-              </div>
-              <div className="tour-baseline-card">
-                <h4>{t('original_order_title', lang)}</h4>
-                <p>{tourResult.comparison.original_visit_order.join(' → ')}</p>
-                <div className="tour-summary-box">
-                  <div className="comp-item"><span>{t('total_cost', lang)}</span><strong>{tourResult.comparison.original_order_cost.toFixed(3)}</strong></div>
-                  <div className="comp-item"><span>{t('dist_total', lang)}</span><strong>{tourResult.comparison.original_order_distance_km.toFixed(2)} km</strong></div>
-                  <div className="comp-item"><span>{t('time_eta', lang)}</span><strong>{tourResult.comparison.original_order_time_min.toFixed(2)} min</strong></div>
-                  <div className="comp-item"><span>{t('tour_savings', lang)}</span><strong>{tourResult.comparison.selected_savings_cost.toFixed(3)} ({tourResult.comparison.selected_savings_percent.toFixed(2)}%)</strong></div>
+                <div className="tour-header-meta">
+                  <span className="tour-kicker">{t('tour_kicker', lang)} · {tourResult.scenario}</span>
+                  <span className="tour-status-pill">{tourResult.data_status}</span>
+                </div>
+                <h3 className="tour-title-route">{t('tour_route', lang)}</h3>
+
+                <div className="tour-sequence-badges">
+                  {tourResult.visit_order.map((nodeId, idx) => {
+                    const isDepot = idx === 0 || idx === tourResult.visit_order.length - 1
+                    const loc = locations.find((item) => item.node_id === nodeId)
+                    const locName = loc ? loc.name : nodeId
+                    return (
+                      <div key={`${nodeId}-${idx}`} className="tour-seq-item">
+                        <span className={`tour-stop-badge ${isDepot ? 'tour-stop-badge--depot' : 'tour-stop-badge--stop'}`}>
+                          {isDepot ? '🏠 ' + t('depot_badge', lang) : `📍 ${t('stop_badge', lang, { no: idx })}`}
+                        </span>
+                        <span className="tour-stop-name">{locName}</span>
+                        <span className="tour-stop-id"><code>{nodeId}</code></span>
+                        {idx < tourResult.visit_order.length - 1 && (
+                          <span className="tour-seq-arrow" aria-hidden="true">➔</span>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
+
+              {/* 2. Before vs After Optimization Comparison */}
+              <div className="tour-optimization-comparison-card">
+                <div className="tour-opt-header">
+                  <h4>⚡ {t('tour_savings_title', lang)}</h4>
+                  <div className="tour-savings-highlight-badge">
+                    🎉 {t('tour_savings_badge', lang, {
+                      dist: (tourResult.comparison.original_order_distance_km - tourResult.total_distance_km).toFixed(2),
+                      time: (tourResult.comparison.original_order_time_min - tourResult.estimated_time_min).toFixed(2),
+                      percent: tourResult.comparison.selected_savings_percent.toFixed(1),
+                    })}
+                  </div>
+                </div>
+
+                <div className="tour-comparison-before-after">
+                  {/* Left: Original Sequence */}
+                  <div className="tour-compare-col tour-compare-col--baseline">
+                    <div className="tour-compare-col-header">
+                      <span className="compare-badge compare-badge--baseline">📝 {t('original_order_title', lang)}</span>
+                    </div>
+                    <div className="tour-compare-seq-text">
+                      {tourResult.comparison.original_visit_order.map((nodeId, i) => {
+                        const loc = locations.find((item) => item.node_id === nodeId)
+                        return (
+                          <span key={i} className="mini-stop-chip">
+                            {loc ? loc.name : nodeId}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    <div className="tour-compare-metrics">
+                      <div className="mini-metric">
+                        <span>{t('dist_total', lang)}</span>
+                        <strong>{tourResult.comparison.original_order_distance_km.toFixed(2)} km</strong>
+                      </div>
+                      <div className="mini-metric">
+                        <span>{t('time_eta', lang)}</span>
+                        <strong>{tourResult.comparison.original_order_time_min.toFixed(2)} min</strong>
+                      </div>
+                      <div className="mini-metric">
+                        <span>{t('total_cost', lang)}</span>
+                        <strong>{tourResult.comparison.original_order_cost.toFixed(3)}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Optimized Sequence */}
+                  <div className="tour-compare-col tour-compare-col--optimized">
+                    <div className="tour-compare-col-header">
+                      <span className="compare-badge compare-badge--optimized">🚀 {t('optimized_order_title', lang)}</span>
+                    </div>
+                    <div className="tour-compare-seq-text">
+                      {tourResult.visit_order.map((nodeId, i) => {
+                        const loc = locations.find((item) => item.node_id === nodeId)
+                        return (
+                          <span key={i} className="mini-stop-chip mini-stop-chip--optimized">
+                            {loc ? loc.name : nodeId}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    <div className="tour-compare-metrics">
+                      <div className="mini-metric">
+                        <span>{t('dist_total', lang)}</span>
+                        <strong className="text-success">{tourResult.total_distance_km.toFixed(2)} km</strong>
+                      </div>
+                      <div className="mini-metric">
+                        <span>{t('time_eta', lang)}</span>
+                        <strong className="text-success">{tourResult.estimated_time_min.toFixed(2)} min</strong>
+                      </div>
+                      <div className="mini-metric">
+                        <span>{t('total_cost', lang)}</span>
+                        <strong className="text-success">{tourResult.total_cost.toFixed(3)}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Theoretical Guarantee & Algorithm Complexity Card */}
               {algorithm === 'OPTIMIZE_TOUR' ? (
                 <div className="tour-guarantee-comparison" aria-label="Guarantee comparison">
                   <div className="tour-guarantee-card optimal-card">
                     <span className="guarantee-tag">{t('optimal_tag', lang)}</span>
                     <h4>Held-Karp DP</h4>
                     <div className="card-cost">{tourResult.comparison.held_karp_cost.toFixed(3)} cost</div>
-                    <div className="card-guarantee">OPTIMAL_HELD_KARP</div>
-                    <p>{t('optimal_tag', lang)}</p>
+                    <div className="card-guarantee">OPTIMAL_HELD_KARP · O(N²·2ᴺ)</div>
+                    <p>{t('held_karp_badge_desc', lang)}</p>
                   </div>
                   <div className="tour-guarantee-card heuristic-card">
                     <span className="guarantee-tag">{t('heuristic_tag', lang)}</span>
                     <h4>Nearest Neighbor</h4>
                     <div className="card-cost">{tourResult.comparison.nearest_neighbor_cost.toFixed(3)} cost</div>
-                    <div className="card-guarantee">APPROXIMATE_NEAREST_NEIGHBOR</div>
-                    <p>{t('heuristic_tag', lang)}</p>
+                    <div className="card-guarantee">APPROXIMATE_NEAREST_NEIGHBOR · O(N²)</div>
+                    <p>{t('nn_badge_desc', lang)}</p>
                   </div>
                   <div className="tour-guarantee-card gap-card">
                     <span className="guarantee-tag">📊 {t('approx_gap_title', lang)}</span>
@@ -1138,39 +1231,27 @@ export function App() {
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className={`tour-guarantee-banner ${tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? 'tour-guarantee-banner--optimal' : 'tour-guarantee-banner--heuristic'}`}>
-                    <div className="guarantee-badge-header">
-                      <span className="guarantee-tag-pill">
-                        {tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? t('optimal_tag', lang) : t('heuristic_tag', lang)}
-                      </span>
-                      <span className="guarantee-title-text">
-                        {t('guarantee', lang)}: <code>{tourResult.guarantee}</code>
-                      </span>
-                    </div>
+                <div className={`tour-guarantee-banner ${tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? 'tour-guarantee-banner--optimal' : 'tour-guarantee-banner--heuristic'}`}>
+                  <div className="guarantee-badge-header">
+                    <span className="guarantee-tag-pill">
+                      {tourResult.guarantee === 'OPTIMAL_HELD_KARP' ? t('optimal_tag', lang) : t('heuristic_tag', lang)}
+                    </span>
+                    <span className="guarantee-title-text">
+                      {algorithm === 'HELD_KARP' ? t('alg_held_karp', lang) : t('alg_nearest_neighbor', lang)}
+                    </span>
+                    <span className="guarantee-algo-code">
+                      <code>{tourResult.guarantee}</code>
+                    </span>
                   </div>
-
-                  <div className="tour-summary-box">
-                    <div className="comp-item">
-                      <span>{t('select_alg_label', lang)}</span>
-                      <strong>{algorithm === 'HELD_KARP' ? t('alg_held_karp', lang) : t('alg_nearest_neighbor', lang)}</strong>
-                    </div>
-                    <div className="comp-item">
-                      <span>{t('dist_total', lang)}</span>
-                      <strong>{tourResult.total_distance_km.toFixed(2)} km</strong>
-                    </div>
-                    <div className="comp-item">
-                      <span>{t('time_eta', lang)}</span>
-                      <strong>{tourResult.estimated_time_min.toFixed(2)} {t('minutes', lang)}</strong>
-                    </div>
-                    <div className="comp-item">
-                      <span>{t('total_cost', lang)}</span>
-                      <strong>{tourResult.total_cost.toFixed(3)}</strong>
-                    </div>
-                  </div>
-                </>
+                  <p className="guarantee-desc-text">
+                    {algorithm === 'HELD_KARP'
+                      ? t('held_karp_badge_desc', lang)
+                      : `${t('nn_badge_desc', lang)} · ${t('approx_gap_title', lang)}: +${tourResult.comparison.approximation_gap_percent.toFixed(2)}%`}
+                  </p>
+                </div>
               )}
 
+              {/* 4. Detailed Legs Breakdown Table */}
               <div className="legs-table-container">
                 <h4>{t('legs_breakdown', lang, { count: tourResult.legs.length })}</h4>
                 <table className="legs-table">
@@ -1179,14 +1260,16 @@ export function App() {
                       <th>{t('leg_no', lang)}</th>
                       <th>{t('from_node', lang)}</th>
                       <th>{t('to_node', lang)}</th>
-                      <th>{t('path_nodes', lang)}</th>
                       <th>{t('leg_dist', lang)}</th>
                       <th>{t('leg_time', lang)}</th>
                       <th>{t('leg_cost', lang)}</th>
+                      <th>{t('path_nodes', lang)}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {tourResult.legs.map((leg, idx) => {
+                      const isFirst = idx === 0
+                      const isLast = idx === tourResult.legs.length - 1
                       const fromLoc = locations.find((loc) => loc.node_id === leg.from_node_id)
                       const toLoc = locations.find((loc) => loc.node_id === leg.to_node_id)
                       const fromName = fromLoc ? fromLoc.name : leg.from_node_id
@@ -1194,40 +1277,40 @@ export function App() {
 
                       return (
                         <tr key={`${leg.from_node_id}-${leg.to_node_id}-${idx}`}>
-                          <td><strong>#{idx + 1}</strong></td>
+                          <td><span className="leg-badge-num">#{idx + 1}</span></td>
                           <td>
                             <div className="leg-node-block">
+                              <span className="leg-node-role">{isFirst ? '🏠 ' + t('depot_badge', lang) : `📍 ${t('stop_badge', lang, { no: idx })}`}</span>
                               <span className="leg-node-name">{fromName}</span>
                               <span className="leg-node-id"><code>{leg.from_node_id}</code></span>
                             </div>
                           </td>
                           <td>
                             <div className="leg-node-block">
+                              <span className="leg-node-role">{isLast ? '🏠 ' + t('depot_badge', lang) : `📍 ${t('stop_badge', lang, { no: idx + 1 })}`}</span>
                               <span className="leg-node-name">{toName}</span>
                               <span className="leg-node-id"><code>{leg.to_node_id}</code></span>
                             </div>
                           </td>
+                          <td><strong>{leg.distance_km.toFixed(2)} km</strong></td>
+                          <td><strong>{leg.travel_time_min.toFixed(2)} {t('minutes', lang)}</strong></td>
+                          <td><strong className="text-primary">{leg.total_cost.toFixed(3)}</strong></td>
                           <td>
-                            <span className="leg-path-seq">{leg.path.join(' → ')}</span>
-                            <small style={{ display: 'block', color: 'var(--muted)', marginTop: '2px' }}>
-                              ({leg.path.length} {t('nodes_count', lang)})
-                            </small>
+                            <details className="leg-subpath-details">
+                              <summary>{t('view_subpath_nodes', lang, { count: leg.path.length })}</summary>
+                              <div className="leg-path-seq">{leg.path.join(' → ')}</div>
+                            </details>
                           </td>
-                          <td>{leg.distance_km.toFixed(2)} km</td>
-                          <td>{leg.travel_time_min.toFixed(2)} {t('minutes', lang)}</td>
-                          <td><strong>{leg.total_cost.toFixed(3)}</strong></td>
                         </tr>
                       )
                     })}
                   </tbody>
                 </table>
               </div>
-
             </section>
           )}
 
-
-          {result && (
+          {result && !tourResult && (
             <section className="result-details">
               <div>
                 <span className="result-kicker">{result.algorithm} · {result.scenario}</span>

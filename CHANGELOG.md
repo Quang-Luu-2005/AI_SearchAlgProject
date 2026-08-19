@@ -5,6 +5,12 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Nâng cấp toàn diện giao diện hiển thị kết quả thuật toán giao hàng đa điểm (Tour
+  Held-Karp DP, Nearest Neighbor và So sánh Tour): hiển thị lộ trình dạng huy hiệu tên
+  địa danh thực tế thay vì node ID thô, đối chiếu 2 cột Trước vs Sau tối ưu kèm mức tiết
+  kiệm (km, phút, % chi phí), làm rõ cam kết học thuật và độ phức tạp ($O(N^2 \cdot 2^N)$
+  vs $O(N^2)$), tinh gọn bảng từng chặng và ẩn các thẻ 2 điểm trùng lặp.
+
 - Tách biệt mục So sánh thuật toán (Algorithm Comparison) thành phân nhóm riêng trong
   bộ chọn thuật toán ở Bảng điều khiển (Control Panel) bằng `<optgroup>` đa ngôn ngữ
   (EN/VI), phân định rành mạch giữa tìm kiếm 2 điểm đơn lẻ, tour giao hàng đa điểm (TSP),
