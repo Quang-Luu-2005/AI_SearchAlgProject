@@ -20,3 +20,9 @@ Thư mục này chứa các tài liệu báo cáo kỹ thuật, mã nguồn LaTe
 - [`hcmus-report-template.sty`](hcmus-report-template.sty): Style package HCMUS.
 - `content/`: Các chương mục nội dung LaTeX phân tách.
 - `ref/`: Thư viện tài liệu tham khảo BibTeX và hình ảnh.
+
+## 4. Artefact tạm
+
+Log biên dịch, file trung gian LaTeX (`.aux`, `.toc`, `.nav`, ...) và ảnh
+render kiểm tra không thuộc source tree. Các file này được ignore trong
+`.gitignore` và có thể tạo lại khi build report/slides.

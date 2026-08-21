@@ -5,6 +5,9 @@ Mọi thay đổi đáng chú ý được ghi tại đây. Nhật ký chi tiết
 
 ## [Unreleased]
 
+- Cleaned tracked LaTeX build logs, intermediate files, temporary report renders,
+  a duplicate report PDF, and an orphan root file; documented the report
+  artefact policy in `docs/reports/README.md`.
 - Added an editable XeLaTeX Beamer presentation source `docs/reports/presentation_slides.tex` and compiled PDF with 30 frames covering the current dataset, scenarios, cost model, algorithms, frontend flow, experiments, limitations, and conclusion.
 - Added four project UI illustrations and the KHTN logo to the LaTeX deck, including two dedicated gallery frames for map, route, comparison, and delivery-tour views; rebuilt the PDF with 32 frames.
 - Updated the LaTeX team slide to show the requested score allocation table: 35%, 25%, 20%, 20%, total 100%.

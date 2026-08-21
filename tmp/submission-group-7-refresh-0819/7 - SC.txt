@@ -1,5 +1,0 @@
-Link source code:
-https://github.com/Quang-Luu-2005/AI_SearchAlgProject
-
-Repository: AI_SearchAlgProject
-Group ID: 7
